@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
+import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 
 interface ProfileForm {
   display_name: string;
@@ -175,6 +176,8 @@ const ProfileEditor = () => {
           Save
         </Button>
       </div>
+
+      <ProfileReadiness />
 
       <Card>
         <CardHeader><CardTitle>Photos</CardTitle></CardHeader>
