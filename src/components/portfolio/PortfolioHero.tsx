@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote, Play } from "lucide-react";
 import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
+import { getContrastTextColors, isLightColor } from "@/lib/contrastColor";
+import { BokehField } from "@/components/CinematicBackground";
 import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CompanyLogo from "@/components/CompanyLogo";
@@ -24,6 +27,7 @@ const PRESET_GRADIENTS: Record<string, string> = {
 export type HeroLayout = 'classic' | 'centered' | 'split' | 'minimal' | 'banner' | 'sidebar' | 'editorial' | 'card' | 'stacked' | 'cinematic' | 'compact';
 export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'showreel' | 'none';
 export type HeroKnownForStyle = 'strip' | 'large' | 'text' | 'hidden';
+export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
 
 interface Props {
   profile: {
@@ -60,6 +64,9 @@ interface Props {
   testimonials?: any[];
   demoReels?: any[];
   imageAnimation?: string;
+  heroBgType?: HeroBgType;
+  heroBgSolidColor?: string;
+  heroBgVideoUrl?: string;
 }
 
 const platformIcons: Record<string, string> = {
@@ -68,7 +75,7 @@ const platformIcons: Record<string, string> = {
   website: "🌐", spotlight: "★",
 };
 
-const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, demoReels, imageAnimation = 'none' }: Props) => {
+const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, demoReels, imageAnimation = 'none', heroBgType = 'preset', heroBgSolidColor, heroBgVideoUrl }: Props) => {
   const theme = usePortfolioTheme();
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
