@@ -461,9 +461,44 @@ const ClassicLayout = () => {
           <ClientLogosWithToggle companies={mockClients} />
         </PortfolioSectionWrapper>
       </div>
-      <div>
+      <div className="mb-10">
         <PortfolioSectionWrapper title="Services" index={6}>
           <ServicesWithToggle items={mockServices} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Representation" index={8}>
+          <RepresentationWithToggle items={mockRepresentation} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Education & Training" index={9}>
+          <EducationWithToggle items={mockEducation} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Skills" index={10}>
+          <SkillsWithToggle items={mockSkills} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Gallery" index={11}>
+          <GalleryWithToggle items={mockGallery} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Demo Reels" index={12}>
+          <DemoReelsWithToggle items={mockDemoReels} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Events & Appearances" index={13}>
+          <EventsWithToggle items={mockEvents} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Production History" index={14}>
+          <ProductionsWithToggle items={mockProductions} />
         </PortfolioSectionWrapper>
       </div>
     </>
