@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
 import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
-import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
+import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
+import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
+import SortableSectionList from "@/components/portfolio/SortableSectionList";
 import { Loader2, ArrowUp, MessageSquare } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
