@@ -261,23 +261,23 @@ const CreditHeroCard = ({ project }: { project: any }) => {
 /* 2. STANDARD — Dense grid with sidebar modules */
 const StandardLayout = () => (
   <>
-    {/* Known For in sidebar */}
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
-      <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+    {/* Known For — full-width strip at top */}
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" display="both" />
       </PortfolioSectionWrapper>
-      <div className="space-y-6">
-        <PortfolioSectionWrapper title="Known For" index={-1}>
-          <SectionKnownFor items={mockKnownFor} variant="grid" />
-        </PortfolioSectionWrapper>
-        <PortfolioSectionWrapper title="Services" index={1}>
-          <SectionServices items={mockServices} compact />
-        </PortfolioSectionWrapper>
-      </div>
     </div>
     {/* Client logos bar */}
     <div className="mb-10">
       <SectionClientLogos companies={mockClients} variant="bar" />
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Services" index={1}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -764,6 +764,7 @@ const DemoScreenwriter = () => {
         representation={mockRepresentation}
         featuredProject={featuredProject}
         stats={stats}
+        knownFor={mockKnownFor}
       />
 
       {/* Body */}

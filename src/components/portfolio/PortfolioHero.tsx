@@ -33,6 +33,7 @@ interface Props {
   representation?: any[];
   featuredProject?: any;
   stats?: { scripts: number; developing: number; awards: number };
+  knownFor?: any[];
 }
 
 const platformIcons: Record<string, string> = {
@@ -41,7 +42,7 @@ const platformIcons: Record<string, string> = {
   website: "🌐", spotlight: "★",
 };
 
-const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats }: Props) => {
+const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor }: Props) => {
   const theme = usePortfolioTheme();
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -399,24 +400,64 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             )}
           </div>
 
-          {/* Stats bar — tight horizontal */}
-          {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
+          {/* Stats bar + Known For — side by side */}
+          {(stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0)) || (knownFor && knownFor.length > 0) ? (
             <div
-              className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 mt-6 pt-5"
               style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(5) }}
             >
-              {[
-                { n: stats.scripts, label: 'Scripts Available' },
-                { n: stats.developing, label: 'In Development' },
-                { n: stats.awards, label: 'Awards' },
-              ].filter(s => s.n > 0).map(s => (
-                <div key={s.label}>
-                  <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
-                  <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextMuted }}>{s.label}</p>
+              {/* Stats */}
+              {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
+                <div className="flex items-center gap-8 sm:gap-10 shrink-0">
+                  {[
+                    { n: stats.scripts, label: 'Scripts Available' },
+                    { n: stats.developing, label: 'In Development' },
+                    { n: stats.awards, label: 'Awards' },
+                  ].filter(s => s.n > 0).map(s => (
+                    <div key={s.label}>
+                      <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
+                      <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextMuted }}>{s.label}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+
+              {/* Known For — compact poster strip alongside stats */}
+              {knownFor && knownFor.length > 0 && (
+                <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+                  {knownFor.slice(0, 4).map((item: any) => {
+                    const card = (
+                      <div
+                        key={item.id}
+                        className="group/kf shrink-0 overflow-hidden transition-transform duration-300 hover:scale-105"
+                        style={{
+                          width: '52px',
+                          borderRadius: '4px',
+                          border: `1px solid rgba(255,255,255,0.1)`,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                        }}
+                      >
+                        <div className="aspect-[2/3] overflow-hidden relative">
+                          {item.poster_url ? (
+                            <img src={item.poster_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+                              <span className="text-xs" style={{ color: theme.textTertiary }}>🎬</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                    return item.imdb_link ? (
+                      <a key={item.id} href={item.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline shrink-0">
+                        {card}
+                      </a>
+                    ) : <div key={item.id} className="shrink-0">{card}</div>;
+                  })}
+                </div>
+              )}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
