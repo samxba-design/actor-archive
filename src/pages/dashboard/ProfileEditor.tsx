@@ -220,6 +220,9 @@ const ProfileEditor = () => {
           heroStyle={form.hero_style}
           heroBackgroundPreset={form.hero_background_preset}
           bannerUrl={form.banner_url}
+          heroBgType={form.hero_bg_type}
+          heroBgSolidColor={form.hero_bg_solid_color}
+          heroBgVideoUrl={form.hero_bg_video_url}
           onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
         />
       )}
