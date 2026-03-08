@@ -5,7 +5,7 @@ import { themes } from "@/lib/themes";
 import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles,
   BarChart3, Palette, Shield, Zap, Globe, Users,
-  Eye, MessageSquare, FolderOpen, Diamond, Quote
+  Eye, MessageSquare, FolderOpen, Diamond, Quote, PenTool
 } from "lucide-react";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import MarketingNav from "@/components/MarketingNav";
@@ -460,6 +460,7 @@ const Index = () => {
                   {[
                     { label: "Screenwriter", path: "/demo/screenwriter", icon: Pen },
                     { label: "Actor", path: "/demo/actor", icon: Mic2 },
+                    { label: "Copywriter", path: "/demo/copywriter", icon: PenTool },
                   ].map(demo => (
                     <Link
                       key={demo.path}
