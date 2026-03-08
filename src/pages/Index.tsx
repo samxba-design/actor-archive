@@ -256,17 +256,9 @@ const Index = () => {
       {/* Stats */}
       <section className="max-w-4xl mx-auto px-6 py-16">
         <div className="grid grid-cols-3 gap-6">
-          {stats.map((s, i) => {
-            const { ref, inView } = useInView();
-            return (
-              <div key={i} ref={ref} className="text-center transition-all duration-500"
-                style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${i * 120}ms` }}>
-                <s.icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(40 80% 60%)" }} />
-                <div className="text-2xl sm:text-3xl font-bold text-white">{s.value}</div>
-                <div className="text-xs mt-1" style={{ color: "hsl(220 10% 45%)" }}>{s.label}</div>
-              </div>
-            );
-          })}
+          {stats.map((s, i) => (
+            <StatItem key={i} icon={s.icon} value={s.value} label={s.label} index={i} />
+          ))}
         </div>
       </section>
 
