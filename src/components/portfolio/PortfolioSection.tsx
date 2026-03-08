@@ -27,6 +27,7 @@ import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
 import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import SectionClientLogos from "./sections/SectionClientLogos";
 import SectionPublishedWork from "./sections/SectionPublishedWork";
+import SectionCustom from "./sections/SectionCustom";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
