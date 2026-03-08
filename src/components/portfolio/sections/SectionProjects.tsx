@@ -184,7 +184,7 @@ const PosterCard = ({ project }: { project: any }) => {
                 key={g}
                 className="text-[8px] uppercase tracking-wider px-1.5 py-0.5"
                 style={{
-                  border: `1px solid ${theme.borderDefault}`,
+                  backgroundColor: theme.accentSubtle,
                   color: theme.textSecondary,
                   borderRadius: '2px',
                 }}

@@ -464,9 +464,9 @@ All colors MUST be HSL.
   background: linear-gradient(
     105deg,
     transparent 0%,
-    hsl(0 0% 100% / 0.06) 35%,
-    hsl(0 0% 100% / 0.12) 50%,
-    hsl(0 0% 100% / 0.06) 65%,
+    hsl(0 0% 100% / 0.08) 35%,
+    hsl(0 0% 100% / 0.15) 50%,
+    hsl(0 0% 100% / 0.08) 65%,
     transparent 100%
   );
   animation: glass-shine 12s ease-in-out 2s infinite;

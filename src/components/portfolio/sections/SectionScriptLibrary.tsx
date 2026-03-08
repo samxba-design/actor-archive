@@ -142,8 +142,8 @@ const ScriptCard = ({ item: p, theme, isFeatured }: { item: any; theme: any; isF
             <span
               className="text-[9px] uppercase tracking-widest px-2 py-0.5"
               style={{
-                border: `1px solid ${theme.borderDefault}`,
-                color: theme.textTertiary,
+                backgroundColor: theme.bgElevated,
+                color: theme.textSecondary,
                 borderRadius: '3px',
               }}
             >

@@ -28,7 +28,9 @@ const GlassCard = ({ children, className = "", featured, style }: Props) => {
         ...style,
       }}
     >
-      {children}
+      <div className="relative" style={{ zIndex: 2 }}>
+        {children}
+      </div>
     </div>
   );
 };

@@ -87,15 +87,15 @@ const LoglineItem = ({ item: p, index, isFeatured, isLast, theme }: { item: any;
           >
             {p.title}
           </h3>
-          {p.genre?.length > 0 && (
+              {p.genre?.length > 0 && (
             <div className="flex gap-1">
               {p.genre.slice(0, 3).map((g: string) => (
                 <span
                   key={g}
-                  className="text-[10px] uppercase tracking-wide px-2 py-px"
+                  className="text-[10px] uppercase tracking-wide px-2 py-0.5"
                   style={{
-                    border: `1px solid ${theme.borderDefault}`,
-                    color: theme.textTertiary,
+                    backgroundColor: theme.accentSubtle,
+                    color: theme.textSecondary,
                     borderRadius: '3px',
                   }}
                 >
