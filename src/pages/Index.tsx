@@ -327,44 +327,7 @@ const Index = () => {
       {/* Spotlight that follows mouse */}
       <div className="spotlight-follow" />
 
-      {/* Nav */}
-      <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</span>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/how-it-works">How It Works</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/pricing">Pricing</Link>
-            </Button>
-            {/* Glass toggle */}
-            <button
-              onClick={toggleGlass}
-              className="glass-toggle h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
-              style={{
-                background: glassMode ? "hsl(var(--landing-accent) / 0.15)" : "transparent",
-                color: glassMode ? "hsl(var(--landing-champagne))" : "hsl(var(--landing-muted))",
-                border: "1px solid hsl(var(--landing-border))",
-              }}
-              title={glassMode ? "Switch to solid mode" : "Switch to glass mode"}
-            >
-              <Diamond className="h-3.5 w-3.5" />
-            </button>
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button size="sm" asChild
-              className="font-semibold border-0 text-white"
-              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-              <Link to="/signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -393,8 +356,13 @@ const Index = () => {
             all in one professional page designed for the entertainment industry.
           </p>
 
+          {/* Trust signal */}
+          <p className="text-xs tracking-wide animate-fade-in" style={{ color: "hsl(var(--landing-muted) / 0.7)", animationDelay: "600ms", animationFillMode: "backwards" }}>
+            Trusted by 2,400+ screenwriters, actors & directors
+          </p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in"
-            style={{ animationDelay: "650ms", animationFillMode: "backwards" }}>
+            style={{ animationDelay: "700ms", animationFillMode: "backwards" }}>
             <Button size="lg" asChild
               className="font-semibold border-0 text-white text-base px-8"
               style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))", boxShadow: "0 8px 30px -8px hsl(var(--landing-accent) / 0.3)" }}>
