@@ -109,6 +109,16 @@ export const PosterCard = ({
               <ExternalLink className="w-2.5 h-2.5" style={{ color: theme.accentPrimary }} />
             </div>
           )}
+          {editable && onRemove && (
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(item.id); }}
+              className="absolute top-1 left-1 p-1 rounded-full opacity-0 group-hover/kf:opacity-100 transition-opacity z-10"
+              style={{ backgroundColor: '#ef4444', color: '#fff' }}
+              aria-label={`Remove ${item.title}`}
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
         {display === 'both' && (
           <div className="p-2.5 space-y-0.5">
@@ -379,8 +389,10 @@ const SpotlightVariant = ({ items, display }: { items: KnownForItem[]; display: 
 
 /* ════════════════════ MAIN COMPONENT ════════════════════ */
 
-const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) => {
+const SectionKnownFor = ({ items, variant = 'strip', display = 'both', onRemoveItem, editable }: Props) => {
   if (!items.length) return null;
+
+  const stripProps = { items, display, onRemoveItem, editable };
 
   switch (variant) {
     case 'scroll': return <ScrollVariant items={items} display={display} />;
@@ -388,7 +400,7 @@ const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) 
     case 'stack': return <StackVariant items={items} display={display} />;
     case 'spotlight': return <SpotlightVariant items={items} display={display} />;
     case 'strip':
-    default: return <StripVariant items={items} display={display} />;
+    default: return <StripVariant items={items} display={display} onRemoveItem={onRemoveItem} editable={editable} />;
   }
 };
 
