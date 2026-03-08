@@ -11,6 +11,7 @@ import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
+import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
 
 interface ProfileForm {
   display_name: string;
@@ -24,6 +25,8 @@ interface ProfileForm {
   banner_url: string;
   profile_type: string;
   primary_goal: string;
+  hero_style: string;
+  hero_background_preset: string;
 }
 
 const ProfileEditor = () => {
