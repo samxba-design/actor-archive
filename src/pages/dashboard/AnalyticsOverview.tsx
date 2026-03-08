@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Eye, Globe, Smartphone, Monitor, Tablet } from "lucide-react";
+import { Loader2, Eye, Globe, Monitor, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeGate } from "@/components/UpgradeGate";
+import { format } from "date-fns";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--accent))", "hsl(var(--destructive))", "hsl(var(--secondary))"];
 
@@ -19,6 +20,8 @@ const AnalyticsOverview = () => {
   const [topReferrers, setTopReferrers] = useState<{ referrer: string; count: number }[]>([]);
   const [topCountries, setTopCountries] = useState<{ country: string; count: number }[]>([]);
   const [topCities, setTopCities] = useState<{ city: string; count: number }[]>([]);
+  const [downloads, setDownloads] = useState<{ downloader_name: string | null; downloader_email: string | null; document_url: string | null; created_at: string | null }[]>([]);
+  const [totalDownloads, setTotalDownloads] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -98,6 +101,16 @@ const AnalyticsOverview = () => {
           .slice(0, 8)
           .map(([city, count]) => ({ city, count }))
       );
+
+      // Fetch download logs
+      const { data: dlData } = await supabase
+        .from("download_logs")
+        .select("downloader_name, downloader_email, document_url, created_at")
+        .eq("profile_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      setDownloads(dlData || []);
+      setTotalDownloads(dlData?.length || 0);
 
       setLoading(false);
     };
