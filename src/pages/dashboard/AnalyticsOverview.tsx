@@ -259,6 +259,30 @@ const AnalyticsOverview = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Download Tracking */}
+      <Card>
+        <CardHeader><CardTitle>Recent Downloads</CardTitle></CardHeader>
+        <CardContent>
+          {downloads.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No downloads tracked yet</p>
+          ) : (
+            <div className="space-y-2">
+              {downloads.map((d, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{d.downloader_name || "Anonymous"}</p>
+                    <p className="text-xs text-muted-foreground">{d.downloader_email || "No email"}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {d.created_at ? format(new Date(d.created_at), "MMM d, yyyy") : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
       </UpgradeGate>
     </div>
   );
