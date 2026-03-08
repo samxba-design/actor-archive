@@ -24,23 +24,6 @@ import SectionCampaignTimeline from "@/components/portfolio/sections/SectionCamp
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
-import SectionAwards from "@/components/portfolio/sections/SectionAwards";
-import SectionPress from "@/components/portfolio/sections/SectionPress";
-import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
-import SectionServices from "@/components/portfolio/sections/SectionServices";
-import SectionKnownFor, { type KnownForVariant } from "@/components/portfolio/sections/SectionKnownFor";
-import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
-import SectionEducation from "@/components/portfolio/sections/SectionEducation";
-import SectionGallery from "@/components/portfolio/sections/SectionGallery";
-import SectionDemoReels from "@/components/portfolio/sections/SectionDemoReels";
-import SectionRepresentation from "@/components/portfolio/sections/SectionRepresentation";
-import SectionSkills from "@/components/portfolio/sections/SectionSkills";
-import SectionEvents from "@/components/portfolio/sections/SectionEvents";
-import SectionProductionHistory from "@/components/portfolio/sections/SectionProductionHistory";
-import SectionActorStats from "@/components/portfolio/sections/SectionActorStats";
-import GlassCard from "@/components/portfolio/GlassCard";
-import { ExternalLink } from "lucide-react";
-import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 
 /* ── Unified section variants context ── */
 export interface SectionVariants {
