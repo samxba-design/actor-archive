@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+// All project columns EXCEPT password_hash (security: never expose to public)
+const SAFE_PROJECT_COLS = "id,profile_id,title,project_type,description,logline,genre,format,status,year,display_order,is_featured,is_notable,poster_url,backdrop_url,custom_image_url,thumbnail_url,video_url,video_type,video_thumbnail_url,role_name,role_type,director,notable_cast,network_or_studio,production_company,runtime_minutes,synopsis,network,show_role,credit_medium,cast_size_notation,duration,set_requirements,rights_status,publisher,isbn,publication,article_url,beat,client,challenge,solution,results,writing_samples_category,tags,page_count,access_level,project_slug,imdb_link,season_number,episode_count,coverage_excerpt,script_pdf_url,series_bible_url,nda_url,comparable_titles,metric_callouts,purchase_links,chapters,created_at,updated_at,tmdb_id";
 import SectionProjects from "./sections/SectionProjects";
 import SectionGallery from "./sections/SectionGallery";
 import SectionAwards from "./sections/SectionAwards";
@@ -100,12 +103,12 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
 
       switch (sectionKey) {
         case "projects": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "credits": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["film", "tv_show"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["film", "tv_show"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -151,7 +154,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "representation": {
-          const { data } = await supabase.from("representation").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          const { data } = await supabase.from("representation").select("id,profile_id,rep_type,name,company,department,market,logo_url,display_order,is_primary,created_at,updated_at").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -163,37 +166,37 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           return;
         }
         case "demo_reels": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("video_url", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).not("video_url", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "logline_showcase": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("logline", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).not("logline", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "script_library": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "bookshelf": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["novel", "book", "short_story"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["novel", "book", "short_story"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "article_feed": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["article"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["article"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "case_studies": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["case_study"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "writing_samples": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["writing_sample"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["writing_sample"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -203,17 +206,17 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "results_wall": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).not("metric_callouts", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["case_study"]).not("metric_callouts", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "video_portfolio": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "video"]).not("video_url", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["campaign", "video"]).not("video_url", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "campaign_timeline": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "case_study"]).order("year", { ascending: false });
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["campaign", "case_study"]).order("year", { ascending: false });
           rows = data || [];
           break;
         }

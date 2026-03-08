@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Eye, Globe, Smartphone, Monitor, Tablet } from "lucide-react";
+import { Loader2, Eye, Globe, Monitor, Download } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeGate } from "@/components/UpgradeGate";
+import { format } from "date-fns";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--accent))", "hsl(var(--destructive))", "hsl(var(--secondary))"];
 
@@ -19,6 +20,8 @@ const AnalyticsOverview = () => {
   const [topReferrers, setTopReferrers] = useState<{ referrer: string; count: number }[]>([]);
   const [topCountries, setTopCountries] = useState<{ country: string; count: number }[]>([]);
   const [topCities, setTopCities] = useState<{ city: string; count: number }[]>([]);
+  const [downloads, setDownloads] = useState<{ downloader_name: string | null; downloader_email: string | null; document_url: string | null; created_at: string | null }[]>([]);
+  const [totalDownloads, setTotalDownloads] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -99,6 +102,16 @@ const AnalyticsOverview = () => {
           .map(([city, count]) => ({ city, count }))
       );
 
+      // Fetch download logs
+      const { data: dlData } = await supabase
+        .from("download_logs")
+        .select("downloader_name, downloader_email, document_url, created_at")
+        .eq("profile_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      setDownloads(dlData || []);
+      setTotalDownloads(dlData?.length || 0);
+
       setLoading(false);
     };
     fetchAnalytics();
@@ -112,13 +125,22 @@ const AnalyticsOverview = () => {
     <div className="max-w-4xl space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6 flex items-center gap-3">
             <Eye className="h-8 w-8 text-primary" />
             <div>
               <p className="text-2xl font-bold text-foreground">{totalViews}</p>
               <p className="text-sm text-muted-foreground">Total Views</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 flex items-center gap-3">
+            <Download className="h-8 w-8 text-primary" />
+            <div>
+              <p className="text-2xl font-bold text-foreground">{totalDownloads}</p>
+              <p className="text-sm text-muted-foreground">Downloads</p>
             </div>
           </CardContent>
         </Card>
@@ -237,6 +259,30 @@ const AnalyticsOverview = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Download Tracking */}
+      <Card>
+        <CardHeader><CardTitle>Recent Downloads</CardTitle></CardHeader>
+        <CardContent>
+          {downloads.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No downloads tracked yet</p>
+          ) : (
+            <div className="space-y-2">
+              {downloads.map((d, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{d.downloader_name || "Anonymous"}</p>
+                    <p className="text-xs text-muted-foreground">{d.downloader_email || "No email"}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {d.created_at ? format(new Date(d.created_at), "MMM d, yyyy") : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
       </UpgradeGate>
     </div>
   );
