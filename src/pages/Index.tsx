@@ -110,9 +110,6 @@ const CinematicBackground = () => (
     {/* Vignette */}
     <div className="cinema-vignette" />
 
-    {/* Film strip edges */}
-    <div className="film-strip-edge film-strip-edge--left" />
-    <div className="film-strip-edge film-strip-edge--right" />
   </>
 );
 
@@ -282,8 +279,6 @@ const Index = () => {
       {/* Cinematic background layers */}
       <CinematicBackground />
 
-      {/* Film grain overlay */}
-      <div className="film-grain" />
 
       {/* Spotlight that follows mouse */}
       <div className="spotlight-follow" />
