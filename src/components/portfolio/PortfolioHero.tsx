@@ -164,37 +164,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           {knownFor && knownFor.length > 0 && (
             <div id="tour-known-for" className="mb-6" style={stagger(0)}>
               <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
-                {knownFor.slice(0, 6).map((item: any) => {
-                  const card = (
-                    <div
-                      key={item.id}
-                      className="group/kf shrink-0 overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-1"
-                      style={{
-                        width: '70px',
-                        borderRadius: '6px',
-                        border: `1px solid rgba(255,255,255,0.12)`,
-                        boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-                      }}
-                    >
-                      <div className="aspect-[2/3] overflow-hidden relative">
-                        {item.poster_url ? (
-                          <img src={item.poster_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
-                            <span className="text-xs" style={{ color: theme.textTertiary }}>🎬</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-1.5 py-1" style={{ backgroundColor: theme.bgSecondary }}>
-                        <p className="text-[8px] font-semibold leading-tight truncate" style={{ color: heroText, fontFamily: theme.fontDisplay }}>{item.title}</p>
-                        {item.role_name && <p className="text-[7px] uppercase tracking-wider truncate" style={{ color: theme.accentPrimary }}>{item.role_name}</p>}
-                      </div>
-                    </div>
-                  );
-                  return item.imdb_link ? (
-                    <a key={item.id} href={item.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline shrink-0">{card}</a>
-                  ) : <div key={item.id} className="shrink-0">{card}</div>;
-                })}
+                {knownFor.slice(0, 6).map((item: any) => (
+                  <PosterCard key={item.id} item={item} width="80px" display="image" />
+                ))}
               </div>
             </div>
           )}
