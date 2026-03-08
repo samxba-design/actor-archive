@@ -152,11 +152,47 @@ FeatureCard.displayName = "FeatureCard";
 
 const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
   const { ref, inView } = useInView();
+  const [displayed, setDisplayed] = useState(value);
+  
+  useEffect(() => {
+    if (!inView) return;
+    // Parse the numeric part
+    const match = value.match(/^([\d,.]+)(\D*)$/);
+    if (!match) return;
+    const target = parseFloat(match[1].replace(/,/g, ''));
+    const suffix = match[2] || '';
+    const isDecimal = match[1].includes('.');
+    const hasCommas = match[1].includes(',');
+    const duration = 1800;
+    const startTime = performance.now();
+    
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = target * eased;
+      
+      let formatted: string;
+      if (isDecimal) {
+        formatted = current.toFixed(1);
+      } else if (hasCommas) {
+        formatted = Math.round(current).toLocaleString();
+      } else {
+        formatted = Math.round(current).toString();
+      }
+      
+      setDisplayed(formatted + suffix);
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    
+    requestAnimationFrame(animate);
+  }, [inView, value]);
+
   return (
     <div ref={ref} className="text-center transition-all duration-500 glass-stat"
       style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${index * 120}ms` }}>
       <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(var(--landing-champagne))" }} />
-      <div className="text-2xl sm:text-3xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{value}</div>
+      <div className="text-2xl sm:text-3xl font-bold tabular-nums" style={{ color: "hsl(var(--landing-fg))" }}>{displayed}</div>
       <div className="text-xs mt-1" style={{ color: "hsl(var(--landing-muted))" }}>{label}</div>
     </div>
   );
