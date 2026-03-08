@@ -177,6 +177,8 @@ const ProfileEditor = () => {
         </Button>
       </div>
 
+      <ProfileReadiness />
+
       <Card>
         <CardHeader><CardTitle>Photos</CardTitle></CardHeader>
         <CardContent className="space-y-4">
