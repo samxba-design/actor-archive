@@ -309,6 +309,53 @@ export type Database = {
           },
         ]
       }
+      custom_sections: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_visible: boolean | null
+          profile_id: string
+          section_type: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          profile_id: string
+          section_type?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          profile_id?: string
+          section_type?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_sections_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       download_logs: {
         Row: {
           created_at: string | null
@@ -848,6 +895,7 @@ export type Database = {
           banner_url: string | null
           bio: string | null
           booking_url: string | null
+          contact_mode: string | null
           created_at: string | null
           cta_label: string | null
           cta_type: string | null
@@ -895,6 +943,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           booking_url?: string | null
+          contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null
           cta_type?: string | null
@@ -942,6 +991,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           booking_url?: string | null
+          contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null
           cta_type?: string | null
