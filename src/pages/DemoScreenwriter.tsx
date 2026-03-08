@@ -1063,6 +1063,20 @@ const DemoScreenwriter = () => {
     awards: mockAwards.length,
   };
 
+  const CTA_LABELS: Record<string, string> = {
+    script: 'Read My Latest Script',
+    hire: 'Hire Me',
+    contact: 'Get in Touch',
+    reel: 'Watch My Reel',
+    book: 'Book a Consultation',
+    custom: 'View My Work',
+  };
+
+  const dynamicProfile = {
+    ...mockProfile,
+    cta_label: CTA_LABELS[variants.ctaPreset] || mockProfile.cta_label,
+  };
+
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
@@ -1079,14 +1093,39 @@ const DemoScreenwriter = () => {
         </span>
       </div>
 
+      {/* Hero toggle bars */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 relative z-20 space-y-1">
+        <WithToggle sectionKey="heroLayout" sectionName="Hero Layout">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroRightContent" sectionName="Hero Right">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="ctaPreset" sectionName="CTA Button">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
+          {() => null}
+        </WithToggle>
+      </div>
+
       {/* Hero */}
       <PortfolioHero
-        profile={mockProfile}
+        profile={dynamicProfile}
         socialLinks={mockSocialLinks}
         representation={mockRepresentation}
         featuredProject={featuredProject}
         stats={stats}
         knownFor={mockKnownFor}
+        heroLayout={variants.heroLayout}
+        heroRightContent={variants.heroRightContent}
+        heroKnownFor={variants.heroKnownFor}
+        services={mockServices}
+        testimonials={mockTestimonials}
+        imageAnimation={variants.imageAnimation}
       />
 
       {/* Body */}
