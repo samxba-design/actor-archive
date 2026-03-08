@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
 import { PortfolioThemeProvider, usePortfolioTheme } from "@/themes/ThemeProvider";
 import { getAllThemeFontsUrl } from "@/themes/themes";
-import PortfolioHero from "@/components/portfolio/PortfolioHero";
+import PortfolioHero, { type HeroLayout, type HeroRightContent, type HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
 import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
@@ -45,6 +45,11 @@ interface SectionVariants {
   skills: 'tags' | 'bars' | 'grouped';
   events: 'list' | 'calendar' | 'cards';
   productions: 'list' | 'cards' | 'timeline';
+  imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
+  heroLayout: HeroLayout;
+  heroRightContent: HeroRightContent;
+  ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
+  heroKnownFor: HeroKnownForStyle;
 }
 
 const defaultVariants: SectionVariants = {
@@ -64,6 +69,11 @@ const defaultVariants: SectionVariants = {
   skills: 'tags',
   events: 'list',
   productions: 'list',
+  imageAnimation: 'none',
+  heroLayout: 'classic',
+  heroRightContent: 'featured',
+  ctaPreset: 'script',
+  heroKnownFor: 'strip',
 };
 
 const SectionVariantsCtx = createContext<{
@@ -122,6 +132,29 @@ const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: strin
   ],
   productions: [
     { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
+  ],
+  imageAnimation: [
+    { key: 'none', label: 'None' }, { key: 'pulse', label: 'Pulse' }, { key: 'drift', label: 'Drift' },
+    { key: 'glass', label: 'Glass' }, { key: 'shine', label: 'Shine' }, { key: 'fade', label: 'Fade' }, { key: 'tilt', label: 'Tilt' },
+  ],
+  heroLayout: [
+    { key: 'classic', label: 'Classic' }, { key: 'centered', label: 'Centered' }, { key: 'split', label: 'Split' },
+    { key: 'minimal', label: 'Minimal' }, { key: 'banner', label: 'Banner' }, { key: 'sidebar', label: 'Sidebar' },
+    { key: 'editorial', label: 'Editorial' }, { key: 'card', label: 'Card' }, { key: 'stacked', label: 'Stacked' },
+    { key: 'cinematic', label: 'Cinematic' }, { key: 'compact', label: 'Compact' },
+  ],
+  heroRightContent: [
+    { key: 'featured', label: 'Featured' }, { key: 'services', label: 'Services' },
+    { key: 'stats', label: 'Stats' }, { key: 'testimonial', label: 'Testimonial' }, { key: 'none', label: 'None' },
+  ],
+  ctaPreset: [
+    { key: 'script', label: 'Read Script' }, { key: 'hire', label: 'Hire Me' },
+    { key: 'contact', label: 'Get in Touch' }, { key: 'reel', label: 'Watch Reel' },
+    { key: 'book', label: 'Book Consult' }, { key: 'custom', label: 'View Work' },
+  ],
+  heroKnownFor: [
+    { key: 'strip', label: 'Strip' }, { key: 'large', label: 'Large' },
+    { key: 'text', label: 'Text' }, { key: 'hidden', label: 'Hidden' },
   ],
 };
 
@@ -1030,6 +1063,20 @@ const DemoScreenwriter = () => {
     awards: mockAwards.length,
   };
 
+  const CTA_LABELS: Record<string, string> = {
+    script: 'Read My Latest Script',
+    hire: 'Hire Me',
+    contact: 'Get in Touch',
+    reel: 'Watch My Reel',
+    book: 'Book a Consultation',
+    custom: 'View My Work',
+  };
+
+  const dynamicProfile = {
+    ...mockProfile,
+    cta_label: CTA_LABELS[variants.ctaPreset] || mockProfile.cta_label,
+  };
+
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
@@ -1046,14 +1093,39 @@ const DemoScreenwriter = () => {
         </span>
       </div>
 
+      {/* Hero toggle bars */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 relative z-20 space-y-1">
+        <WithToggle sectionKey="heroLayout" sectionName="Hero Layout">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroRightContent" sectionName="Hero Right">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="ctaPreset" sectionName="CTA Button">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
+          {() => null}
+        </WithToggle>
+      </div>
+
       {/* Hero */}
       <PortfolioHero
-        profile={mockProfile}
+        profile={dynamicProfile}
         socialLinks={mockSocialLinks}
         representation={mockRepresentation}
         featuredProject={featuredProject}
         stats={stats}
         knownFor={mockKnownFor}
+        heroLayout={variants.heroLayout}
+        heroRightContent={variants.heroRightContent}
+        heroKnownFor={variants.heroKnownFor}
+        services={mockServices}
+        testimonials={mockTestimonials}
+        imageAnimation={variants.imageAnimation}
       />
 
       {/* Body */}
