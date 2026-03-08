@@ -133,6 +133,29 @@ const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: strin
   productions: [
     { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
   ],
+  imageAnimation: [
+    { key: 'none', label: 'None' }, { key: 'pulse', label: 'Pulse' }, { key: 'drift', label: 'Drift' },
+    { key: 'glass', label: 'Glass' }, { key: 'shine', label: 'Shine' }, { key: 'fade', label: 'Fade' }, { key: 'tilt', label: 'Tilt' },
+  ],
+  heroLayout: [
+    { key: 'classic', label: 'Classic' }, { key: 'centered', label: 'Centered' }, { key: 'split', label: 'Split' },
+    { key: 'minimal', label: 'Minimal' }, { key: 'banner', label: 'Banner' }, { key: 'sidebar', label: 'Sidebar' },
+    { key: 'editorial', label: 'Editorial' }, { key: 'card', label: 'Card' }, { key: 'stacked', label: 'Stacked' },
+    { key: 'cinematic', label: 'Cinematic' }, { key: 'compact', label: 'Compact' },
+  ],
+  heroRightContent: [
+    { key: 'featured', label: 'Featured' }, { key: 'services', label: 'Services' },
+    { key: 'stats', label: 'Stats' }, { key: 'testimonial', label: 'Testimonial' }, { key: 'none', label: 'None' },
+  ],
+  ctaPreset: [
+    { key: 'script', label: 'Read Script' }, { key: 'hire', label: 'Hire Me' },
+    { key: 'contact', label: 'Get in Touch' }, { key: 'reel', label: 'Watch Reel' },
+    { key: 'book', label: 'Book Consult' }, { key: 'custom', label: 'View Work' },
+  ],
+  heroKnownFor: [
+    { key: 'strip', label: 'Strip' }, { key: 'large', label: 'Large' },
+    { key: 'text', label: 'Text' }, { key: 'hidden', label: 'Hidden' },
+  ],
 };
 
 /* ── Toggle wrapper components ── */
