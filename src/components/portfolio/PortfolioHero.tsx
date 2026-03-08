@@ -291,6 +291,36 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const RightContent = () => {
     if (heroRightContent === 'none') return null;
 
+    if (heroRightContent === 'showreel' && demoReels?.length) {
+      const reel = demoReels[0];
+      const getReelEmbedUrl = (url: string) => {
+        if (isYouTube(url)) { const yid = extractYouTubeId(url); if (yid) return `https://www.youtube.com/embed/${yid}`; }
+        if (isVimeo(url)) { const vid = extractVimeoId(url); if (vid) return `https://player.vimeo.com/video/${vid}`; }
+        return "";
+      };
+      const reelEmbedUrl = getReelEmbedUrl(reel.video_url);
+      return (
+        <div className="w-full lg:w-[420px] shrink-0" style={stagger(3)}>
+          <div className="overflow-hidden" style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, boxShadow: theme.cardShadow }}>
+            <div className="relative" style={{ aspectRatio: '16/9' }}>
+              {reelEmbedUrl ? (
+                <iframe src={reelEmbedUrl} title={reel.title} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+              ) : (
+                <a href={reel.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+                  <Play className="w-10 h-10" style={{ color: theme.accentPrimary }} />
+                </a>
+              )}
+            </div>
+            <div className="px-3 py-2" style={{ backgroundColor: theme.bgSecondary }}>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>Showreel</p>
+              <p className="text-[13px] font-medium mt-0.5" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{reel.title}</p>
+              {reel.description && <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: theme.textSecondary }}>{reel.description}</p>}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (heroRightContent === 'services' && services?.length) {
       return (
         <div className="w-full lg:w-[360px] shrink-0 space-y-3" style={stagger(3)}>
