@@ -263,6 +263,7 @@ const Onboarding = () => {
             onClick={async () => {
               await persistDraft();
               await supabase.from("profiles").update({ onboarding_completed: true, is_draft: false }).eq("id", user!.id);
+              try { localStorage.removeItem(STORAGE_KEY); } catch {}
               navigate("/dashboard");
             }}
             className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
