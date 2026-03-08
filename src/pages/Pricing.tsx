@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,8 @@ import {
   Globe, Code2, PenTool, FileText, Bell, Heart, Loader2
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 import { useSubscription, STRIPE_PRICES } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -97,31 +99,16 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
-      {/* Nav */}
-      <nav className="border-b" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</Link>
-          <div className="flex items-center gap-2">
-            {user ? (
-              <Button size="sm" asChild className="font-semibold border-0 text-white"
-                style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-                <Link to="/dashboard">Dashboard</Link>
-              </Button>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-                  <Link to="/login">Log in</Link>
-                </Button>
-                <Button size="sm" asChild className="font-semibold border-0 text-white"
-                  style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-                  <Link to="/signup">Get Started</Link>
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
+      {/* Cinematic background */}
+      <div className="gradient-mesh">
+        <div className="gradient-mesh-orb gradient-mesh-orb--1" />
+        <div className="gradient-mesh-orb gradient-mesh-orb--2" />
+        <div className="gradient-mesh-orb gradient-mesh-orb--3" />
+      </div>
+      <div className="cinema-vignette" />
+
+      <MarketingNav />
 
       <div className="max-w-5xl mx-auto px-6 pt-20 pb-24">
         {/* Header */}
@@ -235,12 +222,14 @@ const Pricing = () => {
         </div>
 
         {/* Footer note */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-16 relative z-10">
           <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
             Questions? <Link to="/" className="underline hover:no-underline" style={{ color: "hsl(var(--landing-champagne))" }}>Get in touch</Link>. Cancel anytime.
           </p>
         </div>
       </div>
+
+      <MarketingFooter />
     </div>
   );
 };
