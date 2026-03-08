@@ -175,6 +175,44 @@ export type Database = {
           },
         ]
       }
+      client_logos_profile: {
+        Row: {
+          company_name: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          logo_url: string | null
+          profile_id: string
+          website_url: string | null
+        }
+        Insert: {
+          company_name: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          logo_url?: string | null
+          profile_id: string
+          website_url?: string | null
+        }
+        Update: {
+          company_name?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          logo_url?: string | null
+          profile_id?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_logos_profile_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_logos: {
         Row: {
           company_name: string
