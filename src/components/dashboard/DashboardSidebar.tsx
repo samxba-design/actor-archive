@@ -29,26 +29,28 @@ interface NavItem {
   icon: any;
   /** Profile types that should see this item. Undefined = all types see it. */
   visibleTo?: string[];
+  /** Table name to count items for badge. */
+  countTable?: string;
 }
 
 const mainNav: NavItem[] = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Profile", url: "/dashboard/profile", icon: User },
-  { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
+  { title: "Projects", url: "/dashboard/projects", icon: FolderOpen, countTable: "projects" },
   { title: "Scripts & Docs", url: "/dashboard/scripts", icon: FileText },
-  { title: "Gallery", url: "/dashboard/gallery", icon: Image },
-  { title: "Services", url: "/dashboard/services", icon: Briefcase },
-  { title: "Social Links", url: "/dashboard/social", icon: Link2 },
+  { title: "Gallery", url: "/dashboard/gallery", icon: Image, countTable: "gallery_images" },
+  { title: "Services", url: "/dashboard/services", icon: Briefcase, countTable: "services" },
+  { title: "Social Links", url: "/dashboard/social", icon: Link2, countTable: "social_links" },
 ];
 
 const contentNav: NavItem[] = [
-  { title: "Awards", url: "/dashboard/awards", icon: Trophy },
-  { title: "Education", url: "/dashboard/education", icon: GraduationCap },
-  { title: "Events", url: "/dashboard/events", icon: CalendarDays },
-  { title: "Press", url: "/dashboard/press", icon: Newspaper },
-  { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote },
-  { title: "Skills", url: "/dashboard/skills", icon: Zap },
-  { title: "Representation", url: "/dashboard/representation", icon: Users, visibleTo: ["actor", "screenwriter", "tv_writer", "playwright", "director_producer", "multi_hyphenate"] },
+  { title: "Awards", url: "/dashboard/awards", icon: Trophy, countTable: "awards" },
+  { title: "Education", url: "/dashboard/education", icon: GraduationCap, countTable: "education" },
+  { title: "Events", url: "/dashboard/events", icon: CalendarDays, countTable: "events" },
+  { title: "Press", url: "/dashboard/press", icon: Newspaper, countTable: "press" },
+  { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote, countTable: "testimonials" },
+  { title: "Skills", url: "/dashboard/skills", icon: Zap, countTable: "skills" },
+  { title: "Representation", url: "/dashboard/representation", icon: Users, visibleTo: ["actor", "screenwriter", "tv_writer", "playwright", "director_producer", "multi_hyphenate"], countTable: "representation" },
 ];
 
 const toolsNav: NavItem[] = [
@@ -66,11 +68,19 @@ const trackingNav: NavItem[] = [
 ];
 
 const systemNav: NavItem[] = [
-  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
+  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox, countTable: "contact_submissions" },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
   { title: "Insights", url: "/dashboard/insights", icon: Lightbulb },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
+
+const COUNTABLE_TABLES = [
+  "projects", "gallery_images", "services", "social_links",
+  "awards", "education", "events", "press", "testimonials",
+  "skills", "representation", "contact_submissions",
+] as const;
+
+type CountableTable = typeof COUNTABLE_TABLES[number];
 
 export function DashboardSidebar() {
   const { state } = useSidebar();
@@ -80,9 +90,12 @@ export function DashboardSidebar() {
   const navigate = useNavigate();
   const [slug, setSlug] = useState<string | null>(null);
   const [profileType, setProfileType] = useState<string | null>(null);
+  const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!user) return;
+
+    // Fetch profile info
     supabase
       .from("profiles")
       .select("slug, profile_type")
@@ -92,6 +105,21 @@ export function DashboardSidebar() {
         setSlug(data?.slug || null);
         setProfileType(data?.profile_type || null);
       });
+
+    // Fetch counts for all countable tables in parallel
+    const fetchCounts = async () => {
+      const results = await Promise.all(
+        COUNTABLE_TABLES.map(table =>
+          supabase
+            .from(table)
+            .select("id", { count: "exact", head: true })
+            .eq("profile_id", user.id)
+            .then(res => [table, res.count || 0] as [string, number])
+        )
+      );
+      setCounts(Object.fromEntries(results));
+    };
+    fetchCounts();
   }, [user]);
 
   const filterItems = (items: NavItem[]) =>
@@ -118,7 +146,26 @@ export function DashboardSidebar() {
                     activeClassName="bg-accent text-accent-foreground font-medium"
                   >
                     <item.icon className="mr-2 h-4 w-4 shrink-0" />
-                    {!collapsed && <span>{item.title}</span>}
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1">{item.title}</span>
+                        {item.countTable && counts[item.countTable] !== undefined && (
+                          <span
+                            className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+                            style={{
+                              background: counts[item.countTable] === 0
+                                ? "hsl(var(--destructive) / 0.15)"
+                                : "hsl(var(--muted))",
+                              color: counts[item.countTable] === 0
+                                ? "hsl(var(--destructive))"
+                                : "hsl(var(--muted-foreground))",
+                            }}
+                          >
+                            {counts[item.countTable]}
+                          </span>
+                        )}
+                      </>
+                    )}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>

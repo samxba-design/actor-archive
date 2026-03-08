@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { Outlet } from "react-router-dom";
+import DashboardTour from "./DashboardTour";
 
 export default function DashboardLayout() {
   return (
@@ -13,6 +14,7 @@ export default function DashboardLayout() {
           </header>
           <main className="flex-1 overflow-y-auto p-6">
             <Outlet />
+            <DashboardTour />
           </main>
         </div>
       </div>
