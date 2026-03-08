@@ -16,6 +16,13 @@ import SectionTestimonials from "@/components/portfolio/sections/SectionTestimon
 import SectionServices from "@/components/portfolio/sections/SectionServices";
 import SectionKnownFor, { type KnownForVariant } from "@/components/portfolio/sections/SectionKnownFor";
 import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
+import SectionEducation from "@/components/portfolio/sections/SectionEducation";
+import SectionGallery from "@/components/portfolio/sections/SectionGallery";
+import SectionDemoReels from "@/components/portfolio/sections/SectionDemoReels";
+import SectionRepresentation from "@/components/portfolio/sections/SectionRepresentation";
+import SectionSkills from "@/components/portfolio/sections/SectionSkills";
+import SectionEvents from "@/components/portfolio/sections/SectionEvents";
+import SectionProductionHistory from "@/components/portfolio/sections/SectionProductionHistory";
 import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
@@ -31,6 +38,13 @@ interface SectionVariants {
   press: 'feed' | 'cards' | 'quotes';
   services: 'full' | 'compact' | 'pricing';
   clientLogos: 'bar' | 'grid' | 'marquee';
+  education: 'list' | 'cards' | 'timeline';
+  gallery: 'grid' | 'masonry' | 'carousel';
+  demoReels: 'grid' | 'featured' | 'list';
+  representation: 'cards' | 'compact' | 'inline';
+  skills: 'tags' | 'bars' | 'grouped';
+  events: 'list' | 'calendar' | 'cards';
+  productions: 'list' | 'cards' | 'timeline';
 }
 
 const defaultVariants: SectionVariants = {
@@ -43,6 +57,13 @@ const defaultVariants: SectionVariants = {
   press: 'feed',
   services: 'full',
   clientLogos: 'bar',
+  education: 'list',
+  gallery: 'grid',
+  demoReels: 'grid',
+  representation: 'cards',
+  skills: 'tags',
+  events: 'list',
+  productions: 'list',
 };
 
 const SectionVariantsCtx = createContext<{
@@ -80,6 +101,27 @@ const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: strin
   ],
   clientLogos: [
     { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
+  ],
+  education: [
+    { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
+  ],
+  gallery: [
+    { key: 'grid', label: 'Grid' }, { key: 'masonry', label: 'Masonry' }, { key: 'carousel', label: 'Carousel' },
+  ],
+  demoReels: [
+    { key: 'grid', label: 'Grid' }, { key: 'featured', label: 'Featured' }, { key: 'list', label: 'List' },
+  ],
+  representation: [
+    { key: 'cards', label: 'Cards' }, { key: 'compact', label: 'Compact' }, { key: 'inline', label: 'Inline' },
+  ],
+  skills: [
+    { key: 'tags', label: 'Tags' }, { key: 'bars', label: 'Bars' }, { key: 'grouped', label: 'Grouped' },
+  ],
+  events: [
+    { key: 'list', label: 'List' }, { key: 'calendar', label: 'Calendar' }, { key: 'cards', label: 'Cards' },
+  ],
+  productions: [
+    { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
   ],
 };
 
@@ -153,7 +195,49 @@ const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
   </WithToggle>
 );
 
-/* ══════════════════════ MOCK DATA ══════════════════════ */
+const EducationWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="education" sectionName="Education">
+    {(variant) => <SectionEducation items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const GalleryWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="gallery" sectionName="Gallery">
+    {(variant) => <SectionGallery items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const DemoReelsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="demoReels" sectionName="Demo Reels">
+    {(variant) => <SectionDemoReels items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const RepresentationWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="representation" sectionName="Representation">
+    {(variant) => <SectionRepresentation items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const SkillsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="skills" sectionName="Skills">
+    {(variant) => <SectionSkills items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const EventsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="events" sectionName="Events">
+    {(variant) => <SectionEvents items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ProductionsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="productions" sectionName="Productions">
+    {(variant) => <SectionProductionHistory items={items} variant={variant} />}
+  </WithToggle>
+);
+
+
 const mockProfile = {
   id: "demo-screenwriter",
   display_name: "Jordan Avery",
@@ -237,6 +321,49 @@ const featuredProject = mockCredits[0];
 
 const mockKnownFor = mockCredits; // reuse credits as known-for items
 const mockClients = ["HBO", "FX", "A24", "NBC", "Netflix", "Amazon Studios"];
+
+const mockEducation = [
+  { id: "ed1", institution: "UCLA School of Theater, Film and Television", degree_or_certificate: "MFA, Screenwriting", field_of_study: "Screenwriting", education_type: "Graduate", year_start: 2015, year_end: 2017, teacher_name: null, description: "Thesis screenplay selected for university showcase.", is_ongoing: false },
+  { id: "ed2", institution: "Sundance Screenwriters Lab", degree_or_certificate: "Fellow", education_type: "Workshop", year_start: 2019, year_end: null, teacher_name: "Mentor: Scott Frank", description: "Selected for January Lab with feature 'The Last Station'.", is_ongoing: false },
+  { id: "ed3", institution: "University of Michigan", degree_or_certificate: "BA, English & Creative Writing", field_of_study: "English", education_type: "Undergraduate", year_start: 2011, year_end: 2015, teacher_name: null, description: null, is_ongoing: false },
+];
+
+const mockGallery = [
+  { id: "g1", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=600&fit=crop", caption: "On set — 'The Arrangement' Season 2", photographer_credit: "Alex Rivera", image_type: "production" },
+  { id: "g2", image_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&h=600&fit=crop", caption: "Writers room, HBO", photographer_credit: null, image_type: "behind_the_scenes" },
+  { id: "g3", image_url: "https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?w=600&h=600&fit=crop", caption: "Austin Film Festival panel", photographer_credit: null, image_type: "event" },
+  { id: "g4", image_url: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&h=600&fit=crop", caption: "Emmy nomination night", photographer_credit: "Getty Images", image_type: "event" },
+  { id: "g5", image_url: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&h=600&fit=crop", caption: "'Glass Houses' premiere", photographer_credit: null, image_type: "premiere" },
+  { id: "g6", image_url: "https://images.unsplash.com/photo-1505533542167-8c89838bb19e?w=600&h=600&fit=crop", caption: "Writing retreat, Big Sur", photographer_credit: null, image_type: "personal" },
+];
+
+const mockDemoReels = [
+  { id: "dr1", title: "Screenwriting Sizzle Reel 2024", description: "Clips from produced credits with behind-the-scenes footage.", video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", chapters: [{ time: "0:00", label: "Intro" }, { time: "0:45", label: "The Arrangement" }, { time: "1:30", label: "Glass Houses" }] },
+  { id: "dr2", title: "Panel: Writing Sci-Fi for TV", description: "Austin Film Festival 2023 panel discussion.", video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", chapters: [] },
+];
+
+const mockSkills = [
+  { id: "sk1", name: "Feature Screenwriting", category: "Writing", proficiency: "expert" },
+  { id: "sk2", name: "TV Pilot Development", category: "Writing", proficiency: "expert" },
+  { id: "sk3", name: "Series Bible Creation", category: "Writing", proficiency: "advanced" },
+  { id: "sk4", name: "Script Coverage", category: "Industry", proficiency: "advanced" },
+  { id: "sk5", name: "Writers Room Collaboration", category: "Industry", proficiency: "expert" },
+  { id: "sk6", name: "Final Draft", category: "Software", proficiency: "expert" },
+  { id: "sk7", name: "Highland 2", category: "Software", proficiency: "advanced" },
+  { id: "sk8", name: "Story Structure", category: "Craft", proficiency: "expert" },
+];
+
+const mockEvents = [
+  { id: "ev1", title: "WGA Panel: The Future of AI in Screenwriting", venue: "Writers Guild Theater", city: "Los Angeles", country: "US", date: "2024-06-15", is_upcoming: true, description: "Panelist discussion on AI tools and writers' rights.", ticket_url: "#", event_type: "panel" },
+  { id: "ev2", title: "Austin Film Festival", venue: "Driskill Hotel", city: "Austin", country: "US", date: "2024-10-24", is_upcoming: true, description: "Attending as invited panelist and second rounder.", ticket_url: "#", event_type: "festival" },
+  { id: "ev3", title: "Sundance Film Festival", venue: "Various", city: "Park City", country: "US", date: "2024-01-18", is_upcoming: false, description: "Attending in support of lab project.", ticket_url: null, event_type: "festival" },
+];
+
+const mockProductions = [
+  { id: "ph1", theatre_name: "Geffen Playhouse", director: "Sarah Ramirez", city: "Los Angeles", country: "US", year: 2023, run_dates: "Mar 2023 – Apr 2023", cast_names: ["David Oyelowo", "Zazie Beetz"], production_photos: [] },
+  { id: "ph2", theatre_name: "Public Theater", director: "Oskar Eustis", city: "New York", country: "US", year: 2021, run_dates: "Sep 2021 – Nov 2021", cast_names: ["André Holland"], production_photos: [] },
+];
+
 /* ══════════════════════ SHARED ══════════════════════ */
 
 const AmbientGlow = () => {
@@ -334,9 +461,44 @@ const ClassicLayout = () => {
           <ClientLogosWithToggle companies={mockClients} />
         </PortfolioSectionWrapper>
       </div>
-      <div>
+      <div className="mb-10">
         <PortfolioSectionWrapper title="Services" index={6}>
           <ServicesWithToggle items={mockServices} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Representation" index={8}>
+          <RepresentationWithToggle items={mockRepresentation} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Education & Training" index={9}>
+          <EducationWithToggle items={mockEducation} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Skills" index={10}>
+          <SkillsWithToggle items={mockSkills} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Gallery" index={11}>
+          <GalleryWithToggle items={mockGallery} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Demo Reels" index={12}>
+          <DemoReelsWithToggle items={mockDemoReels} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Events & Appearances" index={13}>
+          <EventsWithToggle items={mockEvents} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Production History" index={14}>
+          <ProductionsWithToggle items={mockProductions} />
         </PortfolioSectionWrapper>
       </div>
     </>
@@ -425,12 +587,41 @@ const StandardLayout = () => (
         <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
       <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
         <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press & Reviews" index={6}>
         <PressWithToggle items={mockPress} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+      <PortfolioSectionWrapper title="Gallery" index={7}>
+        <GalleryWithToggle items={mockGallery} />
+      </PortfolioSectionWrapper>
+      <div className="space-y-6">
+        <PortfolioSectionWrapper title="Skills" index={8}>
+          <SkillsWithToggle items={mockSkills} />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Education" index={9}>
+          <EducationWithToggle items={mockEducation} />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <PortfolioSectionWrapper title="Demo Reels" index={10}>
+        <DemoReelsWithToggle items={mockDemoReels} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Events" index={11}>
+        <EventsWithToggle items={mockEvents} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <PortfolioSectionWrapper title="Representation" index={12}>
+        <RepresentationWithToggle items={mockRepresentation} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Production History" index={13}>
+        <ProductionsWithToggle items={mockProductions} />
       </PortfolioSectionWrapper>
     </div>
   </>
