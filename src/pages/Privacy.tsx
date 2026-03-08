@@ -1,13 +1,12 @@
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
+import CinematicBackground from "@/components/CinematicBackground";
+import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => (
   <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
-    <div className="gradient-mesh">
-      <div className="gradient-mesh-orb gradient-mesh-orb--1" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--2" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--3" />
-    </div>
+    <SEOHead title="Privacy Policy" description="How CreativeSlate collects, uses, and protects your personal information." path="/privacy" />
+    <CinematicBackground bokehCount={6} />
     <div className="cinema-vignette" />
     <MarketingNav />
     <div className="max-w-3xl mx-auto px-6 pt-20 pb-24 relative z-10">
