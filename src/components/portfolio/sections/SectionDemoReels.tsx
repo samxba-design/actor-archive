@@ -115,4 +115,59 @@ const ListReels = ({ reels, theme }: { reels: any[]; theme: any }) => (
   </div>
 );
 
+const ReelCard = ({ reel, theme }: { reel: any; theme: any }) => {
+  const [activeChapter, setActiveChapter] = useState<string | null>(null);
+  const chapters: Chapter[] = Array.isArray(reel.chapters) ? reel.chapters : [];
+  const embedUrl = getEmbedUrl(reel.video_url);
+
+  const getChapterUrl = (time: string) => {
+    if (!embedUrl) return "";
+    const parts = time.split(":").map(Number);
+    const seconds = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + (parts[1] || 0);
+    if (embedUrl.includes("youtube")) return `${embedUrl}?start=${seconds}&autoplay=1`;
+    if (embedUrl.includes("vimeo")) return `${embedUrl}#t=${seconds}s`;
+    return embedUrl;
+  };
+
+  const currentEmbedUrl = activeChapter ? getChapterUrl(activeChapter) : embedUrl;
+
+  return (
+    <div className="space-y-2">
+      <div
+        className="relative overflow-hidden"
+        style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, aspectRatio: "16/9" }}
+      >
+        {currentEmbedUrl ? (
+          <iframe src={currentEmbedUrl} title={reel.title} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        ) : (
+          <a href={reel.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+            <span style={{ color: theme.accentPrimary }}>▶ Watch</span>
+          </a>
+        )}
+      </div>
+      <p className="text-sm font-medium" style={{ color: theme.textPrimary }}>{reel.title}</p>
+      {reel.description && <p className="text-xs" style={{ color: theme.textSecondary }}>{reel.description}</p>}
+      {chapters.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-1">
+          {chapters.map((ch, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveChapter(ch.time)}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs transition-all hover:scale-105"
+              style={{
+                backgroundColor: activeChapter === ch.time ? `${theme.accentPrimary}25` : theme.bgElevated,
+                color: activeChapter === ch.time ? theme.accentPrimary : theme.textSecondary,
+                border: `1px solid ${activeChapter === ch.time ? `${theme.accentPrimary}50` : theme.borderDefault}`,
+              }}
+            >
+              <span className="font-mono text-[10px] opacity-70">{ch.time}</span>
+              {ch.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default SectionDemoReels;
