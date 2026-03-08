@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Check, X, Crown, ArrowRight, Sparkles,
   Palette, Wand2, BarChart3, GitBranch, Shield,
-  Globe, Code2, PenTool, FileText, Bell, Heart
+  Globe, Code2, PenTool, FileText, Bell, Heart, Loader2
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription, STRIPE_PRICES } from "@/hooks/useSubscription";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const MONTHLY_PRICE = 19.99;
 const YEARLY_PRICE = 191.88;
@@ -51,6 +55,46 @@ const proFeatures = [
 
 const Pricing = () => {
   const [yearly, setYearly] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { user } = useAuth();
+  const { isPro } = useSubscription();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleUpgrade = async () => {
+    if (!user) {
+      navigate("/signup");
+      return;
+    }
+
+    setCheckoutLoading(true);
+    try {
+      const priceId = yearly ? STRIPE_PRICES.yearly : STRIPE_PRICES.monthly;
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { priceId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Could not start checkout.", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Could not open billing portal.", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="min-h-screen" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
@@ -59,13 +103,22 @@ const Pricing = () => {
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link to="/" className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</Link>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button size="sm" asChild className="font-semibold border-0 text-white"
-              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-              <Link to="/signup">Get Started</Link>
-            </Button>
+            {user ? (
+              <Button size="sm" asChild className="font-semibold border-0 text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                <Link to="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button size="sm" asChild className="font-semibold border-0 text-white"
+                  style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                  <Link to="/signup">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -124,7 +177,7 @@ const Pricing = () => {
             </div>
             <Button size="lg" variant="outline" asChild className="w-full mb-8 text-base"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
-              <Link to="/signup">Get Started</Link>
+              <Link to={user ? "/dashboard" : "/signup"}>{user ? "Go to Dashboard" : "Get Started"}</Link>
             </Button>
             <ul className="space-y-3">
               {freeFeatures.map((f) => (
@@ -140,7 +193,7 @@ const Pricing = () => {
           <div className="rounded-2xl p-8 border-2 relative" style={{ background: "hsl(var(--landing-card))", borderColor: "hsl(var(--landing-accent) / 0.5)" }}>
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
               <Badge className="px-3 py-1 text-xs font-bold border-0 text-white" style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-                <Crown className="h-3 w-3 mr-1" /> MOST POPULAR
+                <Crown className="h-3 w-3 mr-1" /> {isPro ? "YOUR PLAN" : "MOST POPULAR"}
               </Badge>
             </div>
             <div className="mb-6">
@@ -158,12 +211,18 @@ const Pricing = () => {
                 </p>
               )}
             </div>
-            <Button size="lg" asChild className="w-full mb-8 text-base font-semibold border-0 text-white"
-              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))", boxShadow: "0 8px 30px -8px hsl(var(--landing-accent) / 0.3)" }}>
-              <Link to="/signup">
+            {isPro ? (
+              <Button size="lg" onClick={handleManageSubscription} className="w-full mb-8 text-base font-semibold border-0 text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                Manage Subscription
+              </Button>
+            ) : (
+              <Button size="lg" onClick={handleUpgrade} disabled={checkoutLoading} className="w-full mb-8 text-base font-semibold border-0 text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))", boxShadow: "0 8px 30px -8px hsl(var(--landing-accent) / 0.3)" }}>
+                {checkoutLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Upgrade to Pro <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+              </Button>
+            )}
             <ul className="space-y-3">
               {proFeatures.map((f) => (
                 <li key={f.text} className="flex items-start gap-2.5 text-sm" style={{ color: "hsl(var(--landing-fg) / 0.85)" }}>
@@ -175,7 +234,7 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* FAQ or footer note */}
+        {/* Footer note */}
         <div className="text-center mt-16">
           <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
             Questions? <Link to="/" className="underline hover:no-underline" style={{ color: "hsl(var(--landing-champagne))" }}>Get in touch</Link>. Cancel anytime.
