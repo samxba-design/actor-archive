@@ -325,7 +325,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                 >
                   {/* Poster (2:3) on left */}
                   {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
-                    {featuredProject.imdb_link ? (
+                    featuredProject.imdb_link ? (
                       <a href={featuredProject.imdb_link} target="_blank" rel="noopener noreferrer" className="w-[110px] shrink-0 overflow-hidden block">
                         <img
                           src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
@@ -343,7 +343,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                           style={{ minHeight: '165px' }}
                         />
                       </div>
-                    )}
+                    )
                   )}
 
                   {/* Info on right — solid bg, always readable */}
