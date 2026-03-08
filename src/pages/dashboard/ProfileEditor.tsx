@@ -190,24 +190,26 @@ const ProfileEditor = () => {
       <ProfileReadiness />
 
       <Card>
-        <CardHeader><CardTitle>Photos</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Profile Photo</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Profile Photo</Label>
             {form.profile_photo_url && (
-              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2 mb-2" />
+              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover mb-2" />
             )}
             <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, "headshots", "profile_photo_url")} />
           </div>
-          <div>
-            <Label>Banner Image</Label>
-            {form.banner_url && (
-              <img src={form.banner_url} alt="Banner" className="w-full h-32 object-cover rounded-md mt-2 mb-2" />
-            )}
-            <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, "banners", "banner_url")} />
-          </div>
         </CardContent>
       </Card>
+
+      {user && (
+        <HeroBackgroundEditor
+          userId={user.id}
+          heroStyle={form.hero_style}
+          heroBackgroundPreset={form.hero_background_preset}
+          bannerUrl={form.banner_url}
+          onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
+        />
+      )}
 
       <Card>
         <CardHeader><CardTitle>Basic Info</CardTitle></CardHeader>
