@@ -10,7 +10,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Pencil, Trash2, Search, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2 } from "lucide-react";
 import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -71,6 +73,15 @@ const ProjectsManager = () => {
     isbn: "",
     page_count: "",
     purchase_links: [] as PurchaseLink[],
+    // Advanced fields
+    imdb_link: "",
+    network_or_studio: "",
+    is_featured: false,
+    custom_image_url: "",
+    backdrop_url: "",
+    role_type: "",
+    format: "",
+    production_company: "",
   });
 
   const isBookType = BOOK_TYPES.includes(form.project_type);
@@ -89,7 +100,7 @@ const ProjectsManager = () => {
   useEffect(() => { fetchProjects(); }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [] });
+    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
     setEditing(null);
     setBookResults([]);
     setShowBookResults(false);
@@ -115,6 +126,14 @@ const ProjectsManager = () => {
       isbn: p.isbn || "",
       page_count: p.page_count?.toString() || "",
       purchase_links: links,
+      imdb_link: p.imdb_link || "",
+      network_or_studio: p.network_or_studio || "",
+      is_featured: p.is_featured || false,
+      custom_image_url: p.custom_image_url || "",
+      backdrop_url: p.backdrop_url || "",
+      role_type: p.role_type || "",
+      format: p.format || "",
+      production_company: p.production_company || "",
     });
     setDialogOpen(true);
   };
@@ -184,6 +203,15 @@ const ProjectsManager = () => {
       status: form.status || null,
       poster_url: form.poster_url || null,
       role_name: form.role_name || null,
+      // Advanced fields
+      imdb_link: form.imdb_link || null,
+      network_or_studio: form.network_or_studio || null,
+      is_featured: form.is_featured,
+      custom_image_url: form.custom_image_url || null,
+      backdrop_url: form.backdrop_url || null,
+      role_type: form.role_type || null,
+      format: form.format || null,
+      production_company: form.production_company || null,
     };
 
     if (isBookType) {
@@ -397,6 +425,67 @@ const ProjectsManager = () => {
 
               <div><Label>Role / Credit <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={isBookType ? "e.g. Author, Co-Author" : "e.g. Writer, Lead Actor"} /></div>
               <div><Label>{isBookType ? "Cover Image URL" : "Poster URL"} <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
+
+              {/* Advanced Portfolio Display Options */}
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button type="button" variant="outline" size="sm" className="w-full justify-between text-xs">
+                    <span className="flex items-center gap-1.5"><Settings2 className="h-3 w-3" /> Portfolio Display Options</span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3 pt-3">
+                  <p className="text-xs text-muted-foreground">These settings control how your project appears on your public portfolio. Add links, images, and metadata to make your work stand out.</p>
+
+                  <div className="flex items-center justify-between rounded-md border border-border p-3">
+                    <div>
+                      <Label className="text-sm">Feature this project</Label>
+                      <p className="text-xs text-muted-foreground">Display prominently on your portfolio</p>
+                    </div>
+                    <Switch checked={form.is_featured} onCheckedChange={(v) => setForm((f) => ({ ...f, is_featured: v }))} />
+                  </div>
+
+                  <div>
+                    <Label>IMDb / External Link</Label>
+                    <Input value={form.imdb_link} onChange={(e) => setForm((f) => ({ ...f, imdb_link: e.target.value }))} placeholder="https://imdb.com/title/..." />
+                    <p className="text-xs text-muted-foreground mt-1">Visitors can click through to the full page</p>
+                  </div>
+
+                  <div>
+                    <Label>Network / Studio</Label>
+                    <Input value={form.network_or_studio} onChange={(e) => setForm((f) => ({ ...f, network_or_studio: e.target.value }))} placeholder="e.g. HBO, A24, Netflix" />
+                    <p className="text-xs text-muted-foreground mt-1">Displays as a badge on your portfolio</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Format</Label>
+                      <Input value={form.format} onChange={(e) => setForm((f) => ({ ...f, format: e.target.value }))} placeholder="e.g. Feature, Pilot" />
+                    </div>
+                    <div>
+                      <Label>Role Details</Label>
+                      <Input value={form.role_type} onChange={(e) => setForm((f) => ({ ...f, role_type: e.target.value }))} placeholder="e.g. Season 2" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Production Company</Label>
+                    <Input value={form.production_company} onChange={(e) => setForm((f) => ({ ...f, production_company: e.target.value }))} placeholder="e.g. Plan B Entertainment" />
+                  </div>
+
+                  <div>
+                    <Label>Custom Image URL</Label>
+                    <Input value={form.custom_image_url} onChange={(e) => setForm((f) => ({ ...f, custom_image_url: e.target.value }))} placeholder="Upload or paste a custom poster image" />
+                    <p className="text-xs text-muted-foreground mt-1">Overrides the TMDB poster if set</p>
+                  </div>
+
+                  <div>
+                    <Label>Backdrop Image URL</Label>
+                    <Input value={form.backdrop_url} onChange={(e) => setForm((f) => ({ ...f, backdrop_url: e.target.value }))} placeholder="Widescreen banner for featured display" />
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
               <Button onClick={handleSave} disabled={saving} className="w-full">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {editing ? "Update" : "Create"} Project

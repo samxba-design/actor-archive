@@ -14,6 +14,8 @@ import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import SectionPress from "@/components/portfolio/sections/SectionPress";
 import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
+import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
@@ -99,6 +101,8 @@ const mockServices = [
 
 const featuredProject = mockCredits[0];
 
+const mockKnownFor = mockCredits; // reuse credits as known-for items
+const mockClients = ["HBO", "FX", "A24", "NBC", "Netflix", "Amazon Studios"];
 /* ══════════════════════ SHARED ══════════════════════ */
 
 const AmbientGlow = () => {
@@ -120,6 +124,12 @@ const ClassicLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <>
+      {/* Known For — poster strip */}
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </PortfolioSectionWrapper>
+      </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
@@ -132,12 +142,10 @@ const ClassicLayout = () => {
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          {/* Featured hero credit */}
           <CreditHeroCard project={mockCredits[0]} />
-          {/* Remaining credits as rows */}
           <div className="mt-4 space-y-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${theme.borderDefault}` }}>
             {mockCredits.slice(1).map(c => (
-              <div key={c.id} className="flex items-center gap-4 px-4 py-3 transition-colors" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
+              <a key={c.id} href={c.imdb_link || undefined} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 transition-colors no-underline" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}60`)}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
@@ -159,13 +167,13 @@ const ClassicLayout = () => {
                   {c.genre?.length > 0 && (
                     <div className="flex gap-1 mt-1">
                       {c.genre.map((g: string) => (
-                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textTertiary }}>{g}</span>
+                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.textSecondary }}>{g}</span>
                       ))}
                     </div>
                   )}
                 </div>
                 <span className="text-sm tabular-nums" style={{ color: theme.textTertiary }}>{c.year}</span>
-              </div>
+              </a>
             ))}
           </div>
         </PortfolioSectionWrapper>
@@ -185,6 +193,12 @@ const ClassicLayout = () => {
           <SectionPress items={mockPress} />
         </PortfolioSectionWrapper>
       </div>
+      {/* Client logos — bar above services */}
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Written For" index={7}>
+          <SectionClientLogos companies={mockClients} variant="bar" />
+        </PortfolioSectionWrapper>
+      </div>
       <div>
         <PortfolioSectionWrapper title="Services" index={6}>
           <SectionServices items={mockServices} />
@@ -197,15 +211,20 @@ const ClassicLayout = () => {
 /* Credit hero card for Classic layout — split: image top, info on solid bg below */
 const CreditHeroCard = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
-  return (
-    <GlassCard featured className="overflow-hidden">
+  const card = (
+    <GlassCard featured className="overflow-hidden group">
       {/* Backdrop image — clean, no text overlay */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <img
           src={project.backdrop_url || project.poster_url}
           alt={project.title}
-          className="w-full aspect-[2.4/1] object-cover"
+          className="w-full aspect-[2.4/1] object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        {project.imdb_link && (
+          <div className="absolute top-3 right-3 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        )}
       </div>
       {/* Info section — solid background for guaranteed readability */}
       <div className="p-5 space-y-1.5" style={{ backgroundColor: theme.bgSecondary }}>
@@ -224,25 +243,41 @@ const CreditHeroCard = ({ project }: { project: any }) => {
           </p>
         )}
         {project.logline && (
-          <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontLogline, fontStyle: theme.loglineStyle, color: theme.textSecondary }}>
+          <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontBody, color: theme.textSecondary }}>
             {project.logline}
           </p>
         )}
       </div>
     </GlassCard>
   );
+
+  return project.imdb_link ? (
+    <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline block">
+      {card}
+    </a>
+  ) : card;
 };
 
 /* 2. STANDARD — Dense grid with sidebar modules */
 const StandardLayout = () => (
   <>
+    {/* Known For in sidebar */}
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
-      <PortfolioSectionWrapper title="Services" index={1}>
-        <SectionServices items={mockServices} compact />
-      </PortfolioSectionWrapper>
+      <div className="space-y-6">
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="grid" />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Services" index={1}>
+          <SectionServices items={mockServices} compact />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+    {/* Client logos bar */}
+    <div className="mb-10">
+      <SectionClientLogos companies={mockClients} variant="bar" />
     </div>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -271,6 +306,12 @@ const StandardLayout = () => (
 /* 3. CINEMATIC — Full-width hero, poster gallery */
 const CinematicLayout = () => (
   <>
+    {/* Full-width Known For strip */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
+    </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -280,6 +321,10 @@ const CinematicLayout = () => (
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
       </PortfolioSectionWrapper>
+    </div>
+    {/* Marquee ticker */}
+    <div className="mb-12">
+      <SectionClientLogos companies={mockClients} variant="marquee" />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -308,6 +353,9 @@ const CinematicLayout = () => (
 /* 4. COMPACT — Maximum density */
 const CompactLayout = () => (
   <>
+    <div className="mb-4">
+      <SectionClientLogos companies={mockClients} variant="bar" />
+    </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 mb-6">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -342,6 +390,9 @@ const CompactLayout = () => (
 const MagazineLayout = () => (
   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
     <div className="space-y-10">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
@@ -361,6 +412,9 @@ const MagazineLayout = () => (
       </div>
     </div>
     <div className="space-y-8">
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <SectionClientLogos companies={mockClients} variant="grid" />
+      </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={3}>
         <SectionServices items={mockServices} compact />
       </PortfolioSectionWrapper>
@@ -377,6 +431,7 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
+    { key: "knownfor", title: "Known For", content: <SectionKnownFor items={mockKnownFor} variant="grid" /> },
     { key: "loglines", title: "Original Work", content: <SectionLoglineShowcase items={mockLoglines} /> },
     { key: "scripts", title: "Script Library", content: <SectionScriptLibrary items={mockScripts} /> },
     { key: "credits", title: "Produced Credits", content: <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" /> },
@@ -465,6 +520,7 @@ const TimelineLayout = () => {
         <PortfolioSectionWrapper title="Press & Reviews" index={6}>
           <SectionPress items={mockPress} />
         </PortfolioSectionWrapper>
+        <SectionClientLogos companies={mockClients} variant="bar" />
       </div>
     </div>
   );
@@ -473,6 +529,20 @@ const TimelineLayout = () => {
 /* 8. BENTO — Asymmetric masonry-like grid */
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+    {/* Known For — spans 2 cols */}
+    <div className="sm:col-span-2">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Client logos - single col */}
+    <div>
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <SectionClientLogos companies={mockClients} variant="grid" />
+      </PortfolioSectionWrapper>
+    </div>
+
     {/* Large featured loglines - spans 2 cols */}
     <div className="sm:col-span-2 lg:col-span-2">
       <PortfolioSectionWrapper title="Original Work" index={0}>
@@ -530,6 +600,11 @@ const MinimalLayout = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-16">
       <div>
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
         <PortfolioSectionWrapper title="Work" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
         </PortfolioSectionWrapper>
@@ -576,6 +651,18 @@ const DashboardLayout = () => {
             <p className="text-[10px]" style={{ color: theme.textTertiary }}>{s.sub}</p>
           </GlassCard>
         ))}
+      </div>
+
+      {/* Known For + Client Logos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
+          <SectionClientLogos companies={mockClients} variant="grid" />
+        </GlassCard>
       </div>
 
       {/* Main grid */}

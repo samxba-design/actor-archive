@@ -480,3 +480,13 @@ All colors MUST be HSL.
   33% { transform: translate(5vw, -3vh) scale(1.1); opacity: 0.04; }
   66% { transform: translate(-3vw, 5vh) scale(0.95); opacity: 0.025; }
 }
+
+/* ═══ Client logo marquee ═══ */
+@keyframes client-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.333%); }
+}
+
+/* Hide scrollbar for known-for strip */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
