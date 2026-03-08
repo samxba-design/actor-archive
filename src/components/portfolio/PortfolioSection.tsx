@@ -9,6 +9,17 @@ import SectionSkills from "./sections/SectionSkills";
 import SectionServices from "./sections/SectionServices";
 import SectionTestimonials from "./sections/SectionTestimonials";
 import SectionEvents from "./sections/SectionEvents";
+import SectionRepresentation from "./sections/SectionRepresentation";
+import SectionActorStats from "./sections/SectionActorStats";
+import SectionDemoReels from "./sections/SectionDemoReels";
+import SectionScriptLibrary from "./sections/SectionScriptLibrary";
+import SectionLoglineShowcase from "./sections/SectionLoglineShowcase";
+import SectionBookshelf from "./sections/SectionBookshelf";
+import SectionArticleFeed from "./sections/SectionArticleFeed";
+import SectionCaseStudies from "./sections/SectionCaseStudies";
+import SectionProductionHistory from "./sections/SectionProductionHistory";
+import SectionWritingSamples from "./sections/SectionWritingSamples";
+import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
   sectionKey: string;
@@ -16,27 +27,50 @@ interface Props {
   profileType: string | null;
 }
 
-const sectionLabels: Record<string, string> = {
+const defaultSectionLabels: Record<string, string> = {
   projects: "Projects",
   credits: "Credits",
   gallery: "Gallery",
   awards: "Awards & Recognition",
   press: "Press & Reviews",
   education: "Education & Training",
+  training: "Training",
   skills: "Skills",
   services: "Services",
   testimonials: "Testimonials",
   events: "Events",
   contact: "Contact",
+  representation: "Representation",
+  stats_bar: "Stats",
+  demo_reels: "Demo Reels",
+  logline_showcase: "Logline Showcase",
+  script_library: "Script Library",
+  bookshelf: "Bookshelf",
+  article_feed: "Articles",
+  case_studies: "Case Studies",
+  client_logos: "Clients",
+  production_history: "Production History",
+  writing_samples: "Writing Samples",
 };
+
+function getContextualLabel(sectionKey: string, profileType: string | null): string {
+  if (profileType) {
+    const config = getProfileTypeConfig(profileType);
+    if (config) {
+      const section = config.sections.find((s) => s.key === sectionKey);
+      if (section) return section.label;
+    }
+  }
+  return defaultSectionLabels[sectionKey] || sectionKey;
+}
 
 const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   const [data, setData] = useState<any[]>([]);
+  const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [inView, setInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Scroll-triggered animation
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -79,7 +113,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
           rows = data || [];
           break;
         }
-        case "education": {
+        case "education":
+        case "training": {
           const { data } = await supabase.from("education").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
@@ -104,6 +139,58 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
           rows = data || [];
           break;
         }
+        case "representation": {
+          const { data } = await supabase.from("representation").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "stats_bar": {
+          const { data } = await supabase.from("actor_stats").select("*").eq("profile_id", profileId).maybeSingle();
+          setSingleData(data);
+          setData([]);
+          setLoading(false);
+          return;
+        }
+        case "demo_reels": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("video_url", "is", null).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "logline_showcase": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("logline", "is", null).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "script_library": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "bookshelf": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["novel", "book", "short_story"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "article_feed": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["article"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "case_studies": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "writing_samples": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["writing_sample"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "production_history": {
+          const { data } = await supabase.from("production_history").select("*").eq("profile_id", profileId).order("created_at", orderOpts);
+          rows = data || [];
+          break;
+        }
         default:
           break;
       }
@@ -116,9 +203,27 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   }, [sectionKey, profileId]);
 
   if (loading) return null;
+
+  // stats_bar is special: uses singleData, not array
+  if (sectionKey === "stats_bar") {
+    if (!singleData) return null;
+    return (
+      <section
+        ref={sectionRef}
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(24px)",
+          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+        }}
+      >
+        <SectionActorStats stats={singleData} />
+      </section>
+    );
+  }
+
   if (data.length === 0 && sectionKey !== "contact") return null;
 
-  const label = sectionLabels[sectionKey] || sectionKey;
+  const label = getContextualLabel(sectionKey, profileType);
 
   const renderSection = () => {
     switch (sectionKey) {
@@ -133,6 +238,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
       case "press":
         return <SectionPress items={data} />;
       case "education":
+      case "training":
         return <SectionEducation items={data} />;
       case "skills":
         return <SectionSkills items={data} />;
@@ -142,6 +248,24 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
         return <SectionTestimonials items={data} />;
       case "events":
         return <SectionEvents items={data} />;
+      case "representation":
+        return <SectionRepresentation items={data} />;
+      case "demo_reels":
+        return <SectionDemoReels items={data} />;
+      case "logline_showcase":
+        return <SectionLoglineShowcase items={data} />;
+      case "script_library":
+        return <SectionScriptLibrary items={data} />;
+      case "bookshelf":
+        return <SectionBookshelf items={data} />;
+      case "article_feed":
+        return <SectionArticleFeed items={data} />;
+      case "case_studies":
+        return <SectionCaseStudies items={data} />;
+      case "writing_samples":
+        return <SectionWritingSamples items={data} />;
+      case "production_history":
+        return <SectionProductionHistory items={data} />;
       default:
         return null;
     }
