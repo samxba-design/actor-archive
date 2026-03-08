@@ -57,4 +57,8 @@ export const glossary: Record<string, string> = {
     "The year this project was produced, released, or written.",
   project_type:
     "The category of this project — screenplay, pilot, play, novel, article, case study, film, TV show, etc.",
+  headline:
+    "A short, punchy pitch line that summarizes who you are professionally. Think of it as your elevator pitch in one sentence — it appears prominently on your portfolio.",
+  primary_goal:
+    "Your main objective for this profile — whether you're seeking representation, looking to get hired, pitching projects, or building a professional presence.",
 };

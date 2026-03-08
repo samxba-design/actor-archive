@@ -753,6 +753,7 @@ export type Database = {
           display_name: string | null
           first_name: string | null
           font_pairing: string | null
+          headline: string | null
           id: string
           is_draft: boolean | null
           is_published: boolean | null
@@ -760,6 +761,7 @@ export type Database = {
           layout_density: string | null
           location: string | null
           onboarding_completed: boolean | null
+          primary_goal: string | null
           profile_photo_url: string | null
           profile_type: Database["public"]["Enums"]["profile_type"] | null
           secondary_types: string[] | null
@@ -792,6 +794,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           font_pairing?: string | null
+          headline?: string | null
           id: string
           is_draft?: boolean | null
           is_published?: boolean | null
@@ -799,6 +802,7 @@ export type Database = {
           layout_density?: string | null
           location?: string | null
           onboarding_completed?: boolean | null
+          primary_goal?: string | null
           profile_photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"] | null
           secondary_types?: string[] | null
@@ -831,6 +835,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           font_pairing?: string | null
+          headline?: string | null
           id?: string
           is_draft?: boolean | null
           is_published?: boolean | null
@@ -838,6 +843,7 @@ export type Database = {
           layout_density?: string | null
           location?: string | null
           onboarding_completed?: boolean | null
+          primary_goal?: string | null
           profile_photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"] | null
           secondary_types?: string[] | null
