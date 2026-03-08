@@ -50,6 +50,9 @@ const TYPE_ACTIONS: Record<string, SmartAction[]> = {
   ],
   copywriter: [
     { label: "Create a case study", description: "Show the results of your best campaigns", icon: PenTool, route: "/dashboard/case-study" },
+    { label: "Add your top clients", description: "Showcase the brands you've worked with", icon: Users, route: "/dashboard/clients" },
+    { label: "Upload a writing sample", description: "Headlines, emails, landing pages, speeches", icon: FileText, route: "/dashboard/projects" },
+    { label: "List your specializations", description: "Content strategy, crisis comms, paid ads…", icon: Sparkles, route: "/dashboard/skills" },
     { label: "List your services & pricing", description: "Help clients understand what you offer", icon: Briefcase, route: "/dashboard/services" },
   ],
   corporate_video: [

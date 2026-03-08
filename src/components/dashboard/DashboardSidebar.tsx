@@ -78,7 +78,7 @@ const systemNav: NavItem[] = [
 const COUNTABLE_TABLES = [
   "projects", "gallery_images", "services", "social_links",
   "awards", "education", "events", "press", "testimonials",
-  "skills", "representation", "contact_submissions",
+  "skills", "representation", "contact_submissions", "client_logos_profile",
 ] as const;
 
 type CountableTable = typeof COUNTABLE_TABLES[number];
