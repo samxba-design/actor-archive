@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 export interface KnownForItem {
@@ -18,6 +18,8 @@ interface Props {
   items: KnownForItem[];
   variant?: KnownForVariant;
   display?: 'both' | 'image' | 'text';
+  onRemoveItem?: (id: string) => void;
+  editable?: boolean;
 }
 
 /* ── Link wrapper ── */
@@ -34,11 +36,15 @@ export const PosterCard = ({
   width,
   display = 'both',
   showHoverIcon = true,
+  onRemove,
+  editable = false,
 }: {
   item: KnownForItem;
   width?: string;
   display?: 'both' | 'image' | 'text';
   showHoverIcon?: boolean;
+  onRemove?: (id: string) => void;
+  editable?: boolean;
 }) => {
   const theme = usePortfolioTheme();
 
