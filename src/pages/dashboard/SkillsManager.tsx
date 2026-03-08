@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Zap } from "lucide-react";
+import { useAuth as useAuthHook } from "@/hooks/useAuth";
 
 interface Skill {
   id: string;
@@ -20,6 +21,12 @@ interface Skill {
   proficiency: string | null;
   display_order: number | null;
 }
+
+const COPYWRITER_CATEGORIES = [
+  "Content Strategy", "Paid Ads", "Email Marketing", "SEO", "UX Writing",
+  "Brand Voice", "Social Media", "Technical Writing", "Leadership Speeches",
+  "Crisis Communications", "Thought Leadership", "Product Marketing",
+];
 
 const SkillsManager = () => {
   const { user } = useAuth();
@@ -30,11 +37,16 @@ const SkillsManager = () => {
   const [editing, setEditing] = useState<Skill | null>(null);
   const [form, setForm] = useState({ name: "", category: "", proficiency: "proficient" });
   const [saving, setSaving] = useState(false);
+  const [profileType, setProfileType] = useState<string | null>(null);
 
   const fetchItems = async () => {
     if (!user) return;
-    const { data } = await supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order");
+    const [{ data }, { data: profileData }] = await Promise.all([
+      supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order"),
+      supabase.from("profiles").select("profile_type").eq("id", user.id).single(),
+    ]);
     setItems(data || []);
+    setProfileType(profileData?.profile_type || null);
     setLoading(false);
   };
 
@@ -104,7 +116,19 @@ const SkillsManager = () => {
           <DialogHeader><DialogTitle>{editing ? "Edit" : "Add"} Skill</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div><Label>Skill Name *</Label><Input value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Final Draft" /></div>
-            <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))} placeholder="e.g. Software, Languages, Genres" /></div>
+            <div><Label>Category</Label>
+              <Input value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))} placeholder="e.g. Software, Languages, Genres" />
+              {profileType === "copywriter" && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {COPYWRITER_CATEGORIES.filter(c => c !== form.category).slice(0, 6).map(cat => (
+                    <button key={cat} type="button" onClick={() => setForm(f => ({ ...f, category: cat }))}
+                      className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors">
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div><Label>Proficiency</Label>
               <Select value={form.proficiency} onValueChange={(v) => setForm(f => ({ ...f, proficiency: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
