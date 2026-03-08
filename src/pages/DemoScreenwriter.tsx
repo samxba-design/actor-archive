@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
 import { PortfolioThemeProvider, usePortfolioTheme } from "@/themes/ThemeProvider";
 import { getAllThemeFontsUrl } from "@/themes/themes";
@@ -14,10 +14,38 @@ import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import SectionPress from "@/components/portfolio/sections/SectionPress";
 import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
-import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import SectionKnownFor, { type KnownForVariant } from "@/components/portfolio/sections/SectionKnownFor";
 import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
+import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
+
+/* ── Known For variant context (shared across layouts) ── */
+const KnownForVariantCtx = createContext<{ variant: KnownForVariant; setVariant: (v: KnownForVariant) => void }>({ variant: 'strip', setVariant: () => {} });
+const useKnownForVariant = () => useContext(KnownForVariantCtx);
+
+const KNOWN_FOR_OPTIONS = [
+  { key: 'strip', label: 'Strip' },
+  { key: 'scroll', label: 'Scroll' },
+  { key: 'grid', label: 'Grid' },
+  { key: 'stack', label: 'Stack' },
+  { key: 'spotlight', label: 'Spotlight' },
+];
+
+const KnownForWithToggle = ({ items, display }: { items: any[]; display?: 'both' | 'image' | 'text' }) => {
+  const { variant, setVariant } = useKnownForVariant();
+  return (
+    <>
+      <SectionOptionsBar
+        sectionName="Known For"
+        options={KNOWN_FOR_OPTIONS}
+        value={variant}
+        onChange={(v) => setVariant(v as KnownForVariant)}
+      />
+      <SectionKnownFor items={items} variant={variant} display={display} />
+    </>
+  );
+};
 
 /* ══════════════════════ MOCK DATA ══════════════════════ */
 const mockProfile = {
@@ -162,11 +190,11 @@ const ClassicLayout = () => {
     <>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Known For" index={-1}>
-          <SectionKnownFor items={mockKnownFor} variant="carousel" />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
+        <KnownForWithToggle items={mockKnownFor} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
         </PortfolioSectionWrapper>
       </div>
@@ -298,7 +326,7 @@ const StandardLayout = () => (
   <>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="carousel" display="image" />
+        <KnownForWithToggle items={mockKnownFor} display="image" />
       </PortfolioSectionWrapper>
     </div>
     {/* Client logos bar */}
@@ -342,7 +370,7 @@ const CinematicLayout = () => (
   <>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="carousel" />
+        <KnownForWithToggle items={mockKnownFor} />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
@@ -759,6 +787,7 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
+  const [knownForVariant, setKnownForVariant] = useState<KnownForVariant>("strip");
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
@@ -780,6 +809,7 @@ const DemoScreenwriter = () => {
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
+    <KnownForVariantCtx.Provider value={{ variant: knownForVariant, setVariant: setKnownForVariant }}>
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
@@ -843,6 +873,7 @@ const DemoScreenwriter = () => {
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
     </PortfolioThemeProvider>
+    </KnownForVariantCtx.Provider>
   );
 };
 
