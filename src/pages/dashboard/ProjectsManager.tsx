@@ -19,12 +19,6 @@ import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { searchBooks, type BookResult } from "@/lib/googleBooks";
 import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
-import { Constants } from "@/integrations/supabase/types";
-import type { Tables } from "@/integrations/supabase/types";
-import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
-import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
-import { searchBooks, type BookResult } from "@/lib/googleBooks";
-import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
 
 type Project = Tables<"projects">;
 
