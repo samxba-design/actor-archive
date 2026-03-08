@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Check, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   data: OnboardingData;
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
 const slugify = (text: string) =>
@@ -20,7 +22,8 @@ const slugify = (text: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 40);
 
-const StepSlug = ({ data, updateData, onNext, onBack }: Props) => {
+const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
+  const { user } = useAuth();
   const [checking, setChecking] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
 
@@ -31,7 +34,7 @@ const StepSlug = ({ data, updateData, onNext, onBack }: Props) => {
     }
   }, []);
 
-  // Debounced availability check
+  // Debounced availability check — excludes current user
   useEffect(() => {
     if (!data.slug || data.slug.length < 3) {
       setAvailable(null);
@@ -40,18 +43,23 @@ const StepSlug = ({ data, updateData, onNext, onBack }: Props) => {
 
     const timer = setTimeout(async () => {
       setChecking(true);
-      const { data: existing } = await supabase
+      let query = supabase
         .from("profiles")
         .select("id")
-        .eq("slug", data.slug)
-        .maybeSingle();
+        .eq("slug", data.slug);
 
+      // Exclude current user's own slug
+      if (user?.id) {
+        query = query.neq("id", user.id);
+      }
+
+      const { data: existing } = await query.maybeSingle();
       setAvailable(!existing);
       setChecking(false);
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [data.slug]);
+  }, [data.slug, user?.id]);
 
   const handleChange = (value: string) => {
     updateData({ slug: slugify(value) });
@@ -62,7 +70,9 @@ const StepSlug = ({ data, updateData, onNext, onBack }: Props) => {
   return (
     <div className="w-full max-w-lg space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Step 3</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Choose your URL</h1>
         <p className="text-muted-foreground">This is how people will find your portfolio.</p>
       </div>

@@ -1,4 +1,4 @@
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Search, Briefcase, Megaphone, Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -34,9 +34,10 @@ interface Props {
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
-const StepGoal = ({ data, updateData, onNext, onBack }: Props) => {
+const StepGoal = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const handleSelect = (key: string) => {
     updateData({ primaryGoal: key });
   };
@@ -45,7 +46,7 @@ const StepGoal = ({ data, updateData, onNext, onBack }: Props) => {
     <div className="w-full max-w-2xl space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
         <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Step 2
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
         </p>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
           What's your main goal?

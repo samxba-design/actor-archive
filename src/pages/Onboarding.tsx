@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -63,6 +63,11 @@ const INITIAL_DATA: OnboardingData = {
   availableForHire: false,
 };
 
+export interface StepMeta {
+  stepNumber: number;
+  totalSteps: number;
+}
+
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -79,11 +84,17 @@ const Onboarding = () => {
     data.profileType === "actor" ||
     data.secondaryTypes.includes("actor");
 
-  // Steps: 0=type, 1=goal, 2=basic, 3=slug, 4=actor(conditional), 5=theme, 6=services, 7=complete
-  const totalSteps = isActorType ? 8 : 7;
+  // Build step list dynamically
+  const stepKeys: string[] = ["type", "goal", "basic", "slug"];
+  if (isActorType) stepKeys.push("actor");
+  stepKeys.push("theme", "services", "complete");
+
+  const totalSteps = stepKeys.length;
 
   const handleNext = () => setStep((s) => s + 1);
   const handleBack = () => setStep((s) => Math.max(0, s - 1));
+
+  const stepMeta: StepMeta = { stepNumber: step + 1, totalSteps };
 
   const handleComplete = async () => {
     if (!user) return;
@@ -115,7 +126,6 @@ const Onboarding = () => {
 
       if (profileError) throw profileError;
 
-      // Save actor stats if applicable
       if (isActorType) {
         const { error: actorError } = await supabase
           .from("actor_stats")
@@ -130,11 +140,9 @@ const Onboarding = () => {
             union_status: data.unionStatus.length > 0 ? data.unionStatus : null,
             based_in_primary: data.basedInPrimary || null,
           });
-
         if (actorError) throw actorError;
       }
 
-      // Save selected services
       if (data.selectedServices.length > 0) {
         const serviceRows = data.selectedServices.map((s, i) => ({
           profile_id: user.id,
@@ -156,31 +164,23 @@ const Onboarding = () => {
   };
 
   const renderStep = () => {
-    switch (step) {
-      case 0:
-        return <StepProfileType data={data} updateData={updateData} onNext={handleNext} />;
-      case 1:
-        return <StepGoal data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 2:
-        return <StepBasicInfo data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 3:
-        return <StepSlug data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 4:
-        if (isActorType) {
-          return <StepActorStats data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-        }
-        return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 5:
-        if (isActorType) {
-          return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-        }
-        return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 6:
-        if (isActorType) {
-          return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-        }
-        return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
-      case 7:
+    const currentKey = stepKeys[step];
+    switch (currentKey) {
+      case "type":
+        return <StepProfileType data={data} updateData={updateData} onNext={handleNext} stepMeta={stepMeta} />;
+      case "goal":
+        return <StepGoal data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "basic":
+        return <StepBasicInfo data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "slug":
+        return <StepSlug data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "actor":
+        return <StepActorStats data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "theme":
+        return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "services":
+        return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "complete":
         return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
       default:
         return null;

@@ -1,4 +1,4 @@
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,15 +9,15 @@ interface Props {
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
 const UNION_OPTIONS = ["SAG-AFTRA", "Equity (UK)", "Equity (US)", "ACTRA", "Non-Union", "Fi-Core"];
-
 const HAIR_OPTIONS = ["Black", "Brown", "Blonde", "Red", "Auburn", "Grey", "White", "Bald", "Other"];
 const EYE_OPTIONS = ["Brown", "Blue", "Green", "Hazel", "Grey", "Amber", "Other"];
 const GENDER_OPTIONS = ["Male", "Female", "Non-Binary", "Transgender Male", "Transgender Female", "Gender Fluid", "Prefer Not to Say", "Other"];
 
-const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
+const StepActorStats = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const toggleUnion = (u: string) => {
     updateData({
       unionStatus: data.unionStatus.includes(u)
@@ -26,10 +26,16 @@ const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
     });
   };
 
+  const ageMinNum = data.ageRangeMin ? parseInt(data.ageRangeMin) : null;
+  const ageMaxNum = data.ageRangeMax ? parseInt(data.ageRangeMax) : null;
+  const ageError = ageMinNum && ageMaxNum && ageMinNum >= ageMaxNum;
+
   return (
     <div className="w-full max-w-lg space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Actor Details</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Physical stats & basics</h1>
         <p className="text-muted-foreground">Casting directors need this info upfront. You can add more detail later in your dashboard.</p>
       </div>
@@ -44,6 +50,7 @@ const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
               onChange={(e) => updateData({ heightDisplay: e.target.value })}
               placeholder={`5'10" or 178cm`}
             />
+            <p className="text-xs text-muted-foreground">e.g. 5'10" or 178cm</p>
           </div>
           <div className="space-y-2">
             <Label>Playable age range</Label>
@@ -54,6 +61,8 @@ const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
                 placeholder="25"
                 className="w-20"
                 type="number"
+                min={1}
+                max={99}
               />
               <span className="text-muted-foreground">–</span>
               <Input
@@ -62,8 +71,13 @@ const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
                 placeholder="35"
                 className="w-20"
                 type="number"
+                min={1}
+                max={99}
               />
             </div>
+            {ageError && (
+              <p className="text-xs text-destructive">Min must be less than max</p>
+            )}
           </div>
         </div>
 
@@ -159,9 +173,12 @@ const StepActorStats = ({ data, updateData, onNext, onBack }: Props) => {
         <Button variant="ghost" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Back
         </Button>
-        <Button onClick={onNext} className="min-w-[120px]">
-          Continue
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={onNext}>Skip for now</Button>
+          <Button onClick={onNext} className="min-w-[120px]">
+            Continue
+          </Button>
+        </div>
       </div>
     </div>
   );
