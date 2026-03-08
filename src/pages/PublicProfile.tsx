@@ -184,14 +184,6 @@ const PublicProfile = () => {
     }
   }, [profile?.id, slug]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
   // SEO: Set document title and meta tags
   useEffect(() => {
     if (!profile) return;
@@ -199,7 +191,6 @@ const PublicProfile = () => {
     const desc = profile.tagline || profile.bio?.slice(0, 155) || `${name}'s creative portfolio`;
     document.title = `${name} — Portfolio`;
     
-    // Meta description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -208,7 +199,6 @@ const PublicProfile = () => {
     }
     metaDesc.setAttribute("content", desc);
 
-    // Open Graph
     const ogTags: Record<string, string> = {
       "og:title": `${name} — Portfolio`,
       "og:description": desc,
@@ -227,7 +217,6 @@ const PublicProfile = () => {
       tag.setAttribute("content", content);
     });
 
-    // JSON-LD structured data
     const jsonLd = {
       "@context": "https://schema.org",
       "@type": "Person",
@@ -252,6 +241,14 @@ const PublicProfile = () => {
       if (el) el.remove();
     };
   }, [profile]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   if (notFound || !profile) {
     return (
