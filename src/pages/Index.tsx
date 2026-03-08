@@ -47,21 +47,21 @@ const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: str
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(24px)",
         transitionDelay: `${index * 80}ms`,
-        background: "hsl(220 20% 8% / 0.6)",
-        borderColor: "hsl(220 15% 18%)",
+        background: "hsl(var(--landing-card) / 0.6)",
+        borderColor: "hsl(var(--landing-border))",
         backdropFilter: "blur(12px)",
       }}
     >
       {/* hover glow */}
       <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{ boxShadow: "inset 0 0 0 1px hsl(40 80% 60% / 0.3), 0 0 30px -10px hsl(40 80% 60% / 0.15)" }}
+        style={{ boxShadow: "inset 0 0 0 1px hsl(var(--landing-accent) / 0.3), 0 0 30px -10px hsl(var(--landing-accent) / 0.15)" }}
       />
       <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-4"
-        style={{ background: "hsl(40 80% 60% / 0.12)" }}>
-        <Icon className="h-5 w-5" style={{ color: "hsl(40 80% 60%)" }} />
+        style={{ background: "hsl(var(--landing-accent) / 0.12)" }}>
+        <Icon className="h-5 w-5" style={{ color: "hsl(var(--landing-champagne))" }} />
       </div>
-      <h3 className="font-semibold mb-1.5 text-white">{title}</h3>
-      <p className="text-sm leading-relaxed" style={{ color: "hsl(220 10% 55%)" }}>{desc}</p>
+      <h3 className="font-semibold mb-1.5" style={{ color: "hsl(var(--landing-fg))" }}>{title}</h3>
+      <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--landing-muted))" }}>{desc}</p>
     </div>
   );
 };
@@ -71,9 +71,9 @@ const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: strin
   return (
     <div ref={ref} className="text-center transition-all duration-500"
       style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${index * 120}ms` }}>
-      <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(40 80% 60%)" }} />
-      <div className="text-2xl sm:text-3xl font-bold text-white">{value}</div>
-      <div className="text-xs mt-1" style={{ color: "hsl(220 10% 45%)" }}>{label}</div>
+      <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(var(--landing-champagne))" }} />
+      <div className="text-2xl sm:text-3xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{value}</div>
+      <div className="text-xs mt-1" style={{ color: "hsl(var(--landing-muted))" }}>{label}</div>
     </div>
   );
 };
@@ -98,8 +98,8 @@ const ThemeShowcase = () => {
             <button key={key} onClick={() => setActive(i)}
               className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300"
               style={{
-                background: active === i ? "hsl(40 80% 60%)" : "hsl(220 15% 15%)",
-                color: active === i ? "hsl(220 20% 6%)" : "hsl(220 10% 55%)",
+                background: active === i ? "hsl(var(--landing-accent))" : "hsl(var(--landing-card))",
+                color: active === i ? "hsl(var(--landing-bg))" : "hsl(var(--landing-muted))",
               }}>
               {t.label}
             </button>
@@ -109,16 +109,16 @@ const ThemeShowcase = () => {
 
       {/* Mock browser frame */}
       <div className="relative max-w-3xl mx-auto rounded-xl overflow-hidden border"
-        style={{ borderColor: "hsl(220 15% 18%)", background: "hsl(220 20% 6%)" }}>
+        style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 25% 6%)" }}>
         {/* Browser chrome */}
-        <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: "1px solid hsl(220 15% 15%)" }}>
+        <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: "1px solid hsl(var(--landing-border))" }}>
           <div className="flex gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: "hsl(0 60% 50%)" }} />
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: "hsl(40 60% 50%)" }} />
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: "hsl(120 40% 45%)" }} />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-[10px] px-3 py-1 rounded-md" style={{ background: "hsl(220 15% 12%)", color: "hsl(220 10% 45%)" }}>
+            <span className="text-[10px] px-3 py-1 rounded-md" style={{ background: "hsl(var(--landing-card))", color: "hsl(var(--landing-muted))" }}>
               creativeslate.com/alex-rivera
             </span>
           </div>
@@ -186,7 +186,7 @@ const Index = () => {
 
   return (
     <div ref={spotlightRef} className="min-h-screen landing-page"
-      style={{ background: "hsl(220 20% 4%)", color: "hsl(220 10% 85%)" }}>
+      style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
 
       {/* Film grain overlay */}
       <div className="film-grain" />
@@ -195,14 +195,17 @@ const Index = () => {
       <div className="spotlight-follow" />
 
       {/* Nav */}
-      <nav className="relative z-50 border-b" style={{ borderColor: "hsl(220 15% 12%)", background: "hsl(220 20% 4% / 0.85)", backdropFilter: "blur(12px)" }}>
+      <nav className="relative z-50 border-b" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="text-lg font-bold tracking-tight text-white">CreativeSlate</span>
+          <span className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</span>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" asChild className="text-white/70 hover:text-white hover:bg-white/10">
+            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
+              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
               <Link to="/login">Log in</Link>
             </Button>
-            <Button size="sm" asChild className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold border-0">
+            <Button size="sm" asChild
+              className="font-semibold border-0 text-white"
+              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
               <Link to="/signup">Get Started</Link>
             </Button>
           </div>
@@ -213,37 +216,40 @@ const Index = () => {
       <section className="relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse, hsl(40 80% 50% / 0.06) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(ellipse, hsl(var(--landing-accent) / 0.06) 0%, transparent 70%)" }} />
 
         <div className="max-w-4xl mx-auto px-6 pt-28 pb-24 text-center relative">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-8 animate-fade-in"
-            style={{ border: "1px solid hsl(40 80% 60% / 0.3)", color: "hsl(40 80% 60%)", background: "hsl(40 80% 60% / 0.06)" }}>
+            style={{ border: "1px solid hsl(var(--landing-accent) / 0.3)", color: "hsl(var(--landing-champagne))", background: "hsl(var(--landing-accent) / 0.06)" }}>
             <Sparkles className="h-3 w-3" />
             Portfolio platform for entertainment professionals
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.08] mb-6">
-            <span className="hero-word inline-block" style={{ animationDelay: "0ms" }}>Your </span>
-            <span className="hero-word inline-block" style={{ animationDelay: "80ms" }}>work </span>
-            <span className="hero-word inline-block" style={{ animationDelay: "160ms" }}>deserves</span>
+            <span className="hero-word inline-block" style={{ animationDelay: "0ms", color: "hsl(var(--landing-fg))" }}>Your </span>
+            <span className="hero-word inline-block" style={{ animationDelay: "80ms", color: "hsl(var(--landing-fg))" }}>work </span>
+            <span className="hero-word inline-block" style={{ animationDelay: "160ms", color: "hsl(var(--landing-fg))" }}>deserves</span>
             <br />
             <span className="hero-word inline-block text-gradient-gold" style={{ animationDelay: "300ms" }}>a better showcase</span>
           </h1>
 
           <p className="text-base sm:text-lg max-w-2xl mx-auto mb-10 animate-fade-in"
-            style={{ color: "hsl(220 10% 55%)", animationDelay: "500ms", animationFillMode: "backwards" }}>
+            style={{ color: "hsl(var(--landing-muted))", animationDelay: "500ms", animationFillMode: "backwards" }}>
             Build a stunning portfolio in minutes. Showcase screenplays, reels, headshots, and credits —
             all in one professional page designed for the entertainment industry.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in"
             style={{ animationDelay: "650ms", animationFillMode: "backwards" }}>
-            <Button size="lg" asChild className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold border-0 shadow-lg shadow-amber-500/20 text-base px-8">
+            <Button size="lg" asChild
+              className="font-semibold border-0 text-white text-base px-8"
+              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))", boxShadow: "0 8px 30px -8px hsl(var(--landing-accent) / 0.3)" }}>
               <Link to="/signup">
                 Create Your Portfolio <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild className="border-white/15 text-white/80 hover:bg-white/5 hover:text-white text-base px-8">
+            <Button variant="outline" size="lg" asChild className="text-base px-8"
+              style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
               <Link to="/signup">See Examples</Link>
             </Button>
           </div>
@@ -251,12 +257,12 @@ const Index = () => {
       </section>
 
       {/* Built for marquee */}
-      <section className="border-y overflow-hidden" style={{ borderColor: "hsl(220 15% 12%)", background: "hsl(220 20% 5%)" }}>
+      <section className="border-y overflow-hidden" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 25% 7%)" }}>
         <div className="py-6 relative">
           <div className="marquee-fade-edges" />
           <div className="marquee-track">
             {[...profileTypes, ...profileTypes, ...profileTypes].map((t, i) => (
-              <div key={i} className="flex items-center gap-2 mx-8 shrink-0" style={{ color: "hsl(220 10% 50%)" }}>
+              <div key={i} className="flex items-center gap-2 mx-8 shrink-0" style={{ color: "hsl(var(--landing-muted))" }}>
                 <t.icon className="h-4 w-4" />
                 <span className="text-sm font-medium whitespace-nowrap">{t.label}</span>
               </div>
@@ -277,8 +283,8 @@ const Index = () => {
       {/* Features */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-white">Everything you need</h2>
-          <p style={{ color: "hsl(220 10% 50%)" }}>Professional tools without the complexity.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Everything you need</h2>
+          <p style={{ color: "hsl(var(--landing-muted))" }}>Professional tools without the complexity.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f, i) => (
@@ -290,8 +296,8 @@ const Index = () => {
       {/* Theme showcase */}
       <section className="py-24 px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3 text-white">Themes that match your voice</h2>
-          <p style={{ color: "hsl(220 10% 50%)" }}>10 handcrafted themes designed for the entertainment industry. Preview them live.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Themes that match your voice</h2>
+          <p style={{ color: "hsl(var(--landing-muted))" }}>10 handcrafted themes designed for the entertainment industry. Preview them live.</p>
         </div>
         <ThemeShowcase />
       </section>
@@ -299,16 +305,18 @@ const Index = () => {
       {/* CTA */}
       <section className="relative py-28 px-6 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(40 80% 50% / 0.08) 0%, transparent 60%)" }} />
+          style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(var(--landing-accent) / 0.08) 0%, transparent 60%)" }} />
         <div className="max-w-3xl mx-auto text-center relative">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 text-white">Ready to stand out?</h2>
-          <p className="mb-10" style={{ color: "hsl(220 10% 50%)" }}>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4" style={{ color: "hsl(var(--landing-fg))" }}>Ready to stand out?</h2>
+          <p className="mb-10" style={{ color: "hsl(var(--landing-muted))" }}>
             Join creators who've ditched generic websites for a portfolio built for the industry.
           </p>
           <div className="relative inline-block">
             <div className="absolute -inset-1 rounded-lg opacity-60 blur-lg animate-pulse"
-              style={{ background: "linear-gradient(135deg, hsl(40 80% 55%), hsl(20 80% 55%))" }} />
-            <Button size="lg" asChild className="relative bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-semibold border-0 text-base px-8">
+              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }} />
+            <Button size="lg" asChild
+              className="relative font-semibold border-0 text-white text-base px-8"
+              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
               <Link to="/signup">Get Started — It's Free <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
           </div>
@@ -316,13 +324,13 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t" style={{ borderColor: "hsl(220 15% 10%)", background: "hsl(220 20% 3%)" }}>
+      <footer className="border-t" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ color: "hsl(220 10% 35%)" }}>
+          style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
           <span>© {new Date().getFullYear()} CreativeSlate</span>
           <div className="flex gap-6">
-            <Link to="/login" className="hover:text-white transition-colors">Log in</Link>
-            <Link to="/signup" className="hover:text-white transition-colors">Sign up</Link>
+            <Link to="/login" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Log in</Link>
+            <Link to="/signup" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Sign up</Link>
           </div>
         </div>
       </footer>

@@ -18,7 +18,7 @@ const Particle = ({ delay, x }: { delay: number; x: number }) => (
     style={{
       left: `${x}%`,
       top: "-4px",
-      background: `hsl(${40 + Math.random() * 20} 80% ${55 + Math.random() * 15}%)`,
+      background: `hsl(${340 + Math.random() * 30} ${35 + Math.random() * 15}% ${55 + Math.random() * 20}%)`,
       animation: `confetti-fall 1.8s ease-out ${delay}s forwards`,
       opacity: 0,
     }}
@@ -55,10 +55,10 @@ const StepComplete = ({ data, onComplete, onBack, saving }: Props) => {
       <div className="text-center space-y-4">
         <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center"
           style={{
-            background: "linear-gradient(135deg, hsl(40 80% 55% / 0.15), hsl(20 80% 55% / 0.15))",
+            background: "linear-gradient(135deg, hsl(350 40% 58% / 0.15), hsl(20 35% 55% / 0.15))",
             animation: "word-reveal 0.6s ease-out both",
           }}>
-          <Sparkles className="w-8 h-8" style={{ color: "hsl(40 80% 55%)" }} />
+          <Sparkles className="w-8 h-8" style={{ color: "hsl(35 30% 72%)" }} />
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">You're all set!</h1>
         <p className="text-muted-foreground">
@@ -68,7 +68,7 @@ const StepComplete = ({ data, onComplete, onBack, saving }: Props) => {
 
       <div className="rounded-xl border border-border bg-card p-6 space-y-4"
         style={{
-          boxShadow: "0 0 0 1px hsl(40 80% 55% / 0.1), 0 8px 30px -10px hsl(40 80% 55% / 0.08)",
+          boxShadow: "0 0 0 1px hsl(350 40% 58% / 0.1), 0 8px 30px -10px hsl(350 40% 58% / 0.08)",
         }}>
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Type</span>
