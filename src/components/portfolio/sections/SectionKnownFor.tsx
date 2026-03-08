@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 export interface KnownForItem {
@@ -18,6 +18,8 @@ interface Props {
   items: KnownForItem[];
   variant?: KnownForVariant;
   display?: 'both' | 'image' | 'text';
+  onRemoveItem?: (id: string) => void;
+  editable?: boolean;
 }
 
 /* ── Link wrapper ── */
@@ -34,11 +36,15 @@ export const PosterCard = ({
   width,
   display = 'both',
   showHoverIcon = true,
+  onRemove,
+  editable = false,
 }: {
   item: KnownForItem;
   width?: string;
   display?: 'both' | 'image' | 'text';
   showHoverIcon?: boolean;
+  onRemove?: (id: string) => void;
+  editable?: boolean;
 }) => {
   const theme = usePortfolioTheme();
 
@@ -103,6 +109,16 @@ export const PosterCard = ({
               <ExternalLink className="w-2.5 h-2.5" style={{ color: theme.accentPrimary }} />
             </div>
           )}
+          {editable && onRemove && (
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(item.id); }}
+              className="absolute top-1 left-1 p-1 rounded-full opacity-0 group-hover/kf:opacity-100 transition-opacity z-10"
+              style={{ backgroundColor: '#ef4444', color: '#fff' }}
+              aria-label={`Remove ${item.title}`}
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
         {display === 'both' && (
           <div className="p-2.5 space-y-0.5">
@@ -135,13 +151,13 @@ export const PosterCard = ({
 /* ════════════════════ VARIANTS ════════════════════ */
 
 /* Strip — static left-aligned horizontal row */
-const StripVariant = ({ items, display }: { items: KnownForItem[]; display: Props['display'] }) => {
+const StripVariant = ({ items, display, onRemoveItem, editable }: { items: KnownForItem[]; display: Props['display']; onRemoveItem?: (id: string) => void; editable?: boolean }) => {
   const cardWidth = display === 'text' ? undefined : '130px';
   return (
     <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
       <div className="flex gap-3">
         {items.slice(0, 6).map(item => (
-          <PosterCard key={item.id} item={item} width={cardWidth} display={display} />
+          <PosterCard key={item.id} item={item} width={cardWidth} display={display} onRemove={onRemoveItem} editable={editable} />
         ))}
       </div>
     </div>
@@ -373,8 +389,10 @@ const SpotlightVariant = ({ items, display }: { items: KnownForItem[]; display: 
 
 /* ════════════════════ MAIN COMPONENT ════════════════════ */
 
-const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) => {
+const SectionKnownFor = ({ items, variant = 'strip', display = 'both', onRemoveItem, editable }: Props) => {
   if (!items.length) return null;
+
+  const stripProps = { items, display, onRemoveItem, editable };
 
   switch (variant) {
     case 'scroll': return <ScrollVariant items={items} display={display} />;
@@ -382,7 +400,7 @@ const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) 
     case 'stack': return <StackVariant items={items} display={display} />;
     case 'spotlight': return <SpotlightVariant items={items} display={display} />;
     case 'strip':
-    default: return <StripVariant items={items} display={display} />;
+    default: return <StripVariant items={items} display={display} onRemoveItem={onRemoveItem} editable={editable} />;
   }
 };
 

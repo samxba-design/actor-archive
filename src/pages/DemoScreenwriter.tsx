@@ -12,6 +12,7 @@ import SectionProjects from "@/components/portfolio/sections/SectionProjects";
 import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
+import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
@@ -35,93 +36,28 @@ import {
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
 
-/* 1. CLASSIC — Traditional vertical stack (matches original screenshot) */
+/* 1. CLASSIC — Interactive drag-and-drop demo */
 const ClassicLayout = () => {
-  const theme = usePortfolioTheme();
-  return (
-    <>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Known For" index={-1}>
-          <KnownForWithToggle items={mockKnownFor} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
-          <LoglinesWithToggle items={mockLoglines} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Script Library" index={1}>
-          <ScriptsWithToggle items={mockScripts} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          <CreditsWithToggle items={mockCredits} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
-          <AwardsWithToggle items={mockAwards} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Testimonials" index={4}>
-          <TestimonialsWithToggle items={mockTestimonials} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Press & Reviews" index={5}>
-          <PressWithToggle items={mockPress} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Written For" index={7}>
-          <ClientLogosWithToggle companies={mockClients} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Services" index={6}>
-          <ServicesWithToggle items={mockServices} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Representation" index={8}>
-          <RepresentationWithToggle items={mockRepresentation} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Education & Training" index={9}>
-          <EducationWithToggle items={mockEducation} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Skills" index={10}>
-          <SkillsWithToggle items={mockSkills} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Gallery" index={11}>
-          <GalleryWithToggle items={mockGallery} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Demo Reels" index={12}>
-          <DemoReelsWithToggle items={mockDemoReels} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div className="mb-10">
-        <PortfolioSectionWrapper title="Events & Appearances" index={13}>
-          <EventsWithToggle items={mockEvents} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div>
-        <PortfolioSectionWrapper title="Production History" index={14}>
-          <ProductionsWithToggle items={mockProductions} />
-        </PortfolioSectionWrapper>
-      </div>
-    </>
-  );
+  const demoSections = [
+    { id: "knownfor", title: "Known For", content: <KnownForWithToggle items={mockKnownFor} /> },
+    { id: "loglines", title: "Logline Showcase", content: <LoglinesWithToggle items={mockLoglines} /> },
+    { id: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
+    { id: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
+    { id: "awards", title: "Awards & Recognition", content: <AwardsWithToggle items={mockAwards} /> },
+    { id: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
+    { id: "press", title: "Press & Reviews", content: <PressWithToggle items={mockPress} /> },
+    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
+    { id: "services", title: "Services", content: <ServicesWithToggle items={mockServices} /> },
+    { id: "representation", title: "Representation", content: <RepresentationWithToggle items={mockRepresentation} /> },
+    { id: "education", title: "Education & Training", content: <EducationWithToggle items={mockEducation} /> },
+    { id: "skills", title: "Skills", content: <SkillsWithToggle items={mockSkills} /> },
+    { id: "gallery", title: "Gallery", content: <GalleryWithToggle items={mockGallery} /> },
+    { id: "demoreels", title: "Demo Reels", content: <DemoReelsWithToggle items={mockDemoReels} /> },
+    { id: "events", title: "Events & Appearances", content: <EventsWithToggle items={mockEvents} /> },
+    { id: "productions", title: "Production History", content: <ProductionsWithToggle items={mockProductions} /> },
+  ];
+
+  return <DemoInteractiveLayout sections={demoSections} />;
 };
 
 /* CreditHeroCard imported from DemoShared */

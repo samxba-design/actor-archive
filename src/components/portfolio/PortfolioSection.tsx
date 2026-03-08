@@ -27,6 +27,7 @@ import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
 import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import SectionClientLogos from "./sections/SectionClientLogos";
 import SectionPublishedWork from "./sections/SectionPublishedWork";
+import SectionCustom from "./sections/SectionCustom";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
@@ -65,6 +66,7 @@ const defaultSectionLabels: Record<string, string> = {
   video_portfolio: "Video Portfolio",
   campaign_timeline: "Campaign Timeline",
   published_work: "Published Work",
+  custom_sections: "Custom Sections",
 };
 
 function getContextualLabel(sectionKey: string, profileType: string | null): string {
@@ -230,6 +232,11 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
+        case "custom_sections": {
+          const { data } = await supabase.from("custom_sections").select("*").eq("profile_id", profileId).eq("is_visible", true).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
         default:
           break;
       }
@@ -316,6 +323,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionClientLogos items={data} />;
       case "published_work":
         return <SectionPublishedWork items={data} />;
+      case "custom_sections":
+        return <SectionCustom sections={data} />;
       default:
         return null;
     }
