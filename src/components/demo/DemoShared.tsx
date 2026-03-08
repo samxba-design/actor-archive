@@ -19,6 +19,8 @@ import SectionSkills from "@/components/portfolio/sections/SectionSkills";
 import SectionEvents from "@/components/portfolio/sections/SectionEvents";
 import SectionProductionHistory from "@/components/portfolio/sections/SectionProductionHistory";
 import SectionActorStats from "@/components/portfolio/sections/SectionActorStats";
+import SectionCaseStudies from "@/components/portfolio/sections/SectionCaseStudies";
+import SectionCampaignTimeline from "@/components/portfolio/sections/SectionCampaignTimeline";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
@@ -42,6 +44,8 @@ export interface SectionVariants {
   events: 'list' | 'calendar' | 'cards';
   productions: 'list' | 'cards' | 'timeline';
   imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
+  caseStudies: 'stack' | 'magazine' | 'grid' | 'metrics';
+  campaigns: 'timeline';
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
@@ -66,6 +70,8 @@ export const defaultVariants: SectionVariants = {
   events: 'list',
   productions: 'list',
   imageAnimation: 'none',
+  caseStudies: 'stack',
+  campaigns: 'timeline',
   heroLayout: 'classic',
   heroRightContent: 'featured',
   ctaPreset: 'script',
@@ -133,6 +139,12 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   imageAnimation: [
     { key: 'none', label: 'None' }, { key: 'pulse', label: 'Pulse' }, { key: 'drift', label: 'Drift' },
     { key: 'glass', label: 'Glass' }, { key: 'shine', label: 'Shine' }, { key: 'fade', label: 'Fade' }, { key: 'tilt', label: 'Tilt' },
+  ],
+  caseStudies: [
+    { key: 'stack', label: 'Stack' }, { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'metrics', label: 'Metrics' },
+  ],
+  campaigns: [
+    { key: 'timeline', label: 'Timeline' },
   ],
   heroLayout: [
     { key: 'classic', label: 'Classic' }, { key: 'centered', label: 'Centered' }, { key: 'split', label: 'Split' },
@@ -275,6 +287,16 @@ export const ProductionsWithToggle = ({ items }: { items: any[] }) => (
 
 export const ActorStatsWithToggle = ({ stats, profilePhoto, displayName, representation }: { stats: any; profilePhoto?: string | null; displayName?: string | null; representation?: any[] }) => (
   <SectionActorStats stats={stats} profilePhoto={profilePhoto} displayName={displayName} representation={representation} />
+);
+
+export const CaseStudiesWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="caseStudies" sectionName="Case Studies">
+    {(variant) => <SectionCaseStudies items={items} variant={variant} />}
+  </WithToggle>
+);
+
+export const CampaignTimelineWithToggle = ({ items }: { items: any[] }) => (
+  <SectionCampaignTimeline items={items} />
 );
 
 /* ── Ambient Glow ── */
