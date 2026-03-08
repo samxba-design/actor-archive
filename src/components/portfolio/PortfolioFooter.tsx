@@ -38,7 +38,7 @@ const platformIcons: Record<string, string> = {
 const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }: Props) => {
   const theme = usePortfolioTheme();
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
-  const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "" });
+  const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "", website: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
@@ -55,6 +55,8 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sender_name || !form.sender_email || !form.message) return;
+    // Honeypot: if the hidden field is filled, it's a bot
+    if (form.website) return;
     // Rate limit: 1 submission per 30 seconds
     const now = Date.now();
     if (now - lastSubmitTime < 30000) {
@@ -71,6 +73,16 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
       subject_type: form.subject_type as any,
       message: form.message,
     });
+    // Fire-and-forget email notification
+    supabase.functions.invoke("contact-notify", {
+      body: {
+        profile_id: profile.id,
+        sender_name: form.sender_name,
+        sender_email: form.sender_email,
+        subject_type: form.subject_type,
+        message: form.message,
+      },
+    }).catch(() => {});
     setSending(false);
     setSent(true);
   };
@@ -94,6 +106,11 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
               Get in Touch
             </h3>
             <form onSubmit={handleSubmit} className="space-y-3" aria-label="Contact form">
+              {/* Honeypot field - hidden from real users */}
+              <div className="absolute opacity-0 h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                <label htmlFor="contact-website">Website</label>
+                <input id="contact-website" type="text" value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))} tabIndex={-1} autoComplete="off" />
+              </div>
               <label className="sr-only" htmlFor="contact-name">Your name</label>
               <input id="contact-name" type="text" placeholder="Your name" value={form.sender_name} onChange={e => setForm(f => ({ ...f, sender_name: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
               <label className="sr-only" htmlFor="contact-email">Your email</label>
