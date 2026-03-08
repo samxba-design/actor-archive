@@ -3,10 +3,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Loader2, Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
-  ArrowRight, ExternalLink, CheckCircle2, AlertCircle, Camera, FileText, MessageSquare,
-  Award, Link2, Sparkles, type LucideIcon
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
+  ArrowRight, ExternalLink, Camera, FileText, MessageSquare,
+  Award, Link2, Sparkles, Image, Users, PenTool, Film, Mic2, BookOpen,
+  Briefcase, Share2, Copy, Check, type LucideIcon
 } from "lucide-react";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 
@@ -17,9 +24,48 @@ interface SmartAction {
   route: string;
 }
 
+// Type-specific smart action definitions
+const TYPE_ACTIONS: Record<string, SmartAction[]> = {
+  actor: [
+    { label: "Upload demo reel", description: "Casting directors want to see you in action", icon: Film, route: "/dashboard/projects" },
+    { label: "List your agent or manager", description: "Let producers know who to contact", icon: Users, route: "/dashboard/representation" },
+    { label: "Add headshots to gallery", description: "Headshots are your #1 asset as an actor", icon: Image, route: "/dashboard/gallery" },
+  ],
+  screenwriter: [
+    { label: "Add loglines to your scripts", description: "A strong logline is your calling card", icon: FileText, route: "/dashboard/scripts" },
+    { label: "Run the coverage simulator", description: "Get AI feedback on your screenplay", icon: Sparkles, route: "/dashboard/coverage" },
+  ],
+  tv_writer: [
+    { label: "Add your spec or pilot", description: "Showcase your original voice", icon: FileText, route: "/dashboard/scripts" },
+    { label: "Find comp titles", description: "Position your work with comparable shows", icon: Sparkles, route: "/dashboard/comps" },
+  ],
+  playwright: [
+    { label: "Add production history", description: "Document where your plays have been staged", icon: FileText, route: "/dashboard/projects" },
+  ],
+  author: [
+    { label: "Add your first book", description: "Import from Google Books or add manually", icon: BookOpen, route: "/dashboard/projects" },
+  ],
+  journalist: [
+    { label: "Add published articles", description: "Showcase your body of published work", icon: FileText, route: "/dashboard/projects" },
+  ],
+  copywriter: [
+    { label: "Create a case study", description: "Show the results of your best campaigns", icon: PenTool, route: "/dashboard/case-study" },
+    { label: "List your services & pricing", description: "Help clients understand what you offer", icon: Briefcase, route: "/dashboard/services" },
+  ],
+  corporate_video: [
+    { label: "Create a case study", description: "Showcase your best client work with metrics", icon: PenTool, route: "/dashboard/case-study" },
+    { label: "Add your showreel", description: "Upload or link your demo reel", icon: Film, route: "/dashboard/projects" },
+  ],
+  director_producer: [
+    { label: "Import credits from TMDB", description: "Auto-fill your filmography with posters", icon: Film, route: "/dashboard/projects" },
+    { label: "Add your showreel", description: "Showcase your directing work", icon: Film, route: "/dashboard/projects" },
+  ],
+};
+
 const DashboardHome = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [recentViews, setRecentViews] = useState(0);
@@ -30,6 +76,9 @@ const DashboardHome = () => {
   const [socialCount, setSocialCount] = useState(0);
   const [awardCount, setAwardCount] = useState(0);
   const [galleryCount, setGalleryCount] = useState(0);
+  const [showPublishConfirm, setShowPublishConfirm] = useState(false);
+  const [publishAction, setPublishAction] = useState<"publish" | "unpublish">("publish");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -65,12 +114,28 @@ const DashboardHome = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8" style={{ color: "hsl(var(--landing-muted))" }} /></div>;
+    return (
+      <div className="max-w-4xl space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+          <Skeleton className="h-9 w-32" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-24 rounded-xl" />)}
+        </div>
+        <Skeleton className="h-48 rounded-xl" />
+        <Skeleton className="h-40 rounded-xl" />
+      </div>
+    );
   }
 
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
+  const profileType = profile?.profile_type as string | null;
 
-  // Build smart actions based on missing data
+  // Build smart actions based on missing data + profile type
   const smartActions: SmartAction[] = [];
   if (!profile?.profile_photo_url) {
     smartActions.push({ label: "Upload your headshot", description: "A professional photo builds instant trust", icon: Camera, route: "/dashboard/gallery" });
@@ -81,13 +146,24 @@ const DashboardHome = () => {
   if (projectCount === 0) {
     smartActions.push({ label: "Add your first project", description: "Projects are the core of your portfolio", icon: FolderOpen, route: "/dashboard/projects" });
   }
-  if (testimonialCount === 0) {
+
+  // Add type-specific actions
+  if (profileType && TYPE_ACTIONS[profileType]) {
+    for (const action of TYPE_ACTIONS[profileType]) {
+      if (smartActions.length < 6 && !smartActions.some(a => a.route === action.route)) {
+        smartActions.push(action);
+      }
+    }
+  }
+
+  // Generic fallback actions
+  if (testimonialCount === 0 && smartActions.length < 6) {
     smartActions.push({ label: "Add a testimonial", description: "Social proof drives hiring decisions", icon: MessageSquare, route: "/dashboard/testimonials" });
   }
-  if (socialCount === 0) {
-    smartActions.push({ label: "Connect social links", description: "Link your IMDb, LinkedIn, or social profiles", icon: Link2, route: "/dashboard/social-links" });
+  if (socialCount === 0 && smartActions.length < 6) {
+    smartActions.push({ label: "Connect social links", description: "Link your IMDb, LinkedIn, or social profiles", icon: Link2, route: "/dashboard/social" });
   }
-  if (awardCount === 0) {
+  if (awardCount === 0 && smartActions.length < 6) {
     smartActions.push({ label: "Add awards or fellowships", description: "Festival laurels and wins build credibility", icon: Award, route: "/dashboard/awards" });
   }
   if (!profile?.is_published && profile?.slug) {
@@ -102,6 +178,38 @@ const DashboardHome = () => {
     );
   }
 
+  // Profile-type-aware quick actions
+  const quickActions = [
+    { label: "Edit Profile", icon: User, route: "/dashboard/profile" },
+    ...(profileType === "actor"
+      ? [{ label: "Manage Gallery", icon: Image, route: "/dashboard/gallery" }]
+      : [{ label: "Manage Projects", icon: FolderOpen, route: "/dashboard/projects" }]
+    ),
+    { label: "Settings", icon: Settings, route: "/dashboard/settings" },
+  ];
+
+  const handlePublishToggle = () => {
+    setPublishAction(profile?.is_published ? "unpublish" : "publish");
+    setShowPublishConfirm(true);
+  };
+
+  const confirmPublishToggle = async () => {
+    const newState = publishAction === "publish";
+    await supabase.from("profiles").update({ is_published: newState }).eq("id", user!.id);
+    setProfile((p: any) => ({ ...p, is_published: newState }));
+    setShowPublishConfirm(false);
+    toast({ title: newState ? "Portfolio published!" : "Portfolio unpublished" });
+  };
+
+  const handleCopyLink = async () => {
+    if (profile?.slug) {
+      await navigator.clipboard.writeText(`${window.location.origin}/p/${profile.slug}`);
+      setCopied(true);
+      toast({ title: "Link copied!" });
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   return (
     <div className="max-w-4xl space-y-6" style={{ color: "hsl(var(--landing-fg))" }}>
       <div className="flex items-center justify-between">
@@ -112,15 +220,18 @@ const DashboardHome = () => {
           <p className="text-sm mt-1" style={{ color: "hsl(var(--landing-muted))" }}>Here's how your portfolio is performing</p>
         </div>
         <div className="flex items-center gap-2">
+          {profile?.slug && profile?.is_published && (
+            <Button variant="ghost" size="sm" onClick={handleCopyLink}
+              style={{ color: "hsl(var(--landing-fg))" }}>
+              {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+              {copied ? "Copied!" : "Share Link"}
+            </Button>
+          )}
           {profile?.slug && (
             <Button
               variant={profile?.is_published ? "outline" : "default"}
               size="sm"
-              onClick={async () => {
-                const newState = !profile?.is_published;
-                await supabase.from("profiles").update({ is_published: newState }).eq("id", user!.id);
-                setProfile((p: any) => ({ ...p, is_published: newState }));
-              }}
+              onClick={handlePublishToggle}
             >
               {profile?.is_published ? (
                 <><EyeOff className="mr-2 h-4 w-4" />Unpublish</>
@@ -157,7 +268,7 @@ const DashboardHome = () => {
         ))}
       </div>
 
-      {/* Profile Readiness — consolidated from ProfileReadiness component */}
+      {/* Profile Readiness */}
       <ProfileReadiness />
 
       {/* Smart Next Steps */}
@@ -172,10 +283,7 @@ const DashboardHome = () => {
               key={i}
               onClick={() => {
                 if (action.route === "#publish") {
-                  // Trigger publish
-                  supabase.from("profiles").update({ is_published: true }).eq("id", user!.id).then(() => {
-                    setProfile((p: any) => ({ ...p, is_published: true }));
-                  });
+                  handlePublishToggle();
                 } else if (action.route.startsWith("/p/")) {
                   window.open(action.route, "_blank");
                 } else {
@@ -200,17 +308,36 @@ const DashboardHome = () => {
       <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
         <h2 className="text-lg font-semibold mb-4" style={{ color: "hsl(var(--landing-fg))" }}>Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/profile")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
-            <User className="mr-2 h-4 w-4" />Edit Profile
-          </Button>
-          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/projects")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
-            <FolderOpen className="mr-2 h-4 w-4" />Manage Projects
-          </Button>
-          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/settings")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
-            <Settings className="mr-2 h-4 w-4" />Settings
-          </Button>
+          {quickActions.map((qa, i) => (
+            <Button key={i} variant="outline" className="justify-start" onClick={() => navigate(qa.route)}
+              style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
+              <qa.icon className="mr-2 h-4 w-4" />{qa.label}
+            </Button>
+          ))}
         </div>
       </div>
+
+      {/* Publish/Unpublish confirmation */}
+      <AlertDialog open={showPublishConfirm} onOpenChange={setShowPublishConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {publishAction === "unpublish" ? "Unpublish your portfolio?" : "Publish your portfolio?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {publishAction === "unpublish"
+                ? "Your portfolio will no longer be visible to the public. You can republish at any time."
+                : "Your portfolio will be visible to anyone with the link. Make sure you're happy with how it looks!"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmPublishToggle}>
+              {publishAction === "unpublish" ? "Unpublish" : "Publish"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

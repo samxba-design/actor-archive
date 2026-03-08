@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -56,7 +57,8 @@ const RepresentationManager = () => {
     setSaving(false);
   };
 
-  const handleDelete = async (id: string) => { await supabase.from("representation").delete().eq("id", id); fetchItems(); };
+  const performDelete = useCallback(async (id: string) => { await supabase.from("representation").delete().eq("id", id); fetchItems(); }, [user]);
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Remove this representative?", description: "This representative will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
 
@@ -85,7 +87,7 @@ const RepresentationManager = () => {
               </div>
               <div className="flex gap-1 shrink-0">
                 <Button variant="ghost" size="icon" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => requestDelete(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
               </div>
             </CardContent></Card>
           ))}
@@ -126,6 +128,7 @@ const RepresentationManager = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog />
     </div>
   );
 };

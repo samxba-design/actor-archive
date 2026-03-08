@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +26,6 @@ export interface OnboardingData {
   location: string;
   slug: string;
   theme: string;
-  // Actor-specific
   heightDisplay: string;
   ageRangeMin: string;
   ageRangeMax: string;
@@ -35,7 +34,6 @@ export interface OnboardingData {
   genderIdentity: string;
   unionStatus: string[];
   basedInPrimary: string;
-  // Services
   selectedServices: { name: string; description: string }[];
   availableForHire: boolean;
 }
@@ -84,14 +82,41 @@ const Onboarding = () => {
     data.profileType === "actor" ||
     data.secondaryTypes.includes("actor");
 
-  // Build step list dynamically
   const stepKeys: string[] = ["type", "goal", "basic", "slug"];
   if (isActorType) stepKeys.push("actor");
   stepKeys.push("theme", "services", "complete");
 
   const totalSteps = stepKeys.length;
 
-  const handleNext = () => setStep((s) => s + 1);
+  // Persist draft to profiles after each step transition
+  const persistDraft = useCallback(async () => {
+    if (!user) return;
+    const profileType = data.profileType === "multi_hyphenate"
+      ? "multi_hyphenate" as ProfileType
+      : data.profileType;
+
+    await supabase
+      .from("profiles")
+      .update({
+        profile_type: profileType,
+        secondary_types: data.secondaryTypes.length > 0 ? data.secondaryTypes : null,
+        primary_goal: data.primaryGoal || null,
+        display_name: data.displayName || null,
+        first_name: data.firstName || null,
+        last_name: data.lastName || null,
+        tagline: data.tagline || null,
+        location: data.location || null,
+        slug: data.slug || null,
+        theme: data.theme,
+        available_for_hire: data.availableForHire,
+      })
+      .eq("id", user.id);
+  }, [user, data]);
+
+  const handleNext = () => {
+    persistDraft();
+    setStep((s) => s + 1);
+  };
   const handleBack = () => setStep((s) => Math.max(0, s - 1));
 
   const stepMeta: StepMeta = { stepNumber: step + 1, totalSteps };

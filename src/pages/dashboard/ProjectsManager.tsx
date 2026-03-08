@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -242,14 +243,15 @@ const ProjectsManager = () => {
     setSaving(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const performDelete = useCallback(async (id: string) => {
     const { error } = await supabase.from("projects").delete().eq("id", id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       fetchProjects();
     }
-  };
+  }, [user]);
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this project?", description: "This project and all its data will be permanently deleted." });
 
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
@@ -523,13 +525,14 @@ const ProjectsManager = () => {
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => requestDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+      <DeleteConfirmDialog />
     </div>
   );
 };
