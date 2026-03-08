@@ -26,6 +26,7 @@ interface Props {
   profileId: string;
   profileType: string | null;
   profileSlug?: string;
+  sectionIndex?: number;
 }
 
 const defaultSectionLabels: Record<string, string> = {
@@ -65,7 +66,7 @@ function getContextualLabel(sectionKey: string, profileType: string | null): str
   return defaultSectionLabels[sectionKey] || sectionKey;
 }
 
-const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug }: Props) => {
+const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sectionIndex }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -225,6 +226,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug }: P
   if (data.length === 0 && sectionKey !== "contact") return null;
 
   const label = getContextualLabel(sectionKey, profileType);
+  const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
 
   const renderSection = () => {
     switch (sectionKey) {
@@ -281,12 +283,31 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug }: P
         transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
       }}
     >
-      <h2
-        className="text-2xl font-bold mb-6 tracking-tight"
-        style={{ fontFamily: "var(--portfolio-heading-font)" }}
-      >
-        {label}
-      </h2>
+      {/* Section heading with number + accent rule */}
+      <div className="flex items-baseline gap-3 mb-2">
+        {indexNum && (
+          <span
+            className="text-xs font-mono tracking-widest"
+            style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
+          >
+            {indexNum}
+          </span>
+        )}
+        <h2
+          className="text-2xl sm:text-3xl font-bold tracking-tight"
+          style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}
+        >
+          {label}
+        </h2>
+      </div>
+      <div
+        className="mb-8"
+        style={{
+          height: "2px",
+          background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))",
+          maxWidth: "120px",
+        }}
+      />
       {renderSection()}
     </section>
   );
