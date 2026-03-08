@@ -9,9 +9,12 @@ import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import SortableSectionList from "@/components/portfolio/SortableSectionList";
-import { ArrowUp, MessageSquare } from "lucide-react";
+import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
+import ShareButtons from "@/components/portfolio/ShareButtons";
+import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
+import PDFExportModal from "@/components/portfolio/PDFExportModal";
 
 interface ProfileData {
   id: string;
@@ -62,6 +65,8 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [showPdfExport, setShowPdfExport] = useState(false);
+  const [exportData, setExportData] = useState<{ projects: any[]; awards: any[]; skills: any[]; education: any[] }>({ projects: [], awards: [], skills: [], education: [] });
 
   useEffect(() => {
     if (!slug) return;
@@ -81,6 +86,16 @@ const PublicProfile = () => {
         profile_id: profile.id, path: `/${slug}`, referrer: document.referrer || null,
         user_agent: navigator.userAgent,
         device_type: window.innerWidth < 768 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop",
+      });
+
+      // Prefetch export data for PDF
+      Promise.all([
+        supabase.from("projects").select("title, project_type, role_name, year").eq("profile_id", profile.id).order("display_order").limit(20),
+        supabase.from("awards").select("name, organization, result, year").eq("profile_id", profile.id).limit(10),
+        supabase.from("skills").select("name, category").eq("profile_id", profile.id).limit(25),
+        supabase.from("education").select("institution, degree_or_certificate, year_start, year_end").eq("profile_id", profile.id).limit(6),
+      ]).then(([p, a, s, e]) => {
+        setExportData({ projects: p.data || [], awards: a.data || [], skills: s.data || [], education: e.data || [] });
       });
     }
   }, [profile?.id, slug]);
@@ -207,9 +222,17 @@ const PublicProfile = () => {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
+  const profileUrl = `${window.location.origin}/p/${profile.slug}`;
+  const profileName = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
+
   return (
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: sanitizeCSS(profile.custom_css) }} />}
+
+      {/* Skip to content link for accessibility */}
+      <a href="#portfolio-main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:rounded-md focus:shadow-lg">
+        Skip to content
+      </a>
 
       <EditModeProvider
         profileId={profile.id}
@@ -223,7 +246,7 @@ const PublicProfile = () => {
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
         />
 
-        <main className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
+        <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
           <SortableSectionList
             allSections={allSections}
             profileId={profile.id}
@@ -241,35 +264,62 @@ const PublicProfile = () => {
 
         <EditModeToolbar />
 
-      {/* Floating Contact CTA */}
-      {showContact && (
+      {/* Floating toolbar: dark mode, share, PDF, contact */}
+      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-2">
+        <DarkModeToggle />
+        <ShareButtons url={profileUrl} title={profileName} description={profile.tagline || undefined} />
         <button
-          onClick={scrollToContact}
-          className="fixed bottom-20 right-6 z-40 rounded-full p-3 shadow-lg transition-all hover:scale-105"
-          style={{
-            background: "hsl(var(--portfolio-accent, var(--primary)))",
-            color: "hsl(var(--portfolio-accent-fg, var(--primary-foreground)))",
-          }}
-          aria-label="Contact me"
-        >
-          <MessageSquare className="h-5 w-5" />
-        </button>
-      )}
-
-      {/* Back to Top */}
-      {showBackToTop && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-40 rounded-full p-3 shadow-lg transition-all hover:scale-105 border"
+          onClick={() => setShowPdfExport(true)}
+          className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
           style={{
             background: "hsl(var(--portfolio-card, var(--card)))",
             color: "hsl(var(--portfolio-fg, var(--foreground)))",
             borderColor: "hsl(var(--portfolio-border, var(--border)))",
           }}
-          aria-label="Back to top"
+          aria-label="Export as PDF"
         >
-          <ArrowUp className="h-5 w-5" />
+          <FileDown className="h-4 w-4" />
         </button>
+        {showContact && (
+          <button
+            onClick={scrollToContact}
+            className="rounded-full p-3 shadow-lg transition-all hover:scale-105"
+            style={{
+              background: "hsl(var(--portfolio-accent, var(--primary)))",
+              color: "hsl(var(--portfolio-accent-fg, var(--primary-foreground)))",
+            }}
+            aria-label="Contact me"
+          >
+            <MessageSquare className="h-5 w-5" />
+          </button>
+        )}
+        {showBackToTop && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
+            style={{
+              background: "hsl(var(--portfolio-card, var(--card)))",
+              color: "hsl(var(--portfolio-fg, var(--foreground)))",
+              borderColor: "hsl(var(--portfolio-border, var(--border)))",
+            }}
+            aria-label="Back to top"
+          >
+            <ArrowUp className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* PDF Export Modal */}
+      {showPdfExport && (
+        <PDFExportModal
+          profile={profile}
+          projects={exportData.projects}
+          awards={exportData.awards}
+          skills={exportData.skills}
+          education={exportData.education}
+          isPro={profile.subscription_tier === "pro" || profile.subscription_tier === "premium"}
+          onClose={() => setShowPdfExport(false)}
+        />
       )}
       </EditModeProvider>
     </PortfolioThemeProvider>
