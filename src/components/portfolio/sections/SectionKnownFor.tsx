@@ -105,17 +105,17 @@ export const PosterCard = ({
           )}
         </div>
         {display === 'both' && (
-          <div className="p-2 space-y-0.5">
-            <h4 className="text-[11px] font-semibold leading-tight truncate" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
+          <div className="p-2.5 space-y-0.5">
+            <h4 className="text-[11px] font-semibold leading-tight line-clamp-2" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
               {item.title}
             </h4>
             {item.role_name && (
-              <p className="text-[9px] uppercase tracking-wider" style={{ color: theme.accentPrimary }}>
+              <p className="text-[9px] uppercase tracking-wider truncate" style={{ color: theme.accentPrimary }}>
                 {item.role_name}
               </p>
             )}
             {item.network_or_studio && (
-              <p className="text-[8px] uppercase tracking-widest" style={{ color: theme.textTertiary }}>
+              <p className="text-[8px] uppercase tracking-widest truncate" style={{ color: theme.textTertiary }}>
                 {item.network_or_studio}
               </p>
             )}
@@ -136,7 +136,7 @@ export const PosterCard = ({
 
 /* Strip — static left-aligned horizontal row */
 const StripVariant = ({ items, display }: { items: KnownForItem[]; display: Props['display'] }) => {
-  const cardWidth = display === 'text' ? undefined : '120px';
+  const cardWidth = display === 'text' ? undefined : '130px';
   return (
     <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
       <div className="flex gap-3">

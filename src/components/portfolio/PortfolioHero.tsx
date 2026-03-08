@@ -140,10 +140,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const heroHeight = isCompact ? '280px' : theme.heroHeight;
 
   // Determine if background is dark for text contrast
+  // CRITICAL: Banner images always get a dark scrim, so force light text regardless of theme
   const isLightPreset = profile.hero_background_preset === 'arctic-light';
   const solidIsLight = heroBgType === 'solid' && heroBgSolidColor ? isLightColor(heroBgSolidColor) : false;
   const hasDarkBg = heroBgType === 'bokeh' || heroBgType === 'video' || heroBgType === 'gradient'
-    || (heroBgType === 'preset' && (hasBannerImage || !!presetGradient) && !isLightPreset)
+    || (heroBgType === 'preset' && hasBannerImage)
+    || (heroBgType === 'preset' && !!presetGradient && !isLightPreset)
     || (heroBgType === 'solid' && !solidIsLight);
 
   let heroText: string, heroTextMuted: string, heroTextFaint: string;
@@ -548,13 +550,13 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-[240px] shrink-0 space-y-4" style={stagger(1)}>
+          <div className="w-full lg:w-[280px] shrink-0 space-y-4" style={stagger(1)}>
             <PhotoEl size="120px" />
             <NameEl fontSize="clamp(22px, 3vw, 28px)" />
             <RepLine />
             <TaglineEl />
             <CredentialRow />
-            {showCta && <CtaEl />}
+            {showCta && <div className="[&_button]:text-[12px] [&_button]:px-4 [&_button]:truncate [&_button]:max-w-full"><CtaEl /></div>}
           </div>
           <div className="flex-1 space-y-4" style={stagger(2)}>
             <BioEl maxW="max-w-full" />
@@ -644,8 +646,8 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       {/* Large semi-transparent name behind */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-        <h1 className="text-[12vw] font-black leading-none whitespace-nowrap"
-          style={{ fontFamily: theme.fontDisplay, color: heroText, opacity: 0.04, letterSpacing: '-0.04em' }}>
+        <h1 className="text-[14vw] font-black leading-none whitespace-nowrap"
+          style={{ fontFamily: theme.fontDisplay, color: heroText, opacity: 0.07, letterSpacing: '-0.05em', textTransform: 'uppercase' }}>
           {name}
         </h1>
       </div>
@@ -679,16 +681,18 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderCompact = () => (
     <div className="relative z-10 flex items-end h-full" style={{ minHeight: '280px' }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-6">
-        <div className="flex items-center gap-4" style={stagger(1)}>
-          <PhotoEl size="56px" />
-          <div className="flex-1 min-w-0">
-            <NameEl fontSize="clamp(20px, 3vw, 28px)" />
-            <div className="flex items-center gap-3 mt-1">
-              <TaglineEl />
-              <CredentialRow />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4" style={stagger(1)}>
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <PhotoEl size="56px" />
+            <div className="min-w-0 flex-1">
+              <NameEl fontSize="clamp(20px, 3vw, 28px)" />
+              <div className="mt-1"><TaglineEl /></div>
             </div>
           </div>
-          {showCta && <CtaEl />}
+          <div className="flex items-center gap-4 flex-wrap">
+            <CredentialRow />
+            {showCta && <CtaEl />}
+          </div>
         </div>
       </div>
     </div>
@@ -781,6 +785,8 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                     opacity: loaded ? 1 : 0.6, transition: 'opacity 1s ease-out',
                   }} />
               </div>
+              {/* Dark scrim — ensures text readability on ALL themes including light ones */}
+              <div className="absolute inset-0" style={{ bottom: '-1px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%)' }} />
               <div className="absolute inset-0" style={{ bottom: '-1px', background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
               <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ bottom: '-1px', background: `linear-gradient(to top, ${theme.bgPrimary} 2%, ${theme.bgPrimary}ee 8%, transparent 100%)` }} />
             </>
