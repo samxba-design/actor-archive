@@ -184,6 +184,64 @@ const PublicProfile = () => {
     }
   }, [profile?.id, slug]);
 
+  // SEO: Set document title and meta tags
+  useEffect(() => {
+    if (!profile) return;
+    const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
+    const desc = profile.tagline || profile.bio?.slice(0, 155) || `${name}'s creative portfolio`;
+    document.title = `${name} — Portfolio`;
+    
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", desc);
+
+    const ogTags: Record<string, string> = {
+      "og:title": `${name} — Portfolio`,
+      "og:description": desc,
+      "og:type": "profile",
+      "og:url": window.location.href,
+    };
+    if (profile.profile_photo_url) ogTags["og:image"] = profile.profile_photo_url;
+    
+    Object.entries(ogTags).forEach(([prop, content]) => {
+      let tag = document.querySelector(`meta[property="${prop}"]`);
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("property", prop);
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", content);
+    });
+
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name,
+      ...(profile.tagline && { description: profile.tagline }),
+      ...(profile.location && { address: { "@type": "PostalAddress", addressLocality: profile.location } }),
+      ...(profile.profile_photo_url && { image: profile.profile_photo_url }),
+      url: window.location.href,
+    };
+    let script = document.getElementById("portfolio-jsonld");
+    if (!script) {
+      script = document.createElement("script");
+      script.id = "portfolio-jsonld";
+      script.setAttribute("type", "application/ld+json");
+      document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(jsonLd);
+
+    return () => {
+      document.title = "CreativeSlate";
+      const el = document.getElementById("portfolio-jsonld");
+      if (el) el.remove();
+    };
+  }, [profile]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
