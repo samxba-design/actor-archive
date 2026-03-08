@@ -172,10 +172,9 @@ const actorDefaultVariants: SectionVariants = {
 
 const ClassicLayout = () => (
   <>
-    <div className="mb-10">
+    {/* Two-column: Stats left, Showreel right */}
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 mb-10">
       <SectionActorStats stats={mockActorStats} profilePhoto={mockProfile.profile_photo_url} displayName={mockProfile.display_name} representation={mockRepresentation} />
-    </div>
-    <div className="mb-10">
       <PortfolioSectionWrapper title="Demo Reels" index={0}>
         <DemoReelsWithToggle items={mockDemoReels} />
       </PortfolioSectionWrapper>
