@@ -578,3 +578,32 @@ All colors MUST be HSL.
 .img-anim-tilt:hover {
   transform: perspective(600px) rotateY(4deg) rotateX(-2deg) scale(1.02);
 }
+
+/* Dark mode override for portfolio light themes */
+.portfolio-light-override {
+  --portfolio-bg: 220 20% 97% !important;
+  --portfolio-fg: 220 20% 10% !important;
+  --portfolio-card: 0 0% 100% !important;
+  --portfolio-border: 220 15% 88% !important;
+  --portfolio-muted: 220 12% 55% !important;
+}
+
+html:not(.portfolio-light-override) .portfolio-light-override {
+  filter: none;
+}
+
+/* Focus visible styles for accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
