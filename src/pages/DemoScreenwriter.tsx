@@ -648,6 +648,7 @@ const DemoScreenwriter = () => {
         services={mockServices}
         testimonials={mockTestimonials}
         imageAnimation={variants.imageAnimation}
+        heroBgType={variants.heroBgType}
       />
 
       {/* Hero & image customize bars — below hero, above sections */}
@@ -665,6 +666,9 @@ const DemoScreenwriter = () => {
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroBgType" sectionName="Background">
           {() => null}
         </WithToggle>
       </div>

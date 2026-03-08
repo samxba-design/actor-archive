@@ -543,6 +543,7 @@ const DemoActor = () => {
         testimonials={mockTestimonials}
         demoReels={mockDemoReels}
         imageAnimation={variants.imageAnimation}
+        heroBgType={variants.heroBgType}
       />
 
       {/* Hero & image customize bars */}
@@ -560,6 +561,9 @@ const DemoActor = () => {
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroBgType" sectionName="Background">
           {() => null}
         </WithToggle>
       </div>
