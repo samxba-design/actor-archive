@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext } from "react";
 import { Link } from "react-router-dom";
 import { PortfolioThemeProvider, usePortfolioTheme } from "@/themes/ThemeProvider";
 import { getAllThemeFontsUrl } from "@/themes/themes";
-import PortfolioHero from "@/components/portfolio/PortfolioHero";
+import PortfolioHero, { type HeroLayout, type HeroRightContent, type HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
 import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
