@@ -292,6 +292,10 @@ const Index = () => {
               style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
               <Link to="/how-it-works">How It Works</Link>
             </Button>
+            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
+              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+              <Link to="/pricing">Pricing</Link>
+            </Button>
             {/* Glass toggle */}
             <button
               onClick={toggleGlass}

@@ -199,9 +199,11 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
           >
             © {new Date().getFullYear()} {profile.display_name}
           </p>
-          <p className="text-[10px]" style={{ color: "hsl(var(--portfolio-muted-fg) / 0.3)" }}>
-            Powered by <a href="/" className="hover:underline">CreativeSlate</a>
-          </p>
+          {!(profile as any).subscription_tier || (profile as any).subscription_tier === "free" ? (
+            <p className="text-[10px]" style={{ color: "hsl(var(--portfolio-muted-fg) / 0.3)" }}>
+              Powered by <a href="/" className="hover:underline">CreativeSlate</a>
+            </p>
+          ) : null}
         </div>
       </div>
     </footer>
