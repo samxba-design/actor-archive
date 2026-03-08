@@ -133,12 +133,51 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
       {/* Hero content */}
       <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: theme.heroHeight }}>
         <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
+          {/* Known For — prominent carousel above identity */}
+          {knownFor && knownFor.length > 0 && (
+            <div className="mb-6" style={stagger(0)}>
+              <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
+                {knownFor.slice(0, 6).map((item: any) => {
+                  const card = (
+                    <div
+                      key={item.id}
+                      className="group/kf shrink-0 overflow-hidden transition-all duration-500 hover:scale-105 hover:-translate-y-1"
+                      style={{
+                        width: '70px',
+                        borderRadius: '6px',
+                        border: `1px solid rgba(255,255,255,0.12)`,
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                      }}
+                    >
+                      <div className="aspect-[2/3] overflow-hidden relative">
+                        {item.poster_url ? (
+                          <img src={item.poster_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+                            <span className="text-xs" style={{ color: theme.textTertiary }}>🎬</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="px-1.5 py-1" style={{ backgroundColor: theme.bgSecondary }}>
+                        <p className="text-[8px] font-semibold leading-tight truncate" style={{ color: heroText, fontFamily: theme.fontDisplay }}>{item.title}</p>
+                        {item.role_name && <p className="text-[7px] uppercase tracking-wider truncate" style={{ color: theme.accentPrimary }}>{item.role_name}</p>}
+                      </div>
+                    </div>
+                  );
+                  return item.imdb_link ? (
+                    <a key={item.id} href={item.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline shrink-0">{card}</a>
+                  ) : <div key={item.id} className="shrink-0">{card}</div>;
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Two-column: left identity, right featured project */}
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-end">
             {/* LEFT: Identity */}
             <div className="flex-1 min-w-0 space-y-3">
               {/* Photo + name + rep inline */}
-              <div className="flex items-end gap-4" style={stagger(0)}>
+              <div className="flex items-end gap-4" style={stagger(1)}>
                 {profile.profile_photo_url ? (
                   <img
                     src={profile.profile_photo_url}
@@ -400,64 +439,24 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             )}
           </div>
 
-          {/* Stats bar + Known For — side by side */}
-          {(stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0)) || (knownFor && knownFor.length > 0) ? (
+          {/* Stats bar */}
+          {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
             <div
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 mt-6 pt-5"
-              style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(5) }}
+              className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
+              style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(6) }}
             >
-              {/* Stats */}
-              {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
-                <div className="flex items-center gap-8 sm:gap-10 shrink-0">
-                  {[
-                    { n: stats.scripts, label: 'Scripts Available' },
-                    { n: stats.developing, label: 'In Development' },
-                    { n: stats.awards, label: 'Awards' },
-                  ].filter(s => s.n > 0).map(s => (
-                    <div key={s.label}>
-                      <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
-                      <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextMuted }}>{s.label}</p>
-                    </div>
-                  ))}
+              {[
+                { n: stats.scripts, label: 'Scripts Available' },
+                { n: stats.developing, label: 'In Development' },
+                { n: stats.awards, label: 'Awards' },
+              ].filter(s => s.n > 0).map(s => (
+                <div key={s.label}>
+                  <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
+                  <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextMuted }}>{s.label}</p>
                 </div>
-              )}
-
-              {/* Known For — compact poster strip alongside stats */}
-              {knownFor && knownFor.length > 0 && (
-                <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
-                  {knownFor.slice(0, 4).map((item: any) => {
-                    const card = (
-                      <div
-                        key={item.id}
-                        className="group/kf shrink-0 overflow-hidden transition-transform duration-300 hover:scale-105"
-                        style={{
-                          width: '52px',
-                          borderRadius: '4px',
-                          border: `1px solid rgba(255,255,255,0.1)`,
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                        }}
-                      >
-                        <div className="aspect-[2/3] overflow-hidden relative">
-                          {item.poster_url ? (
-                            <img src={item.poster_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
-                              <span className="text-xs" style={{ color: theme.textTertiary }}>🎬</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                    return item.imdb_link ? (
-                      <a key={item.id} href={item.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline shrink-0">
-                        {card}
-                      </a>
-                    ) : <div key={item.id} className="shrink-0">{card}</div>;
-                  })}
-                </div>
-              )}
+              ))}
             </div>
-          ) : null}
+          )}
         </div>
       </div>
 
