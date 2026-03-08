@@ -261,13 +261,23 @@ const CreditHeroCard = ({ project }: { project: any }) => {
 /* 2. STANDARD — Dense grid with sidebar modules */
 const StandardLayout = () => (
   <>
+    {/* Known For in sidebar */}
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
-      <PortfolioSectionWrapper title="Services" index={1}>
-        <SectionServices items={mockServices} compact />
-      </PortfolioSectionWrapper>
+      <div className="space-y-6">
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="grid" />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Services" index={1}>
+          <SectionServices items={mockServices} compact />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+    {/* Client logos bar */}
+    <div className="mb-10">
+      <SectionClientLogos companies={mockClients} variant="bar" />
     </div>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -296,6 +306,12 @@ const StandardLayout = () => (
 /* 3. CINEMATIC — Full-width hero, poster gallery */
 const CinematicLayout = () => (
   <>
+    {/* Full-width Known For strip */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
+    </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -305,6 +321,10 @@ const CinematicLayout = () => (
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
       </PortfolioSectionWrapper>
+    </div>
+    {/* Marquee ticker */}
+    <div className="mb-12">
+      <SectionClientLogos companies={mockClients} variant="marquee" />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -333,6 +353,9 @@ const CinematicLayout = () => (
 /* 4. COMPACT — Maximum density */
 const CompactLayout = () => (
   <>
+    <div className="mb-4">
+      <SectionClientLogos companies={mockClients} variant="bar" />
+    </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 mb-6">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -367,6 +390,9 @@ const CompactLayout = () => (
 const MagazineLayout = () => (
   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
     <div className="space-y-10">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
@@ -386,6 +412,9 @@ const MagazineLayout = () => (
       </div>
     </div>
     <div className="space-y-8">
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <SectionClientLogos companies={mockClients} variant="grid" />
+      </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={3}>
         <SectionServices items={mockServices} compact />
       </PortfolioSectionWrapper>
@@ -402,6 +431,7 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
+    { key: "knownfor", title: "Known For", content: <SectionKnownFor items={mockKnownFor} variant="grid" /> },
     { key: "loglines", title: "Original Work", content: <SectionLoglineShowcase items={mockLoglines} /> },
     { key: "scripts", title: "Script Library", content: <SectionScriptLibrary items={mockScripts} /> },
     { key: "credits", title: "Produced Credits", content: <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" /> },
