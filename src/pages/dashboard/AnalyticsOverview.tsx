@@ -25,7 +25,7 @@ const AnalyticsOverview = () => {
     const fetchAnalytics = async () => {
       const { data: views } = await supabase
         .from("page_views")
-        .select("created_at, device_type, referrer")
+        .select("created_at, device_type, referrer, country, city")
         .eq("profile_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1000);
