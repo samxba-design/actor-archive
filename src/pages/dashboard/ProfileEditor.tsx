@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
-import WritingAssistant from "@/components/dashboard/WritingAssistant";
+import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 
 interface ProfileForm {
   display_name: string;
