@@ -25,6 +25,7 @@ import IndustryTools from "@/pages/dashboard/IndustryTools";
 import PipelineTracker from "@/pages/dashboard/PipelineTracker";
 import SmartFollowUp from "@/pages/dashboard/SmartFollowUp";
 import EmbedAndShare from "@/pages/dashboard/EmbedAndShare";
+import ScriptManager from "@/pages/dashboard/ScriptManager";
 
 const Dashboard = () => {
   return (
@@ -33,6 +34,7 @@ const Dashboard = () => {
         <Route index element={<DashboardHome />} />
         <Route path="profile" element={<ProfileEditor />} />
         <Route path="projects" element={<ProjectsManager />} />
+        <Route path="scripts" element={<ScriptManager />} />
         <Route path="gallery" element={<GalleryManager />} />
         <Route path="social" element={<SocialLinksManager />} />
         <Route path="services" element={<ServicesManager />} />

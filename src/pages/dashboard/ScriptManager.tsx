@@ -36,7 +36,7 @@ const ScriptManager = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const SCRIPT_TYPES = ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet", "writing_sample"];
+  const SCRIPT_TYPES = ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet", "writing_sample"] as const;
 
   const [form, setForm] = useState({
     title: "",

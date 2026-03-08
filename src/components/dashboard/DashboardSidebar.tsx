@@ -35,6 +35,7 @@ const mainNav: NavItem[] = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Profile", url: "/dashboard/profile", icon: User },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
+  { title: "Scripts & Docs", url: "/dashboard/scripts", icon: FileText },
   { title: "Gallery", url: "/dashboard/gallery", icon: Image },
   { title: "Services", url: "/dashboard/services", icon: Briefcase },
   { title: "Social Links", url: "/dashboard/social", icon: Link2 },
