@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { compressImage } from "@/lib/imageCompression";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -126,9 +127,14 @@ const ProfileEditor = () => {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, bucket: string, field: keyof ProfileForm) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
-    const ext = file.name.split(".").pop();
+
+    // Compress image before upload
+    const maxDim = bucket === "headshots" ? 800 : 1920;
+    const compressed = await compressImage(file, { maxWidth: maxDim, maxHeight: maxDim, quality: 0.85 });
+
+    const ext = compressed.name.split(".").pop();
     const path = `${user.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    const { error } = await supabase.storage.from(bucket).upload(path, compressed, { upsert: true });
     if (error) {
       toast({ title: "Upload error", description: error.message, variant: "destructive" });
       return;
