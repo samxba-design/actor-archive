@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { getContrastTextColors, isLightColor } from "@/lib/contrastColor";
 import { BokehField } from "@/components/CinematicBackground";
-import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CompanyLogo from "@/components/CompanyLogo";
 import { PosterCard } from "./sections/SectionKnownFor";
