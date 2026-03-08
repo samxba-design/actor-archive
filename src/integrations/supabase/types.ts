@@ -603,6 +603,72 @@ export type Database = {
           },
         ]
       }
+      pipeline_submissions: {
+        Row: {
+          company_name: string
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          notes: string | null
+          profile_id: string
+          project_id: string | null
+          response_at: string | null
+          status: string
+          submission_type: string | null
+          submitted_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          profile_id: string
+          project_id?: string | null
+          response_at?: string | null
+          status?: string
+          submission_type?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          project_id?: string | null
+          response_at?: string | null
+          status?: string
+          submission_type?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_submissions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pipeline_submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       press: {
         Row: {
           article_url: string | null
