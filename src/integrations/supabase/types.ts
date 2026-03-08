@@ -173,6 +173,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "awards_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       client_logos_profile: {
@@ -307,6 +314,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "contact_submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       download_logs: {
@@ -353,6 +367,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "download_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
         ]
@@ -456,6 +477,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "email_captures_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       events: {
@@ -525,6 +553,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       gallery_images: {
@@ -585,6 +620,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "gallery_images_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       page_views: {
@@ -637,6 +679,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_views_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
         ]
@@ -703,6 +752,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pipeline_submissions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
         ]
@@ -777,6 +833,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "press_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       production_history: {
@@ -835,6 +898,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "production_history_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
             referencedColumns: ["id"]
           },
         ]
@@ -1500,6 +1570,13 @@ export type Database = {
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "testimonials_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "public_projects"
+            referencedColumns: ["id"]
+          },
         ]
       }
       tmdb_cache: {
@@ -1576,7 +1653,212 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_projects: {
+        Row: {
+          access_level: Database["public"]["Enums"]["access_level"] | null
+          article_url: string | null
+          backdrop_url: string | null
+          beat: string | null
+          cast_size_notation: string | null
+          challenge: string | null
+          chapters: Json | null
+          client: string | null
+          comparable_titles: Json | null
+          coverage_excerpt: string | null
+          created_at: string | null
+          credit_medium: string | null
+          custom_image_url: string | null
+          description: string | null
+          director: string | null
+          display_order: number | null
+          duration: string | null
+          episode_count: number | null
+          format: string | null
+          genre: string[] | null
+          id: string | null
+          imdb_link: string | null
+          is_featured: boolean | null
+          is_notable: boolean | null
+          isbn: string | null
+          logline: string | null
+          metric_callouts: Json | null
+          nda_url: string | null
+          network: string | null
+          network_or_studio: string | null
+          notable_cast: string[] | null
+          page_count: number | null
+          poster_url: string | null
+          production_company: string | null
+          profile_id: string | null
+          project_slug: string | null
+          project_type: Database["public"]["Enums"]["project_type"] | null
+          publication: string | null
+          publisher: string | null
+          purchase_links: Json | null
+          results: string | null
+          rights_status: string | null
+          role_name: string | null
+          role_type: string | null
+          runtime_minutes: number | null
+          script_pdf_url: string | null
+          season_number: number | null
+          series_bible_url: string | null
+          set_requirements: string | null
+          show_role: string | null
+          solution: string | null
+          status: string | null
+          synopsis: string | null
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string | null
+          tmdb_id: number | null
+          updated_at: string | null
+          video_thumbnail_url: string | null
+          video_type: string | null
+          video_url: string | null
+          writing_samples_category: string | null
+          year: number | null
+        }
+        Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"] | null
+          article_url?: string | null
+          backdrop_url?: string | null
+          beat?: string | null
+          cast_size_notation?: string | null
+          challenge?: string | null
+          chapters?: Json | null
+          client?: string | null
+          comparable_titles?: Json | null
+          coverage_excerpt?: string | null
+          created_at?: string | null
+          credit_medium?: string | null
+          custom_image_url?: string | null
+          description?: string | null
+          director?: string | null
+          display_order?: number | null
+          duration?: string | null
+          episode_count?: number | null
+          format?: string | null
+          genre?: string[] | null
+          id?: string | null
+          imdb_link?: string | null
+          is_featured?: boolean | null
+          is_notable?: boolean | null
+          isbn?: string | null
+          logline?: string | null
+          metric_callouts?: Json | null
+          nda_url?: string | null
+          network?: string | null
+          network_or_studio?: string | null
+          notable_cast?: string[] | null
+          page_count?: number | null
+          poster_url?: string | null
+          production_company?: string | null
+          profile_id?: string | null
+          project_slug?: string | null
+          project_type?: Database["public"]["Enums"]["project_type"] | null
+          publication?: string | null
+          publisher?: string | null
+          purchase_links?: Json | null
+          results?: string | null
+          rights_status?: string | null
+          role_name?: string | null
+          role_type?: string | null
+          runtime_minutes?: number | null
+          script_pdf_url?: string | null
+          season_number?: number | null
+          series_bible_url?: string | null
+          set_requirements?: string | null
+          show_role?: string | null
+          solution?: string | null
+          status?: string | null
+          synopsis?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string | null
+          tmdb_id?: number | null
+          updated_at?: string | null
+          video_thumbnail_url?: string | null
+          video_type?: string | null
+          video_url?: string | null
+          writing_samples_category?: string | null
+          year?: number | null
+        }
+        Update: {
+          access_level?: Database["public"]["Enums"]["access_level"] | null
+          article_url?: string | null
+          backdrop_url?: string | null
+          beat?: string | null
+          cast_size_notation?: string | null
+          challenge?: string | null
+          chapters?: Json | null
+          client?: string | null
+          comparable_titles?: Json | null
+          coverage_excerpt?: string | null
+          created_at?: string | null
+          credit_medium?: string | null
+          custom_image_url?: string | null
+          description?: string | null
+          director?: string | null
+          display_order?: number | null
+          duration?: string | null
+          episode_count?: number | null
+          format?: string | null
+          genre?: string[] | null
+          id?: string | null
+          imdb_link?: string | null
+          is_featured?: boolean | null
+          is_notable?: boolean | null
+          isbn?: string | null
+          logline?: string | null
+          metric_callouts?: Json | null
+          nda_url?: string | null
+          network?: string | null
+          network_or_studio?: string | null
+          notable_cast?: string[] | null
+          page_count?: number | null
+          poster_url?: string | null
+          production_company?: string | null
+          profile_id?: string | null
+          project_slug?: string | null
+          project_type?: Database["public"]["Enums"]["project_type"] | null
+          publication?: string | null
+          publisher?: string | null
+          purchase_links?: Json | null
+          results?: string | null
+          rights_status?: string | null
+          role_name?: string | null
+          role_type?: string | null
+          runtime_minutes?: number | null
+          script_pdf_url?: string | null
+          season_number?: number | null
+          series_bible_url?: string | null
+          set_requirements?: string | null
+          show_role?: string | null
+          solution?: string | null
+          status?: string | null
+          synopsis?: string | null
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string | null
+          tmdb_id?: number | null
+          updated_at?: string | null
+          video_thumbnail_url?: string | null
+          video_type?: string | null
+          video_url?: string | null
+          writing_samples_category?: string | null
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
