@@ -787,6 +787,7 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
+  const [knownForVariant, setKnownForVariant] = useState<KnownForVariant>("strip");
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
