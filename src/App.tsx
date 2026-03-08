@@ -13,6 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import PublicProfile from "./pages/PublicProfile";
+import ProjectPitchPage from "./pages/ProjectPitchPage";
 import DemoScreenwriter from "./pages/DemoScreenwriter";
 import NotFound from "./pages/NotFound";
 
@@ -48,6 +49,7 @@ const App = () => (
               }
             />
             <Route path="/p/:slug" element={<PublicProfile />} />
+            <Route path="/p/:slug/:projectSlug" element={<ProjectPitchPage />} />
             <Route path="/demo/screenwriter" element={<DemoScreenwriter />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
