@@ -154,7 +154,8 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   ],
   heroRightContent: [
     { key: 'featured', label: 'Featured' }, { key: 'services', label: 'Services' },
-    { key: 'stats', label: 'Stats' }, { key: 'testimonial', label: 'Testimonial' }, { key: 'none', label: 'None' },
+    { key: 'stats', label: 'Stats' }, { key: 'testimonial', label: 'Testimonial' },
+    { key: 'showreel', label: 'Showreel' }, { key: 'none', label: 'None' },
   ],
   ctaPreset: [
     { key: 'script', label: 'Read Script' }, { key: 'hire', label: 'Hire Me' },

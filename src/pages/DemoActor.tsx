@@ -163,7 +163,7 @@ const actorDefaultVariants: SectionVariants = {
   credits: 'poster',
   gallery: 'grid',
   heroLayout: 'classic',
-  heroRightContent: 'none',
+  heroRightContent: 'showreel',
   ctaPreset: 'contact',
   heroKnownFor: 'strip',
 };
@@ -172,9 +172,10 @@ const actorDefaultVariants: SectionVariants = {
 
 const ClassicLayout = () => (
   <>
-    {/* Two-column: Stats left, Showreel right */}
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-6 mb-10">
+    <div className="mb-10">
       <SectionActorStats stats={mockActorStats} profilePhoto={mockProfile.profile_photo_url} displayName={mockProfile.display_name} representation={mockRepresentation} />
+    </div>
+    <div className="mb-10">
       <PortfolioSectionWrapper title="Demo Reels" index={0}>
         <DemoReelsWithToggle items={mockDemoReels} />
       </PortfolioSectionWrapper>
@@ -667,6 +668,7 @@ const DemoActor = () => {
         heroKnownFor={variants.heroKnownFor}
         services={[]}
         testimonials={mockTestimonials}
+        demoReels={mockDemoReels}
         imageAnimation={variants.imageAnimation}
       />
 

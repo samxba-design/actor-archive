@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote } from "lucide-react";
+import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote, Play } from "lucide-react";
+import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
@@ -21,7 +22,7 @@ const PRESET_GRADIENTS: Record<string, string> = {
 };
 
 export type HeroLayout = 'classic' | 'centered' | 'split' | 'minimal' | 'banner' | 'sidebar' | 'editorial' | 'card' | 'stacked' | 'cinematic' | 'compact';
-export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'none';
+export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'showreel' | 'none';
 export type HeroKnownForStyle = 'strip' | 'large' | 'text' | 'hidden';
 
 interface Props {
@@ -57,6 +58,7 @@ interface Props {
   heroKnownFor?: HeroKnownForStyle;
   services?: any[];
   testimonials?: any[];
+  demoReels?: any[];
   imageAnimation?: string;
 }
 
@@ -66,7 +68,7 @@ const platformIcons: Record<string, string> = {
   website: "🌐", spotlight: "★",
 };
 
-const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, imageAnimation = 'none' }: Props) => {
+const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, demoReels, imageAnimation = 'none' }: Props) => {
   const theme = usePortfolioTheme();
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -288,6 +290,36 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   /* ── Right column content ── */
   const RightContent = () => {
     if (heroRightContent === 'none') return null;
+
+    if (heroRightContent === 'showreel' && demoReels?.length) {
+      const reel = demoReels[0];
+      const getReelEmbedUrl = (url: string) => {
+        if (isYouTube(url)) { const yid = extractYouTubeId(url); if (yid) return `https://www.youtube.com/embed/${yid}`; }
+        if (isVimeo(url)) { const vid = extractVimeoId(url); if (vid) return `https://player.vimeo.com/video/${vid}`; }
+        return "";
+      };
+      const reelEmbedUrl = getReelEmbedUrl(reel.video_url);
+      return (
+        <div className="w-full lg:w-[420px] shrink-0" style={stagger(3)}>
+          <div className="overflow-hidden" style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, boxShadow: theme.cardShadow }}>
+            <div className="relative" style={{ aspectRatio: '16/9' }}>
+              {reelEmbedUrl ? (
+                <iframe src={reelEmbedUrl} title={reel.title} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+              ) : (
+                <a href={reel.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+                  <Play className="w-10 h-10" style={{ color: theme.accentPrimary }} />
+                </a>
+              )}
+            </div>
+            <div className="px-3 py-2" style={{ backgroundColor: theme.bgSecondary }}>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>Showreel</p>
+              <p className="text-[13px] font-medium mt-0.5" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{reel.title}</p>
+              {reel.description && <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: theme.textSecondary }}>{reel.description}</p>}
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     if (heroRightContent === 'services' && services?.length) {
       return (
