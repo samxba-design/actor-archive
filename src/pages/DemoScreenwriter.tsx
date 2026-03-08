@@ -20,32 +20,138 @@ import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
-/* ── Known For variant context (shared across layouts) ── */
-const KnownForVariantCtx = createContext<{ variant: KnownForVariant; setVariant: (v: KnownForVariant) => void }>({ variant: 'strip', setVariant: () => {} });
-const useKnownForVariant = () => useContext(KnownForVariantCtx);
+/* ── Unified section variants context ── */
+interface SectionVariants {
+  knownFor: KnownForVariant;
+  loglines: 'editorial' | 'cards' | 'minimal';
+  scripts: 'detailed' | 'grid' | 'compact';
+  credits: 'poster' | 'table' | 'grid';
+  awards: 'list' | 'grid' | 'laurels';
+  testimonials: 'carousel' | 'cards' | 'wall' | 'single';
+  press: 'feed' | 'cards' | 'quotes';
+  services: 'full' | 'compact' | 'pricing';
+  clientLogos: 'bar' | 'grid' | 'marquee';
+}
 
-const KNOWN_FOR_OPTIONS = [
-  { key: 'strip', label: 'Strip' },
-  { key: 'scroll', label: 'Scroll' },
-  { key: 'grid', label: 'Grid' },
-  { key: 'stack', label: 'Stack' },
-  { key: 'spotlight', label: 'Spotlight' },
-];
+const defaultVariants: SectionVariants = {
+  knownFor: 'strip',
+  loglines: 'editorial',
+  scripts: 'detailed',
+  credits: 'poster',
+  awards: 'list',
+  testimonials: 'carousel',
+  press: 'feed',
+  services: 'full',
+  clientLogos: 'bar',
+};
 
-const KnownForWithToggle = ({ items, display }: { items: any[]; display?: 'both' | 'image' | 'text' }) => {
-  const { variant, setVariant } = useKnownForVariant();
+const SectionVariantsCtx = createContext<{
+  variants: SectionVariants;
+  setVariant: <K extends keyof SectionVariants>(key: K, value: SectionVariants[K]) => void;
+}>({ variants: defaultVariants, setVariant: () => {} });
+const useSectionVariants = () => useContext(SectionVariantsCtx);
+
+/* ── Option definitions ── */
+const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: string }[]> = {
+  knownFor: [
+    { key: 'strip', label: 'Strip' }, { key: 'scroll', label: 'Scroll' }, { key: 'grid', label: 'Grid' },
+    { key: 'stack', label: 'Stack' }, { key: 'spotlight', label: 'Spotlight' },
+  ],
+  loglines: [
+    { key: 'editorial', label: 'Editorial' }, { key: 'cards', label: 'Cards' }, { key: 'minimal', label: 'Minimal' },
+  ],
+  scripts: [
+    { key: 'detailed', label: 'Detailed' }, { key: 'grid', label: 'Grid' }, { key: 'compact', label: 'Compact' },
+  ],
+  credits: [
+    { key: 'poster', label: 'Poster' }, { key: 'table', label: 'Table' }, { key: 'grid', label: 'Grid' },
+  ],
+  awards: [
+    { key: 'list', label: 'List' }, { key: 'grid', label: 'Grid' }, { key: 'laurels', label: 'Laurels' },
+  ],
+  testimonials: [
+    { key: 'carousel', label: 'Carousel' }, { key: 'cards', label: 'Cards' }, { key: 'wall', label: 'Wall' }, { key: 'single', label: 'Featured' },
+  ],
+  press: [
+    { key: 'feed', label: 'Feed' }, { key: 'cards', label: 'Cards' }, { key: 'quotes', label: 'Quotes' },
+  ],
+  services: [
+    { key: 'full', label: 'Full' }, { key: 'compact', label: 'Compact' }, { key: 'pricing', label: 'Pricing' },
+  ],
+  clientLogos: [
+    { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
+  ],
+};
+
+/* ── Toggle wrapper components ── */
+const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {
+  const { variants, setVariant } = useSectionVariants();
   return (
     <>
       <SectionOptionsBar
-        sectionName="Known For"
-        options={KNOWN_FOR_OPTIONS}
-        value={variant}
-        onChange={(v) => setVariant(v as KnownForVariant)}
+        sectionName={sectionName}
+        options={VARIANT_OPTIONS[sectionKey]}
+        value={variants[sectionKey]}
+        onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
       />
-      <SectionKnownFor items={items} variant={variant} display={display} />
+      {children(variants[sectionKey])}
     </>
   );
 };
+
+const KnownForWithToggle = ({ items, display }: { items: any[]; display?: 'both' | 'image' | 'text' }) => (
+  <WithToggle sectionKey="knownFor" sectionName="Known For">
+    {(variant) => <SectionKnownFor items={items} variant={variant} display={display} />}
+  </WithToggle>
+);
+
+const LoglinesWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="loglines" sectionName="Loglines">
+    {(variant) => <SectionLoglineShowcase items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ScriptsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="scripts" sectionName="Scripts">
+    {(variant) => <SectionScriptLibrary items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const CreditsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="credits" sectionName="Credits">
+    {(variant) => <SectionProjects items={items} profileType="screenwriter" layout={variant} />}
+  </WithToggle>
+);
+
+const AwardsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="awards" sectionName="Awards">
+    {(variant) => <SectionAwards items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const TestimonialsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="testimonials" sectionName="Testimonials">
+    {(variant) => <SectionTestimonials items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const PressWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="press" sectionName="Press">
+    {(variant) => <SectionPress items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ServicesWithToggle = ({ items, compact }: { items: any[]; compact?: boolean }) => (
+  <WithToggle sectionKey="services" sectionName="Services">
+    {(variant) => <SectionServices items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
+  <WithToggle sectionKey="clientLogos" sectionName="Client Logos">
+    {(variant) => <SectionClientLogos companies={companies} variant={variant} />}
+  </WithToggle>
+);
 
 /* ══════════════════════ MOCK DATA ══════════════════════ */
 const mockProfile = {
