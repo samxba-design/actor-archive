@@ -199,7 +199,11 @@ const PublicProfile = () => {
       </main>
 
       <PortfolioFooter
-        profile={profile}
+        profile={{
+          ...profile,
+          auto_responder_enabled: (profile as any).auto_responder_enabled,
+          auto_responder_message: (profile as any).auto_responder_message,
+        }}
         showContact={profile.show_contact_form !== false}
       />
     </div>
