@@ -154,7 +154,8 @@ const StatItem = forwardRef<HTMLDivElement, { icon: any; value: string; label: s
       <div className="text-xs mt-1" style={{ color: "hsl(var(--landing-muted))" }}>{label}</div>
     </div>
   );
-};
+});
+StatItem.displayName = "StatItem";
 
 const ThemeShowcase = forwardRef<HTMLDivElement>((_, _ref) => {
   const [active, setActive] = useState(0);
