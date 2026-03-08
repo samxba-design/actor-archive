@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -124,10 +125,10 @@ const PipelineTracker = () => {
     <UpgradeGate feature="pipeline_tracker" label="Pipeline Tracker">
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Pipeline Tracker</h1>
-          <p className="text-muted-foreground mt-1">Track where your scripts have been submitted.</p>
-        </div>
+        <PageHeader
+          title="Pipeline Tracker"
+          description="Track where your scripts have been submitted and monitor responses. Keep all your submission activity in one place."
+        />
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" /> Add Submission</Button>

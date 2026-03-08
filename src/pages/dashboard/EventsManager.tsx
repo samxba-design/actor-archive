@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
+import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -65,11 +67,14 @@ const EventsManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Events</h1>
+        <PageHeader
+          title="Events"
+          description="List upcoming screenings, performances, festivals, or appearances. Upcoming events show a badge on your portfolio."
+        />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Event</Button>
       </div>
       {items.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No events yet.</CardContent></Card>
+        <EmptyState icon={CalendarDays} title="No events yet" description="Add screenings, premieres, or speaking engagements to keep your portfolio current." actionLabel="Add Event" onAction={openAdd} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

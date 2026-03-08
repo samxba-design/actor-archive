@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
+import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -63,11 +65,14 @@ const EducationManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Education & Training</h1>
+        <PageHeader
+          title="Education & Training"
+          description="List your degrees, workshops, conservatory training, and mentorships. Training credentials help establish your professional foundation."
+        />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add</Button>
       </div>
       {items.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No education entries yet.</CardContent></Card>
+        <EmptyState icon={GraduationCap} title="No education entries yet" description="Add schools, workshops, masterclasses, or private coaching to show your training background." actionLabel="Add Education" onAction={openAdd} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

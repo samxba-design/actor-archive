@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -81,8 +82,10 @@ const GalleryManager = () => {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Gallery</h1>
+      <PageHeader
+        title="Gallery"
+        description="Upload headshots, production stills, and behind-the-scenes photos. These display in a gallery grid on your portfolio."
+      />
       </div>
 
       <Card>
