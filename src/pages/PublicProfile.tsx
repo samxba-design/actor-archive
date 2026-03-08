@@ -38,6 +38,8 @@ interface ProfileData {
   layout_density: string | null;
   custom_css: string | null;
   subscription_tier?: string | null;
+  hero_style?: string | null;
+  hero_background_preset?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
