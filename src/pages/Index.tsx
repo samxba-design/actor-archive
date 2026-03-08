@@ -7,7 +7,7 @@ import {
   BarChart3, Palette, Shield, Zap, Globe, Users,
   Eye, MessageSquare, FolderOpen, Diamond
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 
 /* ── data ── */
 const features = [
@@ -116,7 +116,7 @@ const CinematicBackground = () => (
   </>
 );
 
-const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: string; desc: string; index: number }) => {
+const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc: string; index: number }>(({ icon: Icon, title, desc, index }, _ref) => {
   const { ref, inView } = useInView();
   return (
     <div
@@ -142,7 +142,8 @@ const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: str
       <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--landing-muted))" }}>{desc}</p>
     </div>
   );
-};
+});
+FeatureCard.displayName = "FeatureCard";
 
 const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
   const { ref, inView } = useInView();
