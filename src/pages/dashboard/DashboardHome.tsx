@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import {
   Loader2, Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
@@ -46,7 +44,7 @@ const DashboardHome = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8" style={{ color: "hsl(var(--landing-muted))" }} /></div>;
   }
 
   // Profile readiness score
@@ -62,13 +60,13 @@ const DashboardHome = () => {
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-4xl space-y-6" style={{ color: "hsl(var(--landing-fg))" }}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>
             Welcome back{profile?.display_name ? `, ${profile.display_name}` : ""}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">Here's how your portfolio is performing</p>
+          <p className="text-sm mt-1" style={{ color: "hsl(var(--landing-muted))" }}>Here's how your portfolio is performing</p>
         </div>
         <div className="flex items-center gap-2">
           {profile?.slug && (
@@ -98,88 +96,62 @@ const DashboardHome = () => {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate("/dashboard/analytics")}>
-          <CardContent className="pt-6 flex items-center gap-3">
-            <Eye className="h-8 w-8 text-primary shrink-0" />
+        {[
+          { icon: Eye, value: recentViews, label: "Views (30d)", route: "/dashboard/analytics" },
+          { icon: Inbox, value: unreadInbox, label: "Unread messages", route: "/dashboard/inbox" },
+          { icon: FolderOpen, value: projectCount, label: "Projects", route: "/dashboard/projects" },
+          { icon: GitBranch, value: totalPipeline, label: "In pipeline", route: "/dashboard/pipeline" },
+        ].map((s, i) => (
+          <div key={i} onClick={() => navigate(s.route)}
+            className="cursor-pointer rounded-xl border p-5 flex items-center gap-3 transition-all hover:border-opacity-80"
+            style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
+            <s.icon className="h-8 w-8 shrink-0" style={{ color: "hsl(var(--landing-champagne))" }} />
             <div>
-              <p className="text-2xl font-bold text-foreground">{recentViews}</p>
-              <p className="text-xs text-muted-foreground">Views (30d)</p>
+              <p className="text-2xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{s.value}</p>
+              <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{s.label}</p>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate("/dashboard/inbox")}>
-          <CardContent className="pt-6 flex items-center gap-3">
-            <Inbox className="h-8 w-8 text-primary shrink-0" />
-            <div>
-              <p className="text-2xl font-bold text-foreground">{unreadInbox}</p>
-              <p className="text-xs text-muted-foreground">Unread messages</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate("/dashboard/projects")}>
-          <CardContent className="pt-6 flex items-center gap-3">
-            <FolderOpen className="h-8 w-8 text-primary shrink-0" />
-            <div>
-              <p className="text-2xl font-bold text-foreground">{projectCount}</p>
-              <p className="text-xs text-muted-foreground">Projects</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => navigate("/dashboard/pipeline")}>
-          <CardContent className="pt-6 flex items-center gap-3">
-            <GitBranch className="h-8 w-8 text-primary shrink-0" />
-            <div>
-              <p className="text-2xl font-bold text-foreground">{totalPipeline}</p>
-              <p className="text-xs text-muted-foreground">In pipeline</p>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
       </div>
 
       {/* Profile readiness */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Profile Readiness</CardTitle>
-            <Badge variant={readinessScore === 100 ? "default" : "secondary"}>{readinessScore}%</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="w-full bg-muted rounded-full h-2 mb-4">
-            <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${readinessScore}%` }} />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {checks.map((c) => (
-              <div key={c.label} className="flex items-center gap-2 text-sm">
-                {c.done ? (
-                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 text-muted-foreground shrink-0" />
-                )}
-                <span className={c.done ? "text-foreground" : "text-muted-foreground"}>{c.label}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>Profile Readiness</h2>
+          <span className="text-sm font-bold px-2 py-0.5 rounded-full" style={{ background: readinessScore === 100 ? "hsl(140 40% 45% / 0.2)" : "hsl(var(--landing-card))", color: readinessScore === 100 ? "hsl(140 50% 65%)" : "hsl(var(--landing-muted))" }}>{readinessScore}%</span>
+        </div>
+        <div className="w-full rounded-full h-2 mb-4" style={{ background: "hsl(var(--landing-border))" }}>
+          <div className="h-2 rounded-full transition-all" style={{ width: `${readinessScore}%`, background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }} />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {checks.map((c) => (
+            <div key={c.label} className="flex items-center gap-2 text-sm">
+              {c.done ? (
+                <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: "hsl(140 50% 55%)" }} />
+              ) : (
+                <AlertCircle className="h-4 w-4 shrink-0" style={{ color: "hsl(var(--landing-muted))" }} />
+              )}
+              <span style={{ color: c.done ? "hsl(var(--landing-fg))" : "hsl(var(--landing-muted))" }}>{c.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Quick actions */}
-      <Card>
-        <CardHeader><CardTitle className="text-lg">Quick Actions</CardTitle></CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/profile")}>
-              <User className="mr-2 h-4 w-4" />Edit Profile
-            </Button>
-            <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/projects")}>
-              <FolderOpen className="mr-2 h-4 w-4" />Manage Projects
-            </Button>
-            <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/settings")}>
-              <Settings className="mr-2 h-4 w-4" />Settings
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: "hsl(var(--landing-fg))" }}>Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/profile")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
+            <User className="mr-2 h-4 w-4" />Edit Profile
+          </Button>
+          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/projects")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
+            <FolderOpen className="mr-2 h-4 w-4" />Manage Projects
+          </Button>
+          <Button variant="outline" className="justify-start" onClick={() => navigate("/dashboard/settings")} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
+            <Settings className="mr-2 h-4 w-4" />Settings
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

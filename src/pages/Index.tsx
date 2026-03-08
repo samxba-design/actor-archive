@@ -5,9 +5,11 @@ import { themes } from "@/lib/themes";
 import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles,
   BarChart3, Palette, Shield, Zap, Globe, Users,
-  Eye, MessageSquare, FolderOpen, Diamond
+  Eye, MessageSquare, FolderOpen, Diamond, Quote
 } from "lucide-react";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 
 /* ── data ── */
 const features = [
@@ -33,7 +35,13 @@ const stats = [
   { icon: MessageSquare, value: "18K", label: "Contact Messages" },
 ];
 
-const showcaseThemes = ["noir", "editorial", "spotlight", "midnight"] as const;
+const showcaseThemes = ["noir", "editorial", "spotlight", "midnight", "warm-luxury", "modern-minimal", "frost"] as const;
+
+const testimonials = [
+  { quote: "CreativeSlate finally gave my scripts the showcase they deserve. I booked two generals in the first week.", author: "Maya Chen", role: "Screenwriter", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" },
+  { quote: "I booked two roles directly from agents who found my portfolio. The headshot gallery and stats page are game changers.", author: "Damon Brooks", role: "Actor", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" },
+  { quote: "The best portfolio platform I've seen for the entertainment industry. Period.", author: "Sofia Ortiz", role: "Director", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" },
+];
 
 /* ── bokeh config ── */
 const BOKEH_COLORS = [
@@ -142,13 +150,71 @@ const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc:
 });
 FeatureCard.displayName = "FeatureCard";
 
+const TestimonialCard = ({ quote, author, role, photo, index }: { quote: string; author: string; role: string; photo: string; index: number }) => {
+  const { ref, inView } = useInView();
+  return (
+    <div ref={ref} className="relative p-6 rounded-xl border glass-card"
+      style={{
+        opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)",
+        transition: `all 0.6s ease ${index * 100}ms`,
+        background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))",
+      }}>
+      <Quote className="h-5 w-5 mb-3" style={{ color: "hsl(var(--landing-accent) / 0.4)" }} />
+      <p className="text-sm leading-relaxed mb-4" style={{ color: "hsl(var(--landing-fg) / 0.85)" }}>"{quote}"</p>
+      <div className="flex items-center gap-3">
+        <img src={photo} alt={author} className="w-9 h-9 rounded-full object-cover" />
+        <div>
+          <p className="text-sm font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>{author}</p>
+          <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{role}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
   const { ref, inView } = useInView();
+  const [displayed, setDisplayed] = useState(value);
+  
+  useEffect(() => {
+    if (!inView) return;
+    // Parse the numeric part
+    const match = value.match(/^([\d,.]+)(\D*)$/);
+    if (!match) return;
+    const target = parseFloat(match[1].replace(/,/g, ''));
+    const suffix = match[2] || '';
+    const isDecimal = match[1].includes('.');
+    const hasCommas = match[1].includes(',');
+    const duration = 1800;
+    const startTime = performance.now();
+    
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const current = target * eased;
+      
+      let formatted: string;
+      if (isDecimal) {
+        formatted = current.toFixed(1);
+      } else if (hasCommas) {
+        formatted = Math.round(current).toLocaleString();
+      } else {
+        formatted = Math.round(current).toString();
+      }
+      
+      setDisplayed(formatted + suffix);
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    
+    requestAnimationFrame(animate);
+  }, [inView, value]);
+
   return (
     <div ref={ref} className="text-center transition-all duration-500 glass-stat"
       style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${index * 120}ms` }}>
       <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(var(--landing-champagne))" }} />
-      <div className="text-2xl sm:text-3xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{value}</div>
+      <div className="text-2xl sm:text-3xl font-bold tabular-nums" style={{ color: "hsl(var(--landing-fg))" }}>{displayed}</div>
       <div className="text-xs mt-1" style={{ color: "hsl(var(--landing-muted))" }}>{label}</div>
     </div>
   );
@@ -283,44 +349,7 @@ const Index = () => {
       {/* Spotlight that follows mouse */}
       <div className="spotlight-follow" />
 
-      {/* Nav */}
-      <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</span>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/how-it-works">How It Works</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/pricing">Pricing</Link>
-            </Button>
-            {/* Glass toggle */}
-            <button
-              onClick={toggleGlass}
-              className="glass-toggle h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
-              style={{
-                background: glassMode ? "hsl(var(--landing-accent) / 0.15)" : "transparent",
-                color: glassMode ? "hsl(var(--landing-champagne))" : "hsl(var(--landing-muted))",
-                border: "1px solid hsl(var(--landing-border))",
-              }}
-              title={glassMode ? "Switch to solid mode" : "Switch to glass mode"}
-            >
-              <Diamond className="h-3.5 w-3.5" />
-            </button>
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button size="sm" asChild
-              className="font-semibold border-0 text-white"
-              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-              <Link to="/signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -349,8 +378,13 @@ const Index = () => {
             all in one professional page designed for the entertainment industry.
           </p>
 
+          {/* Trust signal */}
+          <p className="text-xs tracking-wide animate-fade-in" style={{ color: "hsl(var(--landing-muted) / 0.7)", animationDelay: "600ms", animationFillMode: "backwards" }}>
+            Trusted by 2,400+ screenwriters, actors & directors
+          </p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in"
-            style={{ animationDelay: "650ms", animationFillMode: "backwards" }}>
+            style={{ animationDelay: "700ms", animationFillMode: "backwards" }}>
             <Button size="lg" asChild
               className="font-semibold border-0 text-white text-base px-8"
               style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))", boxShadow: "0 8px 30px -8px hsl(var(--landing-accent) / 0.3)" }}>
@@ -469,6 +503,21 @@ const Index = () => {
         <ThemeShowcase />
       </section>
 
+      {/* Testimonials */}
+      <section className="py-24 px-6 relative z-10" style={{ borderTop: "1px solid hsl(var(--landing-border))" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Loved by creatives</h2>
+            <p style={{ color: "hsl(var(--landing-muted))" }}>Hear from entertainment professionals who switched to CreativeSlate.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => (
+              <TestimonialCard key={i} {...t} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative py-28 px-6 overflow-hidden z-10">
         <div className="absolute inset-0 pointer-events-none"
@@ -490,19 +539,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t relative z-10" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
-          <span>© {new Date().getFullYear()} CreativeSlate</span>
-          <div className="flex gap-6">
-            <Link to="/how-it-works" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>How It Works</Link>
-            <Link to="/demo/screenwriter" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Demo</Link>
-            <Link to="/login" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Log in</Link>
-            <Link to="/signup" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Sign up</Link>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 };

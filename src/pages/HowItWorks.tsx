@@ -8,6 +8,8 @@ import {
   AlertTriangle, Clock, Frown, Briefcase
 } from "lucide-react";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 
 /* ── Bokeh (reuse from landing) ── */
 const BOKEH_COLORS = [
@@ -271,32 +273,7 @@ const HowItWorks = () => {
       <CinematicBackground />
       <div className="spotlight-follow" />
 
-      {/* Nav */}
-      <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</Link>
-          <div className="flex items-center gap-2">
-            <button onClick={toggleGlass}
-              className="glass-toggle h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
-              style={{
-                background: glassMode ? "hsl(var(--landing-accent) / 0.15)" : "transparent",
-                color: glassMode ? "hsl(var(--landing-champagne))" : "hsl(var(--landing-muted))",
-                border: "1px solid hsl(var(--landing-border))",
-              }}
-              title={glassMode ? "Switch to solid mode" : "Switch to glass mode"}>
-              <Diamond className="h-3.5 w-3.5" />
-            </button>
-            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
-              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button size="sm" asChild className="font-semibold border-0 text-white"
-              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-              <Link to="/signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />
 
       {/* ═══ HERO ═══ */}
       <section className="relative overflow-hidden">
@@ -484,19 +461,7 @@ const HowItWorks = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t relative z-10" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
-          <span>© {new Date().getFullYear()} CreativeSlate</span>
-          <div className="flex gap-6">
-            <Link to="/" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Home</Link>
-            <Link to="/demo/screenwriter" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Demo</Link>
-            <Link to="/login" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Log in</Link>
-            <Link to="/signup" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Sign up</Link>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 };
