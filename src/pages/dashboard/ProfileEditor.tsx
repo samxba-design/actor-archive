@@ -97,6 +97,8 @@ const ProfileEditor = () => {
         profile_photo_url: form.profile_photo_url || null,
         banner_url: form.banner_url || null,
         primary_goal: form.primary_goal || null,
+        hero_style: form.hero_style || "full",
+        hero_background_preset: form.hero_background_preset || null,
       } as any)
       .eq("id", user.id);
 
