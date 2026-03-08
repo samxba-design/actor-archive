@@ -109,6 +109,9 @@ const ProfileEditor = () => {
         primary_goal: form.primary_goal || null,
         hero_style: form.hero_style || "full",
         hero_background_preset: form.hero_background_preset || null,
+        hero_bg_type: form.hero_bg_type || "preset",
+        hero_bg_solid_color: form.hero_bg_solid_color || null,
+        hero_bg_video_url: form.hero_bg_video_url || null,
       } as any)
       .eq("id", user.id);
 
