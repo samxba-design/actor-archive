@@ -16,6 +16,11 @@ import TestimonialsManager from "@/pages/dashboard/TestimonialsManager";
 import SkillsManager from "@/pages/dashboard/SkillsManager";
 import RepresentationManager from "@/pages/dashboard/RepresentationManager";
 import ProfileInsights from "@/pages/dashboard/ProfileInsights";
+import CoverageSimulator from "@/pages/dashboard/CoverageSimulator";
+import CompTitleMatcher from "@/pages/dashboard/CompTitleMatcher";
+import CaseStudyBuilder from "@/pages/dashboard/CaseStudyBuilder";
+import EndorsementRequests from "@/pages/dashboard/EndorsementRequests";
+import IndustryTools from "@/pages/dashboard/IndustryTools";
 
 const Dashboard = () => {
   return (
@@ -36,6 +41,11 @@ const Dashboard = () => {
         <Route path="inbox" element={<ContactInbox />} />
         <Route path="analytics" element={<AnalyticsOverview />} />
         <Route path="insights" element={<ProfileInsights />} />
+        <Route path="coverage" element={<CoverageSimulator />} />
+        <Route path="comps" element={<CompTitleMatcher />} />
+        <Route path="case-study" element={<CaseStudyBuilder />} />
+        <Route path="endorsements" element={<EndorsementRequests />} />
+        <Route path="industry" element={<IndustryTools />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>
