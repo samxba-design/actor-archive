@@ -405,9 +405,11 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           </div>
           <RightContent />
         </div>
-        <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}>
-          <StatsBar />
-        </div>
+        {heroRightContent !== 'stats' && (
+          <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}>
+            <StatsBar />
+          </div>
+        )}
       </div>
     </div>
   );
