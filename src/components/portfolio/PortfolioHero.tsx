@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MapPin, ArrowRight, ChevronDown, ChevronUp, Building2 } from "lucide-react";
+import { MapPin, ArrowRight, ExternalLink, ChevronDown, ChevronUp, Building2 } from "lucide-react";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
@@ -135,7 +135,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
         <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
           {/* Known For — prominent carousel above identity */}
           {knownFor && knownFor.length > 0 && (
-            <div className="mb-6" style={stagger(0)}>
+            <div id="tour-known-for" className="mb-6" style={stagger(0)}>
               <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
                 {knownFor.slice(0, 6).map((item: any) => {
                   const card = (
@@ -175,7 +175,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           {/* Two-column: left identity, right featured project */}
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-end">
             {/* LEFT: Identity */}
-            <div className="flex-1 min-w-0 space-y-3">
+            <div id="tour-identity" className="flex-1 min-w-0 space-y-3">
               {/* Photo + name + rep inline */}
               <div className="flex items-end gap-4" style={stagger(1)}>
                 {profile.profile_photo_url ? (
@@ -351,90 +351,89 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
               )}
             </div>
 
-            {/* RIGHT: Featured project card — horizontal poster + info */}
+            {/* RIGHT: Featured project card — clickable, compact */}
             {featuredProject && (
-              <div className="w-full lg:w-[380px] shrink-0" style={stagger(3)}>
-                <div
-                  className="overflow-hidden transition-all duration-300 flex group/feat"
-                  style={{
-                    backgroundColor: theme.bgSecondary,
-                    border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
-                    borderRadius: theme.cardRadius,
-                    boxShadow: theme.cardShadow,
-                  }}
-                >
-                  {/* Poster (2:3) on left */}
-                  {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
-                    featuredProject.imdb_link ? (
-                      <a href={featuredProject.imdb_link} target="_blank" rel="noopener noreferrer" className="w-[110px] shrink-0 overflow-hidden block">
-                        <img
-                          src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
-                          alt={featuredProject.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover/feat:scale-105"
-                          style={{ minHeight: '165px' }}
-                        />
-                      </a>
-                    ) : (
-                      <div className="w-[110px] shrink-0 overflow-hidden">
-                        <img
-                          src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
-                          alt={featuredProject.title}
-                          className="w-full h-full object-cover"
-                          style={{ minHeight: '165px' }}
-                        />
-                      </div>
-                    )
-                  )}
-
-                  {/* Info on right — solid bg, always readable */}
-                  <div className="flex-1 p-4 space-y-2 min-w-0">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>
-                      Featured Project
-                    </p>
-                    <h3
-                      className="text-[15px] font-semibold leading-tight"
-                      style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}
+              <div id="tour-featured" className="w-full lg:w-[360px] shrink-0" style={stagger(3)}>
+                {(() => {
+                  const cardLink = featuredProject.imdb_link || featuredProject.script_pdf_url;
+                  const cardContent = (
+                    <div
+                      className="overflow-hidden transition-all duration-300 flex group/feat"
+                      style={{
+                        backgroundColor: theme.bgSecondary,
+                        border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
+                        borderRadius: theme.cardRadius,
+                        boxShadow: theme.cardShadow,
+                      }}
                     >
-                      {featuredProject.title}
-                    </h3>
-                    {featuredProject.genre?.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {featuredProject.genre.slice(0, 3).map((g: string) => (
-                          <span
-                            key={g}
-                            className="text-[9px] uppercase tracking-wide px-1.5 py-0.5"
-                            style={{
-                              backgroundColor: theme.accentSubtle,
-                              color: theme.textSecondary,
-                              borderRadius: '3px',
-                            }}
+                      {/* Poster with hover overlay */}
+                      {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
+                        <div className="w-[100px] shrink-0 overflow-hidden relative">
+                          <img
+                            src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
+                            alt={featuredProject.title}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover/feat:scale-105"
+                            style={{ minHeight: '150px' }}
+                          />
+                          {cardLink && (
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/feat:opacity-100 transition-opacity duration-300" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                              <ExternalLink className="w-5 h-5" style={{ color: '#fff' }} />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {/* Info — tighter spacing */}
+                      <div className="flex-1 p-3 space-y-1.5 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>
+                            Featured Project
+                          </p>
+                          {cardLink && (
+                            <span
+                              className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full ml-auto shrink-0"
+                              style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}
+                            >
+                              <ExternalLink className="w-2.5 h-2.5" />
+                              {featuredProject.imdb_link ? 'IMDb' : 'Read'}
+                            </span>
+                          )}
+                        </div>
+                        <h3
+                          className="text-[15px] font-semibold leading-tight"
+                          style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}
+                        >
+                          {featuredProject.title}
+                        </h3>
+                        {featuredProject.genre?.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {featuredProject.genre.slice(0, 3).map((g: string) => (
+                              <span
+                                key={g}
+                                className="text-[9px] uppercase tracking-wide px-1.5 py-0.5"
+                                style={{ backgroundColor: theme.accentSubtle, color: theme.textSecondary, borderRadius: '3px' }}
+                              >
+                                {g}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {featuredProject.logline && (
+                          <p
+                            className="text-[12px] leading-relaxed line-clamp-3"
+                            style={{ fontFamily: theme.fontBody, color: theme.textSecondary }}
                           >
-                            {g}
-                          </span>
-                        ))}
+                            "{featuredProject.logline}"
+                          </p>
+                        )}
                       </div>
-                    )}
-                    {featuredProject.logline && (
-                      <p
-                        className="text-[12px] leading-relaxed line-clamp-3"
-                        style={{
-                          fontFamily: theme.fontBody,
-                          fontStyle: 'normal',
-                          color: theme.textSecondary,
-                        }}
-                      >
-                        "{featuredProject.logline}"
-                      </p>
-                    )}
-                    {featuredProject.imdb_link ? (
-                      <a href={featuredProject.imdb_link} target="_blank" rel="noopener noreferrer">
-                        <PortfolioCTA label="View on IMDb" />
-                      </a>
-                    ) : featuredProject.script_pdf_url ? (
-                      <PortfolioCTA label="Read Script" href={featuredProject.script_pdf_url} />
-                    ) : null}
-                  </div>
-                </div>
+                    </div>
+                  );
+                  return cardLink ? (
+                    <a href={cardLink} target="_blank" rel="noopener noreferrer" className="no-underline block hover:scale-[1.01] transition-transform duration-300">
+                      {cardContent}
+                    </a>
+                  ) : cardContent;
+                })()}
               </div>
             )}
           </div>
@@ -442,6 +441,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           {/* Stats bar */}
           {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
             <div
+              id="tour-stats"
               className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
               style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(6) }}
             >
