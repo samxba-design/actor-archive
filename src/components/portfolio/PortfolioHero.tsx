@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MapPin, Briefcase, Star, Calendar, Mail, ArrowRight } from "lucide-react";
+import { MapPin, Briefcase, Star, Calendar, Mail, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import BookingModal from "./BookingModal";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,6 +9,7 @@ interface Props {
     display_name: string | null;
     first_name: string | null;
     last_name: string | null;
+    headline?: string | null;
     tagline: string | null;
     bio: string | null;
     location: string | null;
@@ -56,11 +57,11 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
   const [scrollY, setScrollY] = useState(0);
+  const [bioExpanded, setBioExpanded] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
 
   const socialLinks = socialLinksProp || fetchedLinks;
 
-  // Fetch social links for hero display (skip if prop provided)
   useEffect(() => {
     if (socialLinksProp || !profile.id) return;
     supabase
@@ -71,7 +72,6 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
       .then(({ data }) => setFetchedLinks(data || []));
   }, [profile.id, socialLinksProp]);
 
-  // Parallax
   useEffect(() => {
     if (!profile.banner_url) return;
     const handleScroll = () => setScrollY(window.scrollY);
@@ -107,9 +107,13 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
     return <ArrowRight className="w-4 h-4" />;
   };
 
+  const bioTruncateLen = 200;
+  const bioText = profile.bio || "";
+  const bioIsTruncatable = bioText.length > bioTruncateLen;
+  const displayBio = bioIsTruncatable && !bioExpanded ? `${bioText.slice(0, bioTruncateLen)}...` : bioText;
+
   return (
     <header className="relative">
-      {/* Banner with parallax */}
       {profile.banner_url ? (
         <div ref={bannerRef} className="h-56 sm:h-72 md:h-80 w-full overflow-hidden relative">
           <img
@@ -124,10 +128,8 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
         <div className="h-32 sm:h-40 w-full" style={{ backgroundColor: "hsl(var(--portfolio-muted))" }} />
       )}
 
-      {/* Profile content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          {/* Avatar with reveal */}
           {profile.profile_photo_url ? (
             <img
               src={profile.profile_photo_url}
@@ -148,7 +150,6 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
             </div>
           )}
 
-          {/* Info */}
           <div className="flex-1 pt-2 sm:pt-6 space-y-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h1
@@ -176,8 +177,18 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
               )}
             </div>
 
+            {/* Headline — prominent pitch line */}
+            {profile.headline && (
+              <p
+                className="text-lg font-semibold"
+                style={{ color: "hsl(var(--portfolio-fg))", animation: "word-reveal 0.6s ease-out 0.15s both" }}
+              >
+                {profile.headline}
+              </p>
+            )}
+
             {profile.tagline && (
-              <p className="text-lg" style={{ color: "hsl(var(--portfolio-muted-fg))", animation: "word-reveal 0.6s ease-out 0.2s both" }}>
+              <p className="text-base" style={{ color: "hsl(var(--portfolio-muted-fg))", animation: "word-reveal 0.6s ease-out 0.2s both" }}>
                 {profile.tagline}
               </p>
             )}
@@ -213,7 +224,6 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
               )}
             </div>
 
-            {/* Social links in hero */}
             {socialLinks.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-1">
                 {socialLinks.map((link) => {
@@ -239,19 +249,33 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
               </div>
             )}
 
-            {profile.bio && (
-              <p
-                className="mt-4 max-w-2xl leading-relaxed whitespace-pre-line"
-                style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}
-              >
-                {profile.bio}
-              </p>
+            {bioText && (
+              <div className="mt-4 max-w-2xl">
+                <p
+                  className="leading-relaxed whitespace-pre-line"
+                  style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}
+                >
+                  {displayBio}
+                </p>
+                {bioIsTruncatable && (
+                  <button
+                    onClick={() => setBioExpanded(!bioExpanded)}
+                    className="mt-1 inline-flex items-center gap-1 text-sm font-medium transition-colors hover:opacity-80"
+                    style={{ color: "hsl(var(--portfolio-accent))" }}
+                  >
+                    {bioExpanded ? (
+                      <>Read less <ChevronUp className="w-3.5 h-3.5" /></>
+                    ) : (
+                      <>Read more <ChevronDown className="w-3.5 h-3.5" /></>
+                    )}
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Booking Modal */}
       {(profile.booking_url || profile.cta_url) && (
         <BookingModal
           open={bookingOpen}

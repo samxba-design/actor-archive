@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import StepProfileType from "@/components/onboarding/StepProfileType";
+import StepGoal from "@/components/onboarding/StepGoal";
 import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
 import StepSlug from "@/components/onboarding/StepSlug";
 import StepActorStats from "@/components/onboarding/StepActorStats";
@@ -17,6 +18,7 @@ type ProfileType = Database["public"]["Enums"]["profile_type"];
 export interface OnboardingData {
   profileType: ProfileType | null;
   secondaryTypes: string[];
+  primaryGoal: string;
   displayName: string;
   firstName: string;
   lastName: string;
@@ -41,6 +43,7 @@ export interface OnboardingData {
 const INITIAL_DATA: OnboardingData = {
   profileType: null,
   secondaryTypes: [],
+  primaryGoal: "",
   displayName: "",
   firstName: "",
   lastName: "",
@@ -76,8 +79,8 @@ const Onboarding = () => {
     data.profileType === "actor" ||
     data.secondaryTypes.includes("actor");
 
-  // Steps: 0=type, 1=basic, 2=slug, 3=actor(conditional), 4=theme, 5=services, 6=complete
-  const totalSteps = isActorType ? 7 : 6;
+  // Steps: 0=type, 1=goal, 2=basic, 3=slug, 4=actor(conditional), 5=theme, 6=services, 7=complete
+  const totalSteps = isActorType ? 8 : 7;
 
   const handleNext = () => setStep((s) => s + 1);
   const handleBack = () => setStep((s) => Math.max(0, s - 1));
@@ -96,6 +99,7 @@ const Onboarding = () => {
         .update({
           profile_type: profileType,
           secondary_types: data.secondaryTypes.length > 0 ? data.secondaryTypes : null,
+          primary_goal: data.primaryGoal || null,
           display_name: data.displayName || null,
           first_name: data.firstName || null,
           last_name: data.lastName || null,
@@ -156,44 +160,43 @@ const Onboarding = () => {
       case 0:
         return <StepProfileType data={data} updateData={updateData} onNext={handleNext} />;
       case 1:
-        return <StepBasicInfo data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
+        return <StepGoal data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
       case 2:
-        return <StepSlug data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
+        return <StepBasicInfo data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
       case 3:
+        return <StepSlug data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
+      case 4:
         if (isActorType) {
           return <StepActorStats data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
         }
         return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 4:
+      case 5:
         if (isActorType) {
           return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
         }
         return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
-      case 5:
+      case 6:
         if (isActorType) {
           return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
         }
         return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
-      case 6:
+      case 7:
         return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
       default:
         return null;
     }
   };
 
-  // Progress indicator
   const currentProgress = Math.min(step + 1, totalSteps);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Progress bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-muted">
         <div
           className="h-full bg-primary transition-all duration-500 ease-out"
           style={{ width: `${(currentProgress / totalSteps) * 100}%` }}
         />
       </div>
-
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
         {renderStep()}
       </div>
