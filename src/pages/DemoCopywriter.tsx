@@ -10,6 +10,7 @@ import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/Layout
 import SectionResultsWall from "@/components/portfolio/sections/SectionResultsWall";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
+import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award, BookOpen } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
@@ -45,60 +46,22 @@ const copywriterDefaultVariants: SectionVariants = {
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
 
-const ClassicLayout = () => (
-  <>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Results" index={-1}>
-        <SectionResultsWall items={mockCaseStudies} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Published Work" index={0}>
-        <PublishedWorkWithToggle items={mockPublishedWork} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Case Studies" index={1}>
-        <CaseStudiesWithToggle items={mockCaseStudies} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Clients" index={1}>
-        <ClientLogosWithToggle companies={mockClients} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Services & Pricing" index={2}>
-        <ServicesWithToggle items={mockServices} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Testimonials" index={3}>
-        <TestimonialsWithToggle items={mockTestimonials} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Awards" index={4}>
-        <AwardsWithToggle items={mockAwards} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Press & Features" index={5}>
-        <PressWithToggle items={mockPress} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Skills & Expertise" index={6}>
-        <SkillsWithToggle items={mockSkills} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div>
-      <PortfolioSectionWrapper title="Education & Certifications" index={7}>
-        <EducationWithToggle items={mockEducation} />
-      </PortfolioSectionWrapper>
-    </div>
-  </>
-);
+const ClassicLayout = () => {
+  const demoSections = [
+    { id: "results", title: "Results", content: <SectionResultsWall items={mockCaseStudies} /> },
+    { id: "published", title: "Published Work", content: <PublishedWorkWithToggle items={mockPublishedWork} /> },
+    { id: "casestudies", title: "Case Studies", content: <CaseStudiesWithToggle items={mockCaseStudies} /> },
+    { id: "clients", title: "Clients", content: <ClientLogosWithToggle companies={mockClients} /> },
+    { id: "services", title: "Services & Pricing", content: <ServicesWithToggle items={mockServices} /> },
+    { id: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
+    { id: "awards", title: "Awards", content: <AwardsWithToggle items={mockAwards} /> },
+    { id: "press", title: "Press & Features", content: <PressWithToggle items={mockPress} /> },
+    { id: "skills", title: "Skills & Expertise", content: <SkillsWithToggle items={mockSkills} /> },
+    { id: "education", title: "Education & Certifications", content: <EducationWithToggle items={mockEducation} /> },
+  ];
+
+  return <DemoInteractiveLayout sections={demoSections} />;
+};
 
 const StandardLayout = () => (
   <>
