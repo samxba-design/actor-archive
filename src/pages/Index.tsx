@@ -5,9 +5,9 @@ import { themes } from "@/lib/themes";
 import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles,
   BarChart3, Palette, Shield, Zap, Globe, Users,
-  Eye, MessageSquare, FolderOpen
+  Eye, MessageSquare, FolderOpen, Diamond
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 /* ── data ── */
 const features = [
@@ -35,21 +35,99 @@ const stats = [
 
 const showcaseThemes = ["noir", "editorial", "spotlight", "midnight"] as const;
 
+/* ── bokeh config ── */
+const BOKEH_COLORS = [
+  "hsl(350 40% 55% / 0.07)",
+  "hsl(35 40% 70% / 0.05)",
+  "hsl(20 35% 55% / 0.06)",
+  "hsl(345 30% 50% / 0.04)",
+  "hsl(30 30% 65% / 0.05)",
+];
+
+function generateBokehParticles(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    size: 6 + Math.random() * 34,
+    left: Math.random() * 100,
+    top: 60 + Math.random() * 40,
+    color: BOKEH_COLORS[i % BOKEH_COLORS.length],
+    blur: 2 + Math.random() * 6,
+    duration: 18 + Math.random() * 22,
+    delay: Math.random() * 12,
+    driftX: -30 + Math.random() * 60,
+    endScale: 0.4 + Math.random() * 0.4,
+  }));
+}
+
 /* ── components ── */
+
+const BokehField = () => {
+  const particles = useMemo(() => generateBokehParticles(14), []);
+  return (
+    <div className="bokeh-field">
+      {particles.map(p => (
+        <div
+          key={p.id}
+          className="bokeh-particle"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            background: p.color,
+            filter: `blur(${p.blur}px)`,
+            animationDuration: `${p.duration}s`,
+            animationDelay: `${p.delay}s`,
+            "--drift-x": `${p.driftX}px`,
+            "--drift-y": "-110vh",
+            "--end-scale": `${p.endScale}`,
+          } as React.CSSProperties}
+        />
+      ))}
+    </div>
+  );
+};
+
+const CinematicBackground = () => (
+  <>
+    {/* Gradient mesh */}
+    <div className="gradient-mesh">
+      <div className="gradient-mesh-orb gradient-mesh-orb--1" />
+      <div className="gradient-mesh-orb gradient-mesh-orb--2" />
+      <div className="gradient-mesh-orb gradient-mesh-orb--3" />
+    </div>
+
+    {/* Light rays */}
+    <div className="light-rays">
+      <div className="light-ray light-ray--1" />
+      <div className="light-ray light-ray--2" />
+      <div className="light-ray light-ray--3" />
+    </div>
+
+    {/* Bokeh */}
+    <BokehField />
+
+    {/* Vignette */}
+    <div className="cinema-vignette" />
+
+    {/* Film strip edges */}
+    <div className="film-strip-edge film-strip-edge--left" />
+    <div className="film-strip-edge film-strip-edge--right" />
+  </>
+);
 
 const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: string; desc: string; index: number }) => {
   const { ref, inView } = useInView();
   return (
     <div
       ref={ref}
-      className="group relative p-6 rounded-xl border transition-all duration-500"
+      className="group relative p-6 rounded-xl border transition-all duration-500 glass-card"
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(24px)",
         transitionDelay: `${index * 80}ms`,
         background: "hsl(var(--landing-card) / 0.6)",
         borderColor: "hsl(var(--landing-border))",
-        backdropFilter: "blur(12px)",
       }}
     >
       {/* hover glow */}
@@ -69,7 +147,7 @@ const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: str
 const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
   const { ref, inView } = useInView();
   return (
-    <div ref={ref} className="text-center transition-all duration-500"
+    <div ref={ref} className="text-center transition-all duration-500 glass-stat"
       style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${index * 120}ms` }}>
       <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(var(--landing-champagne))" }} />
       <div className="text-2xl sm:text-3xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{value}</div>
@@ -108,7 +186,7 @@ const ThemeShowcase = () => {
       </div>
 
       {/* Mock browser frame */}
-      <div className="relative max-w-3xl mx-auto rounded-xl overflow-hidden border"
+      <div className="relative max-w-3xl mx-auto rounded-xl overflow-hidden border glass-card glass-browser"
         style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 25% 6%)" }}>
         {/* Browser chrome */}
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: "1px solid hsl(var(--landing-border))" }}>
@@ -173,6 +251,17 @@ const ThemeShowcase = () => {
 /* ── page ── */
 const Index = () => {
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const [glassMode, setGlassMode] = useState(() => {
+    try { return localStorage.getItem("glass-mode") !== "false"; } catch { return true; }
+  });
+
+  const toggleGlass = () => {
+    setGlassMode(prev => {
+      const next = !prev;
+      try { localStorage.setItem("glass-mode", String(next)); } catch {}
+      return next;
+    });
+  };
 
   useEffect(() => {
     const handleMouse = (e: MouseEvent) => {
@@ -185,8 +274,11 @@ const Index = () => {
   }, []);
 
   return (
-    <div ref={spotlightRef} className="min-h-screen landing-page"
+    <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`}
       style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
+
+      {/* Cinematic background layers */}
+      <CinematicBackground />
 
       {/* Film grain overlay */}
       <div className="film-grain" />
@@ -195,10 +287,23 @@ const Index = () => {
       <div className="spotlight-follow" />
 
       {/* Nav */}
-      <nav className="relative z-50 border-b" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
+      <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <span className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {/* Glass toggle */}
+            <button
+              onClick={toggleGlass}
+              className="glass-toggle h-8 w-8 rounded-lg flex items-center justify-center transition-colors"
+              style={{
+                background: glassMode ? "hsl(var(--landing-accent) / 0.15)" : "transparent",
+                color: glassMode ? "hsl(var(--landing-champagne))" : "hsl(var(--landing-muted))",
+                border: "1px solid hsl(var(--landing-border))",
+              }}
+              title={glassMode ? "Switch to solid mode" : "Switch to glass mode"}
+            >
+              <Diamond className="h-3.5 w-3.5" />
+            </button>
             <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
               style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
               <Link to="/login">Log in</Link>
@@ -219,7 +324,7 @@ const Index = () => {
           style={{ background: "radial-gradient(ellipse, hsl(var(--landing-accent) / 0.06) 0%, transparent 70%)" }} />
 
         <div className="max-w-4xl mx-auto px-6 pt-28 pb-24 text-center relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-8 animate-fade-in"
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-8 animate-fade-in glass-card"
             style={{ border: "1px solid hsl(var(--landing-accent) / 0.3)", color: "hsl(var(--landing-champagne))", background: "hsl(var(--landing-accent) / 0.06)" }}>
             <Sparkles className="h-3 w-3" />
             Portfolio platform for entertainment professionals
@@ -248,7 +353,7 @@ const Index = () => {
                 Create Your Portfolio <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild className="text-base px-8"
+            <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
               <Link to="/signup">See Examples</Link>
             </Button>
@@ -272,7 +377,7 @@ const Index = () => {
       </section>
 
       {/* Stats */}
-      <section className="max-w-4xl mx-auto px-6 py-16">
+      <section className="max-w-4xl mx-auto px-6 py-16 relative z-10">
         <div className="grid grid-cols-3 gap-6">
           {stats.map((s, i) => (
             <StatItem key={i} icon={s.icon} value={s.value} label={s.label} index={i} />
@@ -281,7 +386,7 @@ const Index = () => {
       </section>
 
       {/* Features */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
+      <section className="max-w-5xl mx-auto px-6 py-20 relative z-10">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Everything you need</h2>
           <p style={{ color: "hsl(var(--landing-muted))" }}>Professional tools without the complexity.</p>
@@ -294,7 +399,7 @@ const Index = () => {
       </section>
 
       {/* Theme showcase */}
-      <section className="py-24 px-6">
+      <section className="py-24 px-6 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Themes that match your voice</h2>
           <p style={{ color: "hsl(var(--landing-muted))" }}>10 handcrafted themes designed for the entertainment industry. Preview them live.</p>
@@ -303,7 +408,7 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="relative py-28 px-6 overflow-hidden">
+      <section className="relative py-28 px-6 overflow-hidden z-10">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(var(--landing-accent) / 0.08) 0%, transparent 60%)" }} />
         <div className="max-w-3xl mx-auto text-center relative">
@@ -324,7 +429,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
+      <footer className="border-t relative z-10" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
           style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
           <span>© {new Date().getFullYear()} CreativeSlate</span>
