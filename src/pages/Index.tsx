@@ -489,27 +489,9 @@ const Index = () => {
             <p style={{ color: "hsl(var(--landing-muted))" }}>Hear from entertainment professionals who switched to CreativeSlate.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => {
-              const { ref: tRef, inView: tInView } = useInView();
-              return (
-                <div key={i} ref={tRef} className="relative p-6 rounded-xl border glass-card"
-                  style={{
-                    opacity: tInView ? 1 : 0, transform: tInView ? "translateY(0)" : "translateY(24px)",
-                    transition: `all 0.6s ease ${i * 100}ms`,
-                    background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))",
-                  }}>
-                  <Quote className="h-5 w-5 mb-3" style={{ color: "hsl(var(--landing-accent) / 0.4)" }} />
-                  <p className="text-sm leading-relaxed mb-4" style={{ color: "hsl(var(--landing-fg) / 0.85)" }}>"{t.quote}"</p>
-                  <div className="flex items-center gap-3">
-                    <img src={t.photo} alt={t.author} className="w-9 h-9 rounded-full object-cover" />
-                    <div>
-                      <p className="text-sm font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>{t.author}</p>
-                      <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{t.role}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {testimonials.map((t, i) => (
+              <TestimonialCard key={i} {...t} index={i} />
+            ))}
           </div>
         </div>
       </section>
