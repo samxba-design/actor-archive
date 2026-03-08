@@ -17,7 +17,7 @@ import SectionServices from "@/components/portfolio/sections/SectionServices";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
 import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
 import GlassCard from "@/components/portfolio/GlassCard";
-import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
+import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
 /* ══════════════════════ MOCK DATA ══════════════════════ */
 const mockProfile = {
@@ -221,7 +221,7 @@ const CreditHeroCard = ({ project }: { project: any }) => {
         />
         {project.imdb_link && (
           <div className="absolute top-3 right-3 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3.5 h-3.5" />
           </div>
         )}
       </div>
@@ -262,7 +262,7 @@ const StandardLayout = () => (
   <>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="carousel" display="both" />
+        <SectionKnownFor items={mockKnownFor} variant="carousel" display="image" />
       </PortfolioSectionWrapper>
     </div>
     {/* Client logos bar */}
@@ -347,18 +347,9 @@ const CinematicLayout = () => (
   </>
 );
 
-/* 4. COMPACT — Maximum density, fixed spacing */
+/* 4. COMPACT — Maximum density, fixed spacing (Known For is in hero) */
 const CompactLayout = () => (
   <>
-    {/* Known For carousel — full width with breathing room */}
-    <div className="mb-8">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="carousel" display="image" />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-4">
-      <SectionClientLogos companies={mockClients} variant="bar" />
-    </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 mb-8">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -374,6 +365,9 @@ const CompactLayout = () => (
       <PortfolioSectionWrapper title="Produced Credits" index={3}>
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
       </PortfolioSectionWrapper>
+    </div>
+    <div className="mb-6">
+      <SectionClientLogos companies={mockClients} variant="bar" />
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <PortfolioSectionWrapper title="Awards" index={4}>
@@ -436,7 +430,7 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
-    { key: "knownfor", title: "Known For", content: <SectionKnownFor items={mockKnownFor} variant="grid" /> },
+    { key: "knownfor", title: "Known For", content: <SectionKnownFor items={mockKnownFor} variant="grid" display="image" /> },
     { key: "loglines", title: "Original Work", content: <SectionLoglineShowcase items={mockLoglines} /> },
     { key: "scripts", title: "Script Library", content: <SectionScriptLibrary items={mockScripts} /> },
     { key: "credits", title: "Produced Credits", content: <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" /> },
@@ -662,7 +656,7 @@ const DashboardLayout = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
-          <SectionKnownFor items={mockKnownFor} variant="strip" />
+          <SectionKnownFor items={mockKnownFor} variant="grid" display="image" />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
