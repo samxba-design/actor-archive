@@ -77,7 +77,7 @@ const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Pr
             <button
               key={img.id}
               onClick={() => setLightboxIdx(i)}
-              className="group relative overflow-hidden cursor-pointer focus:outline-none break-inside-avoid block w-full"
+              className={`group relative overflow-hidden cursor-pointer focus:outline-none break-inside-avoid block w-full ${imgAnimClass}`}
               style={{ borderRadius: theme.cardRadius }}
             >
               <img
@@ -115,7 +115,7 @@ const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Pr
               <button
                 key={img.id}
                 onClick={() => setLightboxIdx(i)}
-                className="group relative flex-shrink-0 overflow-hidden cursor-pointer focus:outline-none snap-start"
+                className={`group relative flex-shrink-0 overflow-hidden cursor-pointer focus:outline-none snap-start ${imgAnimClass}`}
                 style={{ borderRadius: theme.cardRadius, width: '280px', height: '200px' }}
               >
                 <img
@@ -149,7 +149,7 @@ const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Pr
           <button
             key={img.id}
             onClick={() => setLightboxIdx(i)}
-            className="group relative overflow-hidden aspect-square cursor-pointer focus:outline-none"
+            className={`group relative overflow-hidden aspect-square cursor-pointer focus:outline-none ${imgAnimClass}`}
             style={{ borderRadius: theme.cardRadius }}
           >
             <img
