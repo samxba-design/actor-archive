@@ -16,6 +16,13 @@ import SectionTestimonials from "@/components/portfolio/sections/SectionTestimon
 import SectionServices from "@/components/portfolio/sections/SectionServices";
 import SectionKnownFor, { type KnownForVariant } from "@/components/portfolio/sections/SectionKnownFor";
 import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
+import SectionEducation from "@/components/portfolio/sections/SectionEducation";
+import SectionGallery from "@/components/portfolio/sections/SectionGallery";
+import SectionDemoReels from "@/components/portfolio/sections/SectionDemoReels";
+import SectionRepresentation from "@/components/portfolio/sections/SectionRepresentation";
+import SectionSkills from "@/components/portfolio/sections/SectionSkills";
+import SectionEvents from "@/components/portfolio/sections/SectionEvents";
+import SectionProductionHistory from "@/components/portfolio/sections/SectionProductionHistory";
 import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
