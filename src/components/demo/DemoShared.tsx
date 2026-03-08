@@ -27,6 +27,8 @@ import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 
 /* ── Unified section variants context ── */
+export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+
 export interface SectionVariants {
   knownFor: KnownForVariant;
   loglines: 'editorial' | 'cards' | 'minimal';
@@ -52,6 +54,7 @@ export interface SectionVariants {
   heroRightContent: HeroRightContent;
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
   heroKnownFor: HeroKnownForStyle;
+  heroBgType: HeroBgType;
 }
 
 export const defaultVariants: SectionVariants = {
@@ -79,6 +82,7 @@ export const defaultVariants: SectionVariants = {
   heroRightContent: 'featured',
   ctaPreset: 'script',
   heroKnownFor: 'strip',
+  heroBgType: 'preset',
 };
 
 export const SectionVariantsCtx = createContext<{
@@ -171,6 +175,11 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   heroKnownFor: [
     { key: 'strip', label: 'Strip' }, { key: 'large', label: 'Large' },
     { key: 'text', label: 'Text' }, { key: 'hidden', label: 'Hidden' },
+  ],
+  heroBgType: [
+    { key: 'preset', label: 'Preset' }, { key: 'solid', label: 'Solid Color' },
+    { key: 'bokeh', label: 'Bokeh' }, { key: 'video', label: 'Video Loop' },
+    { key: 'gradient', label: 'Gradient' },
   ],
 };
 

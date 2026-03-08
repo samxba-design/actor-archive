@@ -40,6 +40,7 @@ const copywriterDefaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   clientLogos: 'marquee',
   testimonials: 'carousel',
+  heroBgType: 'bokeh',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
@@ -511,6 +512,7 @@ const DemoCopywriter = () => {
         services={mockServices}
         testimonials={mockTestimonials}
         imageAnimation={variants.imageAnimation}
+        heroBgType={variants.heroBgType}
       />
 
       {/* Hero & image customize bars */}
@@ -528,6 +530,9 @@ const DemoCopywriter = () => {
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
+          {() => null}
+        </WithToggle>
+        <WithToggle sectionKey="heroBgType" sectionName="Background">
           {() => null}
         </WithToggle>
       </div>
