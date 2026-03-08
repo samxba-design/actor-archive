@@ -39,32 +39,32 @@ const CaseStudyBuilder = () => {
     }
     setGenerating(true);
     try {
+      const context = JSON.stringify({
+        title: form.title,
+        client: form.client,
+        challenge: form.challenge,
+        solution: form.solution,
+        results: form.results,
+      });
       const { data, error } = await supabase.functions.invoke("writing-assist", {
-        body: {
-          type: "generate_bio",
-          text: JSON.stringify({
-            format: "case_study",
-            title: form.title,
-            client: form.client,
-            challenge: form.challenge,
-            solution: form.solution,
-            results: form.results,
-          }),
-          title: form.title,
-        },
+        body: { type: "draft_case_study", text: context, title: form.title },
       });
       if (error) throw error;
-      // Use the bio text as polished case study narrative
-      if (data?.result?.bio_text) {
-        const parts = data.result.bio_text.split("\n\n");
-        if (parts.length >= 3) {
-          setForm((prev) => ({
-            ...prev,
-            challenge: prev.challenge || parts[0],
-            solution: prev.solution || parts[1],
-            results: prev.results || parts.slice(2).join("\n\n"),
-          }));
-        }
+      if (data?.error) throw new Error(data.error);
+      const r = data.result;
+      if (r) {
+        setForm((prev) => ({
+          ...prev,
+          challenge: r.challenge || prev.challenge,
+          solution: r.solution || prev.solution,
+          results: r.results || prev.results,
+          metric1Label: r.suggested_metrics?.[0]?.label || prev.metric1Label,
+          metric1Value: r.suggested_metrics?.[0]?.value || prev.metric1Value,
+          metric2Label: r.suggested_metrics?.[1]?.label || prev.metric2Label,
+          metric2Value: r.suggested_metrics?.[1]?.value || prev.metric2Value,
+          metric3Label: r.suggested_metrics?.[2]?.label || prev.metric3Label,
+          metric3Value: r.suggested_metrics?.[2]?.value || prev.metric3Value,
+        }));
         toast({ title: "Generated", description: "Review and edit the case study content." });
       }
     } catch (err: any) {
