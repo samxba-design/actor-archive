@@ -51,6 +51,7 @@ interface ProfileData {
   hero_bg_solid_color?: string | null;
   hero_bg_video_url?: string | null;
   seo_indexable?: boolean | null;
+  contact_mode?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -257,7 +258,7 @@ const PublicProfile = () => {
 
         <div id="portfolio-contact">
           <PortfolioFooter
-            profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
+            profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier, contact_mode: (profile as any).contact_mode }}
             showContact={showContact}
           />
         </div>
