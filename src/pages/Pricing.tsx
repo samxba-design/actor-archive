@@ -153,7 +153,19 @@ const Pricing = () => {
         {/* Cards */}
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {/* Free */}
-          <div className="rounded-2xl p-8 border" style={{ background: "hsl(var(--landing-card))", borderColor: "hsl(var(--landing-border))" }}>
+          <div className="rounded-2xl p-8 border relative" style={{
+            background: "hsl(var(--landing-card))",
+            borderColor: user && !isPro ? "hsl(var(--landing-champagne) / 0.5)" : "hsl(var(--landing-border))",
+            borderWidth: user && !isPro ? 2 : 1,
+          }}>
+            {user && !isPro && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold border"
+                  style={{ background: "hsl(var(--landing-card))", borderColor: "hsl(var(--landing-champagne) / 0.5)", color: "hsl(var(--landing-champagne))" }}>
+                  YOUR PLAN
+                </span>
+              </div>
+            )}
             <div className="mb-6">
               <h2 className="text-xl font-bold mb-1" style={{ color: "hsl(var(--landing-fg))" }}>Free</h2>
               <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>Everything you need to get started</p>
