@@ -212,7 +212,7 @@ const PortfolioTour = ({ profileType }: PortfolioTourProps) => {
                 {step + 1} of {availableSteps.length}
               </span>
             </div>
-            <button onClick={dismiss} className="p-1 rounded-md transition-colors hover:bg-white/10">
+            <button type="button" onClick={dismiss} className="p-1 rounded-md transition-colors hover:bg-white/10">
               <X className="w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.4)" }} />
             </button>
           </div>

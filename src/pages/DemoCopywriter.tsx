@@ -230,7 +230,7 @@ const SpotlightLayout = () => {
         const isOpen = openSection === s.key;
         return (
           <GlassCard key={s.key} className="overflow-hidden">
-            <button onClick={() => setOpenSection(isOpen ? "" : s.key)} className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors">
+            <button type="button" onClick={() => setOpenSection(isOpen ? "" : s.key)} className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors">
               <h3 className="text-base font-semibold" style={{ fontFamily: theme.fontDisplay, color: isOpen ? theme.accentPrimary : theme.textPrimary }}>{s.title}</h3>
               {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: theme.textTertiary }} /> : <ChevronDown className="w-4 h-4" style={{ color: theme.textTertiary }} />}
             </button>
