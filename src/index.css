@@ -48,11 +48,14 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Landing page tokens */
-    --landing-bg: 220 20% 4%;
-    --landing-fg: 220 10% 85%;
-    --landing-gold: 40 80% 60%;
-    --landing-card: 220 20% 8%;
-    --landing-border: 220 15% 12%;
+    --landing-bg: 345 25% 8%;
+    --landing-fg: 30 20% 92%;
+    --landing-accent: 350 40% 58%;
+    --landing-accent-warm: 20 35% 55%;
+    --landing-card: 345 20% 12%;
+    --landing-border: 345 15% 18%;
+    --landing-muted: 30 12% 55%;
+    --landing-champagne: 35 30% 72%;
   }
 
   .dark {
@@ -135,7 +138,7 @@ All colors MUST be HSL.
   z-index: 1;
   background: radial-gradient(
     600px circle at var(--mx, 50%) var(--my, 50%),
-    hsl(40 80% 55% / 0.04),
+    hsl(345 40% 50% / 0.04),
     transparent 60%
   );
 }
@@ -160,7 +163,7 @@ All colors MUST be HSL.
 
 /* Gold gradient text */
 .text-gradient-gold {
-  background: linear-gradient(135deg, hsl(40 80% 60%), hsl(25 85% 55%), hsl(40 80% 65%));
+  background: linear-gradient(135deg, hsl(35 30% 82%), hsl(350 40% 62%), hsl(20 35% 60%));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -185,10 +188,10 @@ All colors MUST be HSL.
   pointer-events: none;
   background: linear-gradient(
     to right,
-    hsl(220 20% 5%) 0%,
+    hsl(345 25% 7%) 0%,
     transparent 15%,
     transparent 85%,
-    hsl(220 20% 5%) 100%
+    hsl(345 25% 7%) 100%
   );
 }
 
@@ -218,7 +221,7 @@ All colors MUST be HSL.
 
 /* Auth page split layout */
 .auth-brand-panel {
-  background: linear-gradient(135deg, hsl(220 25% 6%) 0%, hsl(220 20% 10%) 100%);
+  background: linear-gradient(135deg, hsl(345 25% 6%) 0%, hsl(345 20% 10%) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -232,7 +235,7 @@ All colors MUST be HSL.
   height: 400px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, hsl(40 80% 50% / 0.08), transparent 70%);
+  background: radial-gradient(circle, hsl(350 40% 50% / 0.08), transparent 70%);
   animation: spotlight-drift 8s ease-in-out infinite alternate;
 }
 
