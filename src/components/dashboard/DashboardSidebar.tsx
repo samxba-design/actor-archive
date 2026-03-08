@@ -109,6 +109,7 @@ export function DashboardSidebar() {
         {renderGroup("Portfolio", mainNav)}
         {renderGroup("Content", contentNav)}
         {renderGroup("Smart Tools", toolsNav)}
+        {renderGroup("Tracking", trackingNav)}
         {renderGroup("System", systemNav)}
       </SidebarContent>
 
