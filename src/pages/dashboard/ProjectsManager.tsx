@@ -73,6 +73,15 @@ const ProjectsManager = () => {
     isbn: "",
     page_count: "",
     purchase_links: [] as PurchaseLink[],
+    // Advanced fields
+    imdb_link: "",
+    network_or_studio: "",
+    is_featured: false,
+    custom_image_url: "",
+    backdrop_url: "",
+    role_type: "",
+    format: "",
+    production_company: "",
   });
 
   const isBookType = BOOK_TYPES.includes(form.project_type);
@@ -91,7 +100,7 @@ const ProjectsManager = () => {
   useEffect(() => { fetchProjects(); }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [] });
+    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
     setEditing(null);
     setBookResults([]);
     setShowBookResults(false);
@@ -117,6 +126,14 @@ const ProjectsManager = () => {
       isbn: p.isbn || "",
       page_count: p.page_count?.toString() || "",
       purchase_links: links,
+      imdb_link: p.imdb_link || "",
+      network_or_studio: p.network_or_studio || "",
+      is_featured: p.is_featured || false,
+      custom_image_url: p.custom_image_url || "",
+      backdrop_url: p.backdrop_url || "",
+      role_type: p.role_type || "",
+      format: p.format || "",
+      production_company: p.production_company || "",
     });
     setDialogOpen(true);
   };
