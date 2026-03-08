@@ -11,6 +11,7 @@ import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
+import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
 
 interface ProfileForm {
   display_name: string;
@@ -24,6 +25,8 @@ interface ProfileForm {
   banner_url: string;
   profile_type: string;
   primary_goal: string;
+  hero_style: string;
+  hero_background_preset: string;
 }
 
 const ProfileEditor = () => {
@@ -45,13 +48,15 @@ const ProfileEditor = () => {
     banner_url: "",
     profile_type: "",
     primary_goal: "",
+    hero_style: "full",
+    hero_background_preset: "",
   });
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal")
+      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -68,6 +73,8 @@ const ProfileEditor = () => {
             banner_url: data.banner_url || "",
             profile_type: data.profile_type || "",
             primary_goal: (data as any).primary_goal || "",
+            hero_style: (data as any).hero_style || "full",
+            hero_background_preset: (data as any).hero_background_preset || "",
           });
         }
         setLoading(false);
@@ -90,6 +97,8 @@ const ProfileEditor = () => {
         profile_photo_url: form.profile_photo_url || null,
         banner_url: form.banner_url || null,
         primary_goal: form.primary_goal || null,
+        hero_style: form.hero_style || "full",
+        hero_background_preset: form.hero_background_preset || null,
       } as any)
       .eq("id", user.id);
 
@@ -181,24 +190,26 @@ const ProfileEditor = () => {
       <ProfileReadiness />
 
       <Card>
-        <CardHeader><CardTitle>Photos</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Profile Photo</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Profile Photo</Label>
             {form.profile_photo_url && (
-              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover mt-2 mb-2" />
+              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover mb-2" />
             )}
             <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, "headshots", "profile_photo_url")} />
           </div>
-          <div>
-            <Label>Banner Image</Label>
-            {form.banner_url && (
-              <img src={form.banner_url} alt="Banner" className="w-full h-32 object-cover rounded-md mt-2 mb-2" />
-            )}
-            <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, "banners", "banner_url")} />
-          </div>
         </CardContent>
       </Card>
+
+      {user && (
+        <HeroBackgroundEditor
+          userId={user.id}
+          heroStyle={form.hero_style}
+          heroBackgroundPreset={form.hero_background_preset}
+          bannerUrl={form.banner_url}
+          onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
+        />
+      )}
 
       <Card>
         <CardHeader><CardTitle>Basic Info</CardTitle></CardHeader>

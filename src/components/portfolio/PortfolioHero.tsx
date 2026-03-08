@@ -8,6 +8,17 @@ import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CompanyLogo from "@/components/CompanyLogo";
 
+const PRESET_GRADIENTS: Record<string, string> = {
+  "cinematic-dark": "linear-gradient(135deg, #1a0a0f 0%, #2d1520 40%, #0d0d1a 100%)",
+  "noir-smoke": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
+  "golden-hour": "linear-gradient(135deg, #2d1b00 0%, #4a2c17 40%, #1a0e05 100%)",
+  "ocean-deep": "linear-gradient(135deg, #0a192f 0%, #112240 50%, #0d1421 100%)",
+  "forest-mist": "linear-gradient(135deg, #0b1a0b 0%, #1a2f1a 40%, #0d1a0d 100%)",
+  "warm-clay": "linear-gradient(135deg, #2c1810 0%, #3d2419 40%, #1a0f0a 100%)",
+  "arctic-light": "linear-gradient(135deg, #e8edf2 0%, #d4dce6 40%, #c2cdd9 100%)",
+  "lavender-dusk": "linear-gradient(135deg, #1a0a2e 0%, #2d1548 40%, #0d0a1a 100%)",
+};
+
 interface Props {
   profile: {
     id?: string;
@@ -28,6 +39,8 @@ interface Props {
     cta_url: string | null;
     cta_type: string | null;
     booking_url: string | null;
+    hero_style?: string | null;
+    hero_background_preset?: string | null;
   };
   socialLinks?: any[];
   representation?: any[];
@@ -100,19 +113,28 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const primaryRep = representation?.find(r => r.is_primary) || representation?.[0];
   const hasMultipleReps = representation && representation.length > 1;
 
-  // Hero text colors — always light on hero images
-  const heroText = profile.banner_url ? '#F5F0EB' : theme.textPrimary;
-  const heroTextMuted = profile.banner_url ? 'rgba(245,240,235,0.65)' : theme.textSecondary;
-  const heroTextFaint = profile.banner_url ? 'rgba(245,240,235,0.4)' : theme.textTertiary;
+  // Resolve background type
+  const heroStyle = profile.hero_style || 'full';
+  const presetGradient = profile.hero_background_preset ? PRESET_GRADIENTS[profile.hero_background_preset] : null;
+  const hasBannerImage = !!profile.banner_url;
+  const hasDarkBg = hasBannerImage || !!presetGradient;
+  const isCompact = heroStyle === 'compact';
+  const heroHeight = isCompact ? '280px' : theme.heroHeight;
+
+  // Hero text colors — always light on hero images or dark presets
+  const isLightPreset = profile.hero_background_preset === 'arctic-light';
+  const heroText = hasDarkBg && !isLightPreset ? '#F5F0EB' : isLightPreset ? '#1a1a1a' : theme.textPrimary;
+  const heroTextMuted = hasDarkBg && !isLightPreset ? 'rgba(245,240,235,0.65)' : isLightPreset ? 'rgba(26,26,26,0.7)' : theme.textSecondary;
+  const heroTextFaint = hasDarkBg && !isLightPreset ? 'rgba(245,240,235,0.4)' : isLightPreset ? 'rgba(26,26,26,0.45)' : theme.textTertiary;
 
   return (
-    <header className="relative overflow-hidden" style={{ minHeight: theme.heroHeight }}>
-      {/* Background image + overlay — seamless with no gap */}
-      {profile.banner_url ? (
+    <header className="relative overflow-hidden" style={{ minHeight: heroHeight }}>
+      {/* Background: custom image, preset gradient, or theme default */}
+      {hasBannerImage ? (
         <>
           <div className="absolute inset-0" style={{ bottom: '-1px' }}>
             <img
-              src={profile.banner_url}
+              src={profile.banner_url!}
               alt=""
               className="w-full h-full object-cover"
               style={{
@@ -123,15 +145,19 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             />
           </div>
           <div className="absolute inset-0" style={{ bottom: '-1px', background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
-          {/* Seamless bottom fade — extends 1px past to prevent gap */}
           <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ bottom: '-1px', background: `linear-gradient(to top, ${theme.bgPrimary} 2%, ${theme.bgPrimary}ee 8%, transparent 100%)` }} />
+        </>
+      ) : presetGradient ? (
+        <>
+          <div className="absolute inset-0" style={{ background: presetGradient }} />
+          <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
         </>
       ) : (
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 20%, ${theme.accentGlow} 0%, transparent 60%), linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />
       )}
 
       {/* Hero content */}
-      <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: theme.heroHeight }}>
+      <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
         <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
           {/* Known For — left-aligned carousel above identity */}
           {knownFor && knownFor.length > 0 && (

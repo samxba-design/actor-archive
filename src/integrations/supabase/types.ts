@@ -820,6 +820,8 @@ export type Database = {
           first_name: string | null
           font_pairing: string | null
           headline: string | null
+          hero_background_preset: string | null
+          hero_style: string | null
           id: string
           is_draft: boolean | null
           is_published: boolean | null
@@ -861,6 +863,8 @@ export type Database = {
           first_name?: string | null
           font_pairing?: string | null
           headline?: string | null
+          hero_background_preset?: string | null
+          hero_style?: string | null
           id: string
           is_draft?: boolean | null
           is_published?: boolean | null
@@ -902,6 +906,8 @@ export type Database = {
           first_name?: string | null
           font_pairing?: string | null
           headline?: string | null
+          hero_background_preset?: string | null
+          hero_style?: string | null
           id?: string
           is_draft?: boolean | null
           is_published?: boolean | null
