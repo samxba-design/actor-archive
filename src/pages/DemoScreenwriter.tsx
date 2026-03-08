@@ -195,7 +195,49 @@ const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
   </WithToggle>
 );
 
-/* ══════════════════════ MOCK DATA ══════════════════════ */
+const EducationWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="education" sectionName="Education">
+    {(variant) => <SectionEducation items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const GalleryWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="gallery" sectionName="Gallery">
+    {(variant) => <SectionGallery items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const DemoReelsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="demoReels" sectionName="Demo Reels">
+    {(variant) => <SectionDemoReels items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const RepresentationWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="representation" sectionName="Representation">
+    {(variant) => <SectionRepresentation items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const SkillsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="skills" sectionName="Skills">
+    {(variant) => <SectionSkills items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const EventsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="events" sectionName="Events">
+    {(variant) => <SectionEvents items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ProductionsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="productions" sectionName="Productions">
+    {(variant) => <SectionProductionHistory items={items} variant={variant} />}
+  </WithToggle>
+);
+
+
 const mockProfile = {
   id: "demo-screenwriter",
   display_name: "Jordan Avery",
