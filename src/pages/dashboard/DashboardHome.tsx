@@ -44,7 +44,7 @@ const DashboardHome = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8" style={{ color: "hsl(var(--landing-muted))" }} /></div>;
   }
 
   // Profile readiness score
