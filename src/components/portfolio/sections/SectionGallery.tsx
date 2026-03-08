@@ -5,13 +5,15 @@ import { usePortfolioTheme } from "@/themes/ThemeProvider";
 interface Props {
   items: any[];
   variant?: 'grid' | 'masonry' | 'carousel';
+  imageAnimation?: string;
 }
 
-const SectionGallery = ({ items, variant = 'grid' }: Props) => {
+const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Props) => {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const theme = usePortfolioTheme();
 
   const closeLightbox = useCallback(() => setLightboxIdx(null), []);
+  const imgAnimClass = imageAnimation !== 'none' ? `img-anim-${imageAnimation}` : '';
   const prev = useCallback(() => setLightboxIdx(i => i !== null ? (i - 1 + items.length) % items.length : null), [items.length]);
   const next = useCallback(() => setLightboxIdx(i => i !== null ? (i + 1) % items.length : null), [items.length]);
 
