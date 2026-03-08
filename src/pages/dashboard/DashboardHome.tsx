@@ -70,11 +70,30 @@ const DashboardHome = () => {
           </h1>
           <p className="text-sm text-muted-foreground mt-1">Here's how your portfolio is performing</p>
         </div>
-        {profile?.slug && profile?.is_published && (
-          <Button variant="outline" size="sm" onClick={() => window.open(`/p/${profile.slug}`, "_blank")}>
-            <ExternalLink className="mr-2 h-4 w-4" />View Portfolio
-          </Button>
-        )}
+        <div className="flex items-center gap-2">
+          {profile?.slug && (
+            <Button
+              variant={profile?.is_published ? "outline" : "default"}
+              size="sm"
+              onClick={async () => {
+                const newState = !profile?.is_published;
+                await supabase.from("profiles").update({ is_published: newState }).eq("id", user!.id);
+                setProfile((p: any) => ({ ...p, is_published: newState }));
+              }}
+            >
+              {profile?.is_published ? (
+                <><EyeOff className="mr-2 h-4 w-4" />Unpublish</>
+              ) : (
+                <><Globe className="mr-2 h-4 w-4" />Publish Portfolio</>
+              )}
+            </Button>
+          )}
+          {profile?.slug && profile?.is_published && (
+            <Button variant="outline" size="sm" onClick={() => window.open(`/p/${profile.slug}`, "_blank")}>
+              <ExternalLink className="mr-2 h-4 w-4" />View
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Stats row */}
