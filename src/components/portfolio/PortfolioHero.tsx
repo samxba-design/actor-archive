@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { MapPin, Briefcase, Star, Calendar, Mail, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
 import BookingModal from "./BookingModal";
 import { supabase } from "@/integrations/supabase/client";
+import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 
 interface Props {
   profile: {
@@ -251,12 +252,11 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
 
             {bioText && (
               <div className="mt-4 max-w-2xl">
-                <p
+                <div
                   className="leading-relaxed whitespace-pre-line"
                   style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}
-                >
-                  {displayBio}
-                </p>
+                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(displayBio) }}
+                />
                 {bioIsTruncatable && (
                   <button
                     onClick={() => setBioExpanded(!bioExpanded)}

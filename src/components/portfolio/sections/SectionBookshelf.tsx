@@ -1,4 +1,4 @@
-import { BookOpen, ExternalLink } from "lucide-react";
+import { BookOpen, ExternalLink, Play } from "lucide-react";
 
 interface Props {
   items: any[];
@@ -31,15 +31,18 @@ const SectionBookshelf = ({ items }: Props) => (
           <p className="font-semibold text-sm" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{book.title}</p>
           {book.year && <p className="text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>{book.year}</p>}
           {book.publisher && <p className="text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>{book.publisher}</p>}
-          {purchaseLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-1">
-              {purchaseLinks.map((link: any, i: number) => (
-                <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded" style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-accent-fg))" }}>
-                  {link.label || "Buy"} <ExternalLink className="w-2.5 h-2.5" />
-                </a>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap justify-center gap-1">
+            {book.video_url && (
+              <a href={book.video_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded" style={{ backgroundColor: "hsl(var(--portfolio-muted))", color: "hsl(var(--portfolio-muted-fg))" }}>
+                <Play className="w-2.5 h-2.5" /> Trailer
+              </a>
+            )}
+            {purchaseLinks.map((link: any, i: number) => (
+              <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded" style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-accent-fg))" }}>
+                {link.label || "Buy"} <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            ))}
+          </div>
         </div>
       );
     })}

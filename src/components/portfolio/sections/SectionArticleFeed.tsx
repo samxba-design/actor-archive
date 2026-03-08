@@ -1,4 +1,4 @@
-import { ExternalLink, Newspaper } from "lucide-react";
+import { ExternalLink, Newspaper, Play } from "lucide-react";
 
 interface Props {
   items: any[];
@@ -35,7 +35,14 @@ const SectionArticleFeed = ({ items }: Props) => (
             <p className="text-xs mt-1 line-clamp-2" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>{article.description}</p>
           )}
         </div>
-        <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "hsl(var(--portfolio-muted-fg))" }} />
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {article.video_url && (
+            <a href={article.video_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <Play className="w-4 h-4" style={{ color: "hsl(var(--portfolio-accent))" }} />
+            </a>
+          )}
+          <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: "hsl(var(--portfolio-muted-fg))" }} />
+        </div>
       </a>
     ))}
   </div>
