@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Send, Loader2, CheckCircle } from "lucide-react";
+import { Send, Loader2, CheckCircle, Phone, Mail, Building2 } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+
+interface RepInfo {
+  id: string;
+  rep_type: string;
+  name: string | null;
+  company: string | null;
+  department: string | null;
+  is_primary: boolean | null;
+}
 
 interface Props {
   profile: {
@@ -11,9 +20,11 @@ interface Props {
     auto_responder_enabled?: boolean | null;
     auto_responder_message?: string | null;
     subscription_tier?: string | null;
+    contact_mode?: string | null;
   };
   showContact: boolean;
   socialLinks?: any[];
+  representation?: RepInfo[];
 }
 
 const SUBJECT_OPTIONS = [
@@ -35,9 +46,10 @@ const platformIcons: Record<string, string> = {
   website: "🌐", spotlight: "★",
 };
 
-const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }: Props) => {
+const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, representation }: Props) => {
   const theme = usePortfolioTheme();
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
+  const [fetchedReps, setFetchedReps] = useState<RepInfo[]>([]);
   const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "", website: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -45,6 +57,10 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   const [rateLimited, setRateLimited] = useState(false);
 
   const socialLinks = socialLinksProp || fetchedLinks;
+  const contactMode = profile.contact_mode || "form";
+  const showForm = contactMode === "form" || contactMode === "both";
+  const showAgent = contactMode === "agent" || contactMode === "both";
+  const reps = representation || fetchedReps;
 
   useEffect(() => {
     if (socialLinksProp) return;
@@ -52,12 +68,20 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
       .then(({ data }) => setFetchedLinks(data || []));
   }, [profile.id, socialLinksProp]);
 
+  // Fetch representation if needed for agent routing
+  useEffect(() => {
+    if (representation || !showAgent) return;
+    supabase.from("representation")
+      .select("id,rep_type,name,company,department,is_primary")
+      .eq("profile_id", profile.id)
+      .order("display_order")
+      .then(({ data }) => setFetchedReps((data as any) || []));
+  }, [profile.id, representation, showAgent]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sender_name || !form.sender_email || !form.message) return;
-    // Honeypot: if the hidden field is filled, it's a bot
     if (form.website) return;
-    // Rate limit: 1 submission per 30 seconds
     const now = Date.now();
     if (now - lastSubmitTime < 30000) {
       setRateLimited(true);
@@ -73,7 +97,6 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
       subject_type: form.subject_type as any,
       message: form.message,
     });
-    // Fire-and-forget email notification
     supabase.functions.invoke("contact-notify", {
       body: {
         profile_id: profile.id,
@@ -94,19 +117,54 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
     borderRadius: theme.cardRadius,
   };
 
+  const shouldShowContact = showContact && contactMode !== "none";
+
   return (
     <footer id="contact-section" className="mt-16 py-12 px-4" style={{ borderTop: `1px solid ${theme.borderDefault}` }} role="contentinfo" aria-label="Portfolio footer">
       <div className="max-w-[1080px] mx-auto">
-        {showContact && !sent && (
+
+        {/* Agent/Rep info */}
+        {shouldShowContact && showAgent && reps.length > 0 && (
           <div className="mb-12 max-w-lg mx-auto">
-            <h3
-              className="text-xl font-bold mb-4 text-center"
-              style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}
-            >
+            <h3 className="text-xl font-bold mb-4 text-center" style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}>
+              {contactMode === "agent" ? "Contact via Representation" : "Representation"}
+            </h3>
+            <div className="space-y-3">
+              {reps.map(rep => (
+                <div key={rep.id} className="p-4 rounded-lg" style={{ backgroundColor: theme.bgSecondary, border: `1px solid ${theme.borderDefault}`, borderRadius: theme.cardRadius }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Building2 className="w-4 h-4" style={{ color: theme.accentPrimary }} />
+                    <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: theme.accentPrimary }}>
+                      {rep.rep_type}
+                    </span>
+                    {rep.is_primary && (
+                      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>
+                        Primary
+                      </span>
+                    )}
+                  </div>
+                  {rep.company && (
+                    <p className="text-sm font-semibold" style={{ color: theme.textPrimary }}>{rep.company}</p>
+                  )}
+                  {rep.name && (
+                    <p className="text-sm" style={{ color: theme.textSecondary }}>{rep.name}{rep.department ? ` · ${rep.department}` : ''}</p>
+                  )}
+                  <p className="text-xs mt-2" style={{ color: theme.textTertiary }}>
+                    For all enquiries, please contact through representation.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Contact form */}
+        {shouldShowContact && showForm && !sent && (
+          <div className="mb-12 max-w-lg mx-auto">
+            <h3 className="text-xl font-bold mb-4 text-center" style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}>
               Get in Touch
             </h3>
             <form onSubmit={handleSubmit} className="space-y-3" aria-label="Contact form">
-              {/* Honeypot field - hidden from real users */}
               <div className="absolute opacity-0 h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
                 <label htmlFor="contact-website">Website</label>
                 <input id="contact-website" type="text" value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))} tabIndex={-1} autoComplete="off" />
@@ -165,16 +223,10 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                 {socialLinks.map(link => {
                   const icon = platformIcons[link.platform?.toLowerCase()] || "🔗";
                   return (
-                    <a
-                      key={link.id}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm transition-colors"
-                      style={{ color: theme.textTertiary }}
+                    <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
+                      className="text-sm transition-colors" style={{ color: theme.textTertiary }}
                       onMouseEnter={e => (e.currentTarget.style.color = theme.accentPrimary)}
-                      onMouseLeave={e => (e.currentTarget.style.color = theme.textTertiary)}
-                    >
+                      onMouseLeave={e => (e.currentTarget.style.color = theme.textTertiary)}>
                       {icon}
                     </a>
                   );
