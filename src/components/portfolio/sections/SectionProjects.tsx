@@ -11,6 +11,7 @@ interface Props {
   profileSlug?: string;
   isCredits?: boolean;
   layout?: 'poster' | 'table' | 'grid';
+  imageAnimation?: string;
 }
 
 const typeIcons: Record<string, any> = {
