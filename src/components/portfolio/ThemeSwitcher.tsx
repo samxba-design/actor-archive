@@ -12,7 +12,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, Props>(({ currentThemeId, onThe
   const current = portfolioThemeList.find(t => t.id === currentThemeId);
 
   return (
-    <div ref={ref} className="fixed bottom-6 right-6 z-50">
+    <div ref={ref} className="fixed bottom-6 right-6 z-50 max-sm:right-3 max-sm:bottom-16">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"

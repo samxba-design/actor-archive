@@ -18,7 +18,7 @@ const SectionOptionsBar = ({ sectionName, options, value, onChange }: Props) => 
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-1.5 mb-2 rounded-lg"
+      className="flex flex-wrap items-center gap-2 px-3 py-1.5 mb-2 rounded-lg"
       style={{
         backgroundColor: `${theme.accentPrimary}0a`,
         border: `1px dashed ${theme.accentPrimary}30`,
@@ -28,7 +28,7 @@ const SectionOptionsBar = ({ sectionName, options, value, onChange }: Props) => 
       <span className="text-[10px] uppercase tracking-widest shrink-0" style={{ color: theme.textTertiary }}>
         {sectionName}
       </span>
-      <div className="flex items-center gap-1 ml-1">
+      <div className="flex flex-wrap items-center gap-1 ml-1">
         {options.map(opt => (
           <button
             key={opt.key}
