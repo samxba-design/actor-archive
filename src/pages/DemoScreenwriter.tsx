@@ -799,8 +799,14 @@ const DemoScreenwriter = () => {
       />
 
       {/* Separate switchers: Layout (left) + Theme (right) */}
+      <div id="tour-switchers" className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
+        <span className="sr-only">Layout and theme switchers</span>
+      </div>
       <LayoutSwitcher currentLayout={layoutPreset} onLayoutChange={setLayoutPreset} />
       <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
+
+      {/* Onboarding tour */}
+      <PortfolioTour />
     </PortfolioThemeProvider>
   );
 };
