@@ -14,12 +14,16 @@ const SectionServices = ({ items }: Props) => (
           backgroundColor: "hsl(var(--portfolio-card))",
           border: s.is_featured ? "2px solid hsl(var(--portfolio-accent))" : "1px solid hsl(var(--portfolio-border))",
           borderRadius: "var(--portfolio-radius)",
-          boxShadow: s.is_featured ? "0 4px 20px -6px hsl(var(--portfolio-accent) / 0.2)" : undefined,
+          boxShadow: s.is_featured
+            ? "0 4px 24px -6px hsl(var(--portfolio-accent) / 0.25), inset 0 1px 0 hsl(var(--portfolio-accent) / 0.1)"
+            : undefined,
+          background: s.is_featured
+            ? "linear-gradient(135deg, hsl(var(--portfolio-card)) 0%, hsl(var(--portfolio-accent) / 0.04) 100%)"
+            : "hsl(var(--portfolio-card))",
         }}
       >
-        {/* Popular badge for featured */}
         {s.is_featured && (
-          <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1"
+          <div className="absolute -top-2.5 left-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
             style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-accent-fg))" }}>
             <Star className="w-2.5 h-2.5" /> Popular
           </div>
@@ -28,7 +32,7 @@ const SectionServices = ({ items }: Props) => (
         <div className="flex items-baseline justify-between">
           <h4 className="font-semibold text-sm" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{s.name}</h4>
           {s.starting_price && (
-            <span className="text-sm font-medium" style={{ color: "hsl(var(--portfolio-accent))" }}>
+            <span className="text-sm font-bold" style={{ color: "hsl(var(--portfolio-accent))" }}>
               From {s.starting_price}
             </span>
           )}
@@ -40,7 +44,7 @@ const SectionServices = ({ items }: Props) => (
           <ul className="space-y-1 pt-1">
             {s.deliverables.map((d: string, i: number) => (
               <li key={i} className="flex items-center gap-1.5 text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>
-                <CheckCircle className="w-3 h-3" style={{ color: "hsl(var(--portfolio-accent))" }} />
+                <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "hsl(var(--portfolio-accent))" }} />
                 {d}
               </li>
             ))}

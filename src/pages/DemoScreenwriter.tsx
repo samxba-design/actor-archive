@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { applyThemeToElement } from "@/lib/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
+import PortfolioBackground from "@/components/portfolio/PortfolioBackground";
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionScriptLibrary from "@/components/portfolio/sections/SectionScriptLibrary";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
@@ -292,15 +293,31 @@ const mockServices = [
   },
 ];
 
-/* ── section wrapper ── */
-const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+/* ── section wrapper with numbering + accent rule ── */
+const Section = ({ title, index, children }: { title: string; index: number; children: React.ReactNode }) => (
   <section className="animate-fade-in">
-    <h2
-      className="text-2xl font-bold mb-6 tracking-tight"
-      style={{ fontFamily: "var(--portfolio-heading-font)" }}
-    >
-      {title}
-    </h2>
+    <div className="flex items-baseline gap-3 mb-2">
+      <span
+        className="text-xs font-mono tracking-widest"
+        style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
+      >
+        {String(index + 1).padStart(2, "0")}
+      </span>
+      <h2
+        className="text-2xl sm:text-3xl font-bold tracking-tight"
+        style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}
+      >
+        {title}
+      </h2>
+    </div>
+    <div
+      className="mb-8"
+      style={{
+        height: "2px",
+        background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))",
+        maxWidth: "120px",
+      }}
+    />
     {children}
   </section>
 );
@@ -312,8 +329,10 @@ const DemoScreenwriter = () => {
   useEffect(() => {
     if (containerRef.current) {
       applyThemeToElement(containerRef.current, "ink");
+      // Apply the loaded fonts to CSS variables
+      containerRef.current.style.setProperty("--portfolio-heading-font", "'Playfair Display', Georgia, serif");
+      containerRef.current.style.setProperty("--portfolio-body-font", "'Source Serif 4', Georgia, serif");
     }
-    // Load Google Font for ink theme
     const link = document.createElement("link");
     link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap";
     link.rel = "stylesheet";
@@ -324,11 +343,13 @@ const DemoScreenwriter = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen"
-      style={{ backgroundColor: "hsl(var(--portfolio-bg))", color: "hsl(var(--portfolio-fg))" }}
+      className="min-h-screen relative"
+      style={{ backgroundColor: "hsl(var(--portfolio-bg))", color: "hsl(var(--portfolio-fg))", fontFamily: "var(--portfolio-body-font)" }}
     >
+      <PortfolioBackground />
+
       {/* Floating "Build Your Own" banner */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in" style={{ animationDelay: "2s", animationFillMode: "backwards" }}>
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-fade-in" style={{ animationDelay: "2s", animationFillMode: "backwards" }}>
         <Link
           to="/signup"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold shadow-2xl transition-all hover:scale-105"
@@ -346,7 +367,7 @@ const DemoScreenwriter = () => {
 
       {/* Demo banner */}
       <div
-        className="text-center py-2 text-xs font-medium"
+        className="text-center py-2 text-xs font-medium relative z-10"
         style={{
           background: "hsl(var(--portfolio-accent) / 0.1)",
           color: "hsl(var(--portfolio-accent))",
@@ -357,49 +378,53 @@ const DemoScreenwriter = () => {
       </div>
 
       {/* Hero */}
-      <PortfolioHero profile={mockProfile} socialLinks={mockSocialLinks} />
+      <div className="relative z-10">
+        <PortfolioHero profile={mockProfile} socialLinks={mockSocialLinks} />
+      </div>
 
       {/* Sections */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-        <Section title="Logline Showcase">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 relative z-10">
+        <Section title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
         </Section>
 
-        <Section title="Script Library">
+        <Section title="Script Library" index={1}>
           <SectionScriptLibrary items={mockScripts} />
         </Section>
 
-        <Section title="Produced Credits">
+        <Section title="Produced Credits" index={2}>
           <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
         </Section>
 
-        <Section title="Awards & Recognition">
+        <Section title="Awards & Recognition" index={3}>
           <SectionAwards items={mockAwards} />
         </Section>
 
-        <Section title="Press & Reviews">
+        <Section title="Press & Reviews" index={4}>
           <SectionPress items={mockPress} />
         </Section>
 
-        <Section title="Testimonials">
+        <Section title="Testimonials" index={5}>
           <SectionTestimonials items={mockTestimonials} />
         </Section>
 
-        <Section title="Services">
+        <Section title="Services" index={6}>
           <SectionServices items={mockServices} />
         </Section>
 
-        <Section title="Representation">
+        <Section title="Representation" index={7}>
           <SectionRepresentation items={mockRepresentation} />
         </Section>
       </div>
 
       {/* Footer */}
-      <PortfolioFooter
-        profile={mockProfile}
-        showContact={true}
-        socialLinks={mockSocialLinks}
-      />
+      <div className="relative z-10">
+        <PortfolioFooter
+          profile={mockProfile}
+          showContact={true}
+          socialLinks={mockSocialLinks}
+        />
+      </div>
     </div>
   );
 };

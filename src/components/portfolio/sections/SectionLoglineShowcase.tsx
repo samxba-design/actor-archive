@@ -13,11 +13,14 @@ const SectionLoglineShowcase = ({ items }: Props) => {
       {withLoglines.map((p) => (
         <div
           key={p.id}
-          className="p-5"
+          className="p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
           style={{
             backgroundColor: "hsl(var(--portfolio-card))",
-            border: "1px solid hsl(var(--portfolio-border))",
             borderRadius: "var(--portfolio-radius)",
+            borderLeft: "3px solid hsl(var(--portfolio-accent))",
+            borderTop: "1px solid hsl(var(--portfolio-border))",
+            borderRight: "1px solid hsl(var(--portfolio-border))",
+            borderBottom: "1px solid hsl(var(--portfolio-border))",
           }}
         >
           <div className="flex items-center gap-2 mb-2">

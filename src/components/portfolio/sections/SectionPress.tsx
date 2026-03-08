@@ -9,7 +9,7 @@ const SectionPress = ({ items }: Props) => (
     {items.map((p) => (
       <div
         key={p.id}
-        className="flex gap-4 p-4"
+        className="flex gap-4 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
         style={{
           backgroundColor: "hsl(var(--portfolio-card))",
           border: "1px solid hsl(var(--portfolio-border))",
@@ -17,28 +17,44 @@ const SectionPress = ({ items }: Props) => (
         }}
       >
         {p.publication_logo_url && (
-          <img src={p.publication_logo_url} alt={p.publication || ""} className="w-12 h-12 object-contain flex-shrink-0 grayscale" />
+          <img src={p.publication_logo_url} alt={p.publication || ""} className="w-14 h-14 object-contain flex-shrink-0 grayscale" />
         )}
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{p.title}</p>
-          <p className="text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>
-            {[p.publication, p.date].filter(Boolean).join(" · ")}
-          </p>
+          <p className="font-semibold text-sm leading-tight" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{p.title}</p>
+          <div className="flex items-center gap-2 mt-1">
+            {p.publication && (
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "hsl(var(--portfolio-accent))" }}>
+                {p.publication}
+              </span>
+            )}
+            {p.date && (
+              <span className="text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>{p.date}</span>
+            )}
+          </div>
           {p.pull_quote && (
-            <blockquote className="mt-2 text-sm italic border-l-2 pl-3" style={{ borderColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-fg) / 0.8)" }}>
-              "{p.pull_quote}"
+            <blockquote
+              className="mt-3 text-sm italic leading-relaxed pl-4 relative"
+              style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}
+            >
+              <span
+                className="absolute left-0 top-0 text-2xl font-serif leading-none"
+                style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
+              >
+                "
+              </span>
+              {p.pull_quote}
             </blockquote>
           )}
           {p.star_rating && (
-            <div className="flex gap-0.5 mt-1">
+            <div className="flex gap-0.5 mt-2">
               {Array.from({ length: p.star_rating }).map((_, i) => (
-                <Star key={i} className="w-3.5 h-3.5 fill-current" style={{ color: "hsl(var(--portfolio-accent))" }} />
+                <Star key={i} className="w-4 h-4 fill-current" style={{ color: "hsl(var(--portfolio-accent))" }} />
               ))}
             </div>
           )}
           {p.article_url && (
-            <a href={p.article_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs mt-2 hover:opacity-80" style={{ color: "hsl(var(--portfolio-accent))" }}>
-              <ExternalLink className="w-3 h-3" /> Read
+            <a href={p.article_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs mt-2 font-medium hover:opacity-80 transition-opacity" style={{ color: "hsl(var(--portfolio-accent))" }}>
+              <ExternalLink className="w-3.5 h-3.5" /> Read Article
             </a>
           )}
         </div>
