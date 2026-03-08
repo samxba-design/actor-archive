@@ -192,11 +192,14 @@ const ScriptsWithToggle = ({ items }: { items: any[] }) => (
   </WithToggle>
 );
 
-const CreditsWithToggle = ({ items }: { items: any[] }) => (
-  <WithToggle sectionKey="credits" sectionName="Credits">
-    {(variant) => <SectionProjects items={items} profileType="screenwriter" layout={variant} />}
-  </WithToggle>
-);
+const CreditsWithToggle = ({ items }: { items: any[] }) => {
+  const { variants } = useSectionVariants();
+  return (
+    <WithToggle sectionKey="credits" sectionName="Credits">
+      {(variant) => <SectionProjects items={items} profileType="screenwriter" layout={variant} imageAnimation={variants.imageAnimation} />}
+    </WithToggle>
+  );
+};
 
 const AwardsWithToggle = ({ items }: { items: any[] }) => (
   <WithToggle sectionKey="awards" sectionName="Awards">
@@ -234,11 +237,14 @@ const EducationWithToggle = ({ items }: { items: any[] }) => (
   </WithToggle>
 );
 
-const GalleryWithToggle = ({ items }: { items: any[] }) => (
-  <WithToggle sectionKey="gallery" sectionName="Gallery">
-    {(variant) => <SectionGallery items={items} variant={variant} />}
-  </WithToggle>
-);
+const GalleryWithToggle = ({ items }: { items: any[] }) => {
+  const { variants } = useSectionVariants();
+  return (
+    <WithToggle sectionKey="gallery" sectionName="Gallery">
+      {(variant) => <SectionGallery items={items} variant={variant} imageAnimation={variants.imageAnimation} />}
+    </WithToggle>
+  );
+};
 
 const DemoReelsWithToggle = ({ items }: { items: any[] }) => (
   <WithToggle sectionKey="demoReels" sectionName="Demo Reels">
