@@ -1093,8 +1093,24 @@ const DemoScreenwriter = () => {
         </span>
       </div>
 
-      {/* Hero toggle bars */}
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 relative z-20 space-y-1">
+      {/* Hero */}
+      <PortfolioHero
+        profile={dynamicProfile}
+        socialLinks={mockSocialLinks}
+        representation={mockRepresentation}
+        featuredProject={featuredProject}
+        stats={stats}
+        knownFor={mockKnownFor}
+        heroLayout={variants.heroLayout}
+        heroRightContent={variants.heroRightContent}
+        heroKnownFor={variants.heroKnownFor}
+        services={mockServices}
+        testimonials={mockTestimonials}
+        imageAnimation={variants.imageAnimation}
+      />
+
+      {/* Hero & image customize bars — below hero, above sections */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 relative z-20 space-y-1">
         <WithToggle sectionKey="heroLayout" sectionName="Hero Layout">
           {() => null}
         </WithToggle>
@@ -1111,22 +1127,6 @@ const DemoScreenwriter = () => {
           {() => null}
         </WithToggle>
       </div>
-
-      {/* Hero */}
-      <PortfolioHero
-        profile={dynamicProfile}
-        socialLinks={mockSocialLinks}
-        representation={mockRepresentation}
-        featuredProject={featuredProject}
-        stats={stats}
-        knownFor={mockKnownFor}
-        heroLayout={variants.heroLayout}
-        heroRightContent={variants.heroRightContent}
-        heroKnownFor={variants.heroKnownFor}
-        services={mockServices}
-        testimonials={mockTestimonials}
-        imageAnimation={variants.imageAnimation}
-      />
 
       {/* Body */}
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">

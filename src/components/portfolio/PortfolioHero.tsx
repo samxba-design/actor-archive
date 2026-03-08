@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { MapPin, ArrowRight, ExternalLink, ChevronDown, ChevronUp, Building2, Quote } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote } from "lucide-react";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
