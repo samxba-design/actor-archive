@@ -8,7 +8,8 @@ import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import SortableSectionList from "@/components/portfolio/SortableSectionList";
-import { Loader2, ArrowUp, MessageSquare } from "lucide-react";
+import { ArrowUp, MessageSquare } from "lucide-react";
+import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface ProfileData {
@@ -111,7 +112,7 @@ const PublicProfile = () => {
   }, [profile]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
+    return <ProfileSkeleton />;
   }
 
   if (notFound || !profile) {
