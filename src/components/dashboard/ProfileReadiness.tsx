@@ -3,13 +3,38 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Circle, AlertCircle, TrendingUp } from "lucide-react";
-import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface CheckItem {
   label: string;
   done: boolean;
   priority: "high" | "medium" | "low";
   tip: string;
+}
+
+/** Boost priority for items that align with user's primary goal */
+function applyGoalWeights(items: CheckItem[], goal: string | null) {
+  if (!goal) return items;
+
+  const boosts: Record<string, string[]> = {
+    representation: ["Representation listed", "Demo reel uploaded", "Projects have loglines", "Awards or fellowships"],
+    hiring: ["Services listed", "Client testimonials", "Case study added", "Portfolio published"],
+    pitching: ["Projects have loglines", "At least one project", "Awards or fellowships", "Demo reel uploaded"],
+    presence: ["Profile photo uploaded", "Bio written", "Banner image uploaded", "Social links added"],
+  };
+
+  const goalKey = goal.toLowerCase().includes("represent") ? "representation"
+    : goal.toLowerCase().includes("hir") ? "hiring"
+    : goal.toLowerCase().includes("pitch") ? "pitching"
+    : "presence";
+
+  const boosted = boosts[goalKey] || [];
+
+  return items.map(item => {
+    if (boosted.includes(item.label) && item.priority !== "high") {
+      return { ...item, priority: "high" as const };
+    }
+    return item;
+  });
 }
 
 const ProfileReadiness = () => {
@@ -21,7 +46,6 @@ const ProfileReadiness = () => {
   useEffect(() => {
     if (!user) return;
     const evaluate = async () => {
-      // Fetch all relevant data in parallel
       const [profileRes, projectsRes, awardsRes, pressRes, testimonialsRes, servicesRes, skillsRes, galleryRes, socialRes, repRes, educationRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
         supabase.from("projects").select("id, project_type, logline, video_url, poster_url").eq("profile_id", user.id),
@@ -51,7 +75,8 @@ const ProfileReadiness = () => {
       const education = educationRes.data || [];
 
       const profileType = profile.profile_type || "screenwriter";
-      const items: CheckItem[] = [];
+      const primaryGoal = profile.primary_goal || null;
+      let items: CheckItem[] = [];
 
       // Universal checks
       items.push({ label: "Profile photo uploaded", done: !!profile.profile_photo_url, priority: "high", tip: "A professional photo builds instant trust." });
@@ -100,6 +125,9 @@ const ProfileReadiness = () => {
       // General nice-to-haves
       items.push({ label: "Banner image uploaded", done: !!profile.banner_url, priority: "low", tip: "A banner makes your portfolio feel polished." });
       items.push({ label: "Testimonials added", done: testimonials.length > 0, priority: "medium", tip: "What others say about you matters." });
+
+      // Apply goal-based priority boosts
+      items = applyGoalWeights(items, primaryGoal);
 
       // Calculate score
       const totalWeight = items.reduce((sum, i) => sum + (i.priority === "high" ? 3 : i.priority === "medium" ? 2 : 1), 0);
