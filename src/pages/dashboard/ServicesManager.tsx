@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
+import { ServiceDescriptionAI } from "@/components/dashboard/ServiceDescriptionAI";
 
 interface Service {
   id: string;
@@ -165,7 +166,26 @@ const ServicesManager = () => {
           <DialogHeader><DialogTitle>{editing ? "Edit Service" : "Add Service"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div><Label>Name *</Label><Input value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Script Coverage" /></div>
-            <div><Label>Description</Label><Textarea value={form.description || ""} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="What does this service include?" /></div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label>Description</Label>
+                <ServiceDescriptionAI
+                  serviceName={form.name}
+                  currentDescription={form.description || undefined}
+                  onApply={(result) => {
+                    setForm(f => ({
+                      ...f,
+                      description: result.description,
+                      turnaround: result.turnaround || f.turnaround,
+                    }));
+                    if (result.deliverables.length > 0) {
+                      setDeliverablesText(result.deliverables.join("\n"));
+                    }
+                  }}
+                />
+              </div>
+              <Textarea value={form.description || ""} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="What does this service include?" />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div><Label>Starting Price</Label><Input value={form.starting_price || ""} onChange={(e) => setForm(f => ({ ...f, starting_price: e.target.value }))} placeholder="e.g. 150" /></div>
               <div><Label>Turnaround</Label><Input value={form.turnaround || ""} onChange={(e) => setForm(f => ({ ...f, turnaround: e.target.value }))} placeholder="e.g. 3-5 days" /></div>

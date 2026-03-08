@@ -24,14 +24,15 @@ export type ProFeature =
   | "advanced_access_levels"
   | "unlimited_projects"
   | "unlimited_gallery"
-  | "remove_badge";
+  | "remove_badge"
+  | "pitch_email";
 
 const PRO_FEATURES: ProFeature[] = [
   "themes", "font_pairing", "layout_density", "custom_css", "custom_domain",
   "auto_responder", "ai_writing", "coverage_sim", "comp_matcher",
   "profile_insights", "full_analytics", "pipeline_tracker", "smart_followup",
   "endorsements", "case_study_builder", "embed_widget", "advanced_access_levels",
-  "unlimited_projects", "unlimited_gallery", "remove_badge",
+  "unlimited_projects", "unlimited_gallery", "remove_badge", "pitch_email",
 ];
 
 export const FREE_PROJECT_LIMIT = 8;

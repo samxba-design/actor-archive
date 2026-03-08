@@ -18,6 +18,7 @@ import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
+import { LoglineGenerator } from "@/components/dashboard/LoglineGenerator";
 import { searchBooks, type BookResult } from "@/lib/googleBooks";
 import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
 
@@ -343,14 +344,26 @@ const ProjectsManager = () => {
               <div>
                 <div className="flex items-center justify-between">
                   <Label>{isBookType ? "Synopsis" : "Logline"} <GlossaryTooltip term="logline" /></Label>
-                  <WritingAssistant
-                    text={form.logline}
-                    field="logline"
-                    title={form.title}
-                    genre={form.genre ? form.genre.split(",").map(g => g.trim()).filter(Boolean) : undefined}
-                    format={form.project_type}
-                    onApply={(t) => setForm((f) => ({ ...f, logline: t }))}
-                  />
+                  <div className="flex items-center gap-1">
+                    <WritingAssistant
+                      text={form.logline}
+                      field="logline"
+                      title={form.title}
+                      genre={form.genre ? form.genre.split(",").map(g => g.trim()).filter(Boolean) : undefined}
+                      format={form.project_type}
+                      onApply={(t) => setForm((f) => ({ ...f, logline: t }))}
+                    />
+                    {!isBookType && (
+                      <LoglineGenerator
+                        title={form.title}
+                        synopsis={form.description}
+                        genre={form.genre ? form.genre.split(",").map(g => g.trim()).filter(Boolean) : undefined}
+                        format={form.project_type}
+                        currentLogline={form.logline}
+                        onApply={(t) => setForm((f) => ({ ...f, logline: t }))}
+                      />
+                    )}
+                  </div>
                 </div>
                 <Textarea value={form.logline} onChange={(e) => setForm((f) => ({ ...f, logline: e.target.value }))} rows={2} />
               </div>

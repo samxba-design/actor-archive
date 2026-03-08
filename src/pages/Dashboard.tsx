@@ -27,6 +27,7 @@ import SmartFollowUp from "@/pages/dashboard/SmartFollowUp";
 import EmbedAndShare from "@/pages/dashboard/EmbedAndShare";
 import ScriptManager from "@/pages/dashboard/ScriptManager";
 import ClientManager from "@/pages/dashboard/ClientManager";
+import PitchEmailGenerator from "@/pages/dashboard/PitchEmailGenerator";
 
 const Dashboard = () => {
   return (
@@ -59,6 +60,7 @@ const Dashboard = () => {
         <Route path="embed" element={<EmbedAndShare />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="clients" element={<ClientManager />} />
+        <Route path="pitch-email" element={<PitchEmailGenerator />} />
       </Route>
     </Routes>
   );
