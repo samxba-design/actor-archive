@@ -1,5 +1,7 @@
 import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import { useState } from "react";
+import { Play } from "lucide-react";
+import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 interface Chapter {
   time: string;
@@ -8,45 +10,127 @@ interface Chapter {
 
 interface Props {
   items: any[];
+  variant?: 'grid' | 'featured' | 'list';
 }
 
-const SectionDemoReels = ({ items }: Props) => {
+const getEmbedUrl = (videoUrl: string) => {
+  if (isYouTube(videoUrl)) {
+    const id = extractYouTubeId(videoUrl);
+    if (id) return `https://www.youtube.com/embed/${id}`;
+  } else if (isVimeo(videoUrl)) {
+    const id = extractVimeoId(videoUrl);
+    if (id) return `https://player.vimeo.com/video/${id}`;
+  }
+  return "";
+};
+
+const SectionDemoReels = ({ items, variant = 'grid' }: Props) => {
   const reels = items.filter((p) => p.video_url);
+  const theme = usePortfolioTheme();
   if (reels.length === 0) return null;
 
+  if (variant === 'featured') {
+    const [activeIdx, setActiveIdx] = useState(0);
+    const active = reels[activeIdx];
+    const embedUrl = getEmbedUrl(active.video_url);
+
+    return (
+      <div className="space-y-3">
+        {/* Main player */}
+        <div
+          className="relative overflow-hidden"
+          style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, aspectRatio: "16/9" }}
+        >
+          {embedUrl ? (
+            <iframe src={embedUrl} title={active.title} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+          ) : (
+            <a href={active.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+              <span style={{ color: theme.accentPrimary }}>▶ Watch</span>
+            </a>
+          )}
+        </div>
+        <div>
+          <p className="font-semibold text-sm" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{active.title}</p>
+          {active.description && <p className="text-xs mt-0.5" style={{ color: theme.textSecondary }}>{active.description}</p>}
+        </div>
+        {/* Thumbnails */}
+        {reels.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto">
+            {reels.map((reel, i) => (
+              <button
+                key={reel.id}
+                onClick={() => setActiveIdx(i)}
+                className="flex-shrink-0 text-left p-2 rounded transition-all"
+                style={{
+                  backgroundColor: i === activeIdx ? theme.accentSubtle : 'transparent',
+                  border: `1px solid ${i === activeIdx ? theme.accentPrimary : theme.borderDefault}`,
+                  borderRadius: theme.cardRadius,
+                  minWidth: '140px',
+                }}
+              >
+                <p className="text-xs font-medium truncate" style={{ color: i === activeIdx ? theme.accentPrimary : theme.textSecondary }}>{reel.title}</p>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (variant === 'list') {
+    return (
+      <div className="space-y-2">
+        {reels.map((reel) => {
+          const embedUrl = getEmbedUrl(reel.video_url);
+          return (
+            <a
+              key={reel.id}
+              href={reel.video_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 group transition-all"
+              style={{
+                backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary,
+                border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
+                borderRadius: theme.cardRadius,
+              }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: theme.accentSubtle }}>
+                <Play className="w-4 h-4" style={{ color: theme.accentPrimary }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate group-hover:underline" style={{ color: theme.textPrimary }}>{reel.title}</p>
+                {reel.description && <p className="text-xs truncate" style={{ color: theme.textTertiary }}>{reel.description}</p>}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Default: grid
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {reels.map((reel) => (
-        <ReelCard key={reel.id} reel={reel} />
+        <ReelCard key={reel.id} reel={reel} theme={theme} />
       ))}
     </div>
   );
 };
 
-const ReelCard = ({ reel }: { reel: any }) => {
+const ReelCard = ({ reel, theme }: { reel: any; theme: any }) => {
   const [activeChapter, setActiveChapter] = useState<string | null>(null);
   const chapters: Chapter[] = Array.isArray(reel.chapters) ? reel.chapters : [];
 
-  let embedUrl = "";
-  if (isYouTube(reel.video_url)) {
-    const id = extractYouTubeId(reel.video_url);
-    if (id) embedUrl = `https://www.youtube.com/embed/${id}`;
-  } else if (isVimeo(reel.video_url)) {
-    const id = extractVimeoId(reel.video_url);
-    if (id) embedUrl = `https://player.vimeo.com/video/${id}`;
-  }
+  const embedUrl = getEmbedUrl(reel.video_url);
 
-  // Build embed URL with timestamp for YouTube chapters
   const getChapterUrl = (time: string) => {
     if (!embedUrl) return "";
     const parts = time.split(":").map(Number);
     const seconds = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + (parts[1] || 0);
-    if (embedUrl.includes("youtube")) {
-      return `${embedUrl}?start=${seconds}&autoplay=1`;
-    }
-    if (embedUrl.includes("vimeo")) {
-      return `${embedUrl}#t=${seconds}s`;
-    }
+    if (embedUrl.includes("youtube")) return `${embedUrl}?start=${seconds}&autoplay=1`;
+    if (embedUrl.includes("vimeo")) return `${embedUrl}#t=${seconds}s`;
     return embedUrl;
   };
 
@@ -56,44 +140,18 @@ const ReelCard = ({ reel }: { reel: any }) => {
     <div className="space-y-2">
       <div
         className="relative overflow-hidden"
-        style={{
-          borderRadius: "var(--portfolio-radius)",
-          border: "1px solid hsl(var(--portfolio-border))",
-          aspectRatio: "16/9",
-        }}
+        style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, aspectRatio: "16/9" }}
       >
         {currentEmbedUrl ? (
-          <iframe
-            src={currentEmbedUrl}
-            title={reel.title}
-            className="absolute inset-0 w-full h-full"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <iframe src={currentEmbedUrl} title={reel.title} className="absolute inset-0 w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
         ) : (
-          <a
-            href={reel.video_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ backgroundColor: "hsl(var(--portfolio-muted))" }}
-          >
-            <span style={{ color: "hsl(var(--portfolio-accent))" }}>▶ Watch</span>
+          <a href={reel.video_url} target="_blank" rel="noopener noreferrer" className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
+            <span style={{ color: theme.accentPrimary }}>▶ Watch</span>
           </a>
         )}
       </div>
-
-      <p className="text-sm font-medium" style={{ color: "hsl(var(--portfolio-card-fg))" }}>
-        {reel.title}
-      </p>
-
-      {reel.description && (
-        <p className="text-xs" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>
-          {reel.description}
-        </p>
-      )}
-
-      {/* Chapter markers */}
+      <p className="text-sm font-medium" style={{ color: theme.textPrimary }}>{reel.title}</p>
+      {reel.description && <p className="text-xs" style={{ color: theme.textSecondary }}>{reel.description}</p>}
       {chapters.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
           {chapters.map((ch, i) => (
@@ -102,13 +160,9 @@ const ReelCard = ({ reel }: { reel: any }) => {
               onClick={() => setActiveChapter(ch.time)}
               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs transition-all hover:scale-105"
               style={{
-                backgroundColor: activeChapter === ch.time
-                  ? "hsl(var(--portfolio-accent) / 0.15)"
-                  : "hsl(var(--portfolio-muted))",
-                color: activeChapter === ch.time
-                  ? "hsl(var(--portfolio-accent))"
-                  : "hsl(var(--portfolio-muted-fg))",
-                border: `1px solid ${activeChapter === ch.time ? "hsl(var(--portfolio-accent) / 0.3)" : "hsl(var(--portfolio-border))"}`,
+                backgroundColor: activeChapter === ch.time ? `${theme.accentPrimary}25` : theme.bgElevated,
+                color: activeChapter === ch.time ? theme.accentPrimary : theme.textSecondary,
+                border: `1px solid ${activeChapter === ch.time ? `${theme.accentPrimary}50` : theme.borderDefault}`,
               }}
             >
               <span className="font-mono text-[10px] opacity-70">{ch.time}</span>
