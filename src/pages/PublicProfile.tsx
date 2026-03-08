@@ -67,6 +67,7 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
+  const [knownFor, setKnownFor] = useState<any[]>([]);
   const [exportData, setExportData] = useState<{ projects: any[]; awards: any[]; skills: any[]; education: any[] }>({ projects: [], awards: [], skills: [], education: [] });
 
   useEffect(() => {
@@ -88,6 +89,13 @@ const PublicProfile = () => {
         user_agent: navigator.userAgent,
         device_type: window.innerWidth < 768 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop",
       });
+
+      // Fetch notable projects for KnownFor strip
+      supabase.from("projects")
+        .select("id,title,poster_url,role_name,imdb_link,year,network_or_studio")
+        .eq("profile_id", profile.id).eq("is_notable", true)
+        .order("display_order").limit(6)
+        .then(({ data }) => setKnownFor(data || []));
 
       // Prefetch export data for PDF
       Promise.all([
@@ -242,6 +250,7 @@ const PublicProfile = () => {
       >
         <PortfolioHero
           profile={profile}
+          knownFor={knownFor}
           heroBgType={(profile.hero_bg_type as any) || 'preset'}
           heroBgSolidColor={profile.hero_bg_solid_color || undefined}
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
