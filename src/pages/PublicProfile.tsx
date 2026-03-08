@@ -43,6 +43,9 @@ interface ProfileData {
   subscription_tier?: string | null;
   hero_style?: string | null;
   hero_background_preset?: string | null;
+  hero_bg_type?: string | null;
+  hero_bg_solid_color?: string | null;
+  hero_bg_video_url?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -159,7 +162,12 @@ const PublicProfile = () => {
         initialSectionOrder={sectionOrder}
         initialSectionsVisible={sectionsVisible}
       >
-        <PortfolioHero profile={profile} />
+        <PortfolioHero
+          profile={profile}
+          heroBgType={(profile.hero_bg_type as any) || 'preset'}
+          heroBgSolidColor={profile.hero_bg_solid_color || undefined}
+          heroBgVideoUrl={profile.hero_bg_video_url || undefined}
+        />
 
         <main className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
           <SortableSectionList

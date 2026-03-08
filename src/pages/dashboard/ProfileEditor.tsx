@@ -28,6 +28,9 @@ interface ProfileForm {
   primary_goal: string;
   hero_style: string;
   hero_background_preset: string;
+  hero_bg_type: string;
+  hero_bg_solid_color: string;
+  hero_bg_video_url: string;
 }
 
 const ProfileEditor = () => {
@@ -51,6 +54,9 @@ const ProfileEditor = () => {
     primary_goal: "",
     hero_style: "full",
     hero_background_preset: "",
+    hero_bg_type: "preset",
+    hero_bg_solid_color: "",
+    hero_bg_video_url: "",
   });
 
   useEffect(() => {
