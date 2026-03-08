@@ -5,7 +5,8 @@ import { getAllThemeFontsUrl } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
-import ThemeSwitcher, { LayoutPreset } from "@/components/portfolio/ThemeSwitcher";
+import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
+import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/LayoutSwitcher";
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionScriptLibrary from "@/components/portfolio/sections/SectionScriptLibrary";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
@@ -13,9 +14,10 @@ import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import SectionPress from "@/components/portfolio/sections/SectionPress";
 import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
-import { ArrowRight } from "lucide-react";
+import GlassCard from "@/components/portfolio/GlassCard";
+import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
-/* ── mock data ── */
+/* ══════════════════════ MOCK DATA ══════════════════════ */
 const mockProfile = {
   id: "demo-screenwriter",
   display_name: "Jordan Avery",
@@ -97,120 +99,202 @@ const mockServices = [
 
 const featuredProject = mockCredits[0];
 
-/* ── Ambient Background Glow ── */
+/* ══════════════════════ SHARED ══════════════════════ */
+
 const AmbientGlow = () => {
   const theme = usePortfolioTheme();
   const isDark = theme.bgPrimary.startsWith('#0') || theme.bgPrimary.startsWith('#1') || theme.bgPrimary.startsWith('#2');
   if (!isDark) return null;
-
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-      <div
-        className="absolute w-[60vw] h-[40vh] rounded-full"
-        style={{
-          top: '20%',
-          left: '10%',
-          background: `radial-gradient(circle, ${theme.accentPrimary}08 0%, transparent 70%)`,
-          filter: 'blur(80px)',
-          animation: 'ambient-drift 18s ease-in-out infinite',
-        }}
-      />
-      <div
-        className="absolute w-[50vw] h-[35vh] rounded-full"
-        style={{
-          bottom: '10%',
-          right: '5%',
-          background: `radial-gradient(circle, ${theme.accentPrimary}05 0%, transparent 70%)`,
-          filter: 'blur(100px)',
-          animation: 'ambient-drift 24s ease-in-out infinite reverse',
-        }}
-      />
+      <div className="absolute w-[60vw] h-[40vh] rounded-full" style={{ top: '20%', left: '10%', background: `radial-gradient(circle, ${theme.accentPrimary}08 0%, transparent 70%)`, filter: 'blur(80px)', animation: 'ambient-drift 18s ease-in-out infinite' }} />
+      <div className="absolute w-[50vw] h-[35vh] rounded-full" style={{ bottom: '10%', right: '5%', background: `radial-gradient(circle, ${theme.accentPrimary}05 0%, transparent 70%)`, filter: 'blur(100px)', animation: 'ambient-drift 24s ease-in-out infinite reverse' }} />
     </div>
   );
 };
 
-/* ── Layout renderers ── */
+/* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
 
-const StandardLayout = () => {
+/* 1. CLASSIC — Traditional vertical stack (matches original screenshot) */
+const ClassicLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <>
-      {/* Row 1: Loglines (main) + Services (sidebar) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
-        <PortfolioSectionWrapper title="Original Work" index={0}>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
         </PortfolioSectionWrapper>
-        <PortfolioSectionWrapper title="Services" index={1}>
-          <SectionServices items={mockServices} compact />
-        </PortfolioSectionWrapper>
       </div>
-
-      {/* Row 2: Script Library full width */}
       <div className="mb-10">
-        <PortfolioSectionWrapper title="Script Library" index={2}>
+        <PortfolioSectionWrapper title="Script Library" index={1}>
           <SectionScriptLibrary items={mockScripts} />
         </PortfolioSectionWrapper>
       </div>
-
-      {/* Row 3: Credits (poster) + Testimonials (sidebar) */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
-        <PortfolioSectionWrapper title="Produced Credits" index={3}>
-          <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Produced Credits" index={2}>
+          {/* Featured hero credit */}
+          <CreditHeroCard project={mockCredits[0]} />
+          {/* Remaining credits as rows */}
+          <div className="mt-4 space-y-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${theme.borderDefault}` }}>
+            {mockCredits.slice(1).map(c => (
+              <div key={c.id} className="flex items-center gap-4 px-4 py-3 transition-colors" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}60`)}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+              >
+                <img src={c.poster_url} alt={c.title} className="w-14 h-20 rounded object-cover shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    {c.network_or_studio && (
+                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>
+                        {c.network_or_studio}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="text-sm font-semibold mt-1" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{c.title}</h4>
+                  {c.role_name && (
+                    <span className="text-[11px]" style={{ color: theme.textSecondary }}>
+                      {c.role_name}{c.role_type ? ` · ${c.role_type}` : ''}
+                    </span>
+                  )}
+                  {c.genre?.length > 0 && (
+                    <div className="flex gap-1 mt-1">
+                      {c.genre.map((g: string) => (
+                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textTertiary }}>{g}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <span className="text-sm tabular-nums" style={{ color: theme.textTertiary }}>{c.year}</span>
+              </div>
+            ))}
+          </div>
         </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
+          <SectionAwards items={mockAwards} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
         <PortfolioSectionWrapper title="Testimonials" index={4}>
           <SectionTestimonials items={mockTestimonials} />
         </PortfolioSectionWrapper>
       </div>
-
-      {/* Row 4: Awards + Press side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
-          <SectionAwards items={mockAwards} />
-        </PortfolioSectionWrapper>
-        <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Press & Reviews" index={5}>
           <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Services" index={6}>
+          <SectionServices items={mockServices} />
         </PortfolioSectionWrapper>
       </div>
     </>
   );
 };
 
+/* Credit hero card for Classic layout */
+const CreditHeroCard = ({ project }: { project: any }) => {
+  const theme = usePortfolioTheme();
+  return (
+    <GlassCard featured className="overflow-hidden">
+      <div className="relative">
+        <img
+          src={project.backdrop_url || project.poster_url}
+          alt={project.title}
+          className="w-full aspect-[2.4/1] object-cover"
+        />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgPrimary}ee 0%, ${theme.bgPrimary}60 40%, transparent 70%)` }} />
+        <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5">
+          {project.network_or_studio && (
+            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent }}>
+              {project.network_or_studio}
+            </span>
+          )}
+          <h3 className="text-xl font-bold" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
+            {project.title}
+            <span className="text-sm font-normal ml-2" style={{ color: theme.textTertiary }}>{project.year}</span>
+          </h3>
+          {project.role_name && (
+            <p className="text-[13px] font-medium" style={{ color: theme.accentPrimary }}>
+              {project.role_name}{project.role_type ? ` · ${project.role_type}` : ''}
+            </p>
+          )}
+          {project.logline && (
+            <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontLogline, fontStyle: theme.loglineStyle, color: theme.textSecondary }}>
+              {project.logline}
+            </p>
+          )}
+        </div>
+      </div>
+    </GlassCard>
+  );
+};
+
+/* 2. STANDARD — Dense grid with sidebar modules */
+const StandardLayout = () => (
+  <>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Services" index={1}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Script Library" index={2}>
+        <SectionScriptLibrary items={mockScripts} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
+      <PortfolioSectionWrapper title="Produced Credits" index={3}>
+        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Testimonials" index={4}>
+        <SectionTestimonials items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
+        <SectionAwards items={mockAwards} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+        <SectionPress items={mockPress} />
+      </PortfolioSectionWrapper>
+    </div>
+  </>
+);
+
+/* 3. CINEMATIC — Full-width hero, poster gallery */
 const CinematicLayout = () => (
   <>
-    {/* Full-width loglines */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Full-width poster credits */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Full-width script library */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
         <SectionScriptLibrary items={mockScripts} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Testimonials full width */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Testimonials" index={3}>
         <SectionTestimonials items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Awards + Press + Services in row */}
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
+      <PortfolioSectionWrapper title="Awards" index={4}>
         <SectionAwards items={mockAwards} />
       </PortfolioSectionWrapper>
-      <PortfolioSectionWrapper title="Press & Reviews" index={5}>
+      <PortfolioSectionWrapper title="Press" index={5}>
         <SectionPress items={mockPress} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={6}>
@@ -220,9 +304,9 @@ const CinematicLayout = () => (
   </>
 );
 
+/* 4. COMPACT — Maximum density */
 const CompactLayout = () => (
   <>
-    {/* Row 1: Loglines + Services */}
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 mb-6">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
@@ -231,8 +315,6 @@ const CompactLayout = () => (
         <SectionServices items={mockServices} compact />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Row 2: Script Library + Credits table side by side */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
       <PortfolioSectionWrapper title="Script Library" index={2}>
         <SectionScriptLibrary items={mockScripts} />
@@ -241,8 +323,6 @@ const CompactLayout = () => (
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Row 3: Awards + Press + Testimonials */}
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <PortfolioSectionWrapper title="Awards" index={4}>
         <SectionAwards items={mockAwards} />
@@ -257,51 +337,305 @@ const CompactLayout = () => (
   </>
 );
 
+/* 5. MAGAZINE — Editorial two-column */
 const MagazineLayout = () => (
-  <>
-    {/* Two-column editorial: main content left, sidebar right */}
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
-      {/* Main column */}
+  <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+    <div className="space-y-10">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Produced Credits" index={1}>
+        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Script Library" index={2}>
+        <SectionScriptLibrary items={mockScripts} />
+      </PortfolioSectionWrapper>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <PortfolioSectionWrapper title="Awards" index={4}>
+          <SectionAwards items={mockAwards} />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Press" index={5}>
+          <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+    <div className="space-y-8">
+      <PortfolioSectionWrapper title="Services" index={3}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Testimonials" index={6}>
+        <SectionTestimonials items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+  </div>
+);
+
+/* 6. SPOTLIGHT — Accordion, one section expanded at a time */
+const SpotlightLayout = () => {
+  const theme = usePortfolioTheme();
+  const [openSection, setOpenSection] = useState<string>("loglines");
+
+  const sections = [
+    { key: "loglines", title: "Original Work", content: <SectionLoglineShowcase items={mockLoglines} /> },
+    { key: "scripts", title: "Script Library", content: <SectionScriptLibrary items={mockScripts} /> },
+    { key: "credits", title: "Produced Credits", content: <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" /> },
+    { key: "awards", title: "Awards & Recognition", content: <SectionAwards items={mockAwards} /> },
+    { key: "testimonials", title: "Testimonials", content: <SectionTestimonials items={mockTestimonials} /> },
+    { key: "press", title: "Press & Reviews", content: <SectionPress items={mockPress} /> },
+    { key: "services", title: "Services", content: <SectionServices items={mockServices} /> },
+  ];
+
+  return (
+    <div className="space-y-2">
+      {sections.map(s => {
+        const isOpen = openSection === s.key;
+        return (
+          <GlassCard key={s.key} className="overflow-hidden">
+            <button
+              onClick={() => setOpenSection(isOpen ? "" : s.key)}
+              className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors"
+            >
+              <h3 className="text-base font-semibold" style={{ fontFamily: theme.fontDisplay, color: isOpen ? theme.accentPrimary : theme.textPrimary }}>
+                {s.title}
+              </h3>
+              {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: theme.textTertiary }} /> : <ChevronDown className="w-4 h-4" style={{ color: theme.textTertiary }} />}
+            </button>
+            <div
+              className="overflow-hidden transition-all duration-500"
+              style={{
+                maxHeight: isOpen ? '2000px' : '0',
+                opacity: isOpen ? 1 : 0,
+              }}
+            >
+              <div className="px-5 pb-5">
+                {s.content}
+              </div>
+            </div>
+          </GlassCard>
+        );
+      })}
+    </div>
+  );
+};
+
+/* 7. TIMELINE — Chronological vertical with line */
+const TimelineLayout = () => {
+  const theme = usePortfolioTheme();
+
+  const timelineItems = [
+    { year: 2024, title: "Current Projects", content: <SectionLoglineShowcase items={mockLoglines.filter(l => l.status === "Optioned" || l.status === "In Development")} /> },
+    { year: 2023, title: "Emmy Nominations & The Arrangement", content: <SectionProjects items={mockCredits.filter(c => c.year >= 2023)} profileType="screenwriter" layout="poster" /> },
+    { year: 2022, title: "Glass Houses & Awards", content: (
+      <div className="space-y-4">
+        <SectionProjects items={mockCredits.filter(c => c.year === 2022)} profileType="screenwriter" layout="poster" />
+        <SectionAwards items={mockAwards.filter(a => a.year === 2022)} />
+      </div>
+    )},
+    { year: 2021, title: "Borderline & Rising Recognition", content: (
+      <div className="space-y-4">
+        <SectionProjects items={mockCredits.filter(c => c.year <= 2021)} profileType="screenwriter" layout="poster" />
+        <SectionAwards items={mockAwards.filter(a => a.year === 2021)} />
+      </div>
+    )},
+  ];
+
+  return (
+    <div className="relative">
+      {/* Vertical line */}
+      <div className="absolute left-4 top-0 bottom-0 w-px" style={{ backgroundColor: theme.borderDefault }} />
+
       <div className="space-y-10">
-        <PortfolioSectionWrapper title="Original Work" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
-        </PortfolioSectionWrapper>
-
-        <PortfolioSectionWrapper title="Produced Credits" index={1}>
-          <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
-        </PortfolioSectionWrapper>
-
-        <PortfolioSectionWrapper title="Script Library" index={2}>
-          <SectionScriptLibrary items={mockScripts} />
-        </PortfolioSectionWrapper>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
-            <SectionAwards items={mockAwards} />
-          </PortfolioSectionWrapper>
-          <PortfolioSectionWrapper title="Press & Reviews" index={5}>
-            <SectionPress items={mockPress} />
-          </PortfolioSectionWrapper>
-        </div>
+        {timelineItems.map((item, i) => (
+          <div key={item.year} className="relative pl-12">
+            {/* Year dot */}
+            <div className="absolute left-2.5 top-1 w-3 h-3 rounded-full" style={{ backgroundColor: theme.accentPrimary, boxShadow: `0 0 8px ${theme.accentGlow}` }} />
+            <span className="text-[12px] font-bold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>{item.year}</span>
+            <h3 className="text-lg font-semibold mt-1 mb-3" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{item.title}</h3>
+            {item.content}
+          </div>
+        ))}
       </div>
 
-      {/* Sidebar */}
-      <div className="space-y-8">
-        <PortfolioSectionWrapper title="Services" index={3}>
-          <SectionServices items={mockServices} compact />
+      {/* Bottom sections */}
+      <div className="mt-12 pl-12 space-y-8">
+        <PortfolioSectionWrapper title="Testimonials" index={5}>
+          <SectionTestimonials items={mockTestimonials} />
         </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+          <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+  );
+};
 
-        <PortfolioSectionWrapper title="Testimonials" index={6}>
+/* 8. BENTO — Asymmetric masonry-like grid */
+const BentoLayout = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+    {/* Large featured loglines - spans 2 cols */}
+    <div className="sm:col-span-2 lg:col-span-2">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Services - single col */}
+    <div>
+      <PortfolioSectionWrapper title="Services" index={1}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Credits - full width */}
+    <div className="sm:col-span-2 lg:col-span-3">
+      <PortfolioSectionWrapper title="Produced Credits" index={2}>
+        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Scripts - spans 2 */}
+    <div className="sm:col-span-2">
+      <PortfolioSectionWrapper title="Script Library" index={3}>
+        <SectionScriptLibrary items={mockScripts} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Testimonials - single */}
+    <div>
+      <PortfolioSectionWrapper title="Testimonials" index={4}>
+        <SectionTestimonials items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Awards */}
+    <div>
+      <PortfolioSectionWrapper title="Awards" index={5}>
+        <SectionAwards items={mockAwards} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Press - spans 2 */}
+    <div className="sm:col-span-2">
+      <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+        <SectionPress items={mockPress} />
+      </PortfolioSectionWrapper>
+    </div>
+  </div>
+);
+
+/* 9. MINIMAL — Maximum whitespace, essentials only */
+const MinimalLayout = () => {
+  const theme = usePortfolioTheme();
+  return (
+    <div className="max-w-2xl mx-auto space-y-16">
+      <div>
+        <PortfolioSectionWrapper title="Work" index={0}>
+          <SectionLoglineShowcase items={mockLoglines} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Credits" index={1}>
+          <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Recognition" index={2}>
+          <SectionAwards items={mockAwards} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div>
+        <PortfolioSectionWrapper title="Words" index={3}>
           <SectionTestimonials items={mockTestimonials} />
         </PortfolioSectionWrapper>
       </div>
     </div>
-  </>
-);
+  );
+};
+
+/* 10. DASHBOARD — Stats-forward, data cards */
+const DashboardLayout = () => {
+  const theme = usePortfolioTheme();
+
+  const statCards = [
+    { icon: FileText, label: "Scripts", value: mockScripts.length.toString(), sub: "Available to read" },
+    { icon: Eye, label: "Credits", value: mockCredits.length.toString(), sub: "Produced works" },
+    { icon: Award, label: "Awards", value: mockAwards.length.toString(), sub: "Industry recognition" },
+    { icon: TrendingUp, label: "Status", value: mockLoglines.filter(l => l.status === "In Development").length.toString(), sub: "In development" },
+  ];
+
+  return (
+    <>
+      {/* Stats row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        {statCards.map(s => (
+          <GlassCard key={s.label} className="p-4 text-center">
+            <s.icon className="w-5 h-5 mx-auto mb-2" style={{ color: theme.accentPrimary }} />
+            <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{s.value}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: theme.textSecondary }}>{s.label}</p>
+            <p className="text-[10px]" style={{ color: theme.textTertiary }}>{s.sub}</p>
+          </GlassCard>
+        ))}
+      </div>
+
+      {/* Main grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Active Projects</h3>
+          <SectionLoglineShowcase items={mockLoglines} />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Script Library</h3>
+          <SectionScriptLibrary items={mockScripts} />
+        </GlassCard>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-8">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Produced Credits</h3>
+          <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Testimonials</h3>
+          <SectionTestimonials items={mockTestimonials} />
+        </GlassCard>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <GlassCard className="p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Awards</h3>
+          <SectionAwards items={mockAwards} />
+        </GlassCard>
+        <GlassCard className="p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Press</h3>
+          <SectionPress items={mockPress} />
+        </GlassCard>
+        <GlassCard className="p-4">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
+          <SectionServices items={mockServices} compact />
+        </GlassCard>
+      </div>
+    </>
+  );
+};
+
+/* ══════════════════════ MAIN PAGE ══════════════════════ */
+
+const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
+  classic: ClassicLayout,
+  standard: StandardLayout,
+  cinematic: CinematicLayout,
+  compact: CompactLayout,
+  magazine: MagazineLayout,
+  spotlight: SpotlightLayout,
+  timeline: TimelineLayout,
+  bento: BentoLayout,
+  minimal: MinimalLayout,
+  dashboard: DashboardLayout,
+};
 
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
-  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("standard");
+  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
@@ -319,6 +653,8 @@ const DemoScreenwriter = () => {
     developing: mockScripts.filter(s => s.status === "In Development").length,
     awards: mockAwards.length,
   };
+
+  const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
@@ -345,11 +681,7 @@ const DemoScreenwriter = () => {
       {/* Body */}
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <AmbientGlow />
-
-        {layoutPreset === 'standard' && <StandardLayout />}
-        {layoutPreset === 'cinematic' && <CinematicLayout />}
-        {layoutPreset === 'compact' && <CompactLayout />}
-        {layoutPreset === 'magazine' && <MagazineLayout />}
+        <LayoutComponent />
       </div>
 
       {/* Discreet platform CTA */}
@@ -377,13 +709,9 @@ const DemoScreenwriter = () => {
         socialLinks={mockSocialLinks}
       />
 
-      {/* Theme & Layout Switcher */}
-      <ThemeSwitcher
-        currentThemeId={themeId}
-        onThemeChange={setThemeId}
-        currentLayout={layoutPreset}
-        onLayoutChange={setLayoutPreset}
-      />
+      {/* Separate switchers: Layout (left) + Theme (right) */}
+      <LayoutSwitcher currentLayout={layoutPreset} onLayoutChange={setLayoutPreset} />
+      <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
     </PortfolioThemeProvider>
   );
 };
