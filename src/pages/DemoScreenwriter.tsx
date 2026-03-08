@@ -201,15 +201,20 @@ const ClassicLayout = () => {
 /* Credit hero card for Classic layout — split: image top, info on solid bg below */
 const CreditHeroCard = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
-  return (
-    <GlassCard featured className="overflow-hidden">
+  const card = (
+    <GlassCard featured className="overflow-hidden group">
       {/* Backdrop image — clean, no text overlay */}
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <img
           src={project.backdrop_url || project.poster_url}
           alt={project.title}
-          className="w-full aspect-[2.4/1] object-cover"
+          className="w-full aspect-[2.4/1] object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        {project.imdb_link && (
+          <div className="absolute top-3 right-3 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        )}
       </div>
       {/* Info section — solid background for guaranteed readability */}
       <div className="p-5 space-y-1.5" style={{ backgroundColor: theme.bgSecondary }}>
@@ -228,13 +233,19 @@ const CreditHeroCard = ({ project }: { project: any }) => {
           </p>
         )}
         {project.logline && (
-          <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontLogline, fontStyle: theme.loglineStyle, color: theme.textSecondary }}>
+          <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontBody, color: theme.textSecondary }}>
             {project.logline}
           </p>
         )}
       </div>
     </GlassCard>
   );
+
+  return project.imdb_link ? (
+    <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline block">
+      {card}
+    </a>
+  ) : card;
 };
 
 /* 2. STANDARD — Dense grid with sidebar modules */
