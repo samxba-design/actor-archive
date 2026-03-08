@@ -25,6 +25,7 @@ interface Props {
   sectionKey: string;
   profileId: string;
   profileType: string | null;
+  profileSlug?: string;
 }
 
 const defaultSectionLabels: Record<string, string> = {
@@ -64,7 +65,7 @@ function getContextualLabel(sectionKey: string, profileType: string | null): str
   return defaultSectionLabels[sectionKey] || sectionKey;
 }
 
-const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
+const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -228,9 +229,9 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   const renderSection = () => {
     switch (sectionKey) {
       case "projects":
-        return <SectionProjects items={data} profileType={profileType} />;
+        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} />;
       case "credits":
-        return <SectionProjects items={data} profileType={profileType} isCredits />;
+        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isCredits />;
       case "gallery":
         return <SectionGallery items={data} />;
       case "awards":

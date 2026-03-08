@@ -1,8 +1,11 @@
-import { Film, Tv, BookOpen, FileText, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Film, Tv, BookOpen, FileText, ExternalLink, Play, X } from "lucide-react";
+import { extractYouTubeId, extractVimeoId } from "@/lib/videoEmbed";
 
 interface Props {
   items: any[];
   profileType: string | null;
+  profileSlug?: string;
   isCredits?: boolean;
 }
 
@@ -15,7 +18,8 @@ const typeIcons: Record<string, any> = {
   book: BookOpen,
 };
 
-const SectionProjects = ({ items, profileType, isCredits }: Props) => {
+const SectionProjects = ({ items, profileType, profileSlug, isCredits }: Props) => {
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const featured = items.filter((p) => p.is_featured);
   const rest = items.filter((p) => !p.is_featured);
   const sorted = [...featured, ...rest];
@@ -84,16 +88,48 @@ const SectionProjects = ({ items, profileType, isCredits }: Props) => {
                 borderRadius: "var(--portfolio-radius)",
               }}
             >
-              {/* Image with hover overlay */}
+              {/* Image with hover overlay + video */}
               <div className="relative">
-                {image ? (
-                  <div className="aspect-[2/3] sm:aspect-video overflow-hidden">
+                {playingVideo === project.id ? (
+                  <div className="aspect-video">
+                    {(() => {
+                      const ytId = extractYouTubeId(project.video_url || "");
+                      const vimeoId = extractVimeoId(project.video_url || "");
+                      const embedUrl = ytId
+                        ? `https://www.youtube.com/embed/${ytId}?autoplay=1`
+                        : vimeoId
+                        ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1`
+                        : null;
+                      return embedUrl ? (
+                        <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="autoplay" />
+                      ) : null;
+                    })()}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setPlayingVideo(null); }}
+                      className="absolute top-2 right-2 p-1 rounded-full"
+                      style={{ backgroundColor: "hsl(var(--portfolio-bg) / 0.8)" }}
+                    >
+                      <X className="w-4 h-4" style={{ color: "hsl(var(--portfolio-fg))" }} />
+                    </button>
+                  </div>
+                ) : image ? (
+                  <div className="aspect-[2/3] sm:aspect-video overflow-hidden relative">
                     <img
                       src={image}
                       alt={project.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
+                    {project.video_url && (
+                      <button
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPlayingVideo(project.id); }}
+                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: "hsl(var(--portfolio-accent))" }}>
+                          <Play className="w-5 h-5 ml-0.5" style={{ color: "hsl(var(--portfolio-accent-fg))" }} />
+                        </div>
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <div
@@ -104,7 +140,7 @@ const SectionProjects = ({ items, profileType, isCredits }: Props) => {
                   </div>
                 )}
                 {/* Hover overlay with logline */}
-                {project.logline && image && (
+                {project.logline && image && playingVideo !== project.id && (
                   <div
                     className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     style={{ background: "linear-gradient(transparent 30%, hsl(var(--portfolio-bg) / 0.85))" }}
@@ -160,17 +196,28 @@ const SectionProjects = ({ items, profileType, isCredits }: Props) => {
                   </div>
                 )}
 
-                {project.imdb_link && (
-                  <a
-                    href={project.imdb_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs mt-2 hover:opacity-80"
-                    style={{ color: "hsl(var(--portfolio-accent))" }}
-                  >
-                    <ExternalLink className="w-3 h-3" /> IMDb
-                  </a>
-                )}
+                <div className="flex items-center gap-3 mt-2">
+                  {project.imdb_link && (
+                    <a
+                      href={project.imdb_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs hover:opacity-80"
+                      style={{ color: "hsl(var(--portfolio-accent))" }}
+                    >
+                      <ExternalLink className="w-3 h-3" /> IMDb
+                    </a>
+                  )}
+                  {project.project_slug && profileSlug && (
+                    <a
+                      href={`/p/${profileSlug}/${project.project_slug}`}
+                      className="inline-flex items-center gap-1 text-xs hover:opacity-80"
+                      style={{ color: "hsl(var(--portfolio-accent))" }}
+                    >
+                      <ExternalLink className="w-3 h-3" /> Details
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           );

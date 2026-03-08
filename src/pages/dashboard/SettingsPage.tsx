@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock } from "lucide-react";
 import { themes } from "@/lib/themes";
+import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, type SectionConfig } from "@/config/profileSections";
 
 const SettingsPage = () => {
@@ -35,6 +36,9 @@ const SettingsPage = () => {
     booking_url: "",
     auto_responder_enabled: false,
     auto_responder_message: "",
+    font_pairing: "default",
+    layout_density: "spacious",
+    custom_css: "",
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -49,7 +53,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -115,6 +119,9 @@ const SettingsPage = () => {
             booking_url: (data as any).booking_url || "",
             auto_responder_enabled: (data as any).auto_responder_enabled || false,
             auto_responder_message: (data as any).auto_responder_message || "",
+            font_pairing: (data as any).font_pairing || "default",
+            layout_density: (data as any).layout_density || "spacious",
+            custom_css: (data as any).custom_css || "",
           });
         }
         setLoading(false);
@@ -142,6 +149,9 @@ const SettingsPage = () => {
         sections_visible: sectionsVisible,
         auto_responder_enabled: form.auto_responder_enabled,
         auto_responder_message: form.auto_responder_message || null,
+        font_pairing: form.font_pairing || "default",
+        layout_density: form.layout_density || "spacious",
+        custom_css: form.custom_css || null,
       } as any)
       .eq("id", user.id);
 
@@ -259,6 +269,47 @@ const SettingsPage = () => {
               <span className="text-sm text-muted-foreground">{form.accent_color}</span>
             </div>
           </div>
+          <div>
+            <Label>Font Pairing</Label>
+            <Select value={form.font_pairing} onValueChange={(v) => setForm((f) => ({ ...f, font_pairing: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {Object.values(fontPairings).map((fp) => (
+                  <SelectItem key={fp.key} value={fp.key}>{fp.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1">Override the theme's default fonts</p>
+          </div>
+          <div>
+            <Label>Layout Density</Label>
+            <Select value={form.layout_density} onValueChange={(v) => setForm((f) => ({ ...f, layout_density: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compact">Compact</SelectItem>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="spacious">Spacious</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Custom CSS */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Custom CSS</CardTitle>
+          <CardDescription>Advanced: inject custom styles into your portfolio</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            value={form.custom_css}
+            onChange={(e) => setForm((f) => ({ ...f, custom_css: e.target.value }))}
+            rows={6}
+            placeholder={`.portfolio-container h2 {\n  text-transform: uppercase;\n}`}
+            className="font-mono text-xs"
+          />
+          <p className="text-xs text-muted-foreground mt-1">CSS is scoped to your portfolio page only</p>
         </CardContent>
       </Card>
 

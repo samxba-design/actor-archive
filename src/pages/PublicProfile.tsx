@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { applyThemeToElement, getTheme } from "@/lib/themes";
+import { getFontPairing, getFontGoogleUrl } from "@/lib/fontPairings";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
@@ -33,6 +34,9 @@ interface ProfileData {
   cta_url: string | null;
   cta_type: string | null;
   booking_url: string | null;
+  font_pairing: string | null;
+  layout_density: string | null;
+  custom_css: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -98,7 +102,7 @@ const PublicProfile = () => {
     fetchProfile();
   }, [slug]);
 
-  // Apply theme
+  // Apply theme + font pairing + layout density
   useEffect(() => {
     if (profile && containerRef.current) {
       applyThemeToElement(
@@ -106,6 +110,20 @@ const PublicProfile = () => {
         profile.theme || "minimal",
         profile.accent_color || undefined
       );
+
+      // Font pairing override
+      const pairing = getFontPairing(profile.font_pairing || "default");
+      if (pairing.headingFont) {
+        containerRef.current.style.setProperty("--portfolio-heading-font", pairing.headingFont);
+      }
+      if (pairing.bodyFont) {
+        containerRef.current.style.setProperty("--portfolio-body-font", pairing.bodyFont);
+      }
+
+      // Layout density
+      const density = profile.layout_density || "spacious";
+      const spacingMap: Record<string, string> = { compact: "0.6", default: "1", spacious: "1.4" };
+      containerRef.current.style.setProperty("--portfolio-spacing", spacingMap[density] || "1");
     }
   }, [profile]);
 
@@ -129,6 +147,29 @@ const PublicProfile = () => {
       if (el) el.remove();
     };
   }, [profile?.theme]);
+
+  // Load Google Fonts for custom font pairing
+  useEffect(() => {
+    if (!profile) return;
+    const pairing = getFontPairing(profile.font_pairing || "default");
+    const fontUrl = getFontGoogleUrl(pairing);
+    if (!fontUrl) return;
+
+    const id = "portfolio-font-pairing";
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = fontUrl;
+    document.head.appendChild(link);
+
+    return () => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    };
+  }, [profile?.font_pairing]);
 
   // Log page view
   useEffect(() => {
@@ -176,16 +217,30 @@ const PublicProfile = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen"
+      className="min-h-screen portfolio-container"
       style={{
         backgroundColor: "hsl(var(--portfolio-bg))",
         color: "hsl(var(--portfolio-fg))",
         fontFamily: "var(--portfolio-body-font)",
       }}
     >
+      {/* Inject custom CSS */}
+      {profile.custom_css && (
+        <style dangerouslySetInnerHTML={{ __html: profile.custom_css }} />
+      )}
+
       <PortfolioHero profile={profile} />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <main
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+        style={{
+          paddingTop: `calc(3rem * var(--portfolio-spacing, 1))`,
+          paddingBottom: `calc(3rem * var(--portfolio-spacing, 1))`,
+          gap: `calc(4rem * var(--portfolio-spacing, 1))`,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {sectionOrder
           .filter((key) => sectionsVisible[key] !== false && key !== "hero" && key !== "contact")
           .map((sectionKey) => (
@@ -194,6 +249,7 @@ const PublicProfile = () => {
               sectionKey={sectionKey}
               profileId={profile.id}
               profileType={profile.profile_type}
+              profileSlug={profile.slug || undefined}
             />
           ))}
       </main>
