@@ -66,6 +66,7 @@ const defaultSectionLabels: Record<string, string> = {
   video_portfolio: "Video Portfolio",
   campaign_timeline: "Campaign Timeline",
   published_work: "Published Work",
+  custom_sections: "Custom Sections",
 };
 
 function getContextualLabel(sectionKey: string, profileType: string | null): string {
