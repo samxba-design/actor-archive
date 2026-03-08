@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wand2, Loader2, Check, ChevronDown, ChevronUp, Sparkles } from "lucide-react";
+import { Wand2, Loader2, Check, ChevronDown, ChevronUp, Sparkles, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -9,6 +9,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSubscription } from "@/hooks/useSubscription";
+import { Link } from "react-router-dom";
 
 interface WritingAssistantProps {
   text: string;
@@ -37,6 +39,7 @@ type SuggestResult = {
 
 export function WritingAssistant({ text, field, title, genre, format, onApply }: WritingAssistantProps) {
   const { toast } = useToast();
+  const { isPro } = useSubscription();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<"idle" | "eval" | "suggest">("idle");
@@ -106,6 +109,19 @@ export function WritingAssistant({ text, field, title, genre, format, onApply }:
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0" align="start">
+        {!isPro ? (
+          <div className="p-6 text-center space-y-3">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+              <Crown className="h-5 w-5 text-primary" />
+            </div>
+            <h3 className="font-semibold text-sm">AI Writing Assistant</h3>
+            <p className="text-xs text-muted-foreground">Upgrade to Pro to evaluate and improve your loglines, bios, and descriptions with AI.</p>
+            <Button size="sm" asChild className="w-full">
+              <Link to="/pricing">Upgrade to Pro — $19.99/mo</Link>
+            </Button>
+          </div>
+        ) : (
+        <>
         <div className="p-3 border-b">
           <div className="flex gap-2">
             <Button
@@ -260,6 +276,8 @@ export function WritingAssistant({ text, field, title, genre, format, onApply }:
               ? "Evaluate your logline against industry standards or get alternative suggestions."
               : "Get feedback on your synopsis structure and clarity, or get an improved version."}
           </div>
+        )}
+        </>
         )}
       </PopoverContent>
     </Popover>

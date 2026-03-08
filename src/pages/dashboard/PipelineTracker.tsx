@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Trash2, GripVertical } from "lucide-react";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 interface Submission {
   id: string;
@@ -120,6 +121,7 @@ const PipelineTracker = () => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   return (
+    <UpgradeGate feature="pipeline_tracker" label="Pipeline Tracker">
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -208,6 +210,7 @@ const PipelineTracker = () => {
         ))}
       </div>
     </div>
+    </UpgradeGate>
   );
 };
 

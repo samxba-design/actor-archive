@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Copy, CheckCircle2, QrCode, Code2, ExternalLink } from "lucide-react";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 const EmbedAndShare = () => {
   const { user } = useAuth();
@@ -115,6 +116,7 @@ const EmbedAndShare = () => {
       </Card>
 
       {/* Embed Widget */}
+      <UpgradeGate feature="embed_widget" label="Embed Widget">
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2"><Code2 className="h-5 w-5 text-primary" /> Embed Widget</CardTitle>
@@ -127,7 +129,7 @@ const EmbedAndShare = () => {
           </Button>
         </CardContent>
       </Card>
-
+      </UpgradeGate>
       {/* Badge / Button */}
       <Card>
         <CardHeader>

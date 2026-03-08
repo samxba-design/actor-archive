@@ -14,10 +14,13 @@ import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock } fr
 import { themes } from "@/lib/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, type SectionConfig } from "@/config/profileSections";
+import { useSubscription } from "@/hooks/useSubscription";
+import { ProBadge } from "@/components/UpgradeGate";
 
 const SettingsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isPro } = useSubscription();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profileType, setProfileType] = useState<string | null>(null);
@@ -252,12 +255,17 @@ const SettingsPage = () => {
         <CardHeader><CardTitle>Theme</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Theme</Label>
-            <Select value={form.theme} onValueChange={(v) => setForm((f) => ({ ...f, theme: v }))}>
+            <div className="flex items-center gap-2">
+              <Label>Theme</Label>
+              {!isPro && <ProBadge />}
+            </div>
+            <Select value={form.theme} onValueChange={(v) => setForm((f) => ({ ...f, theme: v }))} disabled={!isPro && form.theme === "minimal"}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 {Object.values(themes).map((t) => (
-                  <SelectItem key={t.key} value={t.key}>{t.label} — {t.description}</SelectItem>
+                  <SelectItem key={t.key} value={t.key} disabled={!isPro && t.key !== "minimal"}>
+                    {t.label} — {t.description} {!isPro && t.key !== "minimal" ? "🔒" : ""}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -270,8 +278,11 @@ const SettingsPage = () => {
             </div>
           </div>
           <div>
-            <Label>Font Pairing</Label>
-            <Select value={form.font_pairing} onValueChange={(v) => setForm((f) => ({ ...f, font_pairing: v }))}>
+            <div className="flex items-center gap-2">
+              <Label>Font Pairing</Label>
+              {!isPro && <ProBadge />}
+            </div>
+            <Select value={form.font_pairing} onValueChange={(v) => setForm((f) => ({ ...f, font_pairing: v }))} disabled={!isPro}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 {Object.values(fontPairings).map((fp) => (
@@ -282,8 +293,11 @@ const SettingsPage = () => {
             <p className="text-xs text-muted-foreground mt-1">Override the theme's default fonts</p>
           </div>
           <div>
-            <Label>Layout Density</Label>
-            <Select value={form.layout_density} onValueChange={(v) => setForm((f) => ({ ...f, layout_density: v }))}>
+            <div className="flex items-center gap-2">
+              <Label>Layout Density</Label>
+              {!isPro && <ProBadge />}
+            </div>
+            <Select value={form.layout_density} onValueChange={(v) => setForm((f) => ({ ...f, layout_density: v }))} disabled={!isPro}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="compact">Compact</SelectItem>
@@ -296,9 +310,12 @@ const SettingsPage = () => {
       </Card>
 
       {/* Custom CSS */}
-      <Card>
+      <Card className={!isPro ? "opacity-60 pointer-events-none" : ""}>
         <CardHeader>
-          <CardTitle>Custom CSS</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>Custom CSS</CardTitle>
+            {!isPro && <ProBadge />}
+          </div>
           <CardDescription>Advanced: inject custom styles into your portfolio</CardDescription>
         </CardHeader>
         <CardContent>
@@ -308,6 +325,7 @@ const SettingsPage = () => {
             rows={6}
             placeholder={`.portfolio-container h2 {\n  text-transform: uppercase;\n}`}
             className="font-mono text-xs"
+            disabled={!isPro}
           />
           <p className="text-xs text-muted-foreground mt-1">CSS is scoped to your portfolio page only</p>
         </CardContent>
@@ -372,17 +390,20 @@ const SettingsPage = () => {
       </Card>
 
       {/* Auto-Responder */}
-      <Card>
+      <Card className={!isPro ? "opacity-60" : ""}>
         <CardHeader>
-          <CardTitle>Auto-Responder</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>Auto-Responder</CardTitle>
+            {!isPro && <ProBadge />}
+          </div>
           <CardDescription>Automatically acknowledge incoming contact messages</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <Label>Enable Auto-Responder</Label>
-            <Switch checked={form.auto_responder_enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, auto_responder_enabled: v }))} />
+            <Switch checked={form.auto_responder_enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, auto_responder_enabled: v }))} disabled={!isPro} />
           </div>
-          {form.auto_responder_enabled && (
+          {form.auto_responder_enabled && isPro && (
             <div>
               <Label>Response Message</Label>
               <Textarea

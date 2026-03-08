@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Check, ArrowRight, TrendingUp } from "lucide-react";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 const PERSONAS = [
   { value: "film_buyer", label: "Film Buyer / Acquisitions Exec", description: "Would they want to acquire your work?" },
@@ -108,6 +109,7 @@ const ProfileInsights = () => {
   const selectedPersona = PERSONAS.find((p) => p.value === persona);
 
   return (
+    <UpgradeGate feature="profile_insights" label="Profile Insights">
     <div className="max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Profile Insights</h1>
@@ -227,6 +229,7 @@ const ProfileInsights = () => {
         </div>
       )}
     </div>
+    </UpgradeGate>
   );
 };
 

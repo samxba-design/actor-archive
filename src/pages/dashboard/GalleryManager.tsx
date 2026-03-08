@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 
 type GalleryImage = Tables<"gallery_images">;
 
@@ -17,10 +18,13 @@ const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poste
 const GalleryManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isPro } = useSubscription();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [imageType, setImageType] = useState("headshot");
+
+  const atGalleryLimit = !isPro && images.length >= FREE_GALLERY_LIMIT;
 
   const fetchImages = async () => {
     if (!user) return;
@@ -97,14 +101,14 @@ const GalleryManager = () => {
             </div>
             <div>
               <Label htmlFor="gallery-upload" className="cursor-pointer">
-                <Button asChild disabled={uploading}>
+                <Button asChild disabled={uploading || atGalleryLimit}>
                   <label htmlFor="gallery-upload" className="cursor-pointer">
                     {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-                    Upload Images
+                    {atGalleryLimit ? `Limit reached (${FREE_GALLERY_LIMIT})` : "Upload Images"}
                   </label>
                 </Button>
               </Label>
-              <Input id="gallery-upload" type="file" accept="image/*" multiple className="hidden" onChange={handleUpload} />
+              <Input id="gallery-upload" type="file" accept="image/*" multiple className="hidden" onChange={handleUpload} disabled={atGalleryLimit} />
             </div>
           </div>
         </CardContent>
