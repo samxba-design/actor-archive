@@ -10,6 +10,7 @@ interface Props {
   profileType: string | null;
   profileSlug?: string;
   isCredits?: boolean;
+  layout?: 'poster' | 'table' | 'grid';
 }
 
 const typeIcons: Record<string, any> = {
@@ -81,6 +82,130 @@ const CreditRow = ({ project }: { project: any }) => {
   );
 };
 
+/* ── Poster-style credit card (2:3 aspect) ── */
+const PosterCard = ({ project }: { project: any }) => {
+  const theme = usePortfolioTheme();
+  const [hovered, setHovered] = useState(false);
+  const image = project.poster_url || project.custom_image_url || project.backdrop_url;
+  const Icon = typeIcons[project.project_type] || FileText;
+
+  return (
+    <div
+      className="group relative overflow-hidden transition-all"
+      style={{
+        borderRadius: theme.cardRadius,
+        boxShadow: hovered ? theme.cardHoverShadow : theme.cardShadow,
+        transform: hovered ? theme.cardHoverTransform : 'none',
+        transitionDuration: theme.hoverTransitionDuration,
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Poster image */}
+      <div className="aspect-[2/3] overflow-hidden relative" style={{ backgroundColor: theme.bgElevated }}>
+        {image ? (
+          <img
+            src={image}
+            alt={project.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Icon className="w-10 h-10" style={{ color: theme.textTertiary }} />
+          </div>
+        )}
+
+        {/* Gradient overlay */}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{
+            background: `linear-gradient(to top, ${theme.bgPrimary}ee 0%, ${theme.bgPrimary}80 35%, transparent 60%)`,
+            opacity: hovered ? 1 : 0.85,
+          }}
+        />
+
+        {/* Content overlay at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 space-y-1">
+          {/* Network badge */}
+          {project.network_or_studio && (
+            <div className="flex items-center gap-1.5 mb-1">
+              <CompanyLogo companyName={project.network_or_studio} size={14} grayscale={false} />
+              <span className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>
+                {project.network_or_studio}
+              </span>
+            </div>
+          )}
+
+          <h4
+            className="font-semibold leading-tight"
+            style={{
+              fontFamily: theme.fontDisplay,
+              fontWeight: theme.headingWeight,
+              fontSize: '15px',
+              color: theme.textPrimary,
+            }}
+          >
+            {project.title}
+          </h4>
+
+          {/* Role + year */}
+          <div className="flex items-center justify-between gap-2">
+            {project.role_name && (
+              <span
+                className="text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded"
+                style={{
+                  backgroundColor: `${theme.accentPrimary}20`,
+                  color: theme.accentPrimary,
+                }}
+              >
+                {project.role_name}
+              </span>
+            )}
+            {project.year && (
+              <span className="text-[11px] tabular-nums" style={{ color: theme.textTertiary }}>
+                {project.year}
+              </span>
+            )}
+          </div>
+
+          {/* Genre tags */}
+          {project.genre?.length > 0 && (
+            <div className="flex flex-wrap gap-1 pt-0.5">
+              {project.genre.slice(0, 2).map((g: string) => (
+                <span
+                  key={g}
+                  className="text-[8px] uppercase tracking-wider px-1.5 py-0.5"
+                  style={{
+                    border: `1px solid ${theme.borderDefault}`,
+                    color: theme.textTertiary,
+                    borderRadius: '2px',
+                  }}
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* IMDb link on hover */}
+      {project.imdb_link && (
+        <a
+          href={project.imdb_link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}
+        >
+          <ExternalLink className="w-3 h-3" />
+        </a>
+      )}
+    </div>
+  );
+};
+
 /* ── Full project card (non-credits) ── */
 const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { project: any; profileSlug?: string; playingVideo: string | null; onPlay: (id: string) => void; onStop: () => void }) => {
   const theme = usePortfolioTheme();
@@ -136,20 +261,33 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
   );
 };
 
-const SectionProjects = ({ items, profileType, profileSlug, isCredits }: Props) => {
+const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout }: Props) => {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const theme = usePortfolioTheme();
   const featured = items.filter(p => p.is_featured);
   const rest = items.filter(p => !p.is_featured);
   const sorted = [...featured, ...rest];
 
-  if (isCredits) {
+  // Determine effective layout
+  const effectiveLayout = layout || (isCredits ? 'table' : 'grid');
+
+  if (effectiveLayout === 'table') {
     return (
       <GlassCard className="divide-y" style={{ borderColor: theme.borderDefault }}>
         {sorted.map(project => (
           <CreditRow key={project.id} project={project} />
         ))}
       </GlassCard>
+    );
+  }
+
+  if (effectiveLayout === 'poster') {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {sorted.map(project => (
+          <PosterCard key={project.id} project={project} />
+        ))}
+      </div>
     );
   }
 
