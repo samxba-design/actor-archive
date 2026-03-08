@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Image, Star, GripVertical } from "lucide-react";
 import EmptyState from "@/components/dashboard/EmptyState";
+import { generatePdfThumbnail, dataUrlToFile } from "@/lib/pdfThumbnail";
 
 interface PublishedWork {
   id: string;
@@ -114,11 +115,29 @@ const PublishedWorkManager = () => {
       setUploadingPdf(false);
       return;
     }
-    // documents bucket is private, generate signed URL pattern
-    // For now store the path; the reader will use signed URLs
     const { data: urlData } = supabase.storage.from("documents").getPublicUrl(path);
     setForm((f) => ({ ...f, pdf_url: urlData.publicUrl }));
     toast({ title: "PDF uploaded" });
+
+    // Auto-generate thumbnail from first page
+    try {
+      const localUrl = URL.createObjectURL(file);
+      const thumbDataUrl = await generatePdfThumbnail(localUrl);
+      URL.revokeObjectURL(localUrl);
+      if (thumbDataUrl) {
+        const thumbFile = dataUrlToFile(thumbDataUrl, `thumb-${Date.now()}.png`);
+        const thumbPath = `${user.id}/pdf-thumbs/${Date.now()}.png`;
+        const { error: thumbErr } = await supabase.storage.from("thumbnails").upload(thumbPath, thumbFile);
+        if (!thumbErr) {
+          const { data: thumbUrl } = supabase.storage.from("thumbnails").getPublicUrl(thumbPath);
+          setForm((f) => ({ ...f, pdf_thumbnail_url: thumbUrl.publicUrl }));
+          toast({ title: "PDF thumbnail generated" });
+        }
+      }
+    } catch {
+      // Thumbnail generation is best-effort
+    }
+
     setUploadingPdf(false);
   };
 
