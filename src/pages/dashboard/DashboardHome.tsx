@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import {
-  Loader2, Eye, Inbox, GitBranch, User, FolderOpen, Settings,
+  Loader2, Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
   ArrowRight, ExternalLink, CheckCircle2, AlertCircle
 } from "lucide-react";
 
