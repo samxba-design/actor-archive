@@ -40,6 +40,7 @@ const copywriterDefaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   clientLogos: 'marquee',
   testimonials: 'carousel',
+  heroBgType: 'bokeh',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */

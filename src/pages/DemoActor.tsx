@@ -39,6 +39,7 @@ const actorDefaultVariants: SectionVariants = {
   heroRightContent: 'showreel',
   ctaPreset: 'contact',
   heroKnownFor: 'strip',
+  heroBgType: 'gradient',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
