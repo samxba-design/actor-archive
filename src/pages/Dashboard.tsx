@@ -21,6 +21,9 @@ import CompTitleMatcher from "@/pages/dashboard/CompTitleMatcher";
 import CaseStudyBuilder from "@/pages/dashboard/CaseStudyBuilder";
 import EndorsementRequests from "@/pages/dashboard/EndorsementRequests";
 import IndustryTools from "@/pages/dashboard/IndustryTools";
+import PipelineTracker from "@/pages/dashboard/PipelineTracker";
+import SmartFollowUp from "@/pages/dashboard/SmartFollowUp";
+import EmbedAndShare from "@/pages/dashboard/EmbedAndShare";
 
 const Dashboard = () => {
   return (
@@ -46,6 +49,9 @@ const Dashboard = () => {
         <Route path="case-study" element={<CaseStudyBuilder />} />
         <Route path="endorsements" element={<EndorsementRequests />} />
         <Route path="industry" element={<IndustryTools />} />
+        <Route path="pipeline" element={<PipelineTracker />} />
+        <Route path="follow-up" element={<SmartFollowUp />} />
+        <Route path="embed" element={<EmbedAndShare />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>
