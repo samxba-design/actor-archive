@@ -15,6 +15,7 @@ import Dashboard from "./pages/Dashboard";
 import PublicProfile from "./pages/PublicProfile";
 import ProjectPitchPage from "./pages/ProjectPitchPage";
 import DemoScreenwriter from "./pages/DemoScreenwriter";
+import DemoActor from "./pages/DemoActor";
 import HowItWorks from "./pages/HowItWorks";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/p/:slug" element={<PublicProfile />} />
             <Route path="/p/:slug/:projectSlug" element={<ProjectPitchPage />} />
             <Route path="/demo/screenwriter" element={<DemoScreenwriter />} />
+            <Route path="/demo/actor" element={<DemoActor />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="*" element={<NotFound />} />

@@ -751,6 +751,9 @@ const DemoScreenwriter = () => {
         </span>
       </div>
 
+      {/* Profile type tabs */}
+      <DemoProfileTabs />
+
       {/* Hero */}
       <PortfolioHero
         profile={dynamicProfile}
