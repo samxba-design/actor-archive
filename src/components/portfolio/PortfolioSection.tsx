@@ -34,40 +34,67 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const tableMap: Record<string, string> = {
-    projects: "projects",
-    credits: "projects",
-    gallery: "gallery_images",
-    awards: "awards",
-    press: "press",
-    education: "education",
-    skills: "skills",
-    services: "services",
-    testimonials: "testimonials",
-    events: "events",
-  };
-
   useEffect(() => {
-    const table = tableMap[sectionKey];
-    if (!table) {
-      setLoading(false);
-      return;
-    }
-
     const fetchData = async () => {
-      const query = supabase
-        .from(table)
-        .select("*")
-        .eq("profile_id", profileId)
-        .order("display_order", { ascending: true });
+      let rows: any[] = [];
+      const orderOpts = { ascending: true } as const;
 
-      // For credits section, filter to acting roles
-      if (sectionKey === "credits") {
-        query.in("project_type", ["film", "tv_show"]);
+      switch (sectionKey) {
+        case "projects": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "credits": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["film", "tv_show"]).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "gallery": {
+          const { data } = await supabase.from("gallery_images").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "awards": {
+          const { data } = await supabase.from("awards").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "press": {
+          const { data } = await supabase.from("press").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "education": {
+          const { data } = await supabase.from("education").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "skills": {
+          const { data } = await supabase.from("skills").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "services": {
+          const { data } = await supabase.from("services").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "testimonials": {
+          const { data } = await supabase.from("testimonials").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "events": {
+          const { data } = await supabase.from("events").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        default:
+          break;
       }
 
-      const { data: rows } = await query;
-      setData(rows || []);
+      setData(rows);
       setLoading(false);
     };
 
