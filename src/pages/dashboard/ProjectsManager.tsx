@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Pencil, Trash2, GripVertical } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -19,6 +19,15 @@ import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 type Project = Tables<"projects">;
 
 const PROJECT_TYPES = Constants.public.Enums.project_type;
+
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60);
+}
 
 const ProjectsManager = () => {
   const { user } = useAuth();
@@ -32,6 +41,7 @@ const ProjectsManager = () => {
   const [form, setForm] = useState({
     title: "",
     project_type: "screenplay" as string,
+    project_slug: "",
     logline: "",
     description: "",
     genre: "",
@@ -57,7 +67,7 @@ const ProjectsManager = () => {
   useEffect(() => { fetchProjects(); }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "" });
+    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "" });
     setEditing(null);
   };
 
@@ -66,6 +76,7 @@ const ProjectsManager = () => {
     setForm({
       title: p.title,
       project_type: p.project_type,
+      project_slug: p.project_slug || "",
       logline: p.logline || "",
       description: p.description || "",
       genre: (p.genre || []).join(", "),
@@ -79,6 +90,17 @@ const ProjectsManager = () => {
     setDialogOpen(true);
   };
 
+  const handleTitleChange = (value: string) => {
+    setForm((f) => ({
+      ...f,
+      title: value,
+      // Auto-generate slug only if slug is empty or was auto-generated from previous title
+      project_slug: !editing && (!f.project_slug || f.project_slug === generateSlug(f.title))
+        ? generateSlug(value)
+        : f.project_slug,
+    }));
+  };
+
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
@@ -87,6 +109,7 @@ const ProjectsManager = () => {
       profile_id: user.id,
       title: form.title,
       project_type: form.project_type as any,
+      project_slug: form.project_slug || generateSlug(form.title),
       logline: form.logline || null,
       description: form.description || null,
       genre: form.genre ? form.genre.split(",").map((g) => g.trim()).filter(Boolean) : null,
@@ -142,7 +165,10 @@ const ProjectsManager = () => {
               <DialogTitle>{editing ? "Edit Project" : "New Project"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
-              <div><Label>Title *</Label><Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} /></div>
+              <div>
+                <Label>Title *</Label>
+                <Input value={form.title} onChange={(e) => handleTitleChange(e.target.value)} />
+              </div>
               <div>
                 <Label>Type</Label>
                 <Select value={form.project_type} onValueChange={(v) => setForm((f) => ({ ...f, project_type: v }))}>
@@ -153,6 +179,18 @@ const ProjectsManager = () => {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div>
+                <Label>Project Slug</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground shrink-0">/p/you/</span>
+                  <Input
+                    value={form.project_slug}
+                    onChange={(e) => setForm((f) => ({ ...f, project_slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))}
+                    placeholder="my-project"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Used for the project pitch page URL</p>
               </div>
               <div>
                 <div className="flex items-center justify-between">
@@ -223,6 +261,7 @@ const ProjectsManager = () => {
                   <div className="flex gap-2 mt-1">
                     <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
                     {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
+                    {p.project_slug && <span className="text-xs text-muted-foreground">/{p.project_slug}</span>}
                   </div>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -13,6 +13,7 @@ interface ProfileData {
   display_name: string | null;
   first_name: string | null;
   last_name: string | null;
+  headline: string | null;
   tagline: string | null;
   bio: string | null;
   location: string | null;
