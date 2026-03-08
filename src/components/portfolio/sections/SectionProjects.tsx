@@ -89,7 +89,7 @@ const PosterCard = ({ project }: { project: any }) => {
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
   const Icon = typeIcons[project.project_type] || FileText;
 
-  return (
+  const card = (
     <div
       className="group overflow-hidden transition-all"
       style={{
@@ -118,17 +118,14 @@ const PosterCard = ({ project }: { project: any }) => {
           </div>
         )}
 
-        {/* IMDb link on hover */}
+        {/* External link on hover */}
         {project.imdb_link && (
-          <a
-            href={project.imdb_link}
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
             className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}
           >
             <ExternalLink className="w-3 h-3" />
-          </a>
+          </div>
         )}
       </div>
 
@@ -197,6 +194,12 @@ const PosterCard = ({ project }: { project: any }) => {
       </div>
     </div>
   );
+
+  return project.imdb_link ? (
+    <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline block">
+      {card}
+    </a>
+  ) : card;
 };
 
 /* ── Full project card (non-credits) ── */
@@ -205,7 +208,7 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
   const Icon = typeIcons[project.project_type] || FileText;
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
 
-  return (
+  const card = (
     <GlassCard className="group overflow-hidden">
       <div className="relative">
         {playingVideo === project.id ? (
@@ -216,7 +219,7 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
               const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}?autoplay=1` : vimeoId ? `https://player.vimeo.com/video/${vimeoId}?autoplay=1` : null;
               return embedUrl ? <iframe src={embedUrl} className="w-full h-full" allowFullScreen allow="autoplay" /> : null;
             })()}
-            <button onClick={e => { e.stopPropagation(); onStop(); }} className="absolute top-2 right-2 p-1 rounded-full" style={{ backgroundColor: `${theme.bgPrimary}cc` }}>
+            <button onClick={e => { e.stopPropagation(); e.preventDefault(); onStop(); }} className="absolute top-2 right-2 p-1 rounded-full" style={{ backgroundColor: `${theme.bgPrimary}cc` }}>
               <X className="w-4 h-4" style={{ color: theme.textPrimary }} />
             </button>
           </div>
@@ -229,6 +232,11 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
                   <Play className="w-5 h-5 ml-0.5" style={{ color: theme.textOnAccent }} />
                 </div>
               </button>
+            )}
+            {project.imdb_link && !project.video_url && (
+              <div className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: `${theme.bgPrimary}cc` }}>
+                <ExternalLink className="w-3.5 h-3.5" style={{ color: theme.accentPrimary }} />
+              </div>
             )}
           </div>
         ) : (
@@ -252,6 +260,15 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
       </div>
     </GlassCard>
   );
+
+  // Don't wrap in link if video is playing
+  if (playingVideo === project.id) return card;
+
+  return project.imdb_link ? (
+    <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline block">
+      {card}
+    </a>
+  ) : card;
 };
 
 const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout }: Props) => {
