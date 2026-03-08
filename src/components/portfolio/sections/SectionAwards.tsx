@@ -32,9 +32,9 @@ const SectionAwards = ({ items }: Props) => {
                   <span
                     className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0"
                     style={{
-                      backgroundColor: isWinner ? theme.accentPrimary : 'transparent',
-                      color: isWinner ? theme.textOnAccent : theme.textTertiary,
-                      border: isWinner ? 'none' : `1px solid ${theme.borderDefault}`,
+                      backgroundColor: isWinner ? theme.accentPrimary : theme.bgElevated,
+                      color: isWinner ? theme.textOnAccent : theme.textSecondary,
+                      border: 'none',
                     }}
                   >
                     {a.result}

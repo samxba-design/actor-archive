@@ -311,50 +311,50 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
               )}
             </div>
 
-            {/* RIGHT: Featured project card */}
+            {/* RIGHT: Featured project card — horizontal poster + info */}
             {featuredProject && (
-              <div className="w-full lg:w-[360px] shrink-0" style={stagger(3)}>
+              <div className="w-full lg:w-[380px] shrink-0" style={stagger(3)}>
                 <div
-                  className="overflow-hidden transition-all duration-300"
+                  className="overflow-hidden transition-all duration-300 flex"
                   style={{
-                    backgroundColor: theme.glassEnabled ? theme.glassBackground : `${theme.bgSecondary}cc`,
-                    backdropFilter: `blur(${theme.glassEnabled ? theme.glassBlur : '12px'})`,
-                    WebkitBackdropFilter: `blur(${theme.glassEnabled ? theme.glassBlur : '12px'})`,
-                    border: theme.glassEnabled ? theme.glassBorder : `1px solid rgba(255,255,255,0.06)`,
+                    backgroundColor: theme.bgSecondary,
+                    border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
                     borderRadius: theme.cardRadius,
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                    boxShadow: theme.cardShadow,
                   }}
                 >
+                  {/* Poster (2:3) on left */}
                   {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
-                    <div className="aspect-[16/9] overflow-hidden relative">
+                    <div className="w-[110px] shrink-0 overflow-hidden">
                       <img
-                        src={featuredProject.backdrop_url || featuredProject.poster_url || featuredProject.custom_image_url}
+                        src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
                         alt={featuredProject.title}
                         className="w-full h-full object-cover"
+                        style={{ minHeight: '165px' }}
                       />
-                      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgPrimary}99 0%, transparent 50%)` }} />
                     </div>
                   )}
-                  <div className="p-4 space-y-2">
+
+                  {/* Info on right — solid bg, always readable */}
+                  <div className="flex-1 p-4 space-y-2 min-w-0">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>
                       Featured Project
                     </p>
                     <h3
-                      className="text-base font-semibold leading-tight"
-                      style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: heroText }}
+                      className="text-[15px] font-semibold leading-tight"
+                      style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}
                     >
                       {featuredProject.title}
                     </h3>
                     {featuredProject.genre?.length > 0 && (
-                      <div className="flex gap-1.5">
+                      <div className="flex flex-wrap gap-1">
                         {featuredProject.genre.slice(0, 3).map((g: string) => (
                           <span
                             key={g}
                             className="text-[9px] uppercase tracking-wide px-1.5 py-0.5"
                             style={{
-                              backgroundColor: 'rgba(255,255,255,0.06)',
-                              border: `1px solid rgba(255,255,255,0.08)`,
-                              color: heroTextMuted,
+                              backgroundColor: theme.accentSubtle,
+                              color: theme.textSecondary,
                               borderRadius: '3px',
                             }}
                           >
@@ -365,11 +365,11 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                     )}
                     {featuredProject.logline && (
                       <p
-                        className="text-[13px] leading-relaxed line-clamp-3"
+                        className="text-[12px] leading-relaxed line-clamp-3"
                         style={{
                           fontFamily: theme.fontLogline,
                           fontStyle: theme.loglineStyle,
-                          color: heroTextMuted,
+                          color: theme.textSecondary,
                         }}
                       >
                         "{featuredProject.logline}"
@@ -395,7 +395,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
               ].filter(s => s.n > 0).map(s => (
                 <div key={s.label}>
                   <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
-                  <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextFaint }}>{s.label}</p>
+                  <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextMuted }}>{s.label}</p>
                 </div>
               ))}
             </div>
