@@ -8,6 +8,17 @@ import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CompanyLogo from "@/components/CompanyLogo";
 
+const PRESET_GRADIENTS: Record<string, string> = {
+  "cinematic-dark": "linear-gradient(135deg, #1a0a0f 0%, #2d1520 40%, #0d0d1a 100%)",
+  "noir-smoke": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)",
+  "golden-hour": "linear-gradient(135deg, #2d1b00 0%, #4a2c17 40%, #1a0e05 100%)",
+  "ocean-deep": "linear-gradient(135deg, #0a192f 0%, #112240 50%, #0d1421 100%)",
+  "forest-mist": "linear-gradient(135deg, #0b1a0b 0%, #1a2f1a 40%, #0d1a0d 100%)",
+  "warm-clay": "linear-gradient(135deg, #2c1810 0%, #3d2419 40%, #1a0f0a 100%)",
+  "arctic-light": "linear-gradient(135deg, #e8edf2 0%, #d4dce6 40%, #c2cdd9 100%)",
+  "lavender-dusk": "linear-gradient(135deg, #1a0a2e 0%, #2d1548 40%, #0d0a1a 100%)",
+};
+
 interface Props {
   profile: {
     id?: string;
@@ -28,6 +39,8 @@ interface Props {
     cta_url: string | null;
     cta_type: string | null;
     booking_url: string | null;
+    hero_style?: string | null;
+    hero_background_preset?: string | null;
   };
   socialLinks?: any[];
   representation?: any[];
