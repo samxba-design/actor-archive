@@ -217,10 +217,11 @@ const ProfileEditor = () => {
             <div className="flex items-center justify-between mb-1">
               <Label>Headline <GlossaryTooltip term="headline" /></Label>
               <WritingAssistant
-                fieldType="headline"
+                field="headline"
                 text={form.headline}
                 onApply={(text) => handleApplySuggestion(text, "headline")}
-                context={{ title: form.display_name || form.first_name, format: form.profile_type }}
+                title={form.display_name || form.first_name}
+                format={form.profile_type}
               />
             </div>
             <Input
@@ -237,10 +238,11 @@ const ProfileEditor = () => {
               <Label>Bio <GlossaryTooltip term="bio" /></Label>
               <div className="flex items-center gap-1">
                 <WritingAssistant
-                  fieldType="bio"
+                  field="bio"
                   text={form.bio}
                   onApply={(text) => handleApplySuggestion(text, "bio")}
-                  context={{ title: form.display_name || form.first_name, format: form.profile_type }}
+                  title={form.display_name || form.first_name}
+                  format={form.profile_type}
                 />
                 <Button
                   variant="ghost"
