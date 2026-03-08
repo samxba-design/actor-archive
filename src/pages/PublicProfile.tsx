@@ -47,6 +47,7 @@ interface ProfileData {
   hero_bg_type?: string | null;
   hero_bg_solid_color?: string | null;
   hero_bg_video_url?: string | null;
+  seo_indexable?: boolean | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -98,21 +99,73 @@ const PublicProfile = () => {
     const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
     const desc = profile.tagline || profile.bio?.slice(0, 155) || `${name}'s creative portfolio`;
     document.title = `${name} — Portfolio`;
+
+    // Robots meta — noindex by default, indexable only if toggled on
+    let robotsMeta = document.querySelector('meta[name="robots"]');
+    if (!robotsMeta) { robotsMeta = document.createElement("meta"); robotsMeta.setAttribute("name", "robots"); document.head.appendChild(robotsMeta); }
+    robotsMeta.setAttribute("content", profile.seo_indexable ? "index, follow" : "noindex, nofollow");
+
+    // Canonical URL
+    const canonicalUrl = `${window.location.origin}/p/${profile.slug}`;
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
+    canonical.setAttribute("href", canonicalUrl);
+
+    // Meta description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) { metaDesc = document.createElement("meta"); metaDesc.setAttribute("name", "description"); document.head.appendChild(metaDesc); }
     metaDesc.setAttribute("content", desc);
-    const ogTags: Record<string, string> = { "og:title": `${name} — Portfolio`, "og:description": desc, "og:type": "profile", "og:url": window.location.href };
+
+    // OpenGraph tags
+    const ogTags: Record<string, string> = {
+      "og:title": `${name} — Portfolio`,
+      "og:description": desc,
+      "og:type": "profile",
+      "og:url": canonicalUrl,
+    };
     if (profile.profile_photo_url) ogTags["og:image"] = profile.profile_photo_url;
     Object.entries(ogTags).forEach(([prop, content]) => {
       let tag = document.querySelector(`meta[property="${prop}"]`);
       if (!tag) { tag = document.createElement("meta"); tag.setAttribute("property", prop); document.head.appendChild(tag); }
       tag.setAttribute("content", content);
     });
-    const jsonLd = { "@context": "https://schema.org", "@type": "Person", name, ...(profile.tagline && { description: profile.tagline }), ...(profile.location && { address: { "@type": "PostalAddress", addressLocality: profile.location } }), ...(profile.profile_photo_url && { image: profile.profile_photo_url }), url: window.location.href };
+
+    // Twitter Card meta
+    const twitterTags: Record<string, string> = {
+      "twitter:card": profile.profile_photo_url ? "summary_large_image" : "summary",
+      "twitter:title": `${name} — Portfolio`,
+      "twitter:description": desc,
+    };
+    if (profile.profile_photo_url) twitterTags["twitter:image"] = profile.profile_photo_url;
+    Object.entries(twitterTags).forEach(([tName, content]) => {
+      let tag = document.querySelector(`meta[name="${tName}"]`);
+      if (!tag) { tag = document.createElement("meta"); tag.setAttribute("name", tName); document.head.appendChild(tag); }
+      tag.setAttribute("content", content);
+    });
+
+    // JSON-LD structured data
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name,
+      ...(profile.tagline && { description: profile.tagline }),
+      ...(profile.location && { address: { "@type": "PostalAddress", addressLocality: profile.location } }),
+      ...(profile.profile_photo_url && { image: profile.profile_photo_url }),
+      url: canonicalUrl,
+    };
     let script = document.getElementById("portfolio-jsonld");
     if (!script) { script = document.createElement("script"); script.id = "portfolio-jsonld"; script.setAttribute("type", "application/ld+json"); document.head.appendChild(script); }
     script.textContent = JSON.stringify(jsonLd);
-    return () => { document.title = "CreativeSlate"; const el = document.getElementById("portfolio-jsonld"); if (el) el.remove(); };
+
+    return () => {
+      document.title = "CreativeSlate";
+      const el = document.getElementById("portfolio-jsonld"); if (el) el.remove();
+      const robots = document.querySelector('meta[name="robots"]'); if (robots) robots.remove();
+      const can = document.querySelector('link[rel="canonical"]'); if (can) can.remove();
+      ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach(n => {
+        const t = document.querySelector(`meta[name="${n}"]`); if (t) t.remove();
+      });
+    };
   }, [profile]);
 
   if (loading) {

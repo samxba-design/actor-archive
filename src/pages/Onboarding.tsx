@@ -67,13 +67,24 @@ export interface StepMeta {
   totalSteps: number;
 }
 
+const STORAGE_KEY = "creativeslate_onboarding";
+
 const Onboarding = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [step, setStep] = useState(0);
-  const [data, setData] = useState<OnboardingData>(INITIAL_DATA);
+  const [step, setStep] = useState(() => {
+    try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s).step || 0 : 0; } catch { return 0; }
+  });
+  const [data, setData] = useState<OnboardingData>(() => {
+    try { const s = localStorage.getItem(STORAGE_KEY); return s ? { ...INITIAL_DATA, ...JSON.parse(s).data } : INITIAL_DATA; } catch { return INITIAL_DATA; }
+  });
   const [saving, setSaving] = useState(false);
+
+  // Persist to localStorage on every change
+  useEffect(() => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, data })); } catch {}
+  }, [step, data]);
 
   const updateData = (partial: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...partial }));
@@ -199,6 +210,8 @@ const Onboarding = () => {
       }
 
       toast({ title: "Profile created!", description: "Welcome to CreativeSlate." });
+      // Clear onboarding localStorage
+      try { localStorage.removeItem(STORAGE_KEY); } catch {}
       navigate("/dashboard");
     } catch (err: any) {
       toast({ title: "Error saving profile", description: err.message, variant: "destructive" });
