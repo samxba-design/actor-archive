@@ -12,7 +12,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers" with { type: "none" };
+
 import { useEditMode } from "./EditModeProvider";
 import DraggableSectionWrapper from "./DraggableSectionWrapper";
 import PortfolioSection from "./PortfolioSection";
