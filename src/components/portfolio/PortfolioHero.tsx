@@ -107,24 +107,24 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
 
   return (
     <header className="relative overflow-hidden" style={{ minHeight: theme.heroHeight }}>
-      {/* Background image + overlay */}
+      {/* Background image + overlay — seamless with no gap */}
       {profile.banner_url ? (
         <>
-          <div className="absolute inset-0">
+          <div className="absolute inset-0" style={{ bottom: '-1px' }}>
             <img
               src={profile.banner_url}
               alt=""
               className="w-full h-full object-cover"
               style={{
-                transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px) scale(1.05)` : 'scale(1.05)',
+                transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px) scale(1.1)` : 'scale(1.1)',
                 opacity: loaded ? 1 : 0.6,
                 transition: 'opacity 1s ease-out',
               }}
             />
           </div>
-          <div className="absolute inset-0" style={{ background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
-          {/* Extra bottom fade for content legibility */}
-          <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+          <div className="absolute inset-0" style={{ bottom: '-1px', background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
+          {/* Seamless bottom fade — extends 1px past to prevent gap */}
+          <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ bottom: '-1px', background: `linear-gradient(to top, ${theme.bgPrimary} 2%, ${theme.bgPrimary}ee 8%, transparent 100%)` }} />
         </>
       ) : (
         <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 20%, ${theme.accentGlow} 0%, transparent 60%), linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />
@@ -133,7 +133,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
       {/* Hero content */}
       <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: theme.heroHeight }}>
         <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-          {/* Known For — prominent carousel above identity */}
+          {/* Known For — left-aligned carousel above identity */}
           {knownFor && knownFor.length > 0 && (
             <div id="tour-known-for" className="mb-6" style={stagger(0)}>
               <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
@@ -443,7 +443,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <div
               id="tour-stats"
               className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
-              style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(6) }}
+              style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}
             >
               {[
                 { n: stats.scripts, label: 'Scripts Available' },

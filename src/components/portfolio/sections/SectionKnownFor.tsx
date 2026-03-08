@@ -93,6 +93,11 @@ const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) 
             </div>
           )}
         </div>
+        {/* Compact title below image */}
+        <div className="px-2 py-1.5" style={{ backgroundColor: theme.bgSecondary }}>
+          <p className="text-[10px] font-semibold leading-tight truncate" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{item.title}</p>
+          {item.role_name && <p className="text-[8px] uppercase tracking-wider truncate" style={{ color: theme.accentPrimary }}>{item.role_name}</p>}
+        </div>
       </div>
     </MaybeLink>
   );
@@ -174,13 +179,13 @@ const SectionKnownFor = ({ items, variant = 'strip', display = 'both' }: Props) 
       );
     }
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-3 gap-2">
         {items.slice(0, 6).map(item => renderCard(item, '100%'))}
       </div>
     );
   }
 
-  /* ── Strip variant (default) ── */
+  /* ── Strip variant (default) — left-aligned horizontal scroll ── */
   const cardWidth = display === 'text' ? 'auto' : '120px';
   return (
     <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
