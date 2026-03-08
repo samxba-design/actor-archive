@@ -82,7 +82,7 @@ const CreditRow = ({ project }: { project: any }) => {
   );
 };
 
-/* ── Poster-style credit card (2:3 aspect) ── */
+/* ── Poster-style credit card (2:3 aspect, text below image) ── */
 const PosterCard = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
   const [hovered, setHovered] = useState(false);
@@ -91,17 +91,19 @@ const PosterCard = ({ project }: { project: any }) => {
 
   return (
     <div
-      className="group relative overflow-hidden transition-all"
+      className="group overflow-hidden transition-all"
       style={{
         borderRadius: theme.cardRadius,
         boxShadow: hovered ? theme.cardHoverShadow : theme.cardShadow,
         transform: hovered ? theme.cardHoverTransform : 'none',
         transitionDuration: theme.hoverTransitionDuration,
+        backgroundColor: theme.bgSecondary,
+        border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Poster image */}
+      {/* Poster image — clean, no overlay text */}
       <div className="aspect-[2/3] overflow-hidden relative" style={{ backgroundColor: theme.bgElevated }}>
         {image ? (
           <img
@@ -116,92 +118,83 @@ const PosterCard = ({ project }: { project: any }) => {
           </div>
         )}
 
-        {/* Gradient overlay */}
-        <div
-          className="absolute inset-0 transition-opacity duration-300"
-          style={{
-            background: `linear-gradient(to top, ${theme.bgPrimary}ee 0%, ${theme.bgPrimary}80 35%, transparent 60%)`,
-            opacity: hovered ? 1 : 0.85,
-          }}
-        />
-
-        {/* Content overlay at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 space-y-1">
-          {/* Network badge */}
-          {project.network_or_studio && (
-            <div className="flex items-center gap-1.5 mb-1">
-              <CompanyLogo companyName={project.network_or_studio} size={14} grayscale={false} />
-              <span className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>
-                {project.network_or_studio}
-              </span>
-            </div>
-          )}
-
-          <h4
-            className="font-semibold leading-tight"
-            style={{
-              fontFamily: theme.fontDisplay,
-              fontWeight: theme.headingWeight,
-              fontSize: '15px',
-              color: theme.textPrimary,
-            }}
+        {/* IMDb link on hover */}
+        {project.imdb_link && (
+          <a
+            href={project.imdb_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}
           >
-            {project.title}
-          </h4>
-
-          {/* Role + year */}
-          <div className="flex items-center justify-between gap-2">
-            {project.role_name && (
-              <span
-                className="text-[10px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded"
-                style={{
-                  backgroundColor: `${theme.accentPrimary}20`,
-                  color: theme.accentPrimary,
-                }}
-              >
-                {project.role_name}
-              </span>
-            )}
-            {project.year && (
-              <span className="text-[11px] tabular-nums" style={{ color: theme.textTertiary }}>
-                {project.year}
-              </span>
-            )}
-          </div>
-
-          {/* Genre tags */}
-          {project.genre?.length > 0 && (
-            <div className="flex flex-wrap gap-1 pt-0.5">
-              {project.genre.slice(0, 2).map((g: string) => (
-                <span
-                  key={g}
-                  className="text-[8px] uppercase tracking-wider px-1.5 py-0.5"
-                  style={{
-                    border: `1px solid ${theme.borderDefault}`,
-                    color: theme.textTertiary,
-                    borderRadius: '2px',
-                  }}
-                >
-                  {g}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
       </div>
 
-      {/* IMDb link on hover */}
-      {project.imdb_link && (
-        <a
-          href={project.imdb_link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute top-2 right-2 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ backgroundColor: `${theme.bgPrimary}cc`, color: theme.accentPrimary }}
+      {/* Info bar — solid background, always readable */}
+      <div className="p-2.5 space-y-1">
+        {/* Network badge */}
+        {project.network_or_studio && (
+          <div className="flex items-center gap-1.5">
+            <CompanyLogo companyName={project.network_or_studio} size={12} grayscale={false} />
+            <span className="text-[9px] font-semibold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>
+              {project.network_or_studio}
+            </span>
+          </div>
+        )}
+
+        <h4
+          className="font-semibold leading-tight truncate"
+          style={{
+            fontFamily: theme.fontDisplay,
+            fontWeight: theme.headingWeight,
+            fontSize: '13px',
+            color: theme.textPrimary,
+          }}
         >
-          <ExternalLink className="w-3 h-3" />
-        </a>
-      )}
+          {project.title}
+        </h4>
+
+        {/* Role + year */}
+        <div className="flex items-center justify-between gap-2">
+          {project.role_name && (
+            <span
+              className="text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded"
+              style={{
+                backgroundColor: `${theme.accentPrimary}20`,
+                color: theme.accentPrimary,
+              }}
+            >
+              {project.role_name}
+            </span>
+          )}
+          {project.year && (
+            <span className="text-[10px] tabular-nums" style={{ color: theme.textTertiary }}>
+              {project.year}
+            </span>
+          )}
+        </div>
+
+        {/* Genre tags */}
+        {project.genre?.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {project.genre.slice(0, 2).map((g: string) => (
+              <span
+                key={g}
+                className="text-[8px] uppercase tracking-wider px-1.5 py-0.5"
+                style={{
+                  border: `1px solid ${theme.borderDefault}`,
+                  color: theme.textSecondary,
+                  borderRadius: '2px',
+                }}
+              >
+                {g}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

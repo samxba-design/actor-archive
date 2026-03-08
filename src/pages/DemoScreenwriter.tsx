@@ -194,39 +194,40 @@ const ClassicLayout = () => {
   );
 };
 
-/* Credit hero card for Classic layout */
+/* Credit hero card for Classic layout — split: image top, info on solid bg below */
 const CreditHeroCard = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
   return (
     <GlassCard featured className="overflow-hidden">
+      {/* Backdrop image — clean, no text overlay */}
       <div className="relative">
         <img
           src={project.backdrop_url || project.poster_url}
           alt={project.title}
           className="w-full aspect-[2.4/1] object-cover"
         />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgPrimary}ee 0%, ${theme.bgPrimary}60 40%, transparent 70%)` }} />
-        <div className="absolute bottom-0 left-0 right-0 p-5 space-y-1.5">
-          {project.network_or_studio && (
-            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent }}>
-              {project.network_or_studio}
-            </span>
-          )}
-          <h3 className="text-xl font-bold" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
-            {project.title}
-            <span className="text-sm font-normal ml-2" style={{ color: theme.textTertiary }}>{project.year}</span>
-          </h3>
-          {project.role_name && (
-            <p className="text-[13px] font-medium" style={{ color: theme.accentPrimary }}>
-              {project.role_name}{project.role_type ? ` · ${project.role_type}` : ''}
-            </p>
-          )}
-          {project.logline && (
-            <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontLogline, fontStyle: theme.loglineStyle, color: theme.textSecondary }}>
-              {project.logline}
-            </p>
-          )}
-        </div>
+      </div>
+      {/* Info section — solid background for guaranteed readability */}
+      <div className="p-5 space-y-1.5" style={{ backgroundColor: theme.bgSecondary }}>
+        {project.network_or_studio && (
+          <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded inline-block" style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent }}>
+            {project.network_or_studio}
+          </span>
+        )}
+        <h3 className="text-xl font-bold" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
+          {project.title}
+          <span className="text-sm font-normal ml-2" style={{ color: theme.textTertiary }}>{project.year}</span>
+        </h3>
+        {project.role_name && (
+          <p className="text-[13px] font-medium" style={{ color: theme.accentPrimary }}>
+            {project.role_name}{project.role_type ? ` · ${project.role_type}` : ''}
+          </p>
+        )}
+        {project.logline && (
+          <p className="text-[13px] leading-relaxed max-w-xl" style={{ fontFamily: theme.fontLogline, fontStyle: theme.loglineStyle, color: theme.textSecondary }}>
+            {project.logline}
+          </p>
+        )}
       </div>
     </GlassCard>
   );
