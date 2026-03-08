@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { applyThemeToElement, getTheme } from "@/lib/themes";
-import { getFontPairing, getFontGoogleUrl } from "@/lib/fontPairings";
+import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
+import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
-import PortfolioBackground from "@/components/portfolio/PortfolioBackground";
 import { Loader2 } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
@@ -38,6 +37,7 @@ interface ProfileData {
   font_pairing: string | null;
   layout_density: string | null;
   custom_css: string | null;
+  subscription_tier?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -45,26 +45,9 @@ const DEFAULT_SECTION_ORDER = [
   "education", "skills", "services", "testimonials", "events", "contact",
 ];
 
-function getGoogleFontFamilies(themeKey: string): string[] {
-  const theme = getTheme(themeKey);
-  const fontVars = [theme.variables["--portfolio-heading-font"], theme.variables["--portfolio-body-font"]];
-  const families = new Set<string>();
-  for (const v of fontVars) {
-    if (!v) continue;
-    const match = v.match(/'([^']+)'/);
-    if (match) {
-      const name = match[1];
-      if (!["Inter", "Courier New"].includes(name)) {
-        families.add(name);
-      }
-    }
-  }
-  return Array.from(families);
-}
-
 const PublicProfile = () => {
   const { slug } = useParams<{ slug: string }>();
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -80,45 +63,6 @@ const PublicProfile = () => {
     };
     fetchProfile();
   }, [slug]);
-
-  useEffect(() => {
-    if (profile && containerRef.current) {
-      applyThemeToElement(containerRef.current, profile.theme || "minimal", profile.accent_color || undefined);
-      const pairing = getFontPairing(profile.font_pairing || "default");
-      if (pairing.headingFont) containerRef.current.style.setProperty("--portfolio-heading-font", pairing.headingFont);
-      if (pairing.bodyFont) containerRef.current.style.setProperty("--portfolio-body-font", pairing.bodyFont);
-      const density = profile.layout_density || "spacious";
-      const spacingMap: Record<string, string> = { compact: "0.6", default: "1", spacious: "1.4" };
-      containerRef.current.style.setProperty("--portfolio-spacing", spacingMap[density] || "1");
-    }
-  }, [profile]);
-
-  useEffect(() => {
-    if (!profile) return;
-    const families = getGoogleFontFamilies(profile.theme || "minimal");
-    if (families.length === 0) return;
-    const id = "portfolio-google-fonts";
-    if (document.getElementById(id)) return;
-    const link = document.createElement("link");
-    link.id = id; link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700`).join("&")}&display=swap`;
-    document.head.appendChild(link);
-    return () => { const el = document.getElementById(id); if (el) el.remove(); };
-  }, [profile?.theme]);
-
-  useEffect(() => {
-    if (!profile) return;
-    const pairing = getFontPairing(profile.font_pairing || "default");
-    const fontUrl = getFontGoogleUrl(pairing);
-    if (!fontUrl) return;
-    const id = "portfolio-font-pairing";
-    const existing = document.getElementById(id);
-    if (existing) existing.remove();
-    const link = document.createElement("link");
-    link.id = id; link.rel = "stylesheet"; link.href = fontUrl;
-    document.head.appendChild(link);
-    return () => { const el = document.getElementById(id); if (el) el.remove(); };
-  }, [profile?.font_pairing]);
 
   useEffect(() => {
     if (profile?.id) {
@@ -153,11 +97,7 @@ const PublicProfile = () => {
   }, [profile]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>;
   }
 
   if (notFound || !profile) {
@@ -168,6 +108,10 @@ const PublicProfile = () => {
       </div>
     );
   }
+
+  // Support ?preview_theme= query param
+  const previewTheme = searchParams.get("preview_theme");
+  const themeId = resolveThemeId(previewTheme || profile.theme);
 
   let sectionOrder = profile.section_order;
   if (!sectionOrder || sectionOrder.length === 0) {
@@ -183,56 +127,29 @@ const PublicProfile = () => {
   const visibleSections = sectionOrder.filter((key) => sectionsVisible[key] !== false && key !== "hero" && key !== "contact");
 
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen portfolio-container relative"
-      style={{
-        backgroundColor: "hsl(var(--portfolio-bg))",
-        color: "hsl(var(--portfolio-fg))",
-        fontFamily: "var(--portfolio-body-font)",
-      }}
-    >
-      {profile.custom_css && (
-        <style dangerouslySetInnerHTML={{ __html: profile.custom_css }} />
-      )}
+    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
+      {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: profile.custom_css }} />}
 
-      <PortfolioBackground />
+      <PortfolioHero profile={profile} />
 
-      <div className="relative z-10">
-        <PortfolioHero profile={profile} />
+      <main className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
+        {visibleSections.map((sectionKey, idx) => (
+          <PortfolioSection
+            key={sectionKey}
+            sectionKey={sectionKey}
+            profileId={profile.id}
+            profileType={profile.profile_type}
+            profileSlug={profile.slug || undefined}
+            sectionIndex={idx}
+          />
+        ))}
+      </main>
 
-        <main
-          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
-          style={{
-            paddingTop: `calc(3rem * var(--portfolio-spacing, 1))`,
-            paddingBottom: `calc(3rem * var(--portfolio-spacing, 1))`,
-            gap: `calc(4rem * var(--portfolio-spacing, 1))`,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {visibleSections.map((sectionKey, idx) => (
-            <PortfolioSection
-              key={sectionKey}
-              sectionKey={sectionKey}
-              profileId={profile.id}
-              profileType={profile.profile_type}
-              profileSlug={profile.slug || undefined}
-              sectionIndex={idx}
-            />
-          ))}
-        </main>
-
-        <PortfolioFooter
-          profile={{
-            ...profile,
-            auto_responder_enabled: (profile as any).auto_responder_enabled,
-            auto_responder_message: (profile as any).auto_responder_message,
-          }}
-          showContact={profile.show_contact_form !== false}
-        />
-      </div>
-    </div>
+      <PortfolioFooter
+        profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
+        showContact={profile.show_contact_form !== false}
+      />
+    </PortfolioThemeProvider>
   );
 };
 
