@@ -86,7 +86,6 @@ const GalleryManager = () => {
         title="Gallery"
         description="Upload headshots, production stills, and behind-the-scenes photos. These display in a gallery grid on your portfolio."
       />
-      </div>
 
       <Card>
         <CardContent className="py-6 space-y-4">
