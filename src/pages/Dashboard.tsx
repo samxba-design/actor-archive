@@ -15,6 +15,7 @@ import PressManager from "@/pages/dashboard/PressManager";
 import TestimonialsManager from "@/pages/dashboard/TestimonialsManager";
 import SkillsManager from "@/pages/dashboard/SkillsManager";
 import RepresentationManager from "@/pages/dashboard/RepresentationManager";
+import ProfileInsights from "@/pages/dashboard/ProfileInsights";
 
 const Dashboard = () => {
   return (
@@ -34,6 +35,7 @@ const Dashboard = () => {
         <Route path="representation" element={<RepresentationManager />} />
         <Route path="inbox" element={<ContactInbox />} />
         <Route path="analytics" element={<AnalyticsOverview />} />
+        <Route path="insights" element={<ProfileInsights />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>

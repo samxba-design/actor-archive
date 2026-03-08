@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Pencil, Trash2, GripVertical } from "lucide-react";
 import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
+import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
+import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 
 type Project = Tables<"projects">;
 
@@ -152,17 +154,43 @@ const ProjectsManager = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label>Logline</Label><Textarea value={form.logline} onChange={(e) => setForm((f) => ({ ...f, logline: e.target.value }))} rows={2} /></div>
-              <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} /></div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><Label>Year</Label><Input value={form.year} onChange={(e) => setForm((f) => ({ ...f, year: e.target.value }))} type="number" /></div>
-                <div><Label>Status</Label><Input value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} placeholder="e.g. In Development" /></div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label>Logline <GlossaryTooltip term="logline" /></Label>
+                  <WritingAssistant
+                    text={form.logline}
+                    field="logline"
+                    title={form.title}
+                    genre={form.genre ? form.genre.split(",").map(g => g.trim()).filter(Boolean) : undefined}
+                    format={form.project_type}
+                    onApply={(t) => setForm((f) => ({ ...f, logline: t }))}
+                  />
+                </div>
+                <Textarea value={form.logline} onChange={(e) => setForm((f) => ({ ...f, logline: e.target.value }))} rows={2} />
               </div>
-              <div><Label>Genre (comma-separated)</Label><Input value={form.genre} onChange={(e) => setForm((f) => ({ ...f, genre: e.target.value }))} placeholder="Drama, Thriller" /></div>
-              <div><Label>Director</Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
-              <div><Label>Role / Credit</Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder="e.g. Writer, Lead Actor" /></div>
-              <div><Label>Video URL</Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
-              <div><Label>Poster URL</Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <Label>Description <GlossaryTooltip term="description" /></Label>
+                  <WritingAssistant
+                    text={form.description}
+                    field="description"
+                    title={form.title}
+                    genre={form.genre ? form.genre.split(",").map(g => g.trim()).filter(Boolean) : undefined}
+                    format={form.project_type}
+                    onApply={(t) => setForm((f) => ({ ...f, description: t }))}
+                  />
+                </div>
+                <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><Label>Year <GlossaryTooltip term="year" /></Label><Input value={form.year} onChange={(e) => setForm((f) => ({ ...f, year: e.target.value }))} type="number" /></div>
+                <div><Label>Status <GlossaryTooltip term="status" /></Label><Input value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))} placeholder="e.g. In Development" /></div>
+              </div>
+              <div><Label>Genre <GlossaryTooltip term="genre" /></Label><Input value={form.genre} onChange={(e) => setForm((f) => ({ ...f, genre: e.target.value }))} placeholder="Drama, Thriller" /></div>
+              <div><Label>Director <GlossaryTooltip term="director" /></Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
+              <div><Label>Role / Credit <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder="e.g. Writer, Lead Actor" /></div>
+              <div><Label>Video URL <GlossaryTooltip term="video_url" /></Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
+              <div><Label>Poster URL <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
               <Button onClick={handleSave} disabled={saving} className="w-full">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {editing ? "Update" : "Create"} Project
