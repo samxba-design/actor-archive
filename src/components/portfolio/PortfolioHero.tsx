@@ -135,15 +135,28 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   // Resolve background type
   const heroStyle = profile.hero_style || 'full';
   const presetGradient = profile.hero_background_preset ? PRESET_GRADIENTS[profile.hero_background_preset] : null;
-  const hasBannerImage = !!profile.banner_url;
-  const hasDarkBg = hasBannerImage || !!presetGradient;
+  const hasBannerImage = heroBgType === 'preset' && !!profile.banner_url;
   const isCompact = heroLayout === 'compact' || heroStyle === 'compact';
   const heroHeight = isCompact ? '280px' : theme.heroHeight;
 
+  // Determine if background is dark for text contrast
   const isLightPreset = profile.hero_background_preset === 'arctic-light';
-  const heroText = hasDarkBg && !isLightPreset ? '#F5F0EB' : isLightPreset ? '#1a1a1a' : theme.textPrimary;
-  const heroTextMuted = hasDarkBg && !isLightPreset ? 'rgba(245,240,235,0.65)' : isLightPreset ? 'rgba(26,26,26,0.7)' : theme.textSecondary;
-  const heroTextFaint = hasDarkBg && !isLightPreset ? 'rgba(245,240,235,0.4)' : isLightPreset ? 'rgba(26,26,26,0.45)' : theme.textTertiary;
+  const solidIsLight = heroBgType === 'solid' && heroBgSolidColor ? isLightColor(heroBgSolidColor) : false;
+  const hasDarkBg = heroBgType === 'bokeh' || heroBgType === 'video' || heroBgType === 'gradient'
+    || (heroBgType === 'preset' && (hasBannerImage || !!presetGradient) && !isLightPreset)
+    || (heroBgType === 'solid' && !solidIsLight);
+
+  let heroText: string, heroTextMuted: string, heroTextFaint: string;
+  if (heroBgType === 'solid' && heroBgSolidColor) {
+    const c = getContrastTextColors(heroBgSolidColor);
+    heroText = c.text; heroTextMuted = c.muted; heroTextFaint = c.faint;
+  } else if (hasDarkBg) {
+    heroText = '#F5F0EB'; heroTextMuted = 'rgba(245,240,235,0.65)'; heroTextFaint = 'rgba(245,240,235,0.4)';
+  } else if (isLightPreset) {
+    heroText = '#1a1a1a'; heroTextMuted = 'rgba(26,26,26,0.7)'; heroTextFaint = 'rgba(26,26,26,0.45)';
+  } else {
+    heroText = theme.textPrimary; heroTextMuted = theme.textSecondary; heroTextFaint = theme.textTertiary;
+  }
 
   const imgAnimClass = imageAnimation !== 'none' ? `img-anim-${imageAnimation}` : '';
 
@@ -695,29 +708,102 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
     compact: renderCompact,
   };
 
+  /* ── Background renderer based on heroBgType ── */
+  const renderBackground = () => {
+    switch (heroBgType) {
+      case 'solid':
+        return (
+          <div className="absolute inset-0" style={{ backgroundColor: heroBgSolidColor || theme.bgPrimary }} />
+        );
+      case 'bokeh':
+        return (
+          <>
+            <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${theme.bgPrimary} 0%, ${theme.bgHero} 100%)` }} />
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <BokehField count={18} />
+              {/* Spotlight */}
+              <div className="absolute" style={{
+                width: '60%', height: '60%', top: '10%', left: '25%',
+                background: `radial-gradient(ellipse, ${theme.accentPrimary}12 0%, transparent 70%)`,
+                filter: 'blur(40px)',
+              }} />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+          </>
+        );
+      case 'video':
+        return (
+          <>
+            <div className="absolute inset-0">
+              <video
+                src={heroBgVideoUrl || 'https://cdn.coverr.co/videos/coverr-los-angeles-at-night-4k-2539/1080p.mp4'}
+                autoPlay muted loop playsInline
+                className="w-full h-full object-cover"
+                style={{ opacity: loaded ? 1 : 0, transition: 'opacity 1s ease-out' }}
+              />
+            </div>
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.6) 100%)' }} />
+            <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+          </>
+        );
+      case 'gradient':
+        return (
+          <>
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0" style={{
+                background: `linear-gradient(135deg, ${theme.bgPrimary} 0%, ${theme.bgHero} 50%, ${theme.accentPrimary}15 100%)`,
+              }} />
+              <div className="absolute w-[80vw] h-[80vh] rounded-full" style={{
+                top: '-20%', left: '-10%',
+                background: `radial-gradient(circle, ${theme.accentPrimary}10 0%, transparent 60%)`,
+                filter: 'blur(60px)',
+                animation: 'ambient-drift 20s ease-in-out infinite',
+              }} />
+              <div className="absolute w-[60vw] h-[60vh] rounded-full" style={{
+                bottom: '-10%', right: '-5%',
+                background: `radial-gradient(circle, ${theme.accentPrimary}08 0%, transparent 60%)`,
+                filter: 'blur(80px)',
+                animation: 'ambient-drift 28s ease-in-out infinite reverse',
+              }} />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+          </>
+        );
+      case 'preset':
+      default:
+        if (hasBannerImage) {
+          return (
+            <>
+              <div className="absolute inset-0" style={{ bottom: '-1px' }}>
+                <img src={profile.banner_url!} alt="" className="w-full h-full object-cover"
+                  style={{
+                    transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px) scale(1.1)` : 'scale(1.1)',
+                    opacity: loaded ? 1 : 0.6, transition: 'opacity 1s ease-out',
+                  }} />
+              </div>
+              <div className="absolute inset-0" style={{ bottom: '-1px', background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
+              <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ bottom: '-1px', background: `linear-gradient(to top, ${theme.bgPrimary} 2%, ${theme.bgPrimary}ee 8%, transparent 100%)` }} />
+            </>
+          );
+        } else if (presetGradient) {
+          return (
+            <>
+              <div className="absolute inset-0" style={{ background: presetGradient }} />
+              <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+            </>
+          );
+        } else {
+          return (
+            <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 20%, ${theme.accentGlow} 0%, transparent 60%), linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />
+          );
+        }
+    }
+  };
+
   return (
     <header className="relative overflow-hidden" style={{ minHeight: heroHeight }}>
       {/* Background */}
-      {hasBannerImage ? (
-        <>
-          <div className="absolute inset-0" style={{ bottom: '-1px' }}>
-            <img src={profile.banner_url!} alt="" className="w-full h-full object-cover"
-              style={{
-                transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px) scale(1.1)` : 'scale(1.1)',
-                opacity: loaded ? 1 : 0.6, transition: 'opacity 1s ease-out',
-              }} />
-          </div>
-          <div className="absolute inset-0" style={{ bottom: '-1px', background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
-          <div className="absolute inset-x-0 bottom-0 h-2/3" style={{ bottom: '-1px', background: `linear-gradient(to top, ${theme.bgPrimary} 2%, ${theme.bgPrimary}ee 8%, transparent 100%)` }} />
-        </>
-      ) : presetGradient ? (
-        <>
-          <div className="absolute inset-0" style={{ background: presetGradient }} />
-          <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
-        </>
-      ) : (
-        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 20%, ${theme.accentGlow} 0%, transparent 60%), linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />
-      )}
+      {renderBackground()}
 
       {layoutRenderers[heroLayout]()}
 
