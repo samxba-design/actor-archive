@@ -10,7 +10,7 @@ import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/Layout
 import SectionResultsWall from "@/components/portfolio/sections/SectionResultsWall";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
-import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award, BookOpen } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
   type SectionVariants, WithToggle,
@@ -19,11 +19,12 @@ import {
   ClientLogosWithToggle, EducationWithToggle, SkillsWithToggle,
   CaseStudiesWithToggle,
   AmbientGlow, MidScrollCTA, CTA_LABELS,
+  PublishedWorkWithToggle,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
   mockTestimonials, mockClients, mockSkills, mockAwards, mockPress,
-  mockEducation, mockKnownFor, featuredProject,
+  mockEducation, mockKnownFor, featuredProject, mockPublishedWork,
 } from "@/data/demoCopywriterData";
 
 /* ══════════════════════ COPYWRITER-SPECIFIC DEFAULTS ══════════════════════ */
