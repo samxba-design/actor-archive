@@ -520,6 +520,7 @@ const TimelineLayout = () => {
         <PortfolioSectionWrapper title="Press & Reviews" index={6}>
           <SectionPress items={mockPress} />
         </PortfolioSectionWrapper>
+        <SectionClientLogos companies={mockClients} variant="bar" />
       </div>
     </div>
   );
@@ -528,6 +529,20 @@ const TimelineLayout = () => {
 /* 8. BENTO — Asymmetric masonry-like grid */
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+    {/* Known For — spans 2 cols */}
+    <div className="sm:col-span-2">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="strip" />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Client logos - single col */}
+    <div>
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <SectionClientLogos companies={mockClients} variant="grid" />
+      </PortfolioSectionWrapper>
+    </div>
+
     {/* Large featured loglines - spans 2 cols */}
     <div className="sm:col-span-2 lg:col-span-2">
       <PortfolioSectionWrapper title="Original Work" index={0}>
@@ -584,6 +599,11 @@ const MinimalLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <div className="max-w-2xl mx-auto space-y-16">
+      <div>
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </PortfolioSectionWrapper>
+      </div>
       <div>
         <PortfolioSectionWrapper title="Work" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
