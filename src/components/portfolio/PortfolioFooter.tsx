@@ -73,6 +73,16 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
       subject_type: form.subject_type as any,
       message: form.message,
     });
+    // Fire-and-forget email notification
+    supabase.functions.invoke("contact-notify", {
+      body: {
+        profile_id: profile.id,
+        sender_name: form.sender_name,
+        sender_email: form.sender_email,
+        subject_type: form.subject_type,
+        message: form.message,
+      },
+    }).catch(() => {});
     setSending(false);
     setSent(true);
   };
