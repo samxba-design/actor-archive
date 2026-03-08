@@ -75,8 +75,13 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
                   Pricing
                 </Link>
                 <Link to="/demo/screenwriter" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
-                  Demo
+                  Demos
                 </Link>
+                <div className="pl-4 flex flex-col gap-1">
+                  <Link to="/demo/screenwriter" onClick={() => setOpen(false)} className="text-sm px-2 py-1.5 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Screenwriter</Link>
+                  <Link to="/demo/actor" onClick={() => setOpen(false)} className="text-sm px-2 py-1.5 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Actor</Link>
+                  <Link to="/demo/copywriter" onClick={() => setOpen(false)} className="text-sm px-2 py-1.5 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Copywriter</Link>
+                </div>
                 <div className="border-t my-2" style={{ borderColor: "hsl(var(--landing-border))" }} />
                 <Link to="/login" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
                   Log in

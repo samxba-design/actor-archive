@@ -54,6 +54,7 @@ const App = () => (
             />
             <Route path="/p/:slug" element={<PublicProfile />} />
             <Route path="/p/:slug/:projectSlug" element={<ProjectPitchPage />} />
+            <Route path="/demo" element={<DemoScreenwriter />} />
             <Route path="/demo/screenwriter" element={<DemoScreenwriter />} />
             <Route path="/demo/actor" element={<DemoActor />} />
             <Route path="/demo/copywriter" element={<DemoCopywriter />} />

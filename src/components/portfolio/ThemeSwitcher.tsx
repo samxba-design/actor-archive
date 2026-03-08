@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { portfolioThemeList } from "@/themes/themes";
 import { Palette } from "lucide-react";
 
@@ -7,12 +7,12 @@ interface Props {
   onThemeChange: (themeId: string) => void;
 }
 
-const ThemeSwitcher = ({ currentThemeId, onThemeChange }: Props) => {
+const ThemeSwitcher = forwardRef<HTMLDivElement, Props>(({ currentThemeId, onThemeChange }, ref) => {
   const [expanded, setExpanded] = useState(false);
   const current = portfolioThemeList.find(t => t.id === currentThemeId);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div ref={ref} className="fixed bottom-6 right-6 z-50">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"
@@ -63,6 +63,7 @@ const ThemeSwitcher = ({ currentThemeId, onThemeChange }: Props) => {
       </button>
     </div>
   );
-};
+});
+ThemeSwitcher.displayName = "ThemeSwitcher";
 
 export default ThemeSwitcher;

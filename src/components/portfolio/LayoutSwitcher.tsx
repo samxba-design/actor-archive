@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { LayoutGrid, ChevronUp, ChevronDown } from "lucide-react";
 
 export type LayoutPreset =
@@ -37,12 +37,12 @@ interface Props {
   onLayoutChange: (layout: LayoutPreset) => void;
 }
 
-const LayoutSwitcher = ({ currentLayout, onLayoutChange }: Props) => {
+const LayoutSwitcher = forwardRef<HTMLDivElement, Props>(({ currentLayout, onLayoutChange }, ref) => {
   const [expanded, setExpanded] = useState(false);
   const current = LAYOUT_PRESETS.find(l => l.id === currentLayout);
 
   return (
-    <div className="fixed bottom-6 left-6 z-50">
+    <div ref={ref} className="fixed bottom-6 left-6 z-50">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"
@@ -85,7 +85,8 @@ const LayoutSwitcher = ({ currentLayout, onLayoutChange }: Props) => {
       </button>
     </div>
   );
-};
+});
+LayoutSwitcher.displayName = "LayoutSwitcher";
 
 /* Mini grid previews */
 const LayoutMiniPreview = ({ layout, isActive }: { layout: LayoutPreset; isActive?: boolean }) => {
