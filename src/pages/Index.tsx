@@ -288,6 +288,10 @@ const Index = () => {
         <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
           <span className="text-lg font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>CreativeSlate</span>
           <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild className="hover:bg-white/10"
+              style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+              <Link to="/how-it-works">How It Works</Link>
+            </Button>
             {/* Glass toggle */}
             <button
               onClick={toggleGlass}
@@ -352,7 +356,7 @@ const Index = () => {
             </Button>
             <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
-              <Link to="/signup">See Examples</Link>
+              <Link to="/demo/screenwriter">See Examples</Link>
             </Button>
           </div>
         </div>
@@ -488,6 +492,8 @@ const Index = () => {
           style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
           <span>© {new Date().getFullYear()} CreativeSlate</span>
           <div className="flex gap-6">
+            <Link to="/how-it-works" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>How It Works</Link>
+            <Link to="/demo/screenwriter" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Demo</Link>
             <Link to="/login" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Log in</Link>
             <Link to="/signup" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Sign up</Link>
           </div>
