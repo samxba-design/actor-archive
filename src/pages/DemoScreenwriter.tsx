@@ -45,6 +45,11 @@ interface SectionVariants {
   skills: 'tags' | 'bars' | 'grouped';
   events: 'list' | 'calendar' | 'cards';
   productions: 'list' | 'cards' | 'timeline';
+  imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
+  heroLayout: HeroLayout;
+  heroRightContent: HeroRightContent;
+  ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
+  heroKnownFor: HeroKnownForStyle;
 }
 
 const defaultVariants: SectionVariants = {
@@ -64,6 +69,11 @@ const defaultVariants: SectionVariants = {
   skills: 'tags',
   events: 'list',
   productions: 'list',
+  imageAnimation: 'none',
+  heroLayout: 'classic',
+  heroRightContent: 'featured',
+  ctaPreset: 'script',
+  heroKnownFor: 'strip',
 };
 
 const SectionVariantsCtx = createContext<{
