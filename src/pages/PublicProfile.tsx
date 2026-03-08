@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
 import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
-import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
+import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
+import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
+import SortableSectionList from "@/components/portfolio/SortableSectionList";
 import { Loader2, ArrowUp, MessageSquare } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
@@ -125,8 +127,8 @@ const PublicProfile = () => {
   const themeId = resolveThemeId(previewTheme || profile.theme);
 
   let sectionOrder = profile.section_order;
+  const typeConfig = profile.profile_type ? getProfileTypeConfig(profile.profile_type) : null;
   if (!sectionOrder || sectionOrder.length === 0) {
-    const typeConfig = profile.profile_type ? getProfileTypeConfig(profile.profile_type) : null;
     if (typeConfig && typeConfig.sections.length > 0) {
       sectionOrder = typeConfig.sections.map((s) => s.key).filter((k) => k !== "hero");
     } else {
@@ -135,8 +137,12 @@ const PublicProfile = () => {
   }
 
   const sectionsVisible = (profile.sections_visible || {}) as Record<string, boolean>;
-  const visibleSections = sectionOrder.filter((key) => sectionsVisible[key] !== false && key !== "hero" && key !== "contact");
   const showContact = profile.show_contact_form !== false;
+
+  // Build section label map from profile type config
+  const allSections = typeConfig
+    ? typeConfig.sections.filter((s) => s.key !== "hero").map((s) => ({ key: s.key, label: s.label }))
+    : sectionOrder.filter((k) => k !== "hero" && k !== "contact").map((k) => ({ key: k, label: k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) }));
 
   const scrollToContact = () => {
     const el = document.getElementById("portfolio-contact");
@@ -147,27 +153,30 @@ const PublicProfile = () => {
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: profile.custom_css }} />}
 
-      <PortfolioHero profile={profile} />
+      <EditModeProvider
+        profileId={profile.id}
+        initialSectionOrder={sectionOrder}
+        initialSectionsVisible={sectionsVisible}
+      >
+        <PortfolioHero profile={profile} />
 
-      <main className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
-        {visibleSections.map((sectionKey, idx) => (
-          <PortfolioSection
-            key={sectionKey}
-            sectionKey={sectionKey}
+        <main className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14">
+          <SortableSectionList
+            allSections={allSections}
             profileId={profile.id}
             profileType={profile.profile_type}
             profileSlug={profile.slug || undefined}
-            sectionIndex={idx}
           />
-        ))}
-      </main>
+        </main>
 
-      <div id="portfolio-contact">
-        <PortfolioFooter
-          profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
-          showContact={showContact}
-        />
-      </div>
+        <div id="portfolio-contact">
+          <PortfolioFooter
+            profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
+            showContact={showContact}
+          />
+        </div>
+
+        <EditModeToolbar />
 
       {/* Floating Contact CTA */}
       {showContact && (
@@ -199,6 +208,7 @@ const PublicProfile = () => {
           <ArrowUp className="h-5 w-5" />
         </button>
       )}
+      </EditModeProvider>
     </PortfolioThemeProvider>
   );
 };
