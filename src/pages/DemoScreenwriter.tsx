@@ -1,9 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { applyThemeToElement } from "@/lib/themes";
+import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
+import { getAllThemeFontsUrl } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
-import PortfolioBackground from "@/components/portfolio/PortfolioBackground";
+import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
+import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionScriptLibrary from "@/components/portfolio/sections/SectionScriptLibrary";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
@@ -13,9 +15,9 @@ import SectionTestimonials from "@/components/portfolio/sections/SectionTestimon
 import SectionRepresentation from "@/components/portfolio/sections/SectionRepresentation";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useEffect } from "react";
 
 /* ── mock data ── */
-
 const mockProfile = {
   id: "demo-screenwriter",
   display_name: "Jordan Avery",
@@ -43,139 +45,28 @@ const mockSocialLinks = [
   { id: "s4", platform: "linkedin", label: "LinkedIn", url: "https://linkedin.com", display_order: 4 },
 ];
 
+const mockRepresentation = [
+  { id: "r1", rep_type: "agent", company: "Creative Artists Agency (CAA)", name: "Michelle Torres", email: "mtorres@caa.com", phone: null, department: "Motion Picture Literary", market: "Los Angeles", is_primary: true },
+  { id: "r2", rep_type: "manager", company: "Management 360", name: "David Park", email: "dpark@management360.com", phone: null, department: "Literary", market: "Los Angeles", is_primary: false },
+];
+
 const mockLoglines = [
-  {
-    id: "l1",
-    title: "The Last Station",
-    logline: "A disgraced NASA engineer discovers that the space station she helped build is receiving transmissions from a civilization that went extinct 10,000 years ago — and the messages are addressed to her.",
-    genre: ["Sci-Fi", "Thriller", "Drama"],
-    format: "Feature",
-    page_count: 118,
-    status: "Optioned",
-  },
-  {
-    id: "l2",
-    title: "Bloodlines",
-    logline: "When a true-crime podcaster discovers that her birth mother was the unidentified accomplice in a notorious 1990s kidnapping, she must choose between breaking the story or protecting the family she never knew.",
-    genre: ["Thriller", "Drama"],
-    format: "Limited Series",
-    page_count: null,
-    status: "In Development",
-  },
-  {
-    id: "l3",
-    title: "Sundown Protocol",
-    logline: "In a near-future Los Angeles where memories can be subpoenaed as evidence, a public defender fights to protect her client's right to forget — even as her own memories are being targeted.",
-    genre: ["Sci-Fi", "Legal Drama"],
-    format: "Pilot",
-    page_count: 62,
-    status: "Spec",
-  },
+  { id: "l1", title: "The Last Station", logline: "A disgraced NASA engineer discovers that the space station she helped build is receiving transmissions from a civilization that went extinct 10,000 years ago — and the messages are addressed to her.", genre: ["Sci-Fi", "Thriller", "Drama"], format: "Feature", page_count: 118, status: "Optioned", is_featured: true },
+  { id: "l2", title: "Bloodlines", logline: "When a true-crime podcaster discovers that her birth mother was the unidentified accomplice in a notorious 1990s kidnapping, she must choose between breaking the story or protecting the family she never knew.", genre: ["Thriller", "Drama"], format: "Limited Series", page_count: null, status: "In Development" },
+  { id: "l3", title: "Sundown Protocol", logline: "In a near-future Los Angeles where memories can be subpoenaed as evidence, a public defender fights to protect her client's right to forget — even as her own memories are being targeted.", genre: ["Sci-Fi", "Legal Drama"], format: "Pilot", page_count: 62, status: "Spec" },
 ];
 
 const mockScripts = [
-  {
-    id: "sc1",
-    title: "The Last Station",
-    format: "Feature Screenplay",
-    genre: ["Sci-Fi", "Thriller"],
-    page_count: 118,
-    year: 2024,
-    logline: "A disgraced NASA engineer discovers transmissions from an extinct civilization — addressed to her.",
-    coverage_excerpt: "\"Exceptional world-building with deeply human stakes. A contained sci-fi that feels epic.\" — Coverage Ink",
-    access_level: "public",
-    script_pdf_url: "#",
-    status: "Optioned",
-    project_type: "screenplay",
-  },
-  {
-    id: "sc2",
-    title: "Bloodlines",
-    format: "Limited Series Bible + Pilot",
-    genre: ["Thriller", "Drama"],
-    page_count: 68,
-    year: 2024,
-    logline: null,
-    coverage_excerpt: null,
-    access_level: "gated",
-    script_pdf_url: "#",
-    status: "In Development",
-    project_type: "pilot",
-  },
-  {
-    id: "sc3",
-    title: "Sundown Protocol",
-    format: "Pilot Script",
-    genre: ["Sci-Fi", "Legal Drama"],
-    page_count: 62,
-    year: 2023,
-    logline: "In a world where memories can be subpoenaed, a public defender fights for the right to forget.",
-    coverage_excerpt: null,
-    access_level: "public",
-    script_pdf_url: "#",
-    status: "Spec",
-    project_type: "pilot",
-  },
-  {
-    id: "sc4",
-    title: "Midnight Country",
-    format: "Feature Screenplay",
-    genre: ["Western", "Drama"],
-    page_count: 105,
-    year: 2022,
-    logline: "A Comanche translator in 1870s Texas uncovers a conspiracy between the US Army and a railroad baron.",
-    coverage_excerpt: "\"A fresh take on the revisionist western. Lyrical prose and razor-sharp dialogue.\" — The Black List",
-    access_level: "public",
-    script_pdf_url: "#",
-    status: "Nicholl Semifinalist",
-    project_type: "screenplay",
-  },
+  { id: "sc1", title: "The Last Station", format: "Feature Screenplay", genre: ["Sci-Fi", "Thriller"], page_count: 118, year: 2024, logline: "A disgraced NASA engineer discovers transmissions from an extinct civilization — addressed to her.", coverage_excerpt: "\"Exceptional world-building with deeply human stakes.\" — Coverage Ink", access_level: "public", script_pdf_url: "#", status: "Optioned", project_type: "screenplay", is_featured: true },
+  { id: "sc2", title: "Bloodlines", format: "Limited Series Bible + Pilot", genre: ["Thriller", "Drama"], page_count: 68, year: 2024, logline: null, coverage_excerpt: null, access_level: "gated", script_pdf_url: "#", status: "In Development", project_type: "pilot" },
+  { id: "sc3", title: "Sundown Protocol", format: "Pilot Script", genre: ["Sci-Fi", "Legal Drama"], page_count: 62, year: 2023, logline: "In a world where memories can be subpoenaed, a public defender fights for the right to forget.", coverage_excerpt: null, access_level: "public", script_pdf_url: "#", status: "Spec", project_type: "pilot" },
+  { id: "sc4", title: "Midnight Country", format: "Feature Screenplay", genre: ["Western", "Drama"], page_count: 105, year: 2022, logline: "A Comanche translator in 1870s Texas uncovers a conspiracy between the US Army and a railroad baron.", coverage_excerpt: "\"A fresh take on the revisionist western.\" — The Black List", access_level: "public", script_pdf_url: "#", status: "Nicholl Semifinalist", project_type: "screenplay" },
 ];
 
 const mockCredits = [
-  {
-    id: "c1",
-    title: "The Arrangement",
-    project_type: "tv_show",
-    year: 2023,
-    poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop",
-    backdrop_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=500&fit=crop",
-    genre: ["Drama", "Thriller"],
-    logline: "An elite political fixer discovers the biggest threat to her client is the truth she's been hired to bury.",
-    role_name: "Staff Writer",
-    role_type: "Season 2",
-    network_or_studio: "HBO",
-    is_featured: true,
-    imdb_link: "https://imdb.com",
-    display_order: 1,
-  },
-  {
-    id: "c2",
-    title: "Glass Houses",
-    project_type: "film",
-    year: 2022,
-    poster_url: "https://images.unsplash.com/photo-1518676590747-1e3dcf5a860f?w=400&h=600&fit=crop",
-    genre: ["Drama"],
-    logline: "A Silicon Valley whistleblower seeks refuge with estranged family in rural Oregon.",
-    role_name: "Co-Writer",
-    network_or_studio: "A24 / Plan B",
-    is_featured: false,
-    display_order: 2,
-  },
-  {
-    id: "c3",
-    title: "Borderline",
-    project_type: "tv_show",
-    year: 2021,
-    poster_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop",
-    genre: ["Crime", "Drama"],
-    logline: "A DEA agent goes undercover on both sides of the US-Mexico border.",
-    role_name: "Story Editor",
-    role_type: "Season 1",
-    network_or_studio: "FX",
-    is_featured: false,
-    display_order: 3,
-  },
+  { id: "c1", title: "The Arrangement", project_type: "tv_show", year: 2023, poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop", backdrop_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=500&fit=crop", genre: ["Drama", "Thriller"], logline: "An elite political fixer discovers the biggest threat to her client is the truth she's been hired to bury.", role_name: "Staff Writer", role_type: "Season 2", network_or_studio: "HBO", is_featured: true, imdb_link: "https://imdb.com", display_order: 1 },
+  { id: "c2", title: "Glass Houses", project_type: "film", year: 2022, poster_url: "https://images.unsplash.com/photo-1518676590747-1e3dcf5a860f?w=400&h=600&fit=crop", genre: ["Drama"], logline: "A Silicon Valley whistleblower seeks refuge with estranged family in rural Oregon.", role_name: "Co-Writer", network_or_studio: "A24 / Plan B", is_featured: false, display_order: 2 },
+  { id: "c3", title: "Borderline", project_type: "tv_show", year: 2021, poster_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop", genre: ["Crime", "Drama"], logline: "A DEA agent goes undercover on both sides of the US-Mexico border.", role_name: "Story Editor", role_type: "Season 1", network_or_studio: "FX", is_featured: false, display_order: 3 },
 ];
 
 const mockAwards = [
@@ -188,244 +79,133 @@ const mockAwards = [
 ];
 
 const mockPress = [
-  {
-    id: "p1",
-    title: "Jordan Avery on Writing the New Wave of Sci-Fi TV",
-    publication: "Deadline",
-    date: "March 2024",
-    pull_quote: "I'm interested in the stories we tell ourselves to survive — and what happens when those stories stop working.",
-    article_url: "#",
-    press_type: "interview",
-    star_rating: null,
-  },
-  {
-    id: "p2",
-    title: "'The Arrangement' Season 2: How the Writers Room Reinvented the Political Thriller",
-    publication: "Variety",
-    date: "January 2024",
-    pull_quote: null,
-    article_url: "#",
-    press_type: "feature",
-    star_rating: null,
-  },
-  {
-    id: "p3",
-    title: "Review: 'Glass Houses' Is a Quietly Devastating Portrait of American Ambition",
-    publication: "IndieWire",
-    date: "September 2022",
-    pull_quote: "Avery's screenplay finds poetry in the mundane and menace in the manicured.",
-    article_url: "#",
-    press_type: "review",
-    star_rating: 4,
-  },
+  { id: "p1", title: "Jordan Avery on Writing the New Wave of Sci-Fi TV", publication: "Deadline", date: "March 2024", pull_quote: "I'm interested in the stories we tell ourselves to survive — and what happens when those stories stop working.", article_url: "#", press_type: "interview", star_rating: null },
+  { id: "p2", title: "'The Arrangement' Season 2: How the Writers Room Reinvented the Political Thriller", publication: "Variety", date: "January 2024", pull_quote: null, article_url: "#", press_type: "feature", star_rating: null },
+  { id: "p3", title: "Review: 'Glass Houses' Is a Quietly Devastating Portrait of American Ambition", publication: "IndieWire", date: "September 2022", pull_quote: "Avery's screenplay finds poetry in the mundane and menace in the manicured.", article_url: "#", press_type: "review", star_rating: 4 },
 ];
 
 const mockTestimonials = [
-  {
-    id: "t1",
-    quote: "Jordan is the rare writer who can hold a massive mythology in their head while writing the most intimate, human scenes. Every draft is better than the last.",
-    author_name: "Sarah Chen",
-    author_role: "Executive Producer",
-    author_company: "HBO",
-    author_photo_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-  },
-  {
-    id: "t2",
-    quote: "One of the most original voices in the room. Jordan brought a specificity to the world-building that elevated the entire show.",
-    author_name: "Marcus Rivera",
-    author_role: "Showrunner",
-    author_company: "FX Networks",
-    author_photo_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-  },
-  {
-    id: "t3",
-    quote: "I've read hundreds of sci-fi specs. Jordan's 'The Last Station' is in a different category entirely — grounded, surprising, and emotionally devastating.",
-    author_name: "David Park",
-    author_role: "Literary Manager",
-    author_company: "Management 360",
-    author_photo_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-  },
-];
-
-const mockRepresentation = [
-  {
-    id: "r1",
-    rep_type: "agent",
-    company: "Creative Artists Agency (CAA)",
-    name: "Michelle Torres",
-    email: "mtorres@caa.com",
-    phone: null,
-    department: "Motion Picture Literary",
-    market: "Los Angeles",
-    is_primary: true,
-  },
-  {
-    id: "r2",
-    rep_type: "manager",
-    company: "Management 360",
-    name: "David Park",
-    email: "dpark@management360.com",
-    phone: null,
-    department: "Literary",
-    market: "Los Angeles",
-    is_primary: false,
-  },
+  { id: "t1", quote: "Jordan is the rare writer who can hold a massive mythology in their head while writing the most intimate, human scenes. Every draft is better than the last.", author_name: "Sarah Chen", author_role: "Executive Producer", author_company: "HBO", author_photo_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" },
+  { id: "t2", quote: "One of the most original voices in the room. Jordan brought a specificity to the world-building that elevated the entire show.", author_name: "Marcus Rivera", author_role: "Showrunner", author_company: "FX Networks", author_photo_url: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" },
+  { id: "t3", quote: "I've read hundreds of sci-fi specs. Jordan's 'The Last Station' is in a different category entirely — grounded, surprising, and emotionally devastating.", author_name: "David Park", author_role: "Literary Manager", author_company: "Management 360", author_photo_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" },
 ];
 
 const mockServices = [
-  {
-    id: "sv1",
-    name: "Feature Script Polish",
-    description: "Full dialogue and structural polish pass on feature-length screenplays. Includes detailed notes document.",
-    starting_price: "$5,000",
-    deliverables: ["Full script polish", "10-page notes document", "One revision pass", "Follow-up call"],
-    turnaround: "3-4 weeks",
-    is_featured: true,
-  },
-  {
-    id: "sv2",
-    name: "Pilot Script Consultation",
-    description: "In-depth creative consultation on pilot scripts with focus on voice, structure, and marketability.",
-    starting_price: "$2,500",
-    deliverables: ["Written evaluation", "60-min video call", "Market positioning notes"],
-    turnaround: "2 weeks",
-    is_featured: false,
-  },
+  { id: "sv1", name: "Feature Script Polish", description: "Full dialogue and structural polish pass on feature-length screenplays.", starting_price: "$5,000", deliverables: ["Full script polish", "10-page notes document", "One revision pass", "Follow-up call"], turnaround: "3-4 weeks", is_featured: true },
+  { id: "sv2", name: "Pilot Script Consultation", description: "In-depth creative consultation on pilot scripts with focus on voice, structure, and marketability.", starting_price: "$2,500", deliverables: ["Written evaluation", "60-min video call", "Market positioning notes"], turnaround: "2 weeks", is_featured: false },
 ];
 
-/* ── section wrapper with numbering + accent rule ── */
-const Section = ({ title, index, children }: { title: string; index: number; children: React.ReactNode }) => (
-  <section className="animate-fade-in">
-    <div className="flex items-baseline gap-3 mb-2">
-      <span
-        className="text-xs font-mono tracking-widest"
-        style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
-      >
-        {String(index + 1).padStart(2, "0")}
-      </span>
-      <h2
-        className="text-2xl sm:text-3xl font-bold tracking-tight"
-        style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}
-      >
-        {title}
-      </h2>
-    </div>
-    <div
-      className="mb-8"
-      style={{
-        height: "2px",
-        background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))",
-        maxWidth: "120px",
-      }}
-    />
-    {children}
-  </section>
-);
+const featuredProject = mockCredits[0];
 
-/* ── page ── */
 const DemoScreenwriter = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [themeId, setThemeId] = useState("cinematic-dark");
 
+  // Load all fonts for theme switching
   useEffect(() => {
-    if (containerRef.current) {
-      applyThemeToElement(containerRef.current, "ink");
-      // Apply the loaded fonts to CSS variables
-      containerRef.current.style.setProperty("--portfolio-heading-font", "'Playfair Display', Georgia, serif");
-      containerRef.current.style.setProperty("--portfolio-body-font", "'Source Serif 4', Georgia, serif");
-    }
+    const url = getAllThemeFontsUrl();
+    if (!url) return;
+    const id = "demo-all-fonts";
+    if (document.getElementById(id)) return;
     const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+4:wght@400;600&display=swap";
-    link.rel = "stylesheet";
+    link.id = id; link.rel = "stylesheet"; link.href = url;
     document.head.appendChild(link);
-    return () => { document.head.removeChild(link); };
+    return () => { const el = document.getElementById(id); if (el) el.remove(); };
   }, []);
 
+  const stats = {
+    scripts: mockScripts.length,
+    developing: mockScripts.filter(s => s.status === "In Development").length,
+    awards: mockAwards.length,
+  };
+
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen relative"
-      style={{ backgroundColor: "hsl(var(--portfolio-bg))", color: "hsl(var(--portfolio-fg))", fontFamily: "var(--portfolio-body-font)" }}
-    >
-      <PortfolioBackground />
-
-      {/* Floating "Build Your Own" banner */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-fade-in" style={{ animationDelay: "2s", animationFillMode: "backwards" }}>
-        <Link
-          to="/signup"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold shadow-2xl transition-all hover:scale-105"
-          style={{
-            background: "linear-gradient(135deg, hsl(30 60% 40%), hsl(20 70% 50%))",
-            color: "#fff",
-            boxShadow: "0 8px 32px -8px hsl(30 60% 40% / 0.5)",
-          }}
-        >
-          <Sparkles className="w-4 h-4" />
-          Build Your Own Portfolio
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-
+    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
-        className="text-center py-2 text-xs font-medium relative z-10"
-        style={{
-          background: "hsl(var(--portfolio-accent) / 0.1)",
-          color: "hsl(var(--portfolio-accent))",
-          borderBottom: "1px solid hsl(var(--portfolio-border))",
-        }}
+        className="text-center py-2 text-xs font-medium relative z-20"
+        style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
-        ✨ This is a demo portfolio — <Link to="/signup" className="underline font-semibold">Create yours free →</Link>
+        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+          ✨ This is a demo portfolio —{" "}
+          <Link to="/signup" className="underline font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>Create yours free →</Link>
+        </span>
       </div>
 
       {/* Hero */}
-      <div className="relative z-10">
-        <PortfolioHero profile={mockProfile} socialLinks={mockSocialLinks} />
-      </div>
+      <PortfolioHero
+        profile={mockProfile}
+        socialLinks={mockSocialLinks}
+        representation={mockRepresentation}
+        featuredProject={featuredProject}
+        stats={stats}
+      />
 
       {/* Sections */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16 relative z-10">
-        <Section title="Logline Showcase" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
-        </Section>
-
-        <Section title="Script Library" index={1}>
-          <SectionScriptLibrary items={mockScripts} />
-        </Section>
-
-        <Section title="Produced Credits" index={2}>
-          <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
-        </Section>
-
-        <Section title="Awards & Recognition" index={3}>
-          <SectionAwards items={mockAwards} />
-        </Section>
-
-        <Section title="Press & Reviews" index={4}>
-          <SectionPress items={mockPress} />
-        </Section>
-
-        <Section title="Testimonials" index={5}>
-          <SectionTestimonials items={mockTestimonials} />
-        </Section>
-
-        <Section title="Services" index={6}>
-          <SectionServices items={mockServices} />
-        </Section>
-
-        <Section title="Representation" index={7}>
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14 relative z-10">
+        <PortfolioSectionWrapper title="Representation" index={0}>
           <SectionRepresentation items={mockRepresentation} />
-        </Section>
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Logline Showcase" index={1}>
+          <SectionLoglineShowcase items={mockLoglines} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Script Library" index={2}>
+          <SectionScriptLibrary items={mockScripts} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Produced Credits" index={3}>
+          <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
+          <SectionAwards items={mockAwards} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Press & Reviews" index={5}>
+          <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Testimonials" index={6}>
+          <SectionTestimonials items={mockTestimonials} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Services" index={7}>
+          <SectionServices items={mockServices} />
+        </PortfolioSectionWrapper>
+      </div>
+
+      {/* Discreet platform CTA */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="pt-20 text-center space-y-3">
+          <div className="mx-auto w-20 h-px" style={{ backgroundColor: 'var(--portfolio-border-default)' }} />
+          <p className="text-sm mt-8" style={{ color: 'var(--portfolio-text-secondary)' }}>
+            Create your own screenwriter portfolio
+          </p>
+          <Link
+            to="/signup"
+            className="inline-flex items-center gap-2 text-sm font-medium transition-all group"
+            style={{ color: 'var(--portfolio-accent-primary)' }}
+          >
+            Get Started
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <p className="text-xs" style={{ color: 'var(--portfolio-text-tertiary)' }}>
+            Join 500+ screenwriters
+          </p>
+        </div>
       </div>
 
       {/* Footer */}
-      <div className="relative z-10">
-        <PortfolioFooter
-          profile={mockProfile}
-          showContact={true}
-          socialLinks={mockSocialLinks}
-        />
-      </div>
-    </div>
+      <PortfolioFooter
+        profile={{ ...mockProfile, subscription_tier: "free" }}
+        showContact={true}
+        socialLinks={mockSocialLinks}
+      />
+
+      {/* Theme Switcher — demo only */}
+      <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
+    </PortfolioThemeProvider>
   );
 };
 
