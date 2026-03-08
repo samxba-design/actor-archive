@@ -5,7 +5,7 @@ import { getAllThemeFontsUrl } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
-import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
+import ThemeSwitcher, { LayoutPreset } from "@/components/portfolio/ThemeSwitcher";
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionScriptLibrary from "@/components/portfolio/sections/SectionScriptLibrary";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
@@ -29,6 +29,7 @@ const mockProfile = {
   profile_type: "screenwriter",
   available_for_hire: true,
   seeking_representation: false,
+  professional_status: "Seeking Representation",
   cta_label: "Read My Latest Script",
   cta_url: "#",
   cta_type: "custom_url",
@@ -62,9 +63,10 @@ const mockScripts = [
 ];
 
 const mockCredits = [
-  { id: "c1", title: "The Arrangement", project_type: "tv_show", year: 2023, poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=600&fit=crop", backdrop_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=500&fit=crop", genre: ["Drama", "Thriller"], logline: "An elite political fixer discovers the biggest threat to her client is the truth she's been hired to bury.", role_name: "Staff Writer", role_type: "Season 2", network_or_studio: "HBO", is_featured: true, imdb_link: "https://imdb.com", display_order: 1 },
-  { id: "c2", title: "Glass Houses", project_type: "film", year: 2022, poster_url: "https://images.unsplash.com/photo-1518676590747-1e3dcf5a860f?w=400&h=600&fit=crop", genre: ["Drama"], logline: "A Silicon Valley whistleblower seeks refuge with estranged family in rural Oregon.", role_name: "Co-Writer", network_or_studio: "A24 / Plan B", is_featured: false, display_order: 2 },
-  { id: "c3", title: "Borderline", project_type: "tv_show", year: 2021, poster_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=600&fit=crop", genre: ["Crime", "Drama"], logline: "A DEA agent goes undercover on both sides of the US-Mexico border.", role_name: "Story Editor", role_type: "Season 1", network_or_studio: "FX", is_featured: false, display_order: 3 },
+  { id: "c1", title: "The Arrangement", project_type: "tv_show", year: 2023, poster_url: "https://image.tmdb.org/t/p/w500/7WUHnWGx5OO145IRxPDUkQSh4C7.jpg", backdrop_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1200&h=500&fit=crop", genre: ["Drama", "Thriller"], logline: "An elite political fixer discovers the biggest threat to her client is the truth she's been hired to bury.", role_name: "Staff Writer", role_type: "Season 2", network_or_studio: "HBO", is_featured: true, imdb_link: "https://imdb.com", display_order: 1 },
+  { id: "c2", title: "Glass Houses", project_type: "film", year: 2022, poster_url: "https://image.tmdb.org/t/p/w500/d5NXSklXo0qyIYkgV94XAgMIckC.jpg", genre: ["Drama"], logline: "A Silicon Valley whistleblower seeks refuge with estranged family in rural Oregon.", role_name: "Co-Writer", network_or_studio: "A24 / Plan B", is_featured: false, display_order: 2 },
+  { id: "c3", title: "Borderline", project_type: "tv_show", year: 2021, poster_url: "https://image.tmdb.org/t/p/w500/6kbAMLteGO8yyewYau6bJ683sw7.jpg", genre: ["Crime", "Drama"], logline: "A DEA agent goes undercover on both sides of the US-Mexico border.", role_name: "Story Editor", role_type: "Season 1", network_or_studio: "FX", is_featured: false, display_order: 3 },
+  { id: "c4", title: "Night Shift", project_type: "tv_show", year: 2020, poster_url: "https://image.tmdb.org/t/p/w500/AkJQpZp9WoNdj7pLYSj1L0RcMMN.jpg", genre: ["Thriller"], logline: "An ER nurse discovers her hospital is at the center of a pharmaceutical conspiracy.", role_name: "Staff Writer", role_type: "Season 3", network_or_studio: "NBC", is_featured: false, display_order: 4 },
 ];
 
 const mockAwards = [
@@ -98,7 +100,6 @@ const featuredProject = mockCredits[0];
 /* ── Ambient Background Glow ── */
 const AmbientGlow = () => {
   const theme = usePortfolioTheme();
-  // Only for dark themes
   const isDark = theme.bgPrimary.startsWith('#0') || theme.bgPrimary.startsWith('#1') || theme.bgPrimary.startsWith('#2');
   if (!isDark) return null;
 
@@ -128,8 +129,179 @@ const AmbientGlow = () => {
   );
 };
 
+/* ── Layout renderers ── */
+
+const StandardLayout = () => {
+  const theme = usePortfolioTheme();
+  return (
+    <>
+      {/* Row 1: Loglines (main) + Services (sidebar) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+        <PortfolioSectionWrapper title="Original Work" index={0}>
+          <SectionLoglineShowcase items={mockLoglines} />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Services" index={1}>
+          <SectionServices items={mockServices} compact />
+        </PortfolioSectionWrapper>
+      </div>
+
+      {/* Row 2: Script Library full width */}
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Script Library" index={2}>
+          <SectionScriptLibrary items={mockScripts} />
+        </PortfolioSectionWrapper>
+      </div>
+
+      {/* Row 3: Credits (poster) + Testimonials (sidebar) */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
+        <PortfolioSectionWrapper title="Produced Credits" index={3}>
+          <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Testimonials" index={4}>
+          <SectionTestimonials items={mockTestimonials} />
+        </PortfolioSectionWrapper>
+      </div>
+
+      {/* Row 4: Awards + Press side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
+          <SectionAwards items={mockAwards} />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+          <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+      </div>
+    </>
+  );
+};
+
+const CinematicLayout = () => (
+  <>
+    {/* Full-width loglines */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Full-width poster credits */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Produced Credits" index={1}>
+        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Full-width script library */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Script Library" index={2}>
+        <SectionScriptLibrary items={mockScripts} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Testimonials full width */}
+    <div className="mb-12">
+      <PortfolioSectionWrapper title="Testimonials" index={3}>
+        <SectionTestimonials items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Awards + Press + Services in row */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
+        <SectionAwards items={mockAwards} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Press & Reviews" index={5}>
+        <SectionPress items={mockPress} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Services" index={6}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
+    </div>
+  </>
+);
+
+const CompactLayout = () => (
+  <>
+    {/* Row 1: Loglines + Services */}
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 mb-6">
+      <PortfolioSectionWrapper title="Original Work" index={0}>
+        <SectionLoglineShowcase items={mockLoglines} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Services" index={1}>
+        <SectionServices items={mockServices} compact />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Row 2: Script Library + Credits table side by side */}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      <PortfolioSectionWrapper title="Script Library" index={2}>
+        <SectionScriptLibrary items={mockScripts} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Produced Credits" index={3}>
+        <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
+      </PortfolioSectionWrapper>
+    </div>
+
+    {/* Row 3: Awards + Press + Testimonials */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <PortfolioSectionWrapper title="Awards" index={4}>
+        <SectionAwards items={mockAwards} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Press" index={5}>
+        <SectionPress items={mockPress} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Testimonials" index={6}>
+        <SectionTestimonials items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+  </>
+);
+
+const MagazineLayout = () => (
+  <>
+    {/* Two-column editorial: main content left, sidebar right */}
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
+      {/* Main column */}
+      <div className="space-y-10">
+        <PortfolioSectionWrapper title="Original Work" index={0}>
+          <SectionLoglineShowcase items={mockLoglines} />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Produced Credits" index={1}>
+          <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Script Library" index={2}>
+          <SectionScriptLibrary items={mockScripts} />
+        </PortfolioSectionWrapper>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
+            <SectionAwards items={mockAwards} />
+          </PortfolioSectionWrapper>
+          <PortfolioSectionWrapper title="Press & Reviews" index={5}>
+            <SectionPress items={mockPress} />
+          </PortfolioSectionWrapper>
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      <div className="space-y-8">
+        <PortfolioSectionWrapper title="Services" index={3}>
+          <SectionServices items={mockServices} compact />
+        </PortfolioSectionWrapper>
+
+        <PortfolioSectionWrapper title="Testimonials" index={6}>
+          <SectionTestimonials items={mockTestimonials} />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+  </>
+);
+
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
+  const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("standard");
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
@@ -170,49 +342,14 @@ const DemoScreenwriter = () => {
         stats={stats}
       />
 
-      {/* Body — dense grid layout */}
+      {/* Body */}
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <AmbientGlow />
 
-        {/* Row 1: Loglines (main) + Services (sidebar) */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
-          <PortfolioSectionWrapper title="Original Work" index={0}>
-            <SectionLoglineShowcase items={mockLoglines} />
-          </PortfolioSectionWrapper>
-
-          <PortfolioSectionWrapper title="Services" index={1}>
-            <SectionServices items={mockServices} compact />
-          </PortfolioSectionWrapper>
-        </div>
-
-        {/* Row 2: Script Library full width */}
-        <div className="mb-10">
-          <PortfolioSectionWrapper title="Script Library" index={2}>
-            <SectionScriptLibrary items={mockScripts} />
-          </PortfolioSectionWrapper>
-        </div>
-
-        {/* Row 3: Credits (main) + Testimonials (sidebar) */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
-          <PortfolioSectionWrapper title="Produced Credits" index={3}>
-            <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
-          </PortfolioSectionWrapper>
-
-          <PortfolioSectionWrapper title="Testimonials" index={4}>
-            <SectionTestimonials items={mockTestimonials} />
-          </PortfolioSectionWrapper>
-        </div>
-
-        {/* Row 4: Awards + Press side by side */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
-            <SectionAwards items={mockAwards} />
-          </PortfolioSectionWrapper>
-
-          <PortfolioSectionWrapper title="Press & Reviews" index={6}>
-            <SectionPress items={mockPress} />
-          </PortfolioSectionWrapper>
-        </div>
+        {layoutPreset === 'standard' && <StandardLayout />}
+        {layoutPreset === 'cinematic' && <CinematicLayout />}
+        {layoutPreset === 'compact' && <CompactLayout />}
+        {layoutPreset === 'magazine' && <MagazineLayout />}
       </div>
 
       {/* Discreet platform CTA */}
@@ -240,8 +377,13 @@ const DemoScreenwriter = () => {
         socialLinks={mockSocialLinks}
       />
 
-      {/* Theme Switcher — demo only */}
-      <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
+      {/* Theme & Layout Switcher */}
+      <ThemeSwitcher
+        currentThemeId={themeId}
+        onThemeChange={setThemeId}
+        currentLayout={layoutPreset}
+        onLayoutChange={setLayoutPreset}
+      />
     </PortfolioThemeProvider>
   );
 };
