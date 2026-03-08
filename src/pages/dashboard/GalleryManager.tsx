@@ -1,0 +1,141 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Plus, Trash2, Upload } from "lucide-react";
+import type { Tables } from "@/integrations/supabase/types";
+
+type GalleryImage = Tables<"gallery_images">;
+
+const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "other"];
+
+const GalleryManager = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [imageType, setImageType] = useState("headshot");
+
+  const fetchImages = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("gallery_images")
+      .select("*")
+      .eq("profile_id", user.id)
+      .order("display_order", { ascending: true });
+    setImages(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchImages(); }, [user]);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user) return;
+    setUploading(true);
+
+    for (const file of Array.from(files)) {
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: uploadErr } = await supabase.storage.from("gallery").upload(path, file);
+      if (uploadErr) {
+        toast({ title: "Upload error", description: uploadErr.message, variant: "destructive" });
+        continue;
+      }
+      const { data: urlData } = supabase.storage.from("gallery").getPublicUrl(path);
+      await supabase.from("gallery_images").insert({
+        profile_id: user.id,
+        image_url: urlData.publicUrl,
+        image_type: imageType,
+        display_order: images.length,
+      });
+    }
+    await fetchImages();
+    setUploading(false);
+    toast({ title: "Uploaded", description: `${files.length} image(s) added.` });
+  };
+
+  const handleDelete = async (img: GalleryImage) => {
+    await supabase.from("gallery_images").delete().eq("id", img.id);
+    // Try to clean storage too
+    try {
+      const urlParts = img.image_url.split("/gallery/");
+      if (urlParts[1]) await supabase.storage.from("gallery").remove([urlParts[1]]);
+    } catch {}
+    fetchImages();
+  };
+
+  if (loading) {
+    return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  }
+
+  return (
+    <div className="max-w-4xl space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-foreground">Gallery</h1>
+      </div>
+
+      <Card>
+        <CardContent className="py-6 space-y-4">
+          <div className="flex gap-4 items-end">
+            <div className="flex-1">
+              <Label>Image Type</Label>
+              <Select value={imageType} onValueChange={setImageType}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {IMAGE_TYPES.map((t) => (
+                    <SelectItem key={t} value={t}>{t.replace(/_/g, " ")}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="gallery-upload" className="cursor-pointer">
+                <Button asChild disabled={uploading}>
+                  <label htmlFor="gallery-upload" className="cursor-pointer">
+                    {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                    Upload Images
+                  </label>
+                </Button>
+              </Label>
+              <Input id="gallery-upload" type="file" accept="image/*" multiple className="hidden" onChange={handleUpload} />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {images.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">No images yet. Upload some above.</div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {images.map((img) => (
+            <div key={img.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
+              <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleDelete(img)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {img.image_type.replace(/_/g, " ")}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GalleryManager;
