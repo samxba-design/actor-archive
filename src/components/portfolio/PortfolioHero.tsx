@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote, Play } from "lucide-react";
 import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { useEditMode } from "./EditModeProvider";
 import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { getContrastTextColors, isLightColor } from "@/lib/contrastColor";
 import { BokehField } from "@/components/CinematicBackground";
@@ -278,15 +279,25 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
 
   const CtaEl = () => showCta ? <PortfolioCTA label={ctaLabel} onClick={handleCta} /> : null;
 
+  const { editMode, isOwner } = useEditMode();
+
+  const handleRemoveKnownFor = useCallback(async (itemId: string) => {
+    if (!profile.id) return;
+    await supabase.from("projects").update({ is_notable: false }).eq("id", itemId).eq("profile_id", profile.id);
+    // Optimistic: caller should refetch or we trust the UI removes it
+    window.location.reload();
+  }, [profile.id]);
+
   const KnownForStrip = () => {
     if (!knownFor?.length || heroKnownFor === 'hidden') return null;
     const posterWidth = heroKnownFor === 'large' ? '120px' : '80px';
     const display = heroKnownFor === 'text' ? 'text' : 'image';
+    const canEdit = editMode && isOwner;
     return (
       <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
         {knownFor.slice(0, 6).map((item: any) => (
           <div key={item.id} className={imgAnimClass}>
-            <PosterCard item={item} width={posterWidth} display={display} />
+            <PosterCard item={item} width={posterWidth} display={display} onRemove={canEdit ? handleRemoveKnownFor : undefined} editable={canEdit} />
           </div>
         ))}
       </div>
