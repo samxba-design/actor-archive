@@ -1180,6 +1180,74 @@ export type Database = {
           },
         ]
       }
+      published_works: {
+        Row: {
+          article_url: string | null
+          category: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          date: string | null
+          display_order: number | null
+          id: string
+          is_featured: boolean | null
+          pdf_thumbnail_url: string | null
+          pdf_url: string | null
+          profile_id: string
+          publication: string | null
+          read_time: string | null
+          show_text_overlay: boolean | null
+          summary: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          article_url?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          date?: string | null
+          display_order?: number | null
+          id?: string
+          is_featured?: boolean | null
+          pdf_thumbnail_url?: string | null
+          pdf_url?: string | null
+          profile_id: string
+          publication?: string | null
+          read_time?: string | null
+          show_text_overlay?: boolean | null
+          summary?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          article_url?: string | null
+          category?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          date?: string | null
+          display_order?: number | null
+          id?: string
+          is_featured?: boolean | null
+          pdf_thumbnail_url?: string | null
+          pdf_url?: string | null
+          profile_id?: string
+          publication?: string | null
+          read_time?: string | null
+          show_text_overlay?: boolean | null
+          summary?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "published_works_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       representation: {
         Row: {
           company: string | null

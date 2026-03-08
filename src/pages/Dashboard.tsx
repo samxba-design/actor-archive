@@ -28,6 +28,7 @@ import EmbedAndShare from "@/pages/dashboard/EmbedAndShare";
 import ScriptManager from "@/pages/dashboard/ScriptManager";
 import ClientManager from "@/pages/dashboard/ClientManager";
 import PitchEmailGenerator from "@/pages/dashboard/PitchEmailGenerator";
+import PublishedWorkManager from "@/pages/dashboard/PublishedWorkManager";
 
 const Dashboard = () => {
   return (
@@ -61,6 +62,7 @@ const Dashboard = () => {
         <Route path="settings" element={<SettingsPage />} />
         <Route path="clients" element={<ClientManager />} />
         <Route path="pitch-email" element={<PitchEmailGenerator />} />
+        <Route path="published-work" element={<PublishedWorkManager />} />
       </Route>
     </Routes>
   );

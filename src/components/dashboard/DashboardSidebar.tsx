@@ -51,6 +51,7 @@ const contentNav: NavItem[] = [
   { title: "Press", url: "/dashboard/press", icon: Newspaper, countTable: "press" },
   { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote, countTable: "testimonials" },
   { title: "Skills", url: "/dashboard/skills", icon: Zap, countTable: "skills" },
+  { title: "Published Work", url: "/dashboard/published-work", icon: FileText, visibleTo: ["copywriter", "journalist", "multi_hyphenate"] },
   { title: "Representation", url: "/dashboard/representation", icon: Users, visibleTo: ["actor", "screenwriter", "tv_writer", "playwright", "director_producer", "multi_hyphenate"], countTable: "representation" },
 ];
 
