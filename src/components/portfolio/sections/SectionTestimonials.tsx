@@ -116,16 +116,16 @@ const AuthorBlock = ({ t, theme, centered, large }: { t: any; theme: any; center
 /* ── Shared: Navigation dots ── */
 const NavDots = ({ items, active, setActive, prev, next, theme }: any) => (
   <div className="flex items-center justify-center gap-3 mt-4">
-    <button onClick={prev} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
+    <button type="button" onClick={prev} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
       <ChevronLeft className="w-3.5 h-3.5" />
     </button>
     <div className="flex gap-1.5">
       {items.map((_: any, i: number) => (
-        <button key={i} onClick={() => setActive(i)} className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+        <button type="button" key={i} onClick={() => setActive(i)} className="w-1.5 h-1.5 rounded-full transition-all duration-300"
           style={{ backgroundColor: i === active ? theme.accentPrimary : theme.borderDefault, transform: i === active ? "scale(1.5)" : "scale(1)" }} />
       ))}
     </div>
-    <button onClick={next} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
+    <button type="button" onClick={next} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
       <ChevronRight className="w-3.5 h-3.5" />
     </button>
   </div>
