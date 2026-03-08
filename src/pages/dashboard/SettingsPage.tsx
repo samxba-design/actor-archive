@@ -37,6 +37,7 @@ const SettingsPage = () => {
     cta_url: "",
     cta_type: "contact_form",
     booking_url: "",
+    contact_mode: "form",
     auto_responder_enabled: false,
     auto_responder_message: "",
     font_pairing: "default",
@@ -57,7 +58,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -121,6 +122,7 @@ const SettingsPage = () => {
             cta_url: (data as any).cta_url || "",
             cta_type: (data as any).cta_type || "contact_form",
             booking_url: (data as any).booking_url || "",
+            contact_mode: (data as any).contact_mode || "form",
             auto_responder_enabled: (data as any).auto_responder_enabled || false,
             auto_responder_message: (data as any).auto_responder_message || "",
             font_pairing: (data as any).font_pairing || "default",
@@ -150,6 +152,7 @@ const SettingsPage = () => {
         cta_url: form.cta_url || null,
         cta_type: form.cta_type || "contact_form",
         booking_url: form.booking_url || null,
+        contact_mode: form.contact_mode || "form",
         section_order: sectionOrder,
         sections_visible: sectionsVisible,
         auto_responder_enabled: form.auto_responder_enabled,
@@ -408,10 +411,31 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Toggles */}
+      {/* Contact & Privacy */}
       <Card>
-        <CardHeader><CardTitle>Preferences</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Contact & Privacy</CardTitle>
+          <CardDescription>Control how visitors can reach you</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-4">
+          <div>
+            <Label>Contact Mode</Label>
+            <Select value={form.contact_mode} onValueChange={(v) => setForm((f) => ({ ...f, contact_mode: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="form">Contact Form Only</SelectItem>
+                <SelectItem value="agent">Agent/Rep Info Only</SelectItem>
+                <SelectItem value="both">Both Form & Agent Info</SelectItem>
+                <SelectItem value="none">Hidden (No Contact)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1">
+              {form.contact_mode === "agent" ? "Visitors will see your agent/rep contact instead of a form" :
+               form.contact_mode === "both" ? "Both the contact form and your agent info will be shown" :
+               form.contact_mode === "none" ? "No contact options will be shown on your portfolio" :
+               "Visitors can message you directly via the contact form"}
+            </p>
+          </div>
           <div className="flex items-center justify-between">
             <Label>Show Contact Form</Label>
             <Switch checked={form.show_contact_form} onCheckedChange={(v) => setForm((f) => ({ ...f, show_contact_form: v }))} />

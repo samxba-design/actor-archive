@@ -29,6 +29,7 @@ import ScriptManager from "@/pages/dashboard/ScriptManager";
 import ClientManager from "@/pages/dashboard/ClientManager";
 import PitchEmailGenerator from "@/pages/dashboard/PitchEmailGenerator";
 import PublishedWorkManager from "@/pages/dashboard/PublishedWorkManager";
+import CustomSectionsManager from "@/pages/dashboard/CustomSectionsManager";
 
 const Dashboard = () => {
   return (
@@ -63,6 +64,7 @@ const Dashboard = () => {
         <Route path="clients" element={<ClientManager />} />
         <Route path="pitch-email" element={<PitchEmailGenerator />} />
         <Route path="published-work" element={<PublishedWorkManager />} />
+        <Route path="custom-sections" element={<CustomSectionsManager />} />
       </Route>
     </Routes>
   );
