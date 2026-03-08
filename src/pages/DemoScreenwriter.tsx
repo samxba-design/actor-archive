@@ -296,81 +296,47 @@ const ClassicLayout = () => {
     <>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Logline Showcase" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
+          <KnownForWithToggle items={mockKnownFor} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
+          <LoglinesWithToggle items={mockLoglines} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Script Library" index={1}>
-          <SectionScriptLibrary items={mockScripts} />
+          <ScriptsWithToggle items={mockScripts} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          <CreditHeroCard project={mockCredits[0]} />
-          <div className="mt-4 space-y-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${theme.borderDefault}` }}>
-            {mockCredits.slice(1).map(c => (
-              <a key={c.id} href={c.imdb_link || undefined} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 transition-colors no-underline" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}60`)}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <img src={c.poster_url} alt={c.title} className="w-14 h-20 rounded object-cover shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {c.network_or_studio && (
-                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>
-                        {c.network_or_studio}
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-sm font-semibold mt-1" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{c.title}</h4>
-                  {c.role_name && (
-                    <span className="text-[11px]" style={{ color: theme.textSecondary }}>
-                      {c.role_name}{c.role_type ? ` · ${c.role_type}` : ''}
-                    </span>
-                  )}
-                  {c.genre?.length > 0 && (
-                    <div className="flex gap-1 mt-1">
-                      {c.genre.map((g: string) => (
-                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.textSecondary }}>{g}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <span className="text-sm tabular-nums" style={{ color: theme.textTertiary }}>{c.year}</span>
-              </a>
-            ))}
-          </div>
+          <CreditsWithToggle items={mockCredits} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
-          <SectionAwards items={mockAwards} />
+          <AwardsWithToggle items={mockAwards} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Testimonials" index={4}>
-          <SectionTestimonials items={mockTestimonials} />
+          <TestimonialsWithToggle items={mockTestimonials} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Press & Reviews" index={5}>
-          <SectionPress items={mockPress} />
+          <PressWithToggle items={mockPress} />
         </PortfolioSectionWrapper>
       </div>
-      {/* Client logos — bar above services */}
       <div className="mb-10">
         <PortfolioSectionWrapper title="Written For" index={7}>
-          <SectionClientLogos companies={mockClients} variant="bar" />
+          <ClientLogosWithToggle companies={mockClients} />
         </PortfolioSectionWrapper>
       </div>
       <div>
         <PortfolioSectionWrapper title="Services" index={6}>
-          <SectionServices items={mockServices} />
+          <ServicesWithToggle items={mockServices} />
         </PortfolioSectionWrapper>
       </div>
     </>
