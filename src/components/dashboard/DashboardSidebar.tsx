@@ -1,8 +1,9 @@
 import {
-  User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox
+  User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
+  Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   Sidebar,
@@ -20,11 +21,25 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const navItems = [
+const mainNav = [
   { title: "Profile", url: "/dashboard", icon: User },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
   { title: "Gallery", url: "/dashboard/gallery", icon: Image },
+  { title: "Services", url: "/dashboard/services", icon: Briefcase },
   { title: "Social Links", url: "/dashboard/social", icon: Link2 },
+];
+
+const contentNav = [
+  { title: "Awards", url: "/dashboard/awards", icon: Trophy },
+  { title: "Education", url: "/dashboard/education", icon: GraduationCap },
+  { title: "Events", url: "/dashboard/events", icon: CalendarDays },
+  { title: "Press", url: "/dashboard/press", icon: Newspaper },
+  { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote },
+  { title: "Skills", url: "/dashboard/skills", icon: Zap },
+  { title: "Representation", url: "/dashboard/representation", icon: Users },
+];
+
+const systemNav = [
   { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
@@ -47,33 +62,37 @@ export function DashboardSidebar() {
       .then(({ data }) => setSlug(data?.slug || null));
   }, [user]);
 
+  const renderGroup = (label: string, items: typeof mainNav) => (
+    <SidebarGroup>
+      <SidebarGroupLabel>{!collapsed && label}</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild>
+                <NavLink
+                  to={item.url}
+                  end={item.url === "/dashboard"}
+                  className="hover:bg-accent/50"
+                  activeClassName="bg-accent text-accent-foreground font-medium"
+                >
+                  <item.icon className="mr-2 h-4 w-4 shrink-0" />
+                  {!collapsed && <span>{item.title}</span>}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {!collapsed && "CreativeSlate"}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/dashboard"}
-                      className="hover:bg-accent/50"
-                      activeClassName="bg-accent text-accent-foreground font-medium"
-                    >
-                      <item.icon className="mr-2 h-4 w-4 shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {renderGroup("Portfolio", mainNav)}
+        {renderGroup("Content", contentNav)}
+        {renderGroup("System", systemNav)}
       </SidebarContent>
 
       <SidebarFooter className="p-2 space-y-1">
