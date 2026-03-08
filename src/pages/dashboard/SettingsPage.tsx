@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, ShieldOff } from "lucide-react";
 import { themes } from "@/lib/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, type SectionConfig } from "@/config/profileSections";
@@ -42,6 +42,7 @@ const SettingsPage = () => {
     font_pairing: "default",
     layout_density: "spacious",
     custom_css: "",
+    seo_indexable: false,
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -56,7 +57,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -125,6 +126,7 @@ const SettingsPage = () => {
             font_pairing: (data as any).font_pairing || "default",
             layout_density: (data as any).layout_density || "spacious",
             custom_css: (data as any).custom_css || "",
+            seo_indexable: (data as any).seo_indexable || false,
           });
         }
         setLoading(false);
@@ -155,6 +157,7 @@ const SettingsPage = () => {
         font_pairing: form.font_pairing || "default",
         layout_density: form.layout_density || "spacious",
         custom_css: form.custom_css || null,
+        seo_indexable: form.seo_indexable,
       } as any)
       .eq("id", user.id);
 
@@ -230,10 +233,26 @@ const SettingsPage = () => {
           </div>
         </CardHeader>
         {form.is_published && form.slug && (
-          <CardContent>
+          <CardContent className="space-y-4">
             <a href={`/p/${form.slug}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary flex items-center gap-1 hover:underline">
               /p/{form.slug} <ExternalLink className="h-3 w-3" />
             </a>
+            <div className="pt-3 border-t border-border space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="flex items-center gap-2">
+                    <Search className="h-3.5 w-3.5" />
+                    Allow Search Engine Indexing
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    {form.seo_indexable
+                      ? "Your portfolio can be found via Google and other search engines"
+                      : "Your portfolio is only accessible via direct link (recommended for privacy)"}
+                  </p>
+                </div>
+                <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
+              </div>
+            </div>
           </CardContent>
         )}
       </Card>

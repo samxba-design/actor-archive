@@ -877,6 +877,7 @@ export type Database = {
           section_order: string[] | null
           sections_visible: Json | null
           seeking_representation: boolean | null
+          seo_indexable: boolean | null
           show_contact_form: boolean | null
           slug: string | null
           subscription_tier:
@@ -923,6 +924,7 @@ export type Database = {
           section_order?: string[] | null
           sections_visible?: Json | null
           seeking_representation?: boolean | null
+          seo_indexable?: boolean | null
           show_contact_form?: boolean | null
           slug?: string | null
           subscription_tier?:
@@ -969,6 +971,7 @@ export type Database = {
           section_order?: string[] | null
           sections_visible?: Json | null
           seeking_representation?: boolean | null
+          seo_indexable?: boolean | null
           show_contact_form?: boolean | null
           slug?: string | null
           subscription_tier?:
