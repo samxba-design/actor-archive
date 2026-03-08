@@ -7,7 +7,7 @@ const Privacy = () => (
   <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
     <SEOHead title="Privacy Policy" description="How CreativeSlate collects, uses, and protects your personal information." path="/privacy" />
     <CinematicBackground bokehCount={6} />
-    <div className="cinema-vignette" />
+    
     <MarketingNav />
     <div className="max-w-3xl mx-auto px-6 pt-20 pb-24 relative z-10">
       <h1 className="text-4xl font-bold tracking-tight mb-8" style={{ color: "hsl(var(--landing-fg))" }}>Privacy Policy</h1>
