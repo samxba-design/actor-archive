@@ -11,6 +11,7 @@ interface Props {
   profileSlug?: string;
   isCredits?: boolean;
   layout?: 'poster' | 'table' | 'grid';
+  imageAnimation?: string;
 }
 
 const typeIcons: Record<string, any> = {
@@ -83,7 +84,7 @@ const CreditRow = ({ project }: { project: any }) => {
 };
 
 /* ── Poster-style credit card (2:3 aspect, text below image) ── */
-const PosterCard = ({ project }: { project: any }) => {
+const PosterCard = ({ project, imageAnimation = 'none' }: { project: any; imageAnimation?: string }) => {
   const theme = usePortfolioTheme();
   const [hovered, setHovered] = useState(false);
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
@@ -104,7 +105,7 @@ const PosterCard = ({ project }: { project: any }) => {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Poster image — clean, no overlay text */}
-      <div className="aspect-[2/3] overflow-hidden relative" style={{ backgroundColor: theme.bgElevated }}>
+      <div className={`aspect-[2/3] overflow-hidden relative ${imageAnimation !== 'none' ? `img-anim-${imageAnimation}` : ''}`} style={{ backgroundColor: theme.bgElevated }}>
         {image ? (
           <img
             src={image}
@@ -271,7 +272,7 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
   ) : card;
 };
 
-const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout }: Props) => {
+const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout, imageAnimation }: Props) => {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const theme = usePortfolioTheme();
   const featured = items.filter(p => p.is_featured);
@@ -295,7 +296,7 @@ const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout }:
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {sorted.map(project => (
-          <PosterCard key={project.id} project={project} />
+          <PosterCard key={project.id} project={project} imageAnimation={imageAnimation} />
         ))}
       </div>
     );

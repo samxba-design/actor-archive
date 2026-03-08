@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { MapPin, ArrowRight, ExternalLink, ChevronDown, ChevronUp, Building2, Quote } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote } from "lucide-react";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
@@ -405,9 +405,11 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           </div>
           <RightContent />
         </div>
-        <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}>
-          <StatsBar />
-        </div>
+        {heroRightContent !== 'stats' && (
+          <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}>
+            <StatsBar />
+          </div>
+        )}
       </div>
     </div>
   );

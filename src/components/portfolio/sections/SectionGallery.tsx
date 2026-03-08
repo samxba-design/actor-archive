@@ -5,13 +5,15 @@ import { usePortfolioTheme } from "@/themes/ThemeProvider";
 interface Props {
   items: any[];
   variant?: 'grid' | 'masonry' | 'carousel';
+  imageAnimation?: string;
 }
 
-const SectionGallery = ({ items, variant = 'grid' }: Props) => {
+const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Props) => {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const theme = usePortfolioTheme();
 
   const closeLightbox = useCallback(() => setLightboxIdx(null), []);
+  const imgAnimClass = imageAnimation !== 'none' ? `img-anim-${imageAnimation}` : '';
   const prev = useCallback(() => setLightboxIdx(i => i !== null ? (i - 1 + items.length) % items.length : null), [items.length]);
   const next = useCallback(() => setLightboxIdx(i => i !== null ? (i + 1) % items.length : null), [items.length]);
 
@@ -75,7 +77,7 @@ const SectionGallery = ({ items, variant = 'grid' }: Props) => {
             <button
               key={img.id}
               onClick={() => setLightboxIdx(i)}
-              className="group relative overflow-hidden cursor-pointer focus:outline-none break-inside-avoid block w-full"
+              className={`group relative overflow-hidden cursor-pointer focus:outline-none break-inside-avoid block w-full ${imgAnimClass}`}
               style={{ borderRadius: theme.cardRadius }}
             >
               <img
@@ -113,7 +115,7 @@ const SectionGallery = ({ items, variant = 'grid' }: Props) => {
               <button
                 key={img.id}
                 onClick={() => setLightboxIdx(i)}
-                className="group relative flex-shrink-0 overflow-hidden cursor-pointer focus:outline-none snap-start"
+                className={`group relative flex-shrink-0 overflow-hidden cursor-pointer focus:outline-none snap-start ${imgAnimClass}`}
                 style={{ borderRadius: theme.cardRadius, width: '280px', height: '200px' }}
               >
                 <img
@@ -147,7 +149,7 @@ const SectionGallery = ({ items, variant = 'grid' }: Props) => {
           <button
             key={img.id}
             onClick={() => setLightboxIdx(i)}
-            className="group relative overflow-hidden aspect-square cursor-pointer focus:outline-none"
+            className={`group relative overflow-hidden aspect-square cursor-pointer focus:outline-none ${imgAnimClass}`}
             style={{ borderRadius: theme.cardRadius }}
           >
             <img
