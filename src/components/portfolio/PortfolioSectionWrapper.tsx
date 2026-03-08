@@ -17,7 +17,7 @@ const PortfolioSectionWrapper = ({ title, index, children }: Props) => {
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.unobserve(el); } },
-      { threshold: 0.08 }
+      { threshold: 0.06 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -35,23 +35,23 @@ const PortfolioSectionWrapper = ({ title, index, children }: Props) => {
       }}
     >
       {/* Heading */}
-      <div className="flex items-baseline gap-3 mb-3">
+      <div className="flex items-baseline gap-2.5 mb-2">
         {theme.sectionNumberStyle !== 'hidden' && (
           <span
-            className="text-xs tracking-widest font-mono"
-            style={{ color: theme.sectionNumberColor }}
+            className="text-[11px] tracking-widest font-mono"
+            style={{ color: theme.sectionNumberColor, opacity: 0.6 }}
           >
             {num}
           </span>
         )}
         {theme.sectionNumberStyle === 'editorial' && (
           <span
-            className="hidden sm:inline-block w-12"
-            style={{ borderBottom: `1px solid ${theme.borderDefault}`, marginBottom: '4px' }}
+            className="hidden sm:inline-block w-8"
+            style={{ borderBottom: `1px solid ${theme.borderDefault}`, marginBottom: '3px' }}
           />
         )}
         <h2
-          className="text-2xl sm:text-3xl tracking-tight"
+          className="text-xl sm:text-2xl tracking-tight"
           style={{
             fontFamily: theme.fontDisplay,
             fontWeight: theme.headingWeight,
@@ -64,13 +64,13 @@ const PortfolioSectionWrapper = ({ title, index, children }: Props) => {
 
       {/* Divider */}
       {theme.sectionDividerStyle === 'thin-line' && (
-        <div className="mb-6" style={{ height: '1px', backgroundColor: theme.borderDefault, maxWidth: '100px' }} />
+        <div className="mb-5" style={{ height: '1px', backgroundColor: theme.borderDefault, maxWidth: '80px' }} />
       )}
       {theme.sectionDividerStyle === 'thick-line' && (
-        <div className="mb-6" style={{ height: '2px', backgroundColor: theme.borderDefault, maxWidth: '60px' }} />
+        <div className="mb-5" style={{ height: '2px', backgroundColor: theme.borderDefault, maxWidth: '50px' }} />
       )}
       {theme.sectionDividerStyle === 'gradient' && (
-        <div className="mb-6" style={{ height: '2px', background: `linear-gradient(to right, ${theme.accentPrimary}, transparent)`, maxWidth: '120px' }} />
+        <div className="mb-5" style={{ height: '1px', background: `linear-gradient(to right, ${theme.accentPrimary}60, transparent)`, maxWidth: '100px' }} />
       )}
 
       {children}

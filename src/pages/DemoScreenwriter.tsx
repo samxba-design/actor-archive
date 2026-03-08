@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
 import { getAllThemeFontsUrl } from "@/themes/themes";
@@ -12,10 +12,8 @@ import SectionProjects from "@/components/portfolio/sections/SectionProjects";
 import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import SectionPress from "@/components/portfolio/sections/SectionPress";
 import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
-import SectionRepresentation from "@/components/portfolio/sections/SectionRepresentation";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 
 /* ── mock data ── */
 const mockProfile = {
@@ -46,8 +44,8 @@ const mockSocialLinks = [
 ];
 
 const mockRepresentation = [
-  { id: "r1", rep_type: "agent", company: "Creative Artists Agency (CAA)", name: "Michelle Torres", email: "mtorres@caa.com", phone: null, department: "Motion Picture Literary", market: "Los Angeles", is_primary: true },
-  { id: "r2", rep_type: "manager", company: "Management 360", name: "David Park", email: "dpark@management360.com", phone: null, department: "Literary", market: "Los Angeles", is_primary: false },
+  { id: "r1", rep_type: "agent", company: "Creative Artists Agency (CAA)", name: "Michelle Torres", email: "mtorres@caa.com", phone: null, department: "Motion Picture Literary", market: "Los Angeles", is_primary: true, logo_url: null },
+  { id: "r2", rep_type: "manager", company: "Management 360", name: "David Park", email: "dpark@management360.com", phone: null, department: "Literary", market: "Los Angeles", is_primary: false, logo_url: null },
 ];
 
 const mockLoglines = [
@@ -100,7 +98,6 @@ const featuredProject = mockCredits[0];
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
 
-  // Load all fonts for theme switching
   useEffect(() => {
     const url = getAllThemeFontsUrl();
     if (!url) return;
@@ -122,16 +119,16 @@ const DemoScreenwriter = () => {
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
-        className="text-center py-2 text-xs font-medium relative z-20"
-        style={{ backgroundColor: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        className="text-center py-1.5 text-[11px] font-medium relative z-20"
+        style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(255,255,255,0.04)' }}
       >
-        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
-          ✨ This is a demo portfolio —{" "}
-          <Link to="/signup" className="underline font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>Create yours free →</Link>
+        <span style={{ color: 'rgba(255,255,255,0.6)' }}>
+          Demo portfolio —{" "}
+          <Link to="/signup" className="underline font-semibold" style={{ color: 'rgba(255,255,255,0.85)' }}>Create yours free →</Link>
         </span>
       </div>
 
-      {/* Hero */}
+      {/* Hero — includes representation inline */}
       <PortfolioHero
         profile={mockProfile}
         socialLinks={mockSocialLinks}
@@ -140,59 +137,55 @@ const DemoScreenwriter = () => {
         stats={stats}
       />
 
-      {/* Sections */}
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14 relative z-10">
-        <PortfolioSectionWrapper title="Representation" index={0}>
-          <SectionRepresentation items={mockRepresentation} />
-        </PortfolioSectionWrapper>
-
-        <PortfolioSectionWrapper title="Logline Showcase" index={1}>
+      {/* Sections — tighter spacing */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 relative z-10">
+        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
         </PortfolioSectionWrapper>
 
-        <PortfolioSectionWrapper title="Script Library" index={2}>
+        <PortfolioSectionWrapper title="Script Library" index={1}>
           <SectionScriptLibrary items={mockScripts} />
         </PortfolioSectionWrapper>
 
-        <PortfolioSectionWrapper title="Produced Credits" index={3}>
+        <PortfolioSectionWrapper title="Produced Credits" index={2}>
           <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
         </PortfolioSectionWrapper>
 
-        <PortfolioSectionWrapper title="Awards & Recognition" index={4}>
-          <SectionAwards items={mockAwards} />
-        </PortfolioSectionWrapper>
+        {/* Awards + Press side by side on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
+            <SectionAwards items={mockAwards} />
+          </PortfolioSectionWrapper>
 
-        <PortfolioSectionWrapper title="Press & Reviews" index={5}>
-          <SectionPress items={mockPress} />
-        </PortfolioSectionWrapper>
+          <PortfolioSectionWrapper title="Press & Reviews" index={4}>
+            <SectionPress items={mockPress} />
+          </PortfolioSectionWrapper>
+        </div>
 
-        <PortfolioSectionWrapper title="Testimonials" index={6}>
+        <PortfolioSectionWrapper title="Testimonials" index={5}>
           <SectionTestimonials items={mockTestimonials} />
         </PortfolioSectionWrapper>
 
-        <PortfolioSectionWrapper title="Services" index={7}>
+        <PortfolioSectionWrapper title="Services" index={6}>
           <SectionServices items={mockServices} />
         </PortfolioSectionWrapper>
       </div>
 
       {/* Discreet platform CTA */}
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-        <div className="pt-20 text-center space-y-3">
-          <div className="mx-auto w-20 h-px" style={{ backgroundColor: 'var(--portfolio-border-default)' }} />
-          <p className="text-sm mt-8" style={{ color: 'var(--portfolio-text-secondary)' }}>
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+        <div className="pt-12 text-center space-y-2">
+          <div className="mx-auto w-16 h-px" style={{ background: 'linear-gradient(to right, transparent, var(--portfolio-border-default), transparent)' }} />
+          <p className="text-[13px] mt-6" style={{ color: 'var(--portfolio-text-secondary)' }}>
             Create your own screenwriter portfolio
           </p>
           <Link
             to="/signup"
-            className="inline-flex items-center gap-2 text-sm font-medium transition-all group"
+            className="inline-flex items-center gap-2 text-[13px] font-medium transition-all group"
             style={{ color: 'var(--portfolio-accent-primary)' }}
           >
             Get Started
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
-          <p className="text-xs" style={{ color: 'var(--portfolio-text-tertiary)' }}>
-            Join 500+ screenwriters
-          </p>
         </div>
       </div>
 
