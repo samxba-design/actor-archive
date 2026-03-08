@@ -859,6 +859,9 @@ export type Database = {
           font_pairing: string | null
           headline: string | null
           hero_background_preset: string | null
+          hero_bg_solid_color: string | null
+          hero_bg_type: string | null
+          hero_bg_video_url: string | null
           hero_style: string | null
           id: string
           is_draft: boolean | null
@@ -902,6 +905,9 @@ export type Database = {
           font_pairing?: string | null
           headline?: string | null
           hero_background_preset?: string | null
+          hero_bg_solid_color?: string | null
+          hero_bg_type?: string | null
+          hero_bg_video_url?: string | null
           hero_style?: string | null
           id: string
           is_draft?: boolean | null
@@ -945,6 +951,9 @@ export type Database = {
           font_pairing?: string | null
           headline?: string | null
           hero_background_preset?: string | null
+          hero_bg_solid_color?: string | null
+          hero_bg_type?: string | null
+          hero_bg_video_url?: string | null
           hero_style?: string | null
           id?: string
           is_draft?: boolean | null

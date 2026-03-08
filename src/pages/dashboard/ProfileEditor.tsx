@@ -28,6 +28,9 @@ interface ProfileForm {
   primary_goal: string;
   hero_style: string;
   hero_background_preset: string;
+  hero_bg_type: string;
+  hero_bg_solid_color: string;
+  hero_bg_video_url: string;
 }
 
 const ProfileEditor = () => {
@@ -51,13 +54,16 @@ const ProfileEditor = () => {
     primary_goal: "",
     hero_style: "full",
     hero_background_preset: "",
+    hero_bg_type: "preset",
+    hero_bg_solid_color: "",
+    hero_bg_video_url: "",
   });
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset")
+      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset, hero_bg_type, hero_bg_solid_color, hero_bg_video_url")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -76,6 +82,9 @@ const ProfileEditor = () => {
             primary_goal: (data as any).primary_goal || "",
             hero_style: (data as any).hero_style || "full",
             hero_background_preset: (data as any).hero_background_preset || "",
+            hero_bg_type: (data as any).hero_bg_type || "preset",
+            hero_bg_solid_color: (data as any).hero_bg_solid_color || "",
+            hero_bg_video_url: (data as any).hero_bg_video_url || "",
           });
         }
         setLoading(false);
@@ -100,6 +109,9 @@ const ProfileEditor = () => {
         primary_goal: form.primary_goal || null,
         hero_style: form.hero_style || "full",
         hero_background_preset: form.hero_background_preset || null,
+        hero_bg_type: form.hero_bg_type || "preset",
+        hero_bg_solid_color: form.hero_bg_solid_color || null,
+        hero_bg_video_url: form.hero_bg_video_url || null,
       } as any)
       .eq("id", user.id);
 
@@ -208,6 +220,9 @@ const ProfileEditor = () => {
           heroStyle={form.hero_style}
           heroBackgroundPreset={form.hero_background_preset}
           bannerUrl={form.banner_url}
+          heroBgType={form.hero_bg_type}
+          heroBgSolidColor={form.hero_bg_solid_color}
+          heroBgVideoUrl={form.hero_bg_video_url}
           onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
         />
       )}
