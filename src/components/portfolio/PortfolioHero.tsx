@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { MapPin, ArrowRight, Calendar, Mail, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, ArrowRight, ChevronDown, ChevronUp, Building2 } from "lucide-react";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import CompanyLogo from "@/components/CompanyLogo";
 
 interface Props {
   profile: {
@@ -81,21 +83,25 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const showCta = profile.available_for_hire || profile.cta_label;
 
   const bioText = profile.bio || "";
-  const bioTruncLen = 250;
+  const bioTruncLen = 220;
   const bioIsTruncatable = bioText.length > bioTruncLen;
   const displayBio = bioIsTruncatable && !bioExpanded ? `${bioText.slice(0, bioTruncLen)}...` : bioText;
 
   const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 
-  // Stagger delays
   const stagger = (i: number) => ({
     opacity: loaded ? 1 : 0,
-    transform: loaded ? 'translateY(0)' : 'translateY(15px)',
-    transition: `opacity 0.7s ease-out ${i * 0.15}s, transform 0.7s ease-out ${i * 0.15}s`,
+    transform: loaded ? 'translateY(0)' : 'translateY(12px)',
+    transition: `opacity 0.7s ease-out ${i * 0.12}s, transform 0.7s ease-out ${i * 0.12}s`,
   });
 
-  // Primary rep
   const primaryRep = representation?.find(r => r.is_primary) || representation?.[0];
+  const hasMultipleReps = representation && representation.length > 1;
+
+  // Hero text colors — always light on hero images
+  const heroText = profile.banner_url ? '#F5F0EB' : theme.textPrimary;
+  const heroTextMuted = profile.banner_url ? 'rgba(245,240,235,0.65)' : theme.textSecondary;
+  const heroTextFaint = profile.banner_url ? 'rgba(245,240,235,0.4)' : theme.textTertiary;
 
   return (
     <header className="relative overflow-hidden" style={{ minHeight: theme.heroHeight }}>
@@ -108,45 +114,34 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
               alt=""
               className="w-full h-full object-cover"
               style={{
-                transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px)` : undefined,
-                opacity: loaded ? 1 : 0.7,
-                transition: 'opacity 0.8s ease-out',
+                transform: theme.enableParallax ? `translateY(${scrollY * theme.parallaxIntensity}px) scale(1.05)` : 'scale(1.05)',
+                opacity: loaded ? 1 : 0.6,
+                transition: 'opacity 1s ease-out',
               }}
             />
           </div>
           <div className="absolute inset-0" style={{ background: theme.heroOverlayGradient, mixBlendMode: theme.heroOverlayBlend as any }} />
+          {/* Extra bottom fade for content legibility */}
+          <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
         </>
       ) : (
-        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgSecondary} 100%)` }} />
+        <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 20%, ${theme.accentGlow} 0%, transparent 60%), linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />
       )}
 
-      {/* Hero content — positioned in bottom portion */}
+      {/* Hero content */}
       <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: theme.heroHeight }}>
-        <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-14">
+        <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
           {/* Two-column: left identity, right featured project */}
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-end">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-end">
             {/* LEFT: Identity */}
-            <div className="flex-1 min-w-0 space-y-4">
-              {/* Representation line */}
-              {primaryRep && (
-                <div style={stagger(0)}>
-                  <span
-                    className="text-[11px] font-medium uppercase tracking-widest"
-                    style={{ color: theme.textTertiary }}
-                  >
-                    Repped by {primaryRep.company}
-                    {primaryRep.name && ` · ${primaryRep.name}`}
-                  </span>
-                </div>
-              )}
-
-              {/* Photo + name row */}
-              <div className="flex items-center gap-5" style={stagger(1)}>
+            <div className="flex-1 min-w-0 space-y-3">
+              {/* Photo + name + rep inline */}
+              <div className="flex items-end gap-4" style={stagger(0)}>
                 {profile.profile_photo_url ? (
                   <img
                     src={profile.profile_photo_url}
                     alt={name}
-                    className="rounded-full object-cover shrink-0 transition-transform duration-300 hover:scale-[1.03]"
+                    className="rounded-full object-cover shrink-0"
                     style={{
                       width: theme.profilePhotoSize,
                       height: theme.profilePhotoSize,
@@ -156,12 +151,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                   />
                 ) : (
                   <div
-                    className="rounded-full flex items-center justify-center shrink-0 text-2xl font-bold"
+                    className="rounded-full flex items-center justify-center shrink-0 text-xl font-bold"
                     style={{
                       width: theme.profilePhotoSize,
                       height: theme.profilePhotoSize,
-                      backgroundColor: theme.accentPrimary,
-                      color: theme.textOnAccent,
+                      backgroundColor: theme.accentSubtle,
+                      color: theme.accentPrimary,
                       border: theme.profilePhotoBorder,
                     }}
                   >
@@ -169,97 +164,139 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                   </div>
                 )}
 
-                <div className="min-w-0">
+                <div className="min-w-0 pb-1">
                   <h1
-                    className="tracking-tight leading-tight"
+                    className="tracking-tight leading-[1.1]"
                     style={{
                       fontFamily: theme.fontDisplay,
                       fontWeight: theme.nameWeight,
-                      fontSize: 'clamp(32px, 5vw, 48px)',
-                      color: profile.banner_url ? '#F5F0EB' : theme.textPrimary,
+                      fontSize: 'clamp(28px, 4.5vw, 44px)',
+                      color: heroText,
                       letterSpacing: '-0.02em',
                     }}
                   >
                     {name}
                   </h1>
-                  {/* Tagline */}
-                  {profile.tagline && (
-                    <p
-                      className="text-base sm:text-lg mt-1"
-                      style={{
-                        fontFamily: theme.fontBody,
-                        color: profile.banner_url ? 'rgba(245,240,235,0.7)' : theme.textSecondary,
-                        letterSpacing: '0.01em',
-                      }}
-                    >
-                      {profile.tagline}
-                    </p>
+
+                  {/* Representation — compact inline with popover */}
+                  {primaryRep && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="text-[12px] tracking-wide" style={{ color: heroTextMuted }}>
+                        Repped by
+                      </span>
+                      {hasMultipleReps ? (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="inline-flex items-center gap-1 text-[12px] font-medium tracking-wide transition-colors hover:opacity-80" style={{ color: theme.accentPrimary }}>
+                              {representation!.map(r => r.company?.split('(')[0]?.trim() || r.name).join(' · ')}
+                              <ChevronDown className="w-3 h-3 opacity-60" />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent
+                            className="w-72 p-0"
+                            style={{
+                              backgroundColor: theme.bgElevated,
+                              border: `1px solid ${theme.borderDefault}`,
+                              borderRadius: theme.cardRadius,
+                            }}
+                          >
+                            <div className="p-3 space-y-2.5">
+                              {representation!.map(rep => (
+                                <div key={rep.id} className="flex items-center gap-2.5">
+                                  <CompanyLogo companyName={rep.company || rep.name || ''} size={24} grayscale={false} />
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-medium" style={{ color: theme.textPrimary }}>{rep.company || rep.name}</p>
+                                    <p className="text-[10px]" style={{ color: theme.textSecondary }}>
+                                      {rep.name && rep.company ? `${rep.name} · ` : ''}{rep.department || rep.rep_type}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      ) : (
+                        <span className="text-[12px] font-medium tracking-wide" style={{ color: theme.accentPrimary }}>
+                          {primaryRep.company?.split('(')[0]?.trim() || primaryRep.name}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
 
-              {/* Credential signals */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5" style={stagger(2)}>
+              {/* Tagline */}
+              {profile.tagline && (
+                <p
+                  className="text-[15px] sm:text-base"
+                  style={{ ...stagger(1), fontFamily: theme.fontBody, color: heroTextMuted, letterSpacing: '0.01em' }}
+                >
+                  {profile.tagline}
+                </p>
+              )}
+
+              {/* Credential signals + social row */}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5" style={stagger(2)}>
                 {profile.location && (
-                  <span className="inline-flex items-center gap-1 text-[13px] uppercase tracking-widest" style={{ color: profile.banner_url ? 'rgba(245,240,235,0.5)' : theme.textSecondary }}>
+                  <span className="inline-flex items-center gap-1 text-[12px] uppercase tracking-widest" style={{ color: heroTextFaint }}>
                     <MapPin className="w-3 h-3" />
                     {profile.location}
                   </span>
                 )}
                 {profile.available_for_hire && (
-                  <span className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-widest" style={{ color: theme.statusAvailable }}>
-                    <span className="relative flex h-2 w-2">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest" style={{ color: theme.statusAvailable }}>
+                    <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30" style={{ backgroundColor: theme.statusAvailable }} />
-                      <span className="relative inline-flex rounded-full h-2 w-2" style={{ backgroundColor: theme.statusAvailable }} />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: theme.statusAvailable }} />
                     </span>
                     Available
                   </span>
                 )}
+                {/* Social links inline */}
+                {socialLinks.length > 0 && (
+                  <>
+                    <span className="w-px h-3" style={{ backgroundColor: heroTextFaint }} />
+                    {socialLinks.map(link => {
+                      const icon = platformIcons[link.platform?.toLowerCase()] || "🔗";
+                      return (
+                        <a
+                          key={link.id}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm transition-colors duration-200"
+                          style={{ color: heroTextFaint }}
+                          onMouseEnter={e => (e.currentTarget.style.color = theme.accentPrimary)}
+                          onMouseLeave={e => (e.currentTarget.style.color = heroTextFaint)}
+                          title={link.label || link.platform}
+                        >
+                          {icon}
+                        </a>
+                      );
+                    })}
+                  </>
+                )}
               </div>
-
-              {/* Social links — icon only */}
-              {socialLinks.length > 0 && (
-                <div className="flex items-center gap-3" style={stagger(3)}>
-                  {socialLinks.map(link => {
-                    const icon = platformIcons[link.platform?.toLowerCase()] || "🔗";
-                    return (
-                      <a
-                        key={link.id}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-base transition-colors duration-200"
-                        style={{ color: profile.banner_url ? 'rgba(245,240,235,0.4)' : theme.textTertiary }}
-                        onMouseEnter={e => (e.currentTarget.style.color = theme.accentPrimary)}
-                        onMouseLeave={e => (e.currentTarget.style.color = profile.banner_url ? 'rgba(245,240,235,0.4)' : theme.textTertiary)}
-                        title={link.label || link.platform}
-                      >
-                        {icon}
-                      </a>
-                    );
-                  })}
-                </div>
-              )}
 
               {/* Bio — compact */}
               {bioText && (
-                <div style={stagger(3)} className="max-w-xl">
+                <div style={stagger(3)} className="max-w-lg">
                   <div
-                    className="text-[15px] leading-[1.7] overflow-hidden transition-all duration-400"
+                    className="text-[14px] leading-[1.65] overflow-hidden transition-all duration-500"
                     style={{
-                      color: profile.banner_url ? 'rgba(245,240,235,0.75)' : theme.textPrimary,
+                      color: heroTextMuted,
                       fontFamily: theme.fontBody,
-                      maxHeight: bioIsTruncatable && !bioExpanded ? '4.5em' : '100em',
+                      maxHeight: bioIsTruncatable && !bioExpanded ? '3.5em' : '100em',
                     }}
                     dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(displayBio) }}
                   />
                   {bioIsTruncatable && (
                     <button
                       onClick={() => setBioExpanded(!bioExpanded)}
-                      className="mt-1 inline-flex items-center gap-1 text-sm font-medium transition-colors"
+                      className="mt-0.5 inline-flex items-center gap-1 text-[12px] font-medium transition-colors"
                       style={{ color: theme.accentPrimary }}
                     >
-                      {bioExpanded ? <>Read less <ChevronUp className="w-3.5 h-3.5" /></> : <>Read more <ChevronDown className="w-3.5 h-3.5" /></>}
+                      {bioExpanded ? <>Less <ChevronUp className="w-3 h-3" /></> : <>More <ChevronDown className="w-3 h-3" /></>}
                     </button>
                   )}
                 </div>
@@ -275,52 +312,49 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
 
             {/* RIGHT: Featured project card */}
             {featuredProject && (
-              <div
-                className="w-full lg:w-[380px] shrink-0"
-                style={stagger(3)}
-              >
+              <div className="w-full lg:w-[360px] shrink-0" style={stagger(3)}>
                 <div
-                  className="overflow-hidden transition-all duration-300 hover:shadow-lg"
+                  className="overflow-hidden transition-all duration-300"
                   style={{
-                    backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary,
-                    backdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined,
-                    WebkitBackdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined,
-                    border: theme.glassEnabled ? theme.glassBorder : `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
+                    backgroundColor: theme.glassEnabled ? theme.glassBackground : `${theme.bgSecondary}cc`,
+                    backdropFilter: `blur(${theme.glassEnabled ? theme.glassBlur : '12px'})`,
+                    WebkitBackdropFilter: `blur(${theme.glassEnabled ? theme.glassBlur : '12px'})`,
+                    border: theme.glassEnabled ? theme.glassBorder : `1px solid rgba(255,255,255,0.06)`,
                     borderRadius: theme.cardRadius,
-                    boxShadow: theme.cardShadow,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                   }}
                 >
-                  {/* Project image */}
                   {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
-                    <div className="aspect-video overflow-hidden">
+                    <div className="aspect-[16/9] overflow-hidden relative">
                       <img
                         src={featuredProject.backdrop_url || featuredProject.poster_url || featuredProject.custom_image_url}
                         alt={featuredProject.title}
                         className="w-full h-full object-cover"
                       />
+                      <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${theme.bgPrimary}99 0%, transparent 50%)` }} />
                     </div>
                   )}
-                  <div className="p-5 space-y-2.5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>
+                  <div className="p-4 space-y-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: theme.accentPrimary }}>
                       Featured Project
                     </p>
                     <h3
-                      className="text-lg font-semibold leading-tight"
-                      style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: profile.banner_url ? '#F5F0EB' : theme.textPrimary }}
+                      className="text-base font-semibold leading-tight"
+                      style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: heroText }}
                     >
                       {featuredProject.title}
                     </h3>
-                    {featuredProject.genre && featuredProject.genre.length > 0 && (
+                    {featuredProject.genre?.length > 0 && (
                       <div className="flex gap-1.5">
                         {featuredProject.genre.slice(0, 3).map((g: string) => (
                           <span
                             key={g}
-                            className="text-[10px] uppercase tracking-wide px-2 py-0.5"
+                            className="text-[9px] uppercase tracking-wide px-1.5 py-0.5"
                             style={{
-                              backgroundColor: theme.bgElevated,
-                              border: `1px solid ${theme.borderDefault}`,
-                              color: theme.textSecondary,
-                              borderRadius: '4px',
+                              backgroundColor: 'rgba(255,255,255,0.06)',
+                              border: `1px solid rgba(255,255,255,0.08)`,
+                              color: heroTextMuted,
+                              borderRadius: '3px',
                             }}
                           >
                             {g}
@@ -330,14 +364,14 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                     )}
                     {featuredProject.logline && (
                       <p
-                        className="text-sm leading-relaxed"
+                        className="text-[13px] leading-relaxed line-clamp-3"
                         style={{
                           fontFamily: theme.fontLogline,
                           fontStyle: theme.loglineStyle,
-                          color: profile.banner_url ? 'rgba(245,240,235,0.8)' : theme.textPrimary,
+                          color: heroTextMuted,
                         }}
                       >
-                        \u201C{featuredProject.logline}\u201D
+                        "{featuredProject.logline}"
                       </p>
                     )}
                     <PortfolioCTA label="Read Script" href={featuredProject.script_pdf_url || "#"} />
@@ -347,22 +381,20 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             )}
           </div>
 
-          {/* Stats bar */}
+          {/* Stats bar — tight horizontal */}
           {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
             <div
-              className="flex items-center gap-6 sm:gap-10 mt-8 pt-6"
-              style={{ borderTop: `1px solid ${theme.borderDefault}`, ...stagger(5) }}
+              className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
+              style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(5) }}
             >
               {[
                 { n: stats.scripts, label: 'Scripts Available' },
                 { n: stats.developing, label: 'In Development' },
                 { n: stats.awards, label: 'Awards' },
               ].filter(s => s.n > 0).map(s => (
-                <div key={s.label} className="text-center sm:text-left">
-                  <p className="text-2xl sm:text-3xl font-bold" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
-                  <p className="text-[11px] uppercase tracking-widest mt-0.5" style={{ color: profile.banner_url ? 'rgba(245,240,235,0.5)' : theme.textSecondary }}>
-                    {s.label}
-                  </p>
+                <div key={s.label}>
+                  <p className="text-2xl font-bold tabular-nums" style={{ fontFamily: theme.fontDisplay, color: theme.accentPrimary }}>{s.n}</p>
+                  <p className="text-[10px] uppercase tracking-[0.1em] mt-0.5" style={{ color: heroTextFaint }}>{s.label}</p>
                 </div>
               ))}
             </div>

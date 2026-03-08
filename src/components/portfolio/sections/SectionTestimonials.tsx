@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import CompanyLogo from "@/components/CompanyLogo";
 
 interface Props {
   items: any[];
@@ -23,55 +24,58 @@ const SectionTestimonials = ({ items }: Props) => {
   if (useCarousel) {
     const t = items[active];
     return (
-      <div className="relative max-w-2xl mx-auto text-center py-6">
+      <div className="relative max-w-2xl mx-auto text-center py-4">
         <span
-          className="block text-7xl leading-none select-none mb-2"
-          style={{ color: `${theme.accentPrimary}25`, fontFamily: theme.fontDisplay }}
+          className="block text-5xl leading-none select-none mb-1"
+          style={{ color: `${theme.accentPrimary}20`, fontFamily: theme.fontDisplay }}
           aria-hidden="true"
         >
-          \u201C
+          "
         </span>
         <p
-          className="text-lg sm:text-xl italic leading-relaxed mb-6 transition-opacity duration-300"
+          className="text-base sm:text-lg italic leading-relaxed mb-4 transition-opacity duration-300"
           style={{ color: theme.textPrimary, fontFamily: theme.fontLogline }}
           key={active}
         >
           {t.quote}
         </p>
-        <div className="flex items-center justify-center gap-3 mb-5">
+        <div className="flex items-center justify-center gap-3 mb-4">
           {t.author_photo_url && (
             <img
               src={t.author_photo_url}
               alt={t.author_name}
-              className="w-11 h-11 rounded-full object-cover"
-              style={{ boxShadow: `0 0 0 2px ${theme.accentPrimary}50` }}
+              className="w-9 h-9 rounded-full object-cover"
+              style={{ boxShadow: `0 0 0 2px ${theme.accentPrimary}30` }}
             />
           )}
           <div className="text-left">
             <p className="text-sm font-semibold" style={{ color: theme.textPrimary }}>{t.author_name}</p>
-            <p className="text-xs" style={{ color: theme.accentPrimary }}>
-              {[t.author_role, t.author_company].filter(Boolean).join(", ")}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>
+                {[t.author_role, t.author_company].filter(Boolean).join(", ")}
+              </p>
+              {t.author_company && <CompanyLogo companyName={t.author_company} size={16} grayscale={false} />}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-4">
-          <button onClick={prev} className="p-2 rounded-full transition-colors" style={{ color: theme.textSecondary, backgroundColor: theme.bgElevated }}>
-            <ChevronLeft className="w-4 h-4" />
+        <div className="flex items-center justify-center gap-3">
+          <button onClick={prev} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
+            <ChevronLeft className="w-3.5 h-3.5" />
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             {items.map((_, i) => (
               <button key={i} onClick={() => setActive(i)}
-                className="w-2 h-2 rounded-full transition-all duration-300"
+                className="w-1.5 h-1.5 rounded-full transition-all duration-300"
                 style={{
                   backgroundColor: i === active ? theme.accentPrimary : theme.borderDefault,
-                  transform: i === active ? "scale(1.4)" : "scale(1)",
+                  transform: i === active ? "scale(1.5)" : "scale(1)",
                 }}
               />
             ))}
           </div>
-          <button onClick={next} className="p-2 rounded-full transition-colors" style={{ color: theme.textSecondary, backgroundColor: theme.bgElevated }}>
-            <ChevronRight className="w-4 h-4" />
+          <button onClick={next} className="p-1.5 rounded-full transition-colors" style={{ color: theme.textTertiary, backgroundColor: theme.bgElevated }}>
+            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -83,7 +87,7 @@ const SectionTestimonials = ({ items }: Props) => {
       {items.map((t) => (
         <div
           key={t.id}
-          className="p-5 space-y-3 relative"
+          className="p-4 space-y-2.5 relative"
           style={{
             backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary,
             backdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined,
@@ -91,22 +95,17 @@ const SectionTestimonials = ({ items }: Props) => {
             borderRadius: theme.cardRadius,
           }}
         >
-          <span
-            className="text-4xl leading-none select-none absolute top-3 left-4"
-            style={{ color: `${theme.accentPrimary}20`, fontFamily: theme.fontDisplay }}
-            aria-hidden="true"
-          >
-            \u201C
-          </span>
-          <p className="text-sm italic leading-relaxed pt-5" style={{ color: theme.textPrimary, fontFamily: theme.fontLogline }}>{t.quote}</p>
-          <div className="flex items-center gap-3">
+          <span className="text-3xl leading-none select-none absolute top-2 left-3" style={{ color: `${theme.accentPrimary}15`, fontFamily: theme.fontDisplay }} aria-hidden="true">"</span>
+          <p className="text-[13px] italic leading-relaxed pt-4" style={{ color: theme.textPrimary, fontFamily: theme.fontLogline }}>{t.quote}</p>
+          <div className="flex items-center gap-2.5">
             {t.author_photo_url && (
-              <img src={t.author_photo_url} alt={t.author_name} className="w-9 h-9 rounded-full object-cover" style={{ boxShadow: `0 0 0 2px ${theme.accentPrimary}40` }} />
+              <img src={t.author_photo_url} alt={t.author_name} className="w-8 h-8 rounded-full object-cover" style={{ boxShadow: `0 0 0 1.5px ${theme.accentPrimary}30` }} />
             )}
-            <div>
-              <p className="text-sm font-semibold" style={{ color: theme.textPrimary }}>{t.author_name}</p>
-              <p className="text-xs" style={{ color: theme.accentPrimary }}>{[t.author_role, t.author_company].filter(Boolean).join(", ")}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold" style={{ color: theme.textPrimary }}>{t.author_name}</p>
+              <p className="text-[11px]" style={{ color: theme.textSecondary }}>{[t.author_role, t.author_company].filter(Boolean).join(", ")}</p>
             </div>
+            {t.author_company && <CompanyLogo companyName={t.author_company} size={18} grayscale />}
           </div>
         </div>
       ))}
