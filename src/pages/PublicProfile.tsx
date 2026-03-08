@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { applyThemeToElement } from "@/lib/themes";
+import { applyThemeToElement, getTheme } from "@/lib/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { Loader2 } from "lucide-react";
+import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface ProfileData {
   id: string;
@@ -47,6 +48,26 @@ const DEFAULT_SECTION_ORDER = [
   "contact",
 ];
 
+/** Extract unique Google Fonts from a theme definition's font variables */
+function getGoogleFontFamilies(themeKey: string): string[] {
+  const theme = getTheme(themeKey);
+  const fontVars = [theme.variables["--portfolio-heading-font"], theme.variables["--portfolio-body-font"]];
+  const families = new Set<string>();
+  for (const v of fontVars) {
+    if (!v) continue;
+    // Extract first font name from "'Font Name', fallback"
+    const match = v.match(/'([^']+)'/);
+    if (match) {
+      const name = match[1];
+      // Skip system fonts
+      if (!["Inter", "Courier New"].includes(name)) {
+        families.add(name);
+      }
+    }
+  }
+  return Array.from(families);
+}
+
 const PublicProfile = () => {
   const { slug } = useParams<{ slug: string }>();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -87,6 +108,27 @@ const PublicProfile = () => {
     }
   }, [profile]);
 
+  // Load Google Fonts for the theme
+  useEffect(() => {
+    if (!profile) return;
+    const families = getGoogleFontFamilies(profile.theme || "minimal");
+    if (families.length === 0) return;
+
+    const id = "portfolio-google-fonts";
+    if (document.getElementById(id)) return;
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f.replace(/ /g, "+")}:wght@400;500;600;700`).join("&")}&display=swap`;
+    document.head.appendChild(link);
+
+    return () => {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    };
+  }, [profile?.theme]);
+
   // Log page view
   useEffect(() => {
     if (profile?.id) {
@@ -117,7 +159,17 @@ const PublicProfile = () => {
     );
   }
 
-  const sectionOrder = profile.section_order || DEFAULT_SECTION_ORDER;
+  // Build section order: use profile's custom order, or derive from profile type config
+  let sectionOrder = profile.section_order;
+  if (!sectionOrder || sectionOrder.length === 0) {
+    const typeConfig = profile.profile_type ? getProfileTypeConfig(profile.profile_type) : null;
+    if (typeConfig && typeConfig.sections.length > 0) {
+      sectionOrder = typeConfig.sections.map((s) => s.key).filter((k) => k !== "hero");
+    } else {
+      sectionOrder = DEFAULT_SECTION_ORDER;
+    }
+  }
+
   const sectionsVisible = (profile.sections_visible || {}) as Record<string, boolean>;
 
   return (
@@ -134,7 +186,7 @@ const PublicProfile = () => {
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
         {sectionOrder
-          .filter((key) => sectionsVisible[key] !== false)
+          .filter((key) => sectionsVisible[key] !== false && key !== "hero" && key !== "contact")
           .map((sectionKey) => (
             <PortfolioSection
               key={sectionKey}
