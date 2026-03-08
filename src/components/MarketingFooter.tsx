@@ -23,7 +23,9 @@ export default function MarketingFooter() {
             <div className="flex flex-col gap-2">
               <Link to="/how-it-works" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>How It Works</Link>
               <Link to="/pricing" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Pricing</Link>
-              <Link to="/demo/screenwriter" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Live Demo</Link>
+              <Link to="/demo/screenwriter" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Screenwriter Demo</Link>
+              <Link to="/demo/actor" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Actor Demo</Link>
+              <Link to="/demo/copywriter" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Copywriter Demo</Link>
             </div>
           </div>
 
@@ -40,8 +42,8 @@ export default function MarketingFooter() {
           <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider" style={{ color: "hsl(var(--landing-fg) / 0.6)" }}>Legal</h4>
             <div className="flex flex-col gap-2">
-              <span className="text-sm" style={{ color: "hsl(var(--landing-muted) / 0.5)" }}>Privacy Policy</span>
-              <span className="text-sm" style={{ color: "hsl(var(--landing-muted) / 0.5)" }}>Terms of Service</span>
+              <Link to="/privacy" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Privacy Policy</Link>
+              <Link to="/terms" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Terms of Service</Link>
             </div>
           </div>
         </div>

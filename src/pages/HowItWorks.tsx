@@ -306,7 +306,7 @@ const HowItWorks = () => {
             </Button>
             <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
-              <Link to="/demo/screenwriter">View Live Demo</Link>
+              <Link to="/demo/actor">View Live Demo</Link>
             </Button>
           </div>
         </div>
@@ -455,7 +455,7 @@ const HowItWorks = () => {
             </div>
             <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
-              <Link to="/demo/screenwriter">View Live Demo</Link>
+              <Link to="/demo/actor">View Live Demo</Link>
             </Button>
           </div>
         </div>
