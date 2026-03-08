@@ -27,6 +27,10 @@ interface ProfileData {
   available_for_hire: boolean | null;
   seeking_representation: boolean | null;
   slug: string | null;
+  cta_label: string | null;
+  cta_url: string | null;
+  cta_type: string | null;
+  booking_url: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [

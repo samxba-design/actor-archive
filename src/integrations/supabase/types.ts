@@ -743,7 +743,11 @@ export type Database = {
           available_for_hire: boolean | null
           banner_url: string | null
           bio: string | null
+          booking_url: string | null
           created_at: string | null
+          cta_label: string | null
+          cta_type: string | null
+          cta_url: string | null
           custom_css: string | null
           custom_domain: string | null
           display_name: string | null
@@ -778,7 +782,11 @@ export type Database = {
           available_for_hire?: boolean | null
           banner_url?: string | null
           bio?: string | null
+          booking_url?: string | null
           created_at?: string | null
+          cta_label?: string | null
+          cta_type?: string | null
+          cta_url?: string | null
           custom_css?: string | null
           custom_domain?: string | null
           display_name?: string | null
@@ -813,7 +821,11 @@ export type Database = {
           available_for_hire?: boolean | null
           banner_url?: string | null
           bio?: string | null
+          booking_url?: string | null
           created_at?: string | null
+          cta_label?: string | null
+          cta_type?: string | null
+          cta_url?: string | null
           custom_css?: string | null
           custom_domain?: string | null
           display_name?: string | null

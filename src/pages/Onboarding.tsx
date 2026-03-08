@@ -8,6 +8,7 @@ import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
 import StepSlug from "@/components/onboarding/StepSlug";
 import StepActorStats from "@/components/onboarding/StepActorStats";
 import StepTheme from "@/components/onboarding/StepTheme";
+import StepServices from "@/components/onboarding/StepServices";
 import StepComplete from "@/components/onboarding/StepComplete";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -32,6 +33,9 @@ export interface OnboardingData {
   genderIdentity: string;
   unionStatus: string[];
   basedInPrimary: string;
+  // Services
+  selectedServices: { name: string; description: string }[];
+  availableForHire: boolean;
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -52,6 +56,8 @@ const INITIAL_DATA: OnboardingData = {
   genderIdentity: "",
   unionStatus: [],
   basedInPrimary: "",
+  selectedServices: [],
+  availableForHire: false,
 };
 
 const Onboarding = () => {
@@ -70,13 +76,8 @@ const Onboarding = () => {
     data.profileType === "actor" ||
     data.secondaryTypes.includes("actor");
 
-  // Steps: 0=type, 1=basic, 2=slug, 3=actor(conditional), 4=theme, 5=complete
-  const getStepIndex = (logicalStep: number) => {
-    if (!isActorType && logicalStep >= 3) return logicalStep + 1;
-    return logicalStep;
-  };
-
-  const totalSteps = isActorType ? 6 : 5;
+  // Steps: 0=type, 1=basic, 2=slug, 3=actor(conditional), 4=theme, 5=services, 6=complete
+  const totalSteps = isActorType ? 7 : 6;
 
   const handleNext = () => setStep((s) => s + 1);
   const handleBack = () => setStep((s) => Math.max(0, s - 1));
@@ -102,6 +103,7 @@ const Onboarding = () => {
           location: data.location || null,
           slug: data.slug || null,
           theme: data.theme,
+          available_for_hire: data.availableForHire,
           onboarding_completed: true,
           is_draft: false,
         })
@@ -126,6 +128,18 @@ const Onboarding = () => {
           });
 
         if (actorError) throw actorError;
+      }
+
+      // Save selected services
+      if (data.selectedServices.length > 0) {
+        const serviceRows = data.selectedServices.map((s, i) => ({
+          profile_id: user.id,
+          name: s.name,
+          description: s.description,
+          display_order: i,
+        }));
+        const { error: servicesError } = await supabase.from("services").insert(serviceRows);
+        if (servicesError) throw servicesError;
       }
 
       toast({ title: "Profile created!", description: "Welcome to CreativeSlate." });
@@ -154,8 +168,13 @@ const Onboarding = () => {
         if (isActorType) {
           return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
         }
-        return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
+        return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
       case 5:
+        if (isActorType) {
+          return <StepServices data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} />;
+        }
+        return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
+      case 6:
         return <StepComplete data={data} onComplete={handleComplete} onBack={handleBack} saving={saving} />;
       default:
         return null;
