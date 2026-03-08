@@ -41,7 +41,7 @@ const mainNav: NavItem[] = [
   { title: "Gallery", url: "/dashboard/gallery", icon: Image, countTable: "gallery_images" },
   { title: "Services", url: "/dashboard/services", icon: Briefcase, countTable: "services" },
   { title: "Social Links", url: "/dashboard/social", icon: Link2, countTable: "social_links" },
-  { title: "Clients", url: "/dashboard/clients", icon: Building2, visibleTo: ["copywriter", "corporate_video", "multi_hyphenate"], countTable: "client_logos_profile" },
+  { title: "Clients", url: "/dashboard/clients", icon: Building2, countTable: "client_logos_profile" },
 ];
 
 const contentNav: NavItem[] = [

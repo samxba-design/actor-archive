@@ -15,7 +15,7 @@ import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 
 type GalleryImage = Tables<"gallery_images">;
 
-const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "other"];
+const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "event_photo", "book_cover", "campaign_creative", "other"];
 
 const GalleryManager = () => {
   const { user } = useAuth();
