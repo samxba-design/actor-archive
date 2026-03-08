@@ -1,8 +1,7 @@
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 
 interface Props {
@@ -10,15 +9,20 @@ interface Props {
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
-const StepBasicInfo = ({ data, updateData, onNext, onBack }: Props) => {
+const TAGLINE_MAX = 80;
+
+const StepBasicInfo = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const canContinue = data.displayName.trim().length > 0;
 
   return (
     <div className="w-full max-w-lg space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Step 2</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Tell us about yourself</h1>
         <p className="text-muted-foreground">This is how you'll appear on your public portfolio.</p>
       </div>
@@ -61,9 +65,16 @@ const StepBasicInfo = ({ data, updateData, onNext, onBack }: Props) => {
           <Input
             id="tagline"
             value={data.tagline}
-            onChange={(e) => updateData({ tagline: e.target.value })}
+            onChange={(e) => updateData({ tagline: e.target.value.slice(0, TAGLINE_MAX) })}
             placeholder="Award-winning screenwriter & director"
+            maxLength={TAGLINE_MAX}
           />
+          <div className="flex justify-between">
+            <p className="text-xs text-muted-foreground">A short phrase under your name on your portfolio.</p>
+            <span className={`text-xs ${data.tagline.length >= TAGLINE_MAX ? "text-destructive" : "text-muted-foreground"}`}>
+              {data.tagline.length}/{TAGLINE_MAX}
+            </span>
+          </div>
         </div>
 
         <div className="space-y-2">

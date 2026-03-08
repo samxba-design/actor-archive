@@ -103,6 +103,12 @@ const Signup = () => {
               </p>
               <p className="text-xs" style={{ color: "hsl(var(--landing-muted) / 0.7)" }}>
                 Didn't receive it? Check your spam folder or{" "}
+                <button onClick={async () => {
+                  const { error } = await supabase.auth.resend({ type: 'signup', email });
+                  if (!error) toast({ title: "Email resent", description: "Check your inbox again." });
+                  else toast({ title: "Error", description: error.message, variant: "destructive" });
+                }} className="hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>resend email</button>
+                {" "}or{" "}
                 <button onClick={() => setEmailSent(false)} className="hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>try again</button>.
               </p>
             </div>
@@ -139,6 +145,24 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label htmlFor="password" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>Password</Label>
                   <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} className="border" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 20% 14%)", color: "hsl(var(--landing-fg))" }} />
+                  {password.length > 0 && (
+                    <div className="space-y-1">
+                      <div className="flex gap-1">
+                        {[1, 2, 3, 4].map((i) => {
+                          const strength = password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password) ? 4
+                            : password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) ? 3
+                            : password.length >= 6 ? 2 : 1;
+                          const color = i <= strength
+                            ? strength >= 4 ? "hsl(140 50% 45%)" : strength >= 3 ? "hsl(48 96% 53%)" : strength >= 2 ? "hsl(30 80% 55%)" : "hsl(0 84% 60%)"
+                            : "hsl(var(--landing-border))";
+                          return <div key={i} className="h-1 flex-1 rounded-full transition-colors" style={{ backgroundColor: color }} />;
+                        })}
+                      </div>
+                      <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>
+                        {password.length < 6 ? "At least 6 characters" : password.length < 8 ? "Try adding uppercase and numbers" : "Strong password ✓"}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <Button type="submit" className="w-full font-semibold border-0 text-white" disabled={loading}
                   style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>

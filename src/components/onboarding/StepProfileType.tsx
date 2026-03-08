@@ -1,5 +1,5 @@
 import { PROFILE_TYPES } from "@/config/profileSections";
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import {
   PenTool, Tv, Theater, BookOpen, Newspaper, Type,
   Clapperboard, Film, Video, Layers, Check
@@ -16,9 +16,10 @@ interface Props {
   data: OnboardingData;
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
+  stepMeta: StepMeta;
 }
 
-const StepProfileType = ({ data, updateData, onNext }: Props) => {
+const StepProfileType = ({ data, updateData, onNext, stepMeta }: Props) => {
   const [selected, setSelected] = useState<string[]>(
     data.profileType
       ? [data.profileType, ...data.secondaryTypes]
@@ -52,7 +53,7 @@ const StepProfileType = ({ data, updateData, onNext }: Props) => {
     <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
         <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Step 1
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
         </p>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
           You are a...

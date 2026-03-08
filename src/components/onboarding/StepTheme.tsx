@@ -1,4 +1,4 @@
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
@@ -9,18 +9,21 @@ interface Props {
   updateData: (d: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
 const THEME_KEYS = ["minimal", "noir", "editorial", "brutalist", "spotlight", "ink", "modernist", "warm", "midnight", "gallery"] as const;
 
-const StepTheme = ({ data, updateData, onNext, onBack }: Props) => {
+const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const typeConfig = data.profileType ? getProfileTypeConfig(data.profileType) : null;
   const suggestedTheme = typeConfig?.defaultTheme || "minimal";
 
   return (
     <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
-        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Theme</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
+        </p>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">Choose your look</h1>
         <p className="text-muted-foreground">
           You can customise colours, fonts, and layout later.
@@ -53,7 +56,6 @@ const StepTheme = ({ data, updateData, onNext, onBack }: Props) => {
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               )}
-              {/* Mini live preview */}
               <div className="p-3 h-[100px]" style={{ backgroundColor: `hsl(${v["--portfolio-bg"]})` }}>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-5 h-5 rounded-full" style={{ backgroundColor: `hsl(${v["--portfolio-accent"]})` }} />
@@ -87,9 +89,12 @@ const StepTheme = ({ data, updateData, onNext, onBack }: Props) => {
         <Button variant="ghost" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Back
         </Button>
-        <Button onClick={onNext} className="min-w-[120px]">
-          Continue
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={onNext}>Skip for now</Button>
+          <Button onClick={onNext} className="min-w-[120px]">
+            Continue
+          </Button>
+        </div>
       </div>
     </div>
   );

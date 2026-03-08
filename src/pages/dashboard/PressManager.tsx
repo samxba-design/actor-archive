@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
+import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -63,11 +65,14 @@ const PressManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Press & Reviews</h1>
+        <PageHeader
+          title="Press & Reviews"
+          description="Add articles, reviews, and media coverage. Featured press appears prominently on your portfolio to build authority."
+        />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Press</Button>
       </div>
       {items.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No press entries yet.</CardContent></Card>
+        <EmptyState icon={Newspaper} title="No press entries yet" description="Add reviews, interviews, or media coverage to show visitors your public profile and credibility." actionLabel="Add Press" onAction={openAdd} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

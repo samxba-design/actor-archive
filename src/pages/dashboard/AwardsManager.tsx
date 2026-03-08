@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
+import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -59,11 +61,14 @@ const AwardsManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Awards</h1>
+        <PageHeader
+          title="Awards & Festivals"
+          description="Showcase festival laurels, competition wins, and fellowships. These appear as badges on your public portfolio and boost credibility."
+        />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>
       {items.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No awards yet.</CardContent></Card>
+        <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/dashboard/PageHeader";
+import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -65,11 +67,14 @@ const SkillsManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Skills</h1>
+        <PageHeader
+          title="Skills"
+          description="List your technical and creative skills. Group them by category (e.g. Software, Languages, Instruments) for a clean portfolio layout."
+        />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Skill</Button>
       </div>
       {items.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No skills yet.</CardContent></Card>
+        <EmptyState icon={Zap} title="No skills yet" description="Add your key abilities — software, languages, instruments, combat training, etc. Group by category for a polished look." actionLabel="Add Skill" onAction={openAdd} />
       ) : (
         Object.entries(grouped).map(([cat, skills]) => (
           <div key={cat} className="space-y-2">

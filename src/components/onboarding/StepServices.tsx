@@ -5,13 +5,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Plus, X, Briefcase, CheckCircle2 } from "lucide-react";
-import type { OnboardingData } from "@/pages/Onboarding";
+import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 
 interface Props {
   data: OnboardingData;
   updateData: (partial: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  stepMeta: StepMeta;
 }
 
 interface ServiceSuggestion {
@@ -90,7 +91,7 @@ export interface SelectedService {
   isCustom?: boolean;
 }
 
-const StepServices = ({ data, updateData, onNext, onBack }: Props) => {
+const StepServices = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const profileType = data.profileType || "screenwriter";
   const suggestions = SERVICE_SUGGESTIONS[profileType] || SERVICE_SUGGESTIONS.multi_hyphenate;
 
@@ -133,6 +134,9 @@ const StepServices = ({ data, updateData, onNext, onBack }: Props) => {
   return (
     <div className="w-full max-w-xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-2">
+        <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
+        </p>
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-2">
           <Briefcase className="w-6 h-6 text-primary" />
         </div>
