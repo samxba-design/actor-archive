@@ -9,6 +9,7 @@ interface Props {
     show_contact_form: boolean | null;
   };
   showContact: boolean;
+  socialLinks?: any[];
 }
 
 const platformIcons: Record<string, string> = {
@@ -24,20 +25,23 @@ const platformIcons: Record<string, string> = {
   spotlight: "★",
 };
 
-const PortfolioFooter = ({ profile, showContact }: Props) => {
-  const [socialLinks, setSocialLinks] = useState<any[]>([]);
+const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }: Props) => {
+  const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
   const [form, setForm] = useState({ sender_name: "", sender_email: "", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const socialLinks = socialLinksProp || fetchedLinks;
+
   useEffect(() => {
+    if (socialLinksProp) return;
     supabase
       .from("social_links")
       .select("*")
       .eq("profile_id", profile.id)
       .order("display_order")
-      .then(({ data }) => setSocialLinks(data || []));
-  }, [profile.id]);
+      .then(({ data }) => setFetchedLinks(data || []));
+  }, [profile.id, socialLinksProp]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

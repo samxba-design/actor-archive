@@ -13,6 +13,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import PublicProfile from "./pages/PublicProfile";
+import DemoScreenwriter from "./pages/DemoScreenwriter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
               }
             />
             <Route path="/p/:slug" element={<PublicProfile />} />
+            <Route path="/demo/screenwriter" element={<DemoScreenwriter />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
