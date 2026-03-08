@@ -12,6 +12,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import PublicProfile from "./pages/PublicProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,9 +46,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            {/* Public portfolio pages - Phase 4 */}
-            {/* <Route path="/:slug" element={<PublicProfile />} /> */}
-            {/* <Route path="/:slug/:projectSlug" element={<PitchDeck />} /> */}
+            <Route path="/p/:slug" element={<PublicProfile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
