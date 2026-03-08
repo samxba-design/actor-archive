@@ -231,6 +231,11 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
+        case "custom_sections": {
+          const { data } = await supabase.from("custom_sections").select("*").eq("profile_id", profileId).eq("is_visible", true).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
         default:
           break;
       }
@@ -317,6 +322,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionClientLogos items={data} />;
       case "published_work":
         return <SectionPublishedWork items={data} />;
+      case "custom_sections":
+        return <SectionCustom sections={data} />;
       default:
         return null;
     }
