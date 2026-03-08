@@ -31,7 +31,8 @@ export type SectionKey =
   | "bio"
   | "results_wall"
   | "video_portfolio"
-  | "campaign_timeline";
+  | "campaign_timeline"
+  | "published_work";
 
 export interface SectionConfig {
   key: SectionKey;
@@ -176,6 +177,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
+      { key: "published_work", label: "Published Work", description: "Featured articles & writing pieces with PDF previews" },
       { key: "results_wall", label: "Impact Numbers", description: "Aggregated metrics across campaigns" },
       { key: "case_studies", label: "Case Studies", description: "Client work with results" },
       { key: "video_portfolio", label: "Video Portfolio", description: "Campaign videos & brand films" },

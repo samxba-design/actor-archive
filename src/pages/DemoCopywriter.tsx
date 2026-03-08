@@ -10,7 +10,7 @@ import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/Layout
 import SectionResultsWall from "@/components/portfolio/sections/SectionResultsWall";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
-import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award, BookOpen } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
   type SectionVariants, WithToggle,
@@ -19,11 +19,12 @@ import {
   ClientLogosWithToggle, EducationWithToggle, SkillsWithToggle,
   CaseStudiesWithToggle,
   AmbientGlow, MidScrollCTA, CTA_LABELS,
+  PublishedWorkWithToggle,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
   mockTestimonials, mockClients, mockSkills, mockAwards, mockPress,
-  mockEducation, mockKnownFor, featuredProject,
+  mockEducation, mockKnownFor, featuredProject, mockPublishedWork,
 } from "@/data/demoCopywriterData";
 
 /* ══════════════════════ COPYWRITER-SPECIFIC DEFAULTS ══════════════════════ */
@@ -51,7 +52,12 @@ const ClassicLayout = () => (
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Case Studies" index={0}>
+      <PortfolioSectionWrapper title="Published Work" index={0}>
+        <PublishedWorkWithToggle items={mockPublishedWork} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Case Studies" index={1}>
         <CaseStudiesWithToggle items={mockCaseStudies} />
       </PortfolioSectionWrapper>
     </div>
@@ -100,6 +106,11 @@ const StandardLayout = () => (
     </div>
     <div className="mb-10">
       <SectionResultsWall items={mockCaseStudies} />
+    </div>
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Published Work" index={-1}>
+        <PublishedWorkWithToggle items={mockPublishedWork} />
+      </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Case Studies" index={0}>

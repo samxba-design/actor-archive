@@ -21,6 +21,7 @@ import SectionProductionHistory from "@/components/portfolio/sections/SectionPro
 import SectionActorStats from "@/components/portfolio/sections/SectionActorStats";
 import SectionCaseStudies from "@/components/portfolio/sections/SectionCaseStudies";
 import SectionCampaignTimeline from "@/components/portfolio/sections/SectionCampaignTimeline";
+import SectionPublishedWork from "@/components/portfolio/sections/SectionPublishedWork";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
@@ -45,6 +46,7 @@ export interface SectionVariants {
   productions: 'list' | 'cards' | 'timeline';
   imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
   caseStudies: 'stack' | 'magazine' | 'grid' | 'metrics';
+  publishedWork: 'magazine' | 'grid' | 'list';
   campaigns: 'timeline';
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
@@ -71,6 +73,7 @@ export const defaultVariants: SectionVariants = {
   productions: 'list',
   imageAnimation: 'none',
   caseStudies: 'stack',
+  publishedWork: 'magazine',
   campaigns: 'timeline',
   heroLayout: 'classic',
   heroRightContent: 'featured',
@@ -142,6 +145,9 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   ],
   caseStudies: [
     { key: 'stack', label: 'Stack' }, { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'metrics', label: 'Metrics' },
+  ],
+  publishedWork: [
+    { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'list', label: 'List' },
   ],
   campaigns: [
     { key: 'timeline', label: 'Timeline' },
@@ -298,6 +304,12 @@ export const CaseStudiesWithToggle = ({ items }: { items: any[] }) => (
 
 export const CampaignTimelineWithToggle = ({ items }: { items: any[] }) => (
   <SectionCampaignTimeline items={items} />
+);
+
+export const PublishedWorkWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="publishedWork" sectionName="Published Work">
+    {(variant) => <SectionPublishedWork items={items} variant={variant} />}
+  </WithToggle>
 );
 
 /* ── Ambient Glow ── */
