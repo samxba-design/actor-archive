@@ -653,6 +653,18 @@ const DashboardLayout = () => {
         ))}
       </div>
 
+      {/* Known For + Client Logos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
+          <SectionClientLogos companies={mockClients} variant="grid" />
+        </GlassCard>
+      </div>
+
       {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
