@@ -321,6 +321,49 @@ const featuredProject = mockCredits[0];
 
 const mockKnownFor = mockCredits; // reuse credits as known-for items
 const mockClients = ["HBO", "FX", "A24", "NBC", "Netflix", "Amazon Studios"];
+
+const mockEducation = [
+  { id: "ed1", institution: "UCLA School of Theater, Film and Television", degree_or_certificate: "MFA, Screenwriting", field_of_study: "Screenwriting", education_type: "Graduate", year_start: 2015, year_end: 2017, teacher_name: null, description: "Thesis screenplay selected for university showcase.", is_ongoing: false },
+  { id: "ed2", institution: "Sundance Screenwriters Lab", degree_or_certificate: "Fellow", education_type: "Workshop", year_start: 2019, year_end: null, teacher_name: "Mentor: Scott Frank", description: "Selected for January Lab with feature 'The Last Station'.", is_ongoing: false },
+  { id: "ed3", institution: "University of Michigan", degree_or_certificate: "BA, English & Creative Writing", field_of_study: "English", education_type: "Undergraduate", year_start: 2011, year_end: 2015, teacher_name: null, description: null, is_ongoing: false },
+];
+
+const mockGallery = [
+  { id: "g1", image_url: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=600&fit=crop", caption: "On set — 'The Arrangement' Season 2", photographer_credit: "Alex Rivera", image_type: "production" },
+  { id: "g2", image_url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=600&h=600&fit=crop", caption: "Writers room, HBO", photographer_credit: null, image_type: "behind_the_scenes" },
+  { id: "g3", image_url: "https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?w=600&h=600&fit=crop", caption: "Austin Film Festival panel", photographer_credit: null, image_type: "event" },
+  { id: "g4", image_url: "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&h=600&fit=crop", caption: "Emmy nomination night", photographer_credit: "Getty Images", image_type: "event" },
+  { id: "g5", image_url: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&h=600&fit=crop", caption: "'Glass Houses' premiere", photographer_credit: null, image_type: "premiere" },
+  { id: "g6", image_url: "https://images.unsplash.com/photo-1505533542167-8c89838bb19e?w=600&h=600&fit=crop", caption: "Writing retreat, Big Sur", photographer_credit: null, image_type: "personal" },
+];
+
+const mockDemoReels = [
+  { id: "dr1", title: "Screenwriting Sizzle Reel 2024", description: "Clips from produced credits with behind-the-scenes footage.", video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", chapters: [{ time: "0:00", label: "Intro" }, { time: "0:45", label: "The Arrangement" }, { time: "1:30", label: "Glass Houses" }] },
+  { id: "dr2", title: "Panel: Writing Sci-Fi for TV", description: "Austin Film Festival 2023 panel discussion.", video_url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", chapters: [] },
+];
+
+const mockSkills = [
+  { id: "sk1", name: "Feature Screenwriting", category: "Writing", proficiency: "expert" },
+  { id: "sk2", name: "TV Pilot Development", category: "Writing", proficiency: "expert" },
+  { id: "sk3", name: "Series Bible Creation", category: "Writing", proficiency: "advanced" },
+  { id: "sk4", name: "Script Coverage", category: "Industry", proficiency: "advanced" },
+  { id: "sk5", name: "Writers Room Collaboration", category: "Industry", proficiency: "expert" },
+  { id: "sk6", name: "Final Draft", category: "Software", proficiency: "expert" },
+  { id: "sk7", name: "Highland 2", category: "Software", proficiency: "advanced" },
+  { id: "sk8", name: "Story Structure", category: "Craft", proficiency: "expert" },
+];
+
+const mockEvents = [
+  { id: "ev1", title: "WGA Panel: The Future of AI in Screenwriting", venue: "Writers Guild Theater", city: "Los Angeles", country: "US", date: "2024-06-15", is_upcoming: true, description: "Panelist discussion on AI tools and writers' rights.", ticket_url: "#", event_type: "panel" },
+  { id: "ev2", title: "Austin Film Festival", venue: "Driskill Hotel", city: "Austin", country: "US", date: "2024-10-24", is_upcoming: true, description: "Attending as invited panelist and second rounder.", ticket_url: "#", event_type: "festival" },
+  { id: "ev3", title: "Sundance Film Festival", venue: "Various", city: "Park City", country: "US", date: "2024-01-18", is_upcoming: false, description: "Attending in support of lab project.", ticket_url: null, event_type: "festival" },
+];
+
+const mockProductions = [
+  { id: "ph1", theatre_name: "Geffen Playhouse", director: "Sarah Ramirez", city: "Los Angeles", country: "US", year: 2023, run_dates: "Mar 2023 – Apr 2023", cast_names: ["David Oyelowo", "Zazie Beetz"], production_photos: [] },
+  { id: "ph2", theatre_name: "Public Theater", director: "Oskar Eustis", city: "New York", country: "US", year: 2021, run_dates: "Sep 2021 – Nov 2021", cast_names: ["André Holland"], production_photos: [] },
+];
+
 /* ══════════════════════ SHARED ══════════════════════ */
 
 const AmbientGlow = () => {
