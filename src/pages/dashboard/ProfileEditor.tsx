@@ -63,7 +63,7 @@ const ProfileEditor = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset")
+      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset, hero_bg_type, hero_bg_solid_color, hero_bg_video_url")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -82,6 +82,9 @@ const ProfileEditor = () => {
             primary_goal: (data as any).primary_goal || "",
             hero_style: (data as any).hero_style || "full",
             hero_background_preset: (data as any).hero_background_preset || "",
+            hero_bg_type: (data as any).hero_bg_type || "preset",
+            hero_bg_solid_color: (data as any).hero_bg_solid_color || "",
+            hero_bg_video_url: (data as any).hero_bg_video_url || "",
           });
         }
         setLoading(false);
