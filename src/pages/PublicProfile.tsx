@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
@@ -6,7 +6,7 @@ import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioSection from "@/components/portfolio/PortfolioSection";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUp, MessageSquare } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface ProfileData {
@@ -53,6 +53,7 @@ const PublicProfile = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -75,6 +76,15 @@ const PublicProfile = () => {
       });
     }
   }, [profile?.id, slug]);
+
+  // Back to top scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 600);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!profile) return;
@@ -111,7 +121,6 @@ const PublicProfile = () => {
     );
   }
 
-  // Support ?preview_theme= query param
   const previewTheme = searchParams.get("preview_theme");
   const themeId = resolveThemeId(previewTheme || profile.theme);
 
@@ -127,6 +136,12 @@ const PublicProfile = () => {
 
   const sectionsVisible = (profile.sections_visible || {}) as Record<string, boolean>;
   const visibleSections = sectionOrder.filter((key) => sectionsVisible[key] !== false && key !== "hero" && key !== "contact");
+  const showContact = profile.show_contact_form !== false;
+
+  const scrollToContact = () => {
+    const el = document.getElementById("portfolio-contact");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
@@ -147,10 +162,43 @@ const PublicProfile = () => {
         ))}
       </main>
 
-      <PortfolioFooter
-        profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
-        showContact={profile.show_contact_form !== false}
-      />
+      <div id="portfolio-contact">
+        <PortfolioFooter
+          profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier }}
+          showContact={showContact}
+        />
+      </div>
+
+      {/* Floating Contact CTA */}
+      {showContact && (
+        <button
+          onClick={scrollToContact}
+          className="fixed bottom-20 right-6 z-40 rounded-full p-3 shadow-lg transition-all hover:scale-105"
+          style={{
+            background: "hsl(var(--portfolio-accent, var(--primary)))",
+            color: "hsl(var(--portfolio-accent-fg, var(--primary-foreground)))",
+          }}
+          aria-label="Contact me"
+        >
+          <MessageSquare className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Back to Top */}
+      {showBackToTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 z-40 rounded-full p-3 shadow-lg transition-all hover:scale-105 border"
+          style={{
+            background: "hsl(var(--portfolio-card, var(--card)))",
+            color: "hsl(var(--portfolio-fg, var(--foreground)))",
+            borderColor: "hsl(var(--portfolio-border, var(--border)))",
+          }}
+          aria-label="Back to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
+      )}
     </PortfolioThemeProvider>
   );
 };
