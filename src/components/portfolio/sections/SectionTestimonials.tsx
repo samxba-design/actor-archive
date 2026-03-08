@@ -39,7 +39,7 @@ const SectionTestimonials = ({ items }: Props) => {
         </p>
         <div className="flex items-center justify-center gap-3 mb-6">
           {t.author_photo_url && (
-            <img src={t.author_photo_url} alt={t.author_name} className="w-12 h-12 rounded-full object-cover ring-2" style={{ ringColor: "hsl(var(--portfolio-accent) / 0.3)" }} />
+            <img src={t.author_photo_url} alt={t.author_name} className="w-12 h-12 rounded-full object-cover" style={{ boxShadow: "0 0 0 2px hsl(var(--portfolio-accent) / 0.3)" }} />
           )}
           <div className="text-left">
             <p className="text-sm font-semibold" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{t.author_name}</p>
