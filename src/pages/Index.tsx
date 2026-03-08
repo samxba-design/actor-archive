@@ -307,11 +307,12 @@ const Index = () => {
             Portfolio platform for entertainment professionals
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.08] mb-6">
-            <span className="hero-word inline-block" style={{ animationDelay: "0ms", color: "hsl(var(--landing-fg))" }}>Your </span>
-            <span className="hero-word inline-block" style={{ animationDelay: "80ms", color: "hsl(var(--landing-fg))" }}>work </span>
-            <span className="hero-word inline-block" style={{ animationDelay: "160ms", color: "hsl(var(--landing-fg))" }}>deserves</span>
-            <br />
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+            <span className="block">
+              <span className="hero-word inline-block" style={{ animationDelay: "0ms", color: "hsl(var(--landing-fg))" }}>Your&nbsp;</span>
+              <span className="hero-word inline-block" style={{ animationDelay: "80ms", color: "hsl(var(--landing-fg))" }}>work&nbsp;</span>
+              <span className="hero-word inline-block" style={{ animationDelay: "160ms", color: "hsl(var(--landing-fg))" }}>deserves</span>
+            </span>
             <span className="hero-word inline-block text-gradient-gold" style={{ animationDelay: "300ms" }}>a better showcase</span>
           </h1>
 
