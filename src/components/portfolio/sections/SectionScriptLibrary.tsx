@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, Lock, ArrowRight } from "lucide-react";
+import { FileText, Lock, ArrowRight, Shield, Mail, Eye } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 interface Props {
@@ -7,6 +7,14 @@ interface Props {
 }
 
 const FILTERS = ["All", "Feature", "Series", "Pilot"];
+
+const ACCESS_CONFIG: Record<string, { icon: any; label: string; color: string }> = {
+  public: { icon: Eye, label: 'Read Script', color: '' },
+  gated: { icon: Mail, label: 'Request Access', color: '' },
+  password_protected: { icon: Lock, label: 'Password Required', color: '' },
+  private: { icon: Shield, label: 'By Request', color: '' },
+  nda_required: { icon: Shield, label: 'NDA Required', color: '' },
+};
 
 const SectionScriptLibrary = ({ items }: Props) => {
   const theme = usePortfolioTheme();
@@ -44,7 +52,7 @@ const SectionScriptLibrary = ({ items }: Props) => {
         </div>
       )}
 
-      {/* Grid — 2x2 with featured spanning */}
+      {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         {featured && <ScriptCard item={featured} theme={theme} isFeatured />}
         {rest.map(p => <ScriptCard key={p.id} item={p} theme={theme} />)}
@@ -55,6 +63,15 @@ const SectionScriptLibrary = ({ items }: Props) => {
 
 const ScriptCard = ({ item: p, theme, isFeatured }: { item: any; theme: any; isFeatured?: boolean }) => {
   const [hovered, setHovered] = useState(false);
+  const accessLevel = p.access_level || 'public';
+  const accessInfo = ACCESS_CONFIG[accessLevel] || ACCESS_CONFIG.public;
+  const AccessIcon = accessInfo.icon;
+
+  // Color-code access levels
+  const accessColor = accessLevel === 'public' ? '#4A9E6B' 
+    : accessLevel === 'gated' ? '#6B9FD4'
+    : accessLevel === 'password_protected' ? '#C9A96E'
+    : '#C41E1E';
 
   return (
     <div
@@ -79,9 +96,11 @@ const ScriptCard = ({ item: p, theme, isFeatured }: { item: any; theme: any; isF
       <div className="space-y-1.5">
         {/* Icon + Title */}
         <div className="flex items-start gap-2">
-          <FileText className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: theme.textTertiary }} />
+          <div className="w-6 h-6 rounded flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${accessColor}18` }}>
+            <FileText className="w-3.5 h-3.5" style={{ color: accessColor }} />
+          </div>
           <h4
-            className="leading-tight transition-colors duration-200"
+            className="leading-tight transition-colors duration-200 flex-1"
             style={{
               fontFamily: theme.fontDisplay,
               fontWeight: theme.headingWeight,
@@ -119,23 +138,21 @@ const ScriptCard = ({ item: p, theme, isFeatured }: { item: any; theme: any; isF
           </p>
         )}
 
-        {/* Bottom row */}
-        <div className="flex items-center justify-between gap-2 pt-0.5">
-          {p.access_level === "public" && p.script_pdf_url ? (
+        {/* Bottom row — color-coded access */}
+        <div className="flex items-center justify-between gap-2 pt-1">
+          {p.script_pdf_url ? (
             <a
-              href={p.script_pdf_url}
+              href={accessLevel === 'public' ? p.script_pdf_url : undefined}
+              onClick={accessLevel !== 'public' ? (e: React.MouseEvent) => e.preventDefault() : undefined}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-medium transition-colors group"
-              style={{ color: theme.accentPrimary }}
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest font-medium transition-colors group"
+              style={{ color: accessColor }}
             >
-              Read Script
-              <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
+              <AccessIcon className="w-3 h-3" />
+              {accessInfo.label}
+              {accessLevel === 'public' && <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />}
             </a>
-          ) : p.script_pdf_url ? (
-            <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest" style={{ color: theme.textTertiary }}>
-              <Lock className="w-2.5 h-2.5" /> Request
-            </span>
           ) : null}
 
           {p.status && (
