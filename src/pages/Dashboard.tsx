@@ -26,6 +26,7 @@ import PipelineTracker from "@/pages/dashboard/PipelineTracker";
 import SmartFollowUp from "@/pages/dashboard/SmartFollowUp";
 import EmbedAndShare from "@/pages/dashboard/EmbedAndShare";
 import ScriptManager from "@/pages/dashboard/ScriptManager";
+import ClientManager from "@/pages/dashboard/ClientManager";
 
 const Dashboard = () => {
   return (
@@ -57,6 +58,7 @@ const Dashboard = () => {
         <Route path="follow-up" element={<SmartFollowUp />} />
         <Route path="embed" element={<EmbedAndShare />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="clients" element={<ClientManager />} />
       </Route>
     </Routes>
   );
