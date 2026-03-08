@@ -9,9 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, Trash2, GripVertical, Sparkles, BookOpen, HelpCircle, Quote, Lightbulb, List } from "lucide-react";
+import { Loader2, Plus, Trash2, Sparkles } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
-import EmptyState from "@/components/dashboard/EmptyState";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 
 const PREDEFINED_TEMPLATES = [
@@ -52,7 +51,17 @@ const CustomSectionsManager = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [showTemplates, setShowTemplates] = useState(false);
-  const { confirmDelete, DeleteDialog } = useDeleteConfirmation();
+
+  const handleDelete = async (id: string) => {
+    await supabase.from("custom_sections" as any).delete().eq("id", id);
+    setSections(prev => prev.filter(s => s.id !== id));
+    toast({ title: "Section deleted" });
+  };
+
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(handleDelete, {
+    title: "Delete Section",
+    description: "This will permanently remove this custom section from your portfolio.",
+  });
 
   const fetchSections = async () => {
     if (!user) return;
@@ -92,32 +101,29 @@ const CustomSectionsManager = () => {
     setSaving(null);
   };
 
-  const deleteSection = async (id: string) => {
-    const confirmed = await confirmDelete("Delete this section? This cannot be undone.");
-    if (!confirmed) return;
-    await supabase.from("custom_sections" as any).delete().eq("id", id);
-    setSections(prev => prev.filter(s => s.id !== id));
-    toast({ title: "Section deleted" });
-  };
-
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
 
   return (
     <div className="max-w-2xl space-y-6">
-      <DeleteDialog />
+      <DeleteConfirmDialog />
       <PageHeader
         title="Custom Sections"
-        subtitle="Add unique content blocks to your portfolio — Fun Facts, Process, FAQ, or anything you want."
+        description="Add unique content blocks to your portfolio — Fun Facts, Process, FAQ, or anything you want."
       />
 
       {sections.length === 0 && !showTemplates && (
-        <EmptyState
-          icon="Sparkles"
-          title="No custom sections yet"
-          description="Add predefined templates or create your own free-text sections to make your portfolio unique."
-          actionLabel="Add Section"
-          onAction={() => setShowTemplates(true)}
-        />
+        <Card>
+          <CardContent className="py-12 text-center space-y-4">
+            <Sparkles className="w-10 h-10 mx-auto text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-foreground">No custom sections yet</p>
+              <p className="text-sm text-muted-foreground mt-1">Add predefined templates or create your own free-text sections to make your portfolio unique.</p>
+            </div>
+            <Button onClick={() => setShowTemplates(true)}>
+              <Plus className="w-4 h-4 mr-2" /> Add Section
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* Template picker */}
@@ -184,7 +190,7 @@ const CustomSectionsManager = () => {
                   checked={section.is_visible}
                   onCheckedChange={(v) => updateSection(section.id, { is_visible: v })}
                 />
-                <Button variant="ghost" size="icon" onClick={() => deleteSection(section.id)}>
+                <Button variant="ghost" size="icon" onClick={() => requestDelete(section.id)}>
                   <Trash2 className="w-4 h-4 text-destructive" />
                 </Button>
               </div>
