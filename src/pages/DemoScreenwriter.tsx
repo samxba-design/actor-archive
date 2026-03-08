@@ -893,7 +893,11 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
-  const [knownForVariant, setKnownForVariant] = useState<KnownForVariant>("strip");
+  const [variants, setVariants] = useState<SectionVariants>(defaultVariants);
+
+  const setVariant = <K extends keyof SectionVariants>(key: K, value: SectionVariants[K]) => {
+    setVariants(prev => ({ ...prev, [key]: value }));
+  };
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
@@ -915,7 +919,7 @@ const DemoScreenwriter = () => {
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
-    <KnownForVariantCtx.Provider value={{ variant: knownForVariant, setVariant: setKnownForVariant }}>
+    <SectionVariantsCtx.Provider value={{ variants, setVariant }}>
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
@@ -979,7 +983,7 @@ const DemoScreenwriter = () => {
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
     </PortfolioThemeProvider>
-    </KnownForVariantCtx.Provider>
+    </SectionVariantsCtx.Provider>
   );
 };
 
