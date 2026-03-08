@@ -19,6 +19,9 @@ import SectionArticleFeed from "./sections/SectionArticleFeed";
 import SectionCaseStudies from "./sections/SectionCaseStudies";
 import SectionProductionHistory from "./sections/SectionProductionHistory";
 import SectionWritingSamples from "./sections/SectionWritingSamples";
+import SectionResultsWall from "./sections/SectionResultsWall";
+import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
+import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
@@ -53,6 +56,9 @@ const defaultSectionLabels: Record<string, string> = {
   client_logos: "Clients",
   production_history: "Production History",
   writing_samples: "Writing Samples",
+  results_wall: "Impact Numbers",
+  video_portfolio: "Video Portfolio",
+  campaign_timeline: "Campaign Timeline",
 };
 
 function getContextualLabel(sectionKey: string, profileType: string | null): string {
@@ -193,6 +199,21 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
+        case "results_wall": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).not("metric_callouts", "is", null).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "video_portfolio": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "video"]).not("video_url", "is", null).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "campaign_timeline": {
+          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "case_study"]).order("year", { ascending: false });
+          rows = data || [];
+          break;
+        }
         default:
           break;
       }
@@ -269,6 +290,12 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionWritingSamples items={data} />;
       case "production_history":
         return <SectionProductionHistory items={data} />;
+      case "results_wall":
+        return <SectionResultsWall items={data} />;
+      case "video_portfolio":
+        return <SectionVideoPortfolio items={data} />;
+      case "campaign_timeline":
+        return <SectionCampaignTimeline items={data} />;
       default:
         return null;
     }
