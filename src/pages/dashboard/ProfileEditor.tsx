@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
+import { BioBuilderWizard } from "@/components/dashboard/BioBuilderWizard";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
 
@@ -258,6 +259,11 @@ const ProfileEditor = () => {
                   onApply={(text) => handleApplySuggestion(text, "bio")}
                   title={form.display_name || form.first_name}
                   format={form.profile_type}
+                />
+                <BioBuilderWizard
+                  name={form.display_name || [form.first_name, form.last_name].filter(Boolean).join(" ")}
+                  profileType={form.profile_type}
+                  onApply={(text) => handleApplySuggestion(text, "bio")}
                 />
                 <Button
                   variant="ghost"
