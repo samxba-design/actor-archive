@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const COVERAGE_SYSTEM = `You are a veteran Hollywood script reader with 20+ years of experience at major studios and agencies. You write professional coverage reports that are honest, specific, and actionable.
+const COVERAGE_SYSTEM_SCREEN = `You are a veteran Hollywood script reader with 20+ years of experience at major studios and agencies. You write professional coverage reports that are honest, specific, and actionable.
 
 You evaluate based ONLY on the provided logline, synopsis, and metadata. NEVER invent plot details.
 
@@ -23,9 +23,36 @@ COVERAGE REPORT FORMAT:
 - Comparable titles: 2-3 existing films/shows this reminds you of
 - Reader notes: 1-2 paragraphs of detailed professional feedback`;
 
-const COMP_SYSTEM = `You are a development executive with encyclopedic knowledge of film and television. Given a project's logline, genre, and tone, suggest 3-5 comparable titles ("comps") that would be used in a pitch meeting.
+const COVERAGE_SYSTEM_BOOK = `You are a veteran literary editor and book reviewer with 20+ years of experience at major publishing houses. You write professional manuscript evaluations that are honest, specific, and actionable.
+
+You evaluate based ONLY on the provided synopsis, description, and metadata. NEVER invent plot details.
+
+EVALUATION FORMAT:
+- Rating: RECOMMEND, CONSIDER, or PASS (be honest — most manuscripts get CONSIDER or PASS)
+- Overall impression in 2-3 sentences
+- Concept: Is this a fresh, marketable premise? Rate 1-10
+- Story: Does the narrative arc and structure work? Rate 1-10
+- Character: Are protagonists compelling and well-drawn? Rate 1-10
+- Voice: Based on tone/voice in the writing. Rate 1-10
+- Marketability: Commercial viability and audience potential. Rate 1-10
+- Strengths: 2-3 specific things that work
+- Weaknesses: 2-3 specific areas for improvement
+- Comparable titles: 2-3 existing books this reminds you of
+- Editor notes: 1-2 paragraphs of detailed professional feedback`;
+
+const COMP_SYSTEM_SCREEN = `You are a development executive with encyclopedic knowledge of film and television. Given a project's logline, genre, and tone, suggest 3-5 comparable titles ("comps") that would be used in a pitch meeting.
 
 For each comp, explain WHY it's comparable (tone, structure, audience, theme — not just surface-level genre match). Include box office/audience data when relevant. Focus on titles from the last 15 years when possible.`;
+
+const COMP_SYSTEM_BOOK = `You are a literary agent with encyclopedic knowledge of published books. Given a manuscript's synopsis, genre, and tone, suggest 3-5 comparable titles ("comps") that would be used in a query letter or pitch to editors.
+
+For each comp, explain WHY it's comparable (tone, themes, audience, structure — not just surface-level genre match). Include sales data or awards when relevant. Focus on titles from the last 10 years when possible.`;
+
+const BOOK_TYPES = ["novel", "book", "short_story"];
+
+function isBookProject(projectType?: string): boolean {
+  return BOOK_TYPES.includes(projectType || "");
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -37,6 +64,8 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("API key not configured");
 
+    const isBook = isBookProject(project_type);
+
     if (action === "coverage") {
       const context = [
         title && `Title: "${title}"`,
@@ -45,13 +74,9 @@ serve(async (req) => {
         format && `Format: ${format}`,
       ].filter(Boolean).join(" | ");
 
-      const userPrompt = `Generate a professional coverage report for this project.
-
-${context}
-
-LOGLINE: ${logline || "(not provided)"}
-
-SYNOPSIS: ${synopsis || "(not provided)"}`;
+      const userPrompt = isBook
+        ? `Generate a professional manuscript evaluation for this book.\n\n${context}\n\nSYNOPSIS: ${logline || synopsis || "(not provided)"}\n\nDESCRIPTION: ${synopsis || "(not provided)"}`
+        : `Generate a professional coverage report for this project.\n\n${context}\n\nLOGLINE: ${logline || "(not provided)"}\n\nSYNOPSIS: ${synopsis || "(not provided)"}`;
 
       const tools = [{
         type: "function" as const,
@@ -100,7 +125,7 @@ SYNOPSIS: ${synopsis || "(not provided)"}`;
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
           messages: [
-            { role: "system", content: COVERAGE_SYSTEM },
+            { role: "system", content: isBook ? COVERAGE_SYSTEM_BOOK : COVERAGE_SYSTEM_SCREEN },
             { role: "user", content: userPrompt },
           ],
           tools,
@@ -127,12 +152,9 @@ SYNOPSIS: ${synopsis || "(not provided)"}`;
     }
 
     if (action === "comps") {
-      const userPrompt = `Suggest comparable titles for this project:
-
-Title: "${title || "Untitled"}"
-Type: ${project_type || "screenplay"}
-Genre: ${genre?.join(", ") || "not specified"}
-Logline: ${logline || "(not provided)"}`;
+      const userPrompt = isBook
+        ? `Suggest comparable titles for this book:\n\nTitle: "${title || "Untitled"}"\nType: ${project_type || "novel"}\nGenre: ${genre?.join(", ") || "not specified"}\nSynopsis: ${logline || "(not provided)"}`
+        : `Suggest comparable titles for this project:\n\nTitle: "${title || "Untitled"}"\nType: ${project_type || "screenplay"}\nGenre: ${genre?.join(", ") || "not specified"}\nLogline: ${logline || "(not provided)"}`;
 
       const tools = [{
         type: "function" as const,
@@ -173,7 +195,7 @@ Logline: ${logline || "(not provided)"}`;
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
           messages: [
-            { role: "system", content: COMP_SYSTEM },
+            { role: "system", content: isBook ? COMP_SYSTEM_BOOK : COMP_SYSTEM_SCREEN },
             { role: "user", content: userPrompt },
           ],
           tools,
