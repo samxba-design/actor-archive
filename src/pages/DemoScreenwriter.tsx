@@ -5,6 +5,7 @@ import { getAllThemeFontsUrl } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
+import PortfolioTour from "@/components/portfolio/PortfolioTour";
 import ThemeSwitcher from "@/components/portfolio/ThemeSwitcher";
 import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/LayoutSwitcher";
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";

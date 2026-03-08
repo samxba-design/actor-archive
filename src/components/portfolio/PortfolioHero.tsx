@@ -135,7 +135,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
         <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
           {/* Known For — prominent carousel above identity */}
           {knownFor && knownFor.length > 0 && (
-            <div className="mb-6" style={stagger(0)}>
+            <div id="tour-known-for" className="mb-6" style={stagger(0)}>
               <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
                 {knownFor.slice(0, 6).map((item: any) => {
                   const card = (
@@ -175,7 +175,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           {/* Two-column: left identity, right featured project */}
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-end">
             {/* LEFT: Identity */}
-            <div className="flex-1 min-w-0 space-y-3">
+            <div id="tour-identity" className="flex-1 min-w-0 space-y-3">
               {/* Photo + name + rep inline */}
               <div className="flex items-end gap-4" style={stagger(1)}>
                 {profile.profile_photo_url ? (
@@ -353,7 +353,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
 
             {/* RIGHT: Featured project card — clickable, compact */}
             {featuredProject && (
-              <div className="w-full lg:w-[360px] shrink-0" style={stagger(3)}>
+              <div id="tour-featured" className="w-full lg:w-[360px] shrink-0" style={stagger(3)}>
                 {(() => {
                   const cardLink = featuredProject.imdb_link || featuredProject.script_pdf_url;
                   const cardContent = (
@@ -441,6 +441,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           {/* Stats bar */}
           {stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) && (
             <div
+              id="tour-stats"
               className="flex items-center gap-8 sm:gap-10 mt-6 pt-5"
               style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(6) }}
             >
