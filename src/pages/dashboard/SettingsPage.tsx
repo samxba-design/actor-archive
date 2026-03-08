@@ -257,6 +257,25 @@ const SettingsPage = () => {
         )}
       </Card>
 
+      {/* Custom Domain - Coming Soon */}
+      <Card className="opacity-70">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <CardTitle>Custom Domain</CardTitle>
+            <ProBadge />
+            <Badge variant="outline" className="text-[10px]">Coming Soon</Badge>
+          </div>
+          <CardDescription>Connect your own domain (e.g. yourname.com) to your portfolio</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <Input placeholder="yourname.com" disabled className="flex-1 opacity-50" />
+            <Button disabled variant="outline" size="sm">Connect</Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">Custom domains will be available soon for Pro users. Stay tuned!</p>
+        </CardContent>
+      </Card>
+
       {/* URL */}
       <Card>
         <CardHeader><CardTitle>Portfolio URL</CardTitle></CardHeader>
