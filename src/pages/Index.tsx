@@ -5,9 +5,11 @@ import { themes } from "@/lib/themes";
 import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles,
   BarChart3, Palette, Shield, Zap, Globe, Users,
-  Eye, MessageSquare, FolderOpen, Diamond
+  Eye, MessageSquare, FolderOpen, Diamond, Quote
 } from "lucide-react";
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import MarketingNav from "@/components/MarketingNav";
+import MarketingFooter from "@/components/MarketingFooter";
 
 /* ── data ── */
 const features = [
@@ -33,7 +35,13 @@ const stats = [
   { icon: MessageSquare, value: "18K", label: "Contact Messages" },
 ];
 
-const showcaseThemes = ["noir", "editorial", "spotlight", "midnight"] as const;
+const showcaseThemes = ["noir", "editorial", "spotlight", "midnight", "warm-luxury", "modern-minimal", "frost"] as const;
+
+const testimonials = [
+  { quote: "CreativeSlate finally gave my scripts the showcase they deserve. I booked two generals in the first week.", author: "Maya Chen", role: "Screenwriter", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" },
+  { quote: "I booked two roles directly from agents who found my portfolio. The headshot gallery and stats page are game changers.", author: "Damon Brooks", role: "Actor", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face" },
+  { quote: "The best portfolio platform I've seen for the entertainment industry. Period.", author: "Sofia Ortiz", role: "Director", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" },
+];
 
 /* ── bokeh config ── */
 const BOKEH_COLORS = [
