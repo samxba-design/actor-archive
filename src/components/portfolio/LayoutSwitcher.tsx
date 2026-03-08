@@ -42,7 +42,7 @@ const LayoutSwitcher = forwardRef<HTMLDivElement, Props>(({ currentLayout, onLay
   const current = LAYOUT_PRESETS.find(l => l.id === currentLayout);
 
   return (
-    <div ref={ref} className="fixed bottom-6 left-6 z-50">
+    <div ref={ref} className="fixed bottom-6 left-6 z-50 max-sm:left-3 max-sm:bottom-16">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"

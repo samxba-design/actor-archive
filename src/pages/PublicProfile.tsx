@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { sanitizeCSS } from "@/lib/sanitizeCSS";
 import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
@@ -155,7 +156,7 @@ const PublicProfile = () => {
 
   return (
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
-      {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: profile.custom_css }} />}
+      {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: sanitizeCSS(profile.custom_css) }} />}
 
       <EditModeProvider
         profileId={profile.id}

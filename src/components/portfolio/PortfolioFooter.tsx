@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Send } from "lucide-react";
+import { Send, Loader2, CheckCircle } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 interface Props {
@@ -102,7 +102,7 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                   opacity: sending ? 0.6 : 1,
                 }}
               >
-                <Send className="w-4 h-4" />
+                {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {sending ? "Sending..." : "Send Message"}
               </button>
             </form>
@@ -110,10 +110,12 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
         )}
 
         {sent && (
-          <div className="text-center mb-8">
-            <p className="text-sm mb-2" style={{ color: theme.accentPrimary }}>Thank you! Your message has been sent.</p>
+          <div className="text-center mb-8 py-8 space-y-3">
+            <CheckCircle className="w-10 h-10 mx-auto" style={{ color: theme.accentPrimary }} />
+            <p className="text-lg font-semibold" style={{ color: theme.textPrimary }}>Message sent!</p>
+            <p className="text-sm" style={{ color: theme.textSecondary }}>Thank you for reaching out. You'll hear back soon.</p>
             {profile.auto_responder_enabled && profile.auto_responder_message && (
-              <p className="text-sm max-w-md mx-auto" style={{ color: theme.textSecondary }}>{profile.auto_responder_message}</p>
+              <p className="text-sm max-w-md mx-auto mt-2 px-4 py-3 rounded-lg" style={{ color: theme.textSecondary, backgroundColor: `${theme.accentPrimary}10`, border: `1px solid ${theme.accentPrimary}20` }}>{profile.auto_responder_message}</p>
             )}
           </div>
         )}
