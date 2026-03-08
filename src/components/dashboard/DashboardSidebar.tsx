@@ -58,6 +58,7 @@ const toolsNav: NavItem[] = [
   { title: "Coverage Simulator", url: "/dashboard/coverage", icon: FileText, visibleTo: ["screenwriter", "tv_writer", "playwright", "multi_hyphenate"] },
   { title: "Comp Matcher", url: "/dashboard/comps", icon: Sparkles, visibleTo: ["screenwriter", "tv_writer", "director_producer", "multi_hyphenate"] },
   { title: "Case Study Builder", url: "/dashboard/case-study", icon: PenTool, visibleTo: ["copywriter", "corporate_video", "journalist", "multi_hyphenate"] },
+  { title: "Pitch Email", url: "/dashboard/pitch-email", icon: FileText },
   { title: "Endorsements", url: "/dashboard/endorsements", icon: Heart },
   { title: "Industry Tools", url: "/dashboard/industry", icon: Compass },
 ];
