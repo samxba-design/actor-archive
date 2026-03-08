@@ -425,6 +425,67 @@ const ProjectsManager = () => {
 
               <div><Label>Role / Credit <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={isBookType ? "e.g. Author, Co-Author" : "e.g. Writer, Lead Actor"} /></div>
               <div><Label>{isBookType ? "Cover Image URL" : "Poster URL"} <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
+
+              {/* Advanced Portfolio Display Options */}
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button type="button" variant="outline" size="sm" className="w-full justify-between text-xs">
+                    <span className="flex items-center gap-1.5"><Settings2 className="h-3 w-3" /> Portfolio Display Options</span>
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-3 pt-3">
+                  <p className="text-xs text-muted-foreground">These settings control how your project appears on your public portfolio. Add links, images, and metadata to make your work stand out.</p>
+
+                  <div className="flex items-center justify-between rounded-md border border-border p-3">
+                    <div>
+                      <Label className="text-sm">Feature this project</Label>
+                      <p className="text-xs text-muted-foreground">Display prominently on your portfolio</p>
+                    </div>
+                    <Switch checked={form.is_featured} onCheckedChange={(v) => setForm((f) => ({ ...f, is_featured: v }))} />
+                  </div>
+
+                  <div>
+                    <Label>IMDb / External Link</Label>
+                    <Input value={form.imdb_link} onChange={(e) => setForm((f) => ({ ...f, imdb_link: e.target.value }))} placeholder="https://imdb.com/title/..." />
+                    <p className="text-xs text-muted-foreground mt-1">Visitors can click through to the full page</p>
+                  </div>
+
+                  <div>
+                    <Label>Network / Studio</Label>
+                    <Input value={form.network_or_studio} onChange={(e) => setForm((f) => ({ ...f, network_or_studio: e.target.value }))} placeholder="e.g. HBO, A24, Netflix" />
+                    <p className="text-xs text-muted-foreground mt-1">Displays as a badge on your portfolio</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Format</Label>
+                      <Input value={form.format} onChange={(e) => setForm((f) => ({ ...f, format: e.target.value }))} placeholder="e.g. Feature, Pilot" />
+                    </div>
+                    <div>
+                      <Label>Role Details</Label>
+                      <Input value={form.role_type} onChange={(e) => setForm((f) => ({ ...f, role_type: e.target.value }))} placeholder="e.g. Season 2" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Production Company</Label>
+                    <Input value={form.production_company} onChange={(e) => setForm((f) => ({ ...f, production_company: e.target.value }))} placeholder="e.g. Plan B Entertainment" />
+                  </div>
+
+                  <div>
+                    <Label>Custom Image URL</Label>
+                    <Input value={form.custom_image_url} onChange={(e) => setForm((f) => ({ ...f, custom_image_url: e.target.value }))} placeholder="Upload or paste a custom poster image" />
+                    <p className="text-xs text-muted-foreground mt-1">Overrides the TMDB poster if set</p>
+                  </div>
+
+                  <div>
+                    <Label>Backdrop Image URL</Label>
+                    <Input value={form.backdrop_url} onChange={(e) => setForm((f) => ({ ...f, backdrop_url: e.target.value }))} placeholder="Widescreen banner for featured display" />
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+
               <Button onClick={handleSave} disabled={saving} className="w-full">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {editing ? "Update" : "Create"} Project
