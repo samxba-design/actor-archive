@@ -28,7 +28,10 @@ export type SectionKey =
   | "production_history"
   | "staffing_info"
   | "diversity_programs"
-  | "bio";
+  | "bio"
+  | "results_wall"
+  | "video_portfolio"
+  | "campaign_timeline";
 
 export interface SectionConfig {
   key: SectionKey;
@@ -163,9 +166,13 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
+      { key: "results_wall", label: "Impact Numbers", description: "Aggregated metrics across campaigns" },
       { key: "case_studies", label: "Case Studies", description: "Client work with results" },
+      { key: "video_portfolio", label: "Video Portfolio", description: "Campaign videos & brand films" },
       { key: "writing_samples", label: "Writing Samples", description: "Headlines, long-form, email, UX" },
+      { key: "skills", label: "Specializations", description: "Your areas of expertise" },
       { key: "client_logos", label: "Clients", description: "Brands you've worked with" },
+      { key: "campaign_timeline", label: "Campaign Timeline", description: "Career progression with key campaigns" },
       { key: "testimonials", label: "Testimonials", description: "Client feedback" },
       { key: "services", label: "Services & Rates", description: "What you offer" },
       { key: "press", label: "Press & Features", description: "Coverage and features" },

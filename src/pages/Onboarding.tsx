@@ -11,6 +11,7 @@ import StepActorStats from "@/components/onboarding/StepActorStats";
 import StepTheme from "@/components/onboarding/StepTheme";
 import StepServices from "@/components/onboarding/StepServices";
 import StepComplete from "@/components/onboarding/StepComplete";
+import StepSpecializations from "@/components/onboarding/StepSpecializations";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileType = Database["public"]["Enums"]["profile_type"];
@@ -82,8 +83,13 @@ const Onboarding = () => {
     data.profileType === "actor" ||
     data.secondaryTypes.includes("actor");
 
+  const isCopywriterType =
+    data.profileType === "copywriter" ||
+    data.secondaryTypes.includes("copywriter");
+
   const stepKeys: string[] = ["type", "goal", "basic", "slug"];
   if (isActorType) stepKeys.push("actor");
+  if (isCopywriterType) stepKeys.push("specializations");
   stepKeys.push("theme", "services", "complete");
 
   const totalSteps = stepKeys.length;
@@ -179,6 +185,19 @@ const Onboarding = () => {
         if (servicesError) throw servicesError;
       }
 
+      // Save specializations as skills for copywriters
+      const specializations = (data as any).specializations as string[] | undefined;
+      if (specializations && specializations.length > 0) {
+        const skillRows = specializations.map((name, i) => ({
+          profile_id: user.id,
+          name,
+          category: "Specialization",
+          proficiency: "expert",
+          display_order: i,
+        }));
+        await supabase.from("skills").insert(skillRows);
+      }
+
       toast({ title: "Profile created!", description: "Welcome to CreativeSlate." });
       navigate("/dashboard");
     } catch (err: any) {
@@ -201,6 +220,8 @@ const Onboarding = () => {
         return <StepSlug data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
       case "actor":
         return <StepActorStats data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
+      case "specializations":
+        return <StepSpecializations data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
       case "theme":
         return <StepTheme data={data} updateData={updateData} onNext={handleNext} onBack={handleBack} stepMeta={stepMeta} />;
       case "services":

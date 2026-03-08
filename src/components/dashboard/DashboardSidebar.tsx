@@ -1,7 +1,7 @@
 import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
-  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown
+  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
@@ -41,6 +41,7 @@ const mainNav: NavItem[] = [
   { title: "Gallery", url: "/dashboard/gallery", icon: Image, countTable: "gallery_images" },
   { title: "Services", url: "/dashboard/services", icon: Briefcase, countTable: "services" },
   { title: "Social Links", url: "/dashboard/social", icon: Link2, countTable: "social_links" },
+  { title: "Clients", url: "/dashboard/clients", icon: Building2, visibleTo: ["copywriter", "corporate_video", "multi_hyphenate"], countTable: "client_logos_profile" },
 ];
 
 const contentNav: NavItem[] = [
@@ -77,7 +78,7 @@ const systemNav: NavItem[] = [
 const COUNTABLE_TABLES = [
   "projects", "gallery_images", "services", "social_links",
   "awards", "education", "events", "press", "testimonials",
-  "skills", "representation", "contact_submissions",
+  "skills", "representation", "contact_submissions", "client_logos_profile",
 ] as const;
 
 type CountableTable = typeof COUNTABLE_TABLES[number];
