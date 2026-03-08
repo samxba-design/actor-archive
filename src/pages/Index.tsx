@@ -85,7 +85,7 @@ const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc:
 });
 FeatureCard.displayName = "FeatureCard";
 
-const TestimonialCard = ({ quote, author, role, photo, index }: { quote: string; author: string; role: string; photo: string; index: number }) => {
+const TestimonialCard = forwardRef<HTMLDivElement, { quote: string; author: string; role: string; photo: string; index: number }>(({ quote, author, role, photo, index }, _fRef) => {
   const { ref, inView } = useInView();
   return (
     <div ref={ref} className="relative p-6 rounded-xl border glass-card"
@@ -105,9 +105,10 @@ const TestimonialCard = ({ quote, author, role, photo, index }: { quote: string;
       </div>
     </div>
   );
-};
+});
+TestimonialCard.displayName = "TestimonialCard";
 
-const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
+const StatItem = forwardRef<HTMLDivElement, { icon: any; value: string; label: string; index: number }>(({ icon: Icon, value, label, index }, _fRef) => {
   const { ref, inView } = useInView();
   const [displayed, setDisplayed] = useState(value);
   
