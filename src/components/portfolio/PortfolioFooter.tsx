@@ -73,7 +73,7 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   };
 
   return (
-    <footer id="contact-section" className="mt-16 py-12 px-4" style={{ borderTop: `1px solid ${theme.borderDefault}` }}>
+    <footer id="contact-section" className="mt-16 py-12 px-4" style={{ borderTop: `1px solid ${theme.borderDefault}` }} role="contentinfo" aria-label="Portfolio footer">
       <div className="max-w-[1080px] mx-auto">
         {showContact && !sent && (
           <div className="mb-12 max-w-lg mx-auto">
@@ -83,13 +83,17 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
             >
               Get in Touch
             </h3>
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <input type="text" placeholder="Your name" value={form.sender_name} onChange={e => setForm(f => ({ ...f, sender_name: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
-              <input type="email" placeholder="Your email" value={form.sender_email} onChange={e => setForm(f => ({ ...f, sender_email: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
-              <select value={form.subject_type} onChange={e => setForm(f => ({ ...f, subject_type: e.target.value }))} className="w-full px-3 py-2 text-sm" style={inputStyle}>
+            <form onSubmit={handleSubmit} className="space-y-3" aria-label="Contact form">
+              <label className="sr-only" htmlFor="contact-name">Your name</label>
+              <input id="contact-name" type="text" placeholder="Your name" value={form.sender_name} onChange={e => setForm(f => ({ ...f, sender_name: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
+              <label className="sr-only" htmlFor="contact-email">Your email</label>
+              <input id="contact-email" type="email" placeholder="Your email" value={form.sender_email} onChange={e => setForm(f => ({ ...f, sender_email: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
+              <label className="sr-only" htmlFor="contact-subject">Subject</label>
+              <select id="contact-subject" value={form.subject_type} onChange={e => setForm(f => ({ ...f, subject_type: e.target.value }))} className="w-full px-3 py-2 text-sm" style={inputStyle}>
                 {SUBJECT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
-              <textarea placeholder="Your message" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} required rows={4} className="w-full px-3 py-2 text-sm resize-none" style={inputStyle} />
+              <label className="sr-only" htmlFor="contact-message">Your message</label>
+              <textarea id="contact-message" placeholder="Your message" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} required rows={4} className="w-full px-3 py-2 text-sm resize-none" style={inputStyle} />
               <button
                 type="submit"
                 disabled={sending}
