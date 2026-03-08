@@ -1,14 +1,13 @@
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
+import CinematicBackground from "@/components/CinematicBackground";
+import SEOHead from "@/components/SEOHead";
 
 const Terms = () => (
   <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
-    <div className="gradient-mesh">
-      <div className="gradient-mesh-orb gradient-mesh-orb--1" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--2" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--3" />
-    </div>
-    <div className="cinema-vignette" />
+    <SEOHead title="Terms of Service" description="Terms and conditions for using CreativeSlate portfolio platform." path="/terms" />
+    <CinematicBackground bokehCount={6} />
+    
     <MarketingNav />
     <div className="max-w-3xl mx-auto px-6 pt-20 pb-24 relative z-10">
       <h1 className="text-4xl font-bold tracking-tight mb-8" style={{ color: "hsl(var(--landing-fg))" }}>Terms of Service</h1>

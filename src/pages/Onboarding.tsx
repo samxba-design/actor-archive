@@ -237,11 +237,26 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-muted">
-        <div
-          className="h-full bg-primary transition-all duration-500 ease-out"
-          style={{ width: `${(currentProgress / totalSteps) * 100}%` }}
-        />
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center">
+        <div className="flex-1 h-1 bg-muted">
+          <div
+            className="h-full bg-primary transition-all duration-500 ease-out"
+            style={{ width: `${(currentProgress / totalSteps) * 100}%` }}
+          />
+        </div>
+        {/* Skip button — always visible except on complete step */}
+        {stepKeys[step] !== "complete" && (
+          <button
+            onClick={async () => {
+              await persistDraft();
+              await supabase.from("profiles").update({ onboarding_completed: true, is_draft: false }).eq("id", user!.id);
+              navigate("/dashboard");
+            }}
+            className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+          >
+            Skip for now →
+          </button>
+        )}
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
         {renderStep()}

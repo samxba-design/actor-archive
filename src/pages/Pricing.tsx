@@ -10,6 +10,8 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
+import CinematicBackground from "@/components/CinematicBackground";
+import SEOHead from "@/components/SEOHead";
 import { useSubscription, STRIPE_PRICES } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -100,13 +102,12 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
-      {/* Cinematic background */}
-      <div className="gradient-mesh">
-        <div className="gradient-mesh-orb gradient-mesh-orb--1" />
-        <div className="gradient-mesh-orb gradient-mesh-orb--2" />
-        <div className="gradient-mesh-orb gradient-mesh-orb--3" />
-      </div>
-      <div className="cinema-vignette" />
+      <SEOHead
+        title="Pricing — Simple, Transparent Plans"
+        description="Start free forever. Upgrade to Pro for unlimited projects, 10+ themes, AI tools, analytics, and custom domains."
+        path="/pricing"
+      />
+      <CinematicBackground bokehCount={10} />
 
       <MarketingNav />
 
