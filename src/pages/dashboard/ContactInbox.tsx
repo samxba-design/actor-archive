@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -46,11 +47,12 @@ const ContactInbox = () => {
     setMessages((prev) => prev.map((m) => m.id === id ? { ...m, [field]: value } : m));
   };
 
-  const handleDelete = async (id: string) => {
+  const performDelete = useCallback(async (id: string) => {
     await supabase.from("contact_submissions").delete().eq("id", id);
     setMessages((prev) => prev.filter((m) => m.id !== id));
     setSelected(null);
-  };
+  }, []);
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this message?", description: "This message will be permanently deleted." });
 
   const openMessage = (m: Submission) => {
     setSelected(m);
@@ -149,7 +151,7 @@ const ContactInbox = () => {
                   <Button variant="ghost" size="sm" onClick={() => { toggleField(selected.id, "is_archived", true); setSelected(null); }}>
                     <Archive className="mr-1 h-4 w-4" /> Archive
                   </Button>
-                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => handleDelete(selected.id)}>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => requestDelete(selected.id)}>
                     <Trash2 className="mr-1 h-4 w-4" /> Delete
                   </Button>
                 </div>
@@ -158,6 +160,7 @@ const ContactInbox = () => {
           )}
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog />
     </div>
   );
 };

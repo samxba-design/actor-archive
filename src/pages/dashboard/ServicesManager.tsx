@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import PageHeader from "@/components/dashboard/PageHeader";
 import EmptyState from "@/components/dashboard/EmptyState";
 import { useAuth } from "@/hooks/useAuth";
@@ -113,10 +114,11 @@ const ServicesManager = () => {
     setSaving(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const performDelete = useCallback(async (id: string) => {
     await supabase.from("services").delete().eq("id", id);
     fetch();
-  };
+  }, [user]);
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this service?", description: "This service will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
 
@@ -150,7 +152,7 @@ const ServicesManager = () => {
                 </div>
                 <div className="flex gap-1 shrink-0">
                   <Button variant="ghost" size="icon" onClick={() => openEdit(item)}><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => requestDelete(item.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                 </div>
               </CardContent>
             </Card>
@@ -183,6 +185,7 @@ const ServicesManager = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DeleteConfirmDialog />
     </div>
   );
 };

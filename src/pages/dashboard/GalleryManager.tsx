@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,15 +67,19 @@ const GalleryManager = () => {
     toast({ title: "Uploaded", description: `${files.length} image(s) added.` });
   };
 
-  const handleDelete = async (img: GalleryImage) => {
-    await supabase.from("gallery_images").delete().eq("id", img.id);
-    // Try to clean storage too
-    try {
-      const urlParts = img.image_url.split("/gallery/");
-      if (urlParts[1]) await supabase.storage.from("gallery").remove([urlParts[1]]);
-    } catch {}
+  const [pendingDeleteImg, setPendingDeleteImg] = useState<GalleryImage | null>(null);
+  const performDeleteImg = useCallback(async (id: string) => {
+    const img = images.find(i => i.id === id);
+    await supabase.from("gallery_images").delete().eq("id", id);
+    if (img) {
+      try {
+        const urlParts = img.image_url.split("/gallery/");
+        if (urlParts[1]) await supabase.storage.from("gallery").remove([urlParts[1]]);
+      } catch {}
+    }
     fetchImages();
-  };
+  }, [images, user]);
+  const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDeleteImg, { title: "Delete this image?", description: "This image will be permanently removed from your gallery." });
 
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
@@ -128,7 +133,7 @@ const GalleryManager = () => {
                   variant="destructive"
                   size="icon"
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDelete(img)}
+                  onClick={() => requestDelete(img.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -140,6 +145,7 @@ const GalleryManager = () => {
           ))}
         </div>
       )}
+      <DeleteConfirmDialog />
     </div>
   );
 };
