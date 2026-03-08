@@ -124,6 +124,12 @@ const ClassicLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <>
+      {/* Known For — poster strip */}
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Known For" index={-1}>
+          <SectionKnownFor items={mockKnownFor} variant="strip" />
+        </PortfolioSectionWrapper>
+      </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Logline Showcase" index={0}>
           <SectionLoglineShowcase items={mockLoglines} />
@@ -136,12 +142,10 @@ const ClassicLayout = () => {
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          {/* Featured hero credit */}
           <CreditHeroCard project={mockCredits[0]} />
-          {/* Remaining credits as rows */}
           <div className="mt-4 space-y-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${theme.borderDefault}` }}>
             {mockCredits.slice(1).map(c => (
-              <div key={c.id} className="flex items-center gap-4 px-4 py-3 transition-colors" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
+              <a key={c.id} href={c.imdb_link || undefined} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 transition-colors no-underline" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}60`)}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
@@ -163,13 +167,13 @@ const ClassicLayout = () => {
                   {c.genre?.length > 0 && (
                     <div className="flex gap-1 mt-1">
                       {c.genre.map((g: string) => (
-                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textTertiary }}>{g}</span>
+                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.textSecondary }}>{g}</span>
                       ))}
                     </div>
                   )}
                 </div>
                 <span className="text-sm tabular-nums" style={{ color: theme.textTertiary }}>{c.year}</span>
-              </div>
+              </a>
             ))}
           </div>
         </PortfolioSectionWrapper>
@@ -187,6 +191,12 @@ const ClassicLayout = () => {
       <div className="mb-10">
         <PortfolioSectionWrapper title="Press & Reviews" index={5}>
           <SectionPress items={mockPress} />
+        </PortfolioSectionWrapper>
+      </div>
+      {/* Client logos — bar above services */}
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Written For" index={7}>
+          <SectionClientLogos companies={mockClients} variant="bar" />
         </PortfolioSectionWrapper>
       </div>
       <div>
