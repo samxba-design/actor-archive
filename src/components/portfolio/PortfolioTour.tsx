@@ -5,9 +5,10 @@ interface TourStep {
   targetId: string;
   title: string;
   description: string;
+  profileTypes?: string[]; // If set, only show for these types
 }
 
-const TOUR_STEPS: TourStep[] = [
+const ALL_TOUR_STEPS: TourStep[] = [
   {
     targetId: "tour-identity",
     title: "Your Identity",
@@ -17,6 +18,7 @@ const TOUR_STEPS: TourStep[] = [
     targetId: "tour-known-for",
     title: "Known For",
     description: "Showcase up to 6 key credits with poster art. These auto-link to IMDb.",
+    profileTypes: ["screenwriter", "tv_writer", "playwright", "actor", "director_producer"],
   },
   {
     targetId: "tour-featured",
@@ -37,7 +39,11 @@ const TOUR_STEPS: TourStep[] = [
 
 const STORAGE_KEY = "portfolio-tour-seen";
 
-const PortfolioTour = () => {
+interface PortfolioTourProps {
+  profileType?: string;
+}
+
+const PortfolioTour = ({ profileType }: PortfolioTourProps) => {
   const [active, setActive] = useState(false);
   const [step, setStep] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<DOMRect | null>(null);
@@ -45,26 +51,36 @@ const PortfolioTour = () => {
   const [fadeIn, setFadeIn] = useState(false);
   const tooltipRef = useRef<HTMLDivElement>(null);
 
+  // Filter steps: only include steps whose target exists in the DOM and matches profile type
+  const [availableSteps, setAvailableSteps] = useState<TourStep[]>([]);
+
   useEffect(() => {
     const seen = localStorage.getItem(STORAGE_KEY);
     if (!seen) {
       const timer = setTimeout(() => {
+        // Filter to steps that exist in the DOM and match profile type
+        const validSteps = ALL_TOUR_STEPS.filter((s) => {
+          if (s.profileTypes && profileType && !s.profileTypes.includes(profileType)) return false;
+          return document.getElementById(s.targetId) !== null;
+        });
+        if (validSteps.length === 0) return;
+        setAvailableSteps(validSteps);
         setActive(true);
         setFadeIn(true);
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [profileType]);
 
   const positionSpotlight = useCallback(() => {
-    if (!active) return;
-    const currentStep = TOUR_STEPS[step];
+    if (!active || availableSteps.length === 0) return;
+    const currentStep = availableSteps[step];
+    if (!currentStep) return;
     const el = document.getElementById(currentStep.targetId);
     if (el) {
       const rect = el.getBoundingClientRect();
       setSpotlightRect(rect);
 
-      // Position tooltip below or above the element
       const tooltipH = 160;
       const spaceBelow = window.innerHeight - rect.bottom;
       const below = spaceBelow > tooltipH + 20;
@@ -75,9 +91,14 @@ const PortfolioTour = () => {
         arrowSide: below ? "top" : "bottom",
       });
     } else {
-      setSpotlightRect(null);
+      // Element no longer exists — skip to next
+      if (step < availableSteps.length - 1) {
+        setStep(s => s + 1);
+      } else {
+        dismiss();
+      }
     }
-  }, [active, step]);
+  }, [active, step, availableSteps]);
 
   useEffect(() => {
     positionSpotlight();
@@ -98,13 +119,12 @@ const PortfolioTour = () => {
   }, []);
 
   const next = useCallback(() => {
-    if (step < TOUR_STEPS.length - 1) {
+    if (step < availableSteps.length - 1) {
       setFadeIn(false);
       setTimeout(() => {
         setStep(s => s + 1);
         setFadeIn(true);
-        // Scroll target into view
-        const nextEl = document.getElementById(TOUR_STEPS[step + 1].targetId);
+        const nextEl = document.getElementById(availableSteps[step + 1].targetId);
         if (nextEl) {
           nextEl.scrollIntoView({ behavior: "smooth", block: "center" });
         }
@@ -112,11 +132,12 @@ const PortfolioTour = () => {
     } else {
       dismiss();
     }
-  }, [step, dismiss]);
+  }, [step, dismiss, availableSteps]);
 
-  if (!active) return null;
+  if (!active || availableSteps.length === 0) return null;
 
-  const currentStep = TOUR_STEPS[step];
+  const currentStep = availableSteps[step];
+  if (!currentStep) return null;
   const pad = 8;
 
   return (
@@ -184,12 +205,11 @@ const PortfolioTour = () => {
             boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
           }}
         >
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5" style={{ color: "#f0c674" }} />
               <span className="text-[10px] font-semibold uppercase tracking-[0.12em]" style={{ color: "rgba(255,255,255,0.45)" }}>
-                {step + 1} of {TOUR_STEPS.length}
+                {step + 1} of {availableSteps.length}
               </span>
             </div>
             <button onClick={dismiss} className="p-1 rounded-md transition-colors hover:bg-white/10">
@@ -204,7 +224,6 @@ const PortfolioTour = () => {
             </p>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-between pt-1">
             <button
               onClick={dismiss}
@@ -222,7 +241,7 @@ const PortfolioTour = () => {
                 border: "1px solid rgba(255,255,255,0.15)",
               }}
             >
-              {step < TOUR_STEPS.length - 1 ? (
+              {step < availableSteps.length - 1 ? (
                 <>Next <ArrowRight className="w-3 h-3" /></>
               ) : (
                 "Got it!"
@@ -230,9 +249,8 @@ const PortfolioTour = () => {
             </button>
           </div>
 
-          {/* Progress dots */}
           <div className="flex justify-center gap-1.5">
-            {TOUR_STEPS.map((_, i) => (
+            {availableSteps.map((_, i) => (
               <div
                 key={i}
                 className="w-1.5 h-1.5 rounded-full transition-all duration-300"
