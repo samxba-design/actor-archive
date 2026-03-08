@@ -587,12 +587,41 @@ const StandardLayout = () => (
         <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
       <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
         <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press & Reviews" index={6}>
         <PressWithToggle items={mockPress} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+      <PortfolioSectionWrapper title="Gallery" index={7}>
+        <GalleryWithToggle items={mockGallery} />
+      </PortfolioSectionWrapper>
+      <div className="space-y-6">
+        <PortfolioSectionWrapper title="Skills" index={8}>
+          <SkillsWithToggle items={mockSkills} />
+        </PortfolioSectionWrapper>
+        <PortfolioSectionWrapper title="Education" index={9}>
+          <EducationWithToggle items={mockEducation} />
+        </PortfolioSectionWrapper>
+      </div>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+      <PortfolioSectionWrapper title="Demo Reels" index={10}>
+        <DemoReelsWithToggle items={mockDemoReels} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Events" index={11}>
+        <EventsWithToggle items={mockEvents} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <PortfolioSectionWrapper title="Representation" index={12}>
+        <RepresentationWithToggle items={mockRepresentation} />
+      </PortfolioSectionWrapper>
+      <PortfolioSectionWrapper title="Production History" index={13}>
+        <ProductionsWithToggle items={mockProductions} />
       </PortfolioSectionWrapper>
     </div>
   </>
