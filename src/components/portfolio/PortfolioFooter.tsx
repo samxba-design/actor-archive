@@ -96,6 +96,11 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
               Get in Touch
             </h3>
             <form onSubmit={handleSubmit} className="space-y-3" aria-label="Contact form">
+              {/* Honeypot field - hidden from real users */}
+              <div className="absolute opacity-0 h-0 w-0 overflow-hidden" aria-hidden="true" tabIndex={-1}>
+                <label htmlFor="contact-website">Website</label>
+                <input id="contact-website" type="text" value={form.website} onChange={e => setForm(f => ({ ...f, website: e.target.value }))} tabIndex={-1} autoComplete="off" />
+              </div>
               <label className="sr-only" htmlFor="contact-name">Your name</label>
               <input id="contact-name" type="text" placeholder="Your name" value={form.sender_name} onChange={e => setForm(f => ({ ...f, sender_name: e.target.value }))} required className="w-full px-3 py-2 text-sm" style={inputStyle} />
               <label className="sr-only" htmlFor="contact-email">Your email</label>
