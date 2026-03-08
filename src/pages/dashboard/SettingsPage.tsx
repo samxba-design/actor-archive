@@ -94,6 +94,10 @@ const SettingsPage = () => {
         show_contact_form: form.show_contact_form,
         available_for_hire: form.available_for_hire,
         seeking_representation: form.seeking_representation,
+        cta_label: form.cta_label || null,
+        cta_url: form.cta_url || null,
+        cta_type: form.cta_type || "contact_form",
+        booking_url: form.booking_url || null,
         section_order: sectionOrder,
         sections_visible: sectionsVisible,
       } as any)
