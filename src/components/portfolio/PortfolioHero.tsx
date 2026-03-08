@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote } from "lucide-react";
+import { MapPin, ExternalLink, ChevronDown, ChevronUp, Quote, Play } from "lucide-react";
+import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import BookingModal from "./BookingModal";
 import PortfolioCTA from "./PortfolioCTA";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
@@ -21,7 +22,7 @@ const PRESET_GRADIENTS: Record<string, string> = {
 };
 
 export type HeroLayout = 'classic' | 'centered' | 'split' | 'minimal' | 'banner' | 'sidebar' | 'editorial' | 'card' | 'stacked' | 'cinematic' | 'compact';
-export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'none';
+export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'showreel' | 'none';
 export type HeroKnownForStyle = 'strip' | 'large' | 'text' | 'hidden';
 
 interface Props {
@@ -57,6 +58,7 @@ interface Props {
   heroKnownFor?: HeroKnownForStyle;
   services?: any[];
   testimonials?: any[];
+  demoReels?: any[];
   imageAnimation?: string;
 }
 
@@ -66,7 +68,7 @@ const platformIcons: Record<string, string> = {
   website: "🌐", spotlight: "★",
 };
 
-const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, imageAnimation = 'none' }: Props) => {
+const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, featuredProject, stats, knownFor, heroLayout = 'classic', heroRightContent = 'featured', heroKnownFor = 'strip', services, testimonials, demoReels, imageAnimation = 'none' }: Props) => {
   const theme = usePortfolioTheme();
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
