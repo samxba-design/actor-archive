@@ -48,13 +48,15 @@ const ProfileEditor = () => {
     banner_url: "",
     profile_type: "",
     primary_goal: "",
+    hero_style: "full",
+    hero_background_preset: "",
   });
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal")
+      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
