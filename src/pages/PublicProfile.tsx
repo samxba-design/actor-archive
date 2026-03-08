@@ -208,6 +208,7 @@ const PublicProfile = () => {
           <ArrowUp className="h-5 w-5" />
         </button>
       )}
+      </EditModeProvider>
     </PortfolioThemeProvider>
   );
 };
