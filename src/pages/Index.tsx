@@ -398,6 +398,63 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Live Demo CTA */}
+      <section className="py-20 px-6 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl glass-card"
+            style={{ border: "1px solid hsl(var(--landing-accent) / 0.3)", background: "hsl(var(--landing-card) / 0.5)" }}>
+            <div className="absolute inset-0 pointer-events-none"
+              style={{ background: "radial-gradient(ellipse at 30% 50%, hsl(var(--landing-accent) / 0.08) 0%, transparent 60%)" }} />
+            <div className="relative flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
+              <div className="flex-1 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs"
+                  style={{ background: "hsl(var(--landing-accent) / 0.1)", color: "hsl(var(--landing-champagne))" }}>
+                  <Sparkles className="h-3 w-3" /> Live Example
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>
+                  See what a finished portfolio looks like
+                </h2>
+                <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--landing-muted))" }}>
+                  Explore a fully fleshed-out screenwriter portfolio with produced credits, awards, script library, testimonials, and more.
+                </p>
+                <Button size="lg" asChild
+                  className="font-semibold border-0 text-white"
+                  style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                  <Link to="/demo/screenwriter">
+                    View Live Demo <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+              {/* Mini preview card */}
+              <div className="w-full md:w-64 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl"
+                style={{ border: "1px solid hsl(var(--landing-border))" }}>
+                <div className="aspect-[3/4] relative" style={{ background: "hsl(40 30% 96%)" }}>
+                  <img
+                    src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=200&fit=crop"
+                    alt="Demo portfolio preview"
+                    className="w-full h-24 object-cover"
+                  />
+                  <div className="p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-amber-800" />
+                      <div>
+                        <div className="h-2 w-20 rounded-full" style={{ background: "hsl(30 15% 25%)" }} />
+                        <div className="h-1.5 w-14 rounded-full mt-1" style={{ background: "hsl(30 10% 70%)" }} />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      {[1,2,3].map(n => (
+                        <div key={n} className="h-8 rounded" style={{ background: "hsl(40 25% 93%)", border: "1px solid hsl(40 18% 82%)" }} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Theme showcase */}
       <section className="py-24 px-6 relative z-10">
         <div className="text-center mb-12">

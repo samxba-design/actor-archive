@@ -22,6 +22,7 @@ interface Props {
     cta_type: string | null;
     booking_url: string | null;
   };
+  socialLinks?: any[];
 }
 
 const typeLabels: Record<string, string> = {
@@ -50,23 +51,25 @@ const platformIcons: Record<string, string> = {
   spotlight: "★",
 };
 
-const PortfolioHero = ({ profile }: Props) => {
+const PortfolioHero = ({ profile, socialLinks: socialLinksProp }: Props) => {
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [socialLinks, setSocialLinks] = useState<any[]>([]);
+  const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
   const [scrollY, setScrollY] = useState(0);
   const bannerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch social links for hero display
+  const socialLinks = socialLinksProp || fetchedLinks;
+
+  // Fetch social links for hero display (skip if prop provided)
   useEffect(() => {
-    if (!profile.id) return;
+    if (socialLinksProp || !profile.id) return;
     supabase
       .from("social_links")
       .select("*")
       .eq("profile_id", profile.id)
       .order("display_order")
-      .then(({ data }) => setSocialLinks(data || []));
-  }, [profile.id]);
+      .then(({ data }) => setFetchedLinks(data || []));
+  }, [profile.id, socialLinksProp]);
 
   // Parallax
   useEffect(() => {
