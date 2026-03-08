@@ -3,6 +3,7 @@ import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 interface Props {
   items: any[];
+  variant?: 'feed' | 'cards' | 'quotes';
 }
 
 const PRESS_TYPE_CONFIG: Record<string, { icon: any; color: string }> = {
@@ -12,8 +13,11 @@ const PRESS_TYPE_CONFIG: Record<string, { icon: any; color: string }> = {
   default: { icon: Newspaper, color: '#888' },
 };
 
-const SectionPress = ({ items }: Props) => {
+const SectionPress = ({ items, variant = 'feed' }: Props) => {
   const theme = usePortfolioTheme();
+
+  if (variant === 'cards') return <CardsVariant items={items} theme={theme} />;
+  if (variant === 'quotes') return <QuotesVariant items={items} theme={theme} />;
 
   return (
     <div className="space-y-2">
@@ -21,38 +25,20 @@ const SectionPress = ({ items }: Props) => {
         const typeConfig = PRESS_TYPE_CONFIG[p.press_type] || PRESS_TYPE_CONFIG.default;
         const TypeIcon = typeConfig.icon;
         return (
-          <div
-            key={p.id}
-            className="py-3 transition-all group"
-            style={{
-              borderBottom: `1px solid ${theme.borderDefault}`,
-            }}
-          >
+          <div key={p.id} className="py-3 transition-all group" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}>
             <div className="flex items-start gap-3">
-              {/* Colored type icon */}
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5" 
-                style={{ backgroundColor: `${typeConfig.color}18` }}>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${typeConfig.color}18` }}>
                 <TypeIcon className="w-3.5 h-3.5" style={{ color: typeConfig.color }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-0.5">
-                  {p.publication && (
-                    <span className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: theme.accentPrimary }}>
-                      {p.publication}
-                    </span>
-                  )}
+                  {p.publication && <span className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: theme.accentPrimary }}>{p.publication}</span>}
                   {p.date && <span className="text-[11px]" style={{ color: theme.textTertiary }}>{p.date}</span>}
                 </div>
                 <p className="font-medium text-[13px] leading-snug" style={{ color: theme.textPrimary }}>{p.title}</p>
                 {p.pull_quote && (
-                  <blockquote
-                    className="mt-1.5 text-[13px] italic leading-relaxed pl-3"
-                    style={{
-                      color: theme.textSecondary,
-                      borderLeft: `2px solid ${typeConfig.color}50`,
-                      fontFamily: theme.fontLogline,
-                    }}
-                  >
+                  <blockquote className="mt-1.5 text-[13px] italic leading-relaxed pl-3"
+                    style={{ color: theme.textSecondary, borderLeft: `2px solid ${typeConfig.color}50`, fontFamily: theme.fontLogline }}>
                     "{p.pull_quote}"
                   </blockquote>
                 )}
@@ -65,20 +51,89 @@ const SectionPress = ({ items }: Props) => {
                     </div>
                   )}
                   {p.article_url && (
-                    <a
-                      href={p.article_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <a href={p.article_url} target="_blank" rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-medium transition-colors"
-                      style={{ color: theme.accentPrimary }}
-                    >
-                      Read
-                      <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
+                      style={{ color: theme.accentPrimary }}>
+                      Read <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
                     </a>
                   )}
                 </div>
               </div>
             </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+/* ── Cards variant: boxed cards ── */
+const CardsVariant = ({ items, theme }: { items: any[]; theme: any }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    {items.map((p) => {
+      const typeConfig = PRESS_TYPE_CONFIG[p.press_type] || PRESS_TYPE_CONFIG.default;
+      const TypeIcon = typeConfig.icon;
+      return (
+        <div key={p.id} className="p-4 space-y-2 transition-all duration-200" style={{
+          backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary,
+          backdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined,
+          border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
+          borderRadius: theme.cardRadius,
+        }}>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${typeConfig.color}18` }}>
+              <TypeIcon className="w-3.5 h-3.5" style={{ color: typeConfig.color }} />
+            </div>
+            {p.publication && <span className="text-[10px] font-bold uppercase tracking-[0.1em]" style={{ color: theme.accentPrimary }}>{p.publication}</span>}
+            {p.date && <span className="text-[10px] ml-auto" style={{ color: theme.textTertiary }}>{p.date}</span>}
+          </div>
+          <p className="font-medium text-[14px] leading-snug" style={{ color: theme.textPrimary, fontFamily: theme.fontDisplay }}>{p.title}</p>
+          {p.star_rating && (
+            <div className="flex gap-0.5">
+              {Array.from({ length: p.star_rating }).map((_, i) => (
+                <Star key={i} className="w-3 h-3 fill-current" style={{ color: '#C9A96E' }} />
+              ))}
+            </div>
+          )}
+          {p.article_url && (
+            <a href={p.article_url} target="_blank" rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-medium" style={{ color: theme.accentPrimary }}>
+              Read article <ArrowRight className="w-2.5 h-2.5" />
+            </a>
+          )}
+        </div>
+      );
+    })}
+  </div>
+);
+
+/* ── Quotes variant: pull-quote focused ── */
+const QuotesVariant = ({ items, theme }: { items: any[]; theme: any }) => {
+  const withQuotes = items.filter(p => p.pull_quote);
+  if (withQuotes.length === 0) return <SectionPress items={items} variant="feed" />;
+
+  return (
+    <div className="space-y-6">
+      {withQuotes.map((p) => {
+        const typeConfig = PRESS_TYPE_CONFIG[p.press_type] || PRESS_TYPE_CONFIG.default;
+        return (
+          <div key={p.id} className="space-y-2">
+            <blockquote className="text-lg sm:text-xl italic leading-relaxed"
+              style={{ color: theme.textPrimary, fontFamily: theme.fontLogline }}>
+              "{p.pull_quote}"
+            </blockquote>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-px" style={{ backgroundColor: theme.accentPrimary }} />
+              <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>{p.publication}</span>
+              {p.star_rating && (
+                <div className="flex gap-0.5 ml-2">
+                  {Array.from({ length: p.star_rating }).map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-current" style={{ color: '#C9A96E' }} />
+                  ))}
+                </div>
+              )}
+            </div>
+            <p className="text-[12px]" style={{ color: theme.textSecondary }}>{p.title}</p>
           </div>
         );
       })}

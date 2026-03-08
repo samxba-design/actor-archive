@@ -20,32 +20,138 @@ import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
-/* ── Known For variant context (shared across layouts) ── */
-const KnownForVariantCtx = createContext<{ variant: KnownForVariant; setVariant: (v: KnownForVariant) => void }>({ variant: 'strip', setVariant: () => {} });
-const useKnownForVariant = () => useContext(KnownForVariantCtx);
+/* ── Unified section variants context ── */
+interface SectionVariants {
+  knownFor: KnownForVariant;
+  loglines: 'editorial' | 'cards' | 'minimal';
+  scripts: 'detailed' | 'grid' | 'compact';
+  credits: 'poster' | 'table' | 'grid';
+  awards: 'list' | 'grid' | 'laurels';
+  testimonials: 'carousel' | 'cards' | 'wall' | 'single';
+  press: 'feed' | 'cards' | 'quotes';
+  services: 'full' | 'compact' | 'pricing';
+  clientLogos: 'bar' | 'grid' | 'marquee';
+}
 
-const KNOWN_FOR_OPTIONS = [
-  { key: 'strip', label: 'Strip' },
-  { key: 'scroll', label: 'Scroll' },
-  { key: 'grid', label: 'Grid' },
-  { key: 'stack', label: 'Stack' },
-  { key: 'spotlight', label: 'Spotlight' },
-];
+const defaultVariants: SectionVariants = {
+  knownFor: 'strip',
+  loglines: 'editorial',
+  scripts: 'detailed',
+  credits: 'poster',
+  awards: 'list',
+  testimonials: 'carousel',
+  press: 'feed',
+  services: 'full',
+  clientLogos: 'bar',
+};
 
-const KnownForWithToggle = ({ items, display }: { items: any[]; display?: 'both' | 'image' | 'text' }) => {
-  const { variant, setVariant } = useKnownForVariant();
+const SectionVariantsCtx = createContext<{
+  variants: SectionVariants;
+  setVariant: <K extends keyof SectionVariants>(key: K, value: SectionVariants[K]) => void;
+}>({ variants: defaultVariants, setVariant: () => {} });
+const useSectionVariants = () => useContext(SectionVariantsCtx);
+
+/* ── Option definitions ── */
+const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: string }[]> = {
+  knownFor: [
+    { key: 'strip', label: 'Strip' }, { key: 'scroll', label: 'Scroll' }, { key: 'grid', label: 'Grid' },
+    { key: 'stack', label: 'Stack' }, { key: 'spotlight', label: 'Spotlight' },
+  ],
+  loglines: [
+    { key: 'editorial', label: 'Editorial' }, { key: 'cards', label: 'Cards' }, { key: 'minimal', label: 'Minimal' },
+  ],
+  scripts: [
+    { key: 'detailed', label: 'Detailed' }, { key: 'grid', label: 'Grid' }, { key: 'compact', label: 'Compact' },
+  ],
+  credits: [
+    { key: 'poster', label: 'Poster' }, { key: 'table', label: 'Table' }, { key: 'grid', label: 'Grid' },
+  ],
+  awards: [
+    { key: 'list', label: 'List' }, { key: 'grid', label: 'Grid' }, { key: 'laurels', label: 'Laurels' },
+  ],
+  testimonials: [
+    { key: 'carousel', label: 'Carousel' }, { key: 'cards', label: 'Cards' }, { key: 'wall', label: 'Wall' }, { key: 'single', label: 'Featured' },
+  ],
+  press: [
+    { key: 'feed', label: 'Feed' }, { key: 'cards', label: 'Cards' }, { key: 'quotes', label: 'Quotes' },
+  ],
+  services: [
+    { key: 'full', label: 'Full' }, { key: 'compact', label: 'Compact' }, { key: 'pricing', label: 'Pricing' },
+  ],
+  clientLogos: [
+    { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
+  ],
+};
+
+/* ── Toggle wrapper components ── */
+const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {
+  const { variants, setVariant } = useSectionVariants();
   return (
     <>
       <SectionOptionsBar
-        sectionName="Known For"
-        options={KNOWN_FOR_OPTIONS}
-        value={variant}
-        onChange={(v) => setVariant(v as KnownForVariant)}
+        sectionName={sectionName}
+        options={VARIANT_OPTIONS[sectionKey]}
+        value={variants[sectionKey]}
+        onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
       />
-      <SectionKnownFor items={items} variant={variant} display={display} />
+      {children(variants[sectionKey])}
     </>
   );
 };
+
+const KnownForWithToggle = ({ items, display }: { items: any[]; display?: 'both' | 'image' | 'text' }) => (
+  <WithToggle sectionKey="knownFor" sectionName="Known For">
+    {(variant) => <SectionKnownFor items={items} variant={variant} display={display} />}
+  </WithToggle>
+);
+
+const LoglinesWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="loglines" sectionName="Loglines">
+    {(variant) => <SectionLoglineShowcase items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ScriptsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="scripts" sectionName="Scripts">
+    {(variant) => <SectionScriptLibrary items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const CreditsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="credits" sectionName="Credits">
+    {(variant) => <SectionProjects items={items} profileType="screenwriter" layout={variant} />}
+  </WithToggle>
+);
+
+const AwardsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="awards" sectionName="Awards">
+    {(variant) => <SectionAwards items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const TestimonialsWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="testimonials" sectionName="Testimonials">
+    {(variant) => <SectionTestimonials items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const PressWithToggle = ({ items }: { items: any[] }) => (
+  <WithToggle sectionKey="press" sectionName="Press">
+    {(variant) => <SectionPress items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ServicesWithToggle = ({ items, compact }: { items: any[]; compact?: boolean }) => (
+  <WithToggle sectionKey="services" sectionName="Services">
+    {(variant) => <SectionServices items={items} variant={variant} />}
+  </WithToggle>
+);
+
+const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
+  <WithToggle sectionKey="clientLogos" sectionName="Client Logos">
+    {(variant) => <SectionClientLogos companies={companies} variant={variant} />}
+  </WithToggle>
+);
 
 /* ══════════════════════ MOCK DATA ══════════════════════ */
 const mockProfile = {
@@ -190,81 +296,47 @@ const ClassicLayout = () => {
     <>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-10">
-      <PortfolioSectionWrapper title="Logline Showcase" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
+          <KnownForWithToggle items={mockKnownFor} />
+        </PortfolioSectionWrapper>
+      </div>
+      <div className="mb-10">
+        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
+          <LoglinesWithToggle items={mockLoglines} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Script Library" index={1}>
-          <SectionScriptLibrary items={mockScripts} />
+          <ScriptsWithToggle items={mockScripts} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          <CreditHeroCard project={mockCredits[0]} />
-          <div className="mt-4 space-y-0 rounded-lg overflow-hidden" style={{ border: `1px solid ${theme.borderDefault}` }}>
-            {mockCredits.slice(1).map(c => (
-              <a key={c.id} href={c.imdb_link || undefined} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 transition-colors no-underline" style={{ borderBottom: `1px solid ${theme.borderDefault}` }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}60`)}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-              >
-                <img src={c.poster_url} alt={c.title} className="w-14 h-20 rounded object-cover shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    {c.network_or_studio && (
-                      <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>
-                        {c.network_or_studio}
-                      </span>
-                    )}
-                  </div>
-                  <h4 className="text-sm font-semibold mt-1" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{c.title}</h4>
-                  {c.role_name && (
-                    <span className="text-[11px]" style={{ color: theme.textSecondary }}>
-                      {c.role_name}{c.role_type ? ` · ${c.role_type}` : ''}
-                    </span>
-                  )}
-                  {c.genre?.length > 0 && (
-                    <div className="flex gap-1 mt-1">
-                      {c.genre.map((g: string) => (
-                        <span key={g} className="text-[9px] uppercase tracking-wide px-1.5 py-0.5 rounded" style={{ backgroundColor: theme.accentSubtle, color: theme.textSecondary }}>{g}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <span className="text-sm tabular-nums" style={{ color: theme.textTertiary }}>{c.year}</span>
-              </a>
-            ))}
-          </div>
+          <CreditsWithToggle items={mockCredits} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
-          <SectionAwards items={mockAwards} />
+          <AwardsWithToggle items={mockAwards} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Testimonials" index={4}>
-          <SectionTestimonials items={mockTestimonials} />
+          <TestimonialsWithToggle items={mockTestimonials} />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
         <PortfolioSectionWrapper title="Press & Reviews" index={5}>
-          <SectionPress items={mockPress} />
+          <PressWithToggle items={mockPress} />
         </PortfolioSectionWrapper>
       </div>
-      {/* Client logos — bar above services */}
       <div className="mb-10">
         <PortfolioSectionWrapper title="Written For" index={7}>
-          <SectionClientLogos companies={mockClients} variant="bar" />
+          <ClientLogosWithToggle companies={mockClients} />
         </PortfolioSectionWrapper>
       </div>
       <div>
         <PortfolioSectionWrapper title="Services" index={6}>
-          <SectionServices items={mockServices} />
+          <ServicesWithToggle items={mockServices} />
         </PortfolioSectionWrapper>
       </div>
     </>
@@ -329,37 +401,36 @@ const StandardLayout = () => (
         <KnownForWithToggle items={mockKnownFor} display="image" />
       </PortfolioSectionWrapper>
     </div>
-    {/* Client logos bar */}
     <div className="mb-10">
-      <SectionClientLogos companies={mockClients} variant="bar" />
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+        <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <SectionServices items={mockServices} compact />
+        <ServicesWithToggle items={mockServices} />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
       <PortfolioSectionWrapper title="Script Library" index={2}>
-        <SectionScriptLibrary items={mockScripts} />
+        <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Produced Credits" index={3}>
-        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Testimonials" index={4}>
-        <SectionTestimonials items={mockTestimonials} />
+        <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
-        <SectionAwards items={mockAwards} />
+        <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press & Reviews" index={6}>
-        <SectionPress items={mockPress} />
+        <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
     </div>
   </>
@@ -375,75 +446,74 @@ const CinematicLayout = () => (
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+        <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
-        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
     </div>
-    {/* Marquee ticker */}
     <div className="mb-12">
-      <SectionClientLogos companies={mockClients} variant="marquee" />
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
-        <SectionScriptLibrary items={mockScripts} />
+        <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Testimonials" index={3}>
-        <SectionTestimonials items={mockTestimonials} />
+        <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <PortfolioSectionWrapper title="Awards" index={4}>
-        <SectionAwards items={mockAwards} />
+        <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press" index={5}>
-        <SectionPress items={mockPress} />
+        <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={6}>
-        <SectionServices items={mockServices} compact />
+        <ServicesWithToggle items={mockServices} />
       </PortfolioSectionWrapper>
     </div>
   </>
 );
 
-/* 4. COMPACT — Maximum density, fixed spacing (Known For is in hero) */
+/* 4. COMPACT — Maximum density, fixed spacing */
 const CompactLayout = () => (
   <>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 mb-8">
       <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+        <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <SectionServices items={mockServices} compact />
+        <ServicesWithToggle items={mockServices} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <PortfolioSectionWrapper title="Script Library" index={2}>
-        <SectionScriptLibrary items={mockScripts} />
+        <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Produced Credits" index={3}>
-        <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
+        <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-6">
-      <SectionClientLogos companies={mockClients} variant="bar" />
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <PortfolioSectionWrapper title="Awards" index={4}>
-        <SectionAwards items={mockAwards} />
+        <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press" index={5}>
-        <SectionPress items={mockPress} />
+        <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
     </div>
     <div>
       <PortfolioSectionWrapper title="Testimonials" index={6}>
-        <SectionTestimonials items={mockTestimonials} />
+        <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
   </>
@@ -454,35 +524,35 @@ const MagazineLayout = () => (
   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
     <div className="space-y-10">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" />
+        <KnownForWithToggle items={mockKnownFor} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+        <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
-        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Script Library" index={2}>
-        <SectionScriptLibrary items={mockScripts} />
+        <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <PortfolioSectionWrapper title="Awards" index={4}>
-          <SectionAwards items={mockAwards} />
+          <AwardsWithToggle items={mockAwards} />
         </PortfolioSectionWrapper>
         <PortfolioSectionWrapper title="Press" index={5}>
-          <SectionPress items={mockPress} />
+          <PressWithToggle items={mockPress} />
         </PortfolioSectionWrapper>
       </div>
     </div>
     <div className="space-y-8">
       <PortfolioSectionWrapper title="Written For" index={7}>
-        <SectionClientLogos companies={mockClients} variant="grid" />
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={3}>
-        <SectionServices items={mockServices} compact />
+        <ServicesWithToggle items={mockServices} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Testimonials" index={6}>
-        <SectionTestimonials items={mockTestimonials} />
+        <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
   </div>
@@ -494,14 +564,14 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
-    { key: "knownfor", title: "Known For", content: <SectionKnownFor items={mockKnownFor} variant="grid" display="image" /> },
-    { key: "loglines", title: "Original Work", content: <SectionLoglineShowcase items={mockLoglines} /> },
-    { key: "scripts", title: "Script Library", content: <SectionScriptLibrary items={mockScripts} /> },
-    { key: "credits", title: "Produced Credits", content: <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" /> },
-    { key: "awards", title: "Awards & Recognition", content: <SectionAwards items={mockAwards} /> },
-    { key: "testimonials", title: "Testimonials", content: <SectionTestimonials items={mockTestimonials} /> },
-    { key: "press", title: "Press & Reviews", content: <SectionPress items={mockPress} /> },
-    { key: "services", title: "Services", content: <SectionServices items={mockServices} /> },
+    { key: "knownfor", title: "Known For", content: <KnownForWithToggle items={mockKnownFor} display="image" /> },
+    { key: "loglines", title: "Original Work", content: <LoglinesWithToggle items={mockLoglines} /> },
+    { key: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
+    { key: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
+    { key: "awards", title: "Awards & Recognition", content: <AwardsWithToggle items={mockAwards} /> },
+    { key: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
+    { key: "press", title: "Press & Reviews", content: <PressWithToggle items={mockPress} /> },
+    { key: "services", title: "Services", content: <ServicesWithToggle items={mockServices} /> },
   ];
 
   return (
@@ -519,16 +589,8 @@ const SpotlightLayout = () => {
               </h3>
               {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: theme.textTertiary }} /> : <ChevronDown className="w-4 h-4" style={{ color: theme.textTertiary }} />}
             </button>
-            <div
-              className="overflow-hidden transition-all duration-500"
-              style={{
-                maxHeight: isOpen ? '2000px' : '0',
-                opacity: isOpen ? 1 : 0,
-              }}
-            >
-              <div className="px-5 pb-5">
-                {s.content}
-              </div>
+            <div className="overflow-hidden transition-all duration-500" style={{ maxHeight: isOpen ? '2000px' : '0', opacity: isOpen ? 1 : 0 }}>
+              <div className="px-5 pb-5">{s.content}</div>
             </div>
           </GlassCard>
         );
@@ -560,13 +622,10 @@ const TimelineLayout = () => {
 
   return (
     <div className="relative">
-      {/* Vertical line */}
       <div className="absolute left-4 top-0 bottom-0 w-px" style={{ backgroundColor: theme.borderDefault }} />
-
       <div className="space-y-10">
-        {timelineItems.map((item, i) => (
+        {timelineItems.map((item) => (
           <div key={item.year} className="relative pl-12">
-            {/* Year dot */}
             <div className="absolute left-2.5 top-1 w-3 h-3 rounded-full" style={{ backgroundColor: theme.accentPrimary, boxShadow: `0 0 8px ${theme.accentGlow}` }} />
             <span className="text-[12px] font-bold uppercase tracking-widest" style={{ color: theme.accentPrimary }}>{item.year}</span>
             <h3 className="text-lg font-semibold mt-1 mb-3" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{item.title}</h3>
@@ -574,16 +633,14 @@ const TimelineLayout = () => {
           </div>
         ))}
       </div>
-
-      {/* Bottom sections */}
       <div className="mt-12 pl-12 space-y-8">
         <PortfolioSectionWrapper title="Testimonials" index={5}>
-          <SectionTestimonials items={mockTestimonials} />
+          <TestimonialsWithToggle items={mockTestimonials} />
         </PortfolioSectionWrapper>
         <PortfolioSectionWrapper title="Press & Reviews" index={6}>
-          <SectionPress items={mockPress} />
+          <PressWithToggle items={mockPress} />
         </PortfolioSectionWrapper>
-        <SectionClientLogos companies={mockClients} variant="bar" />
+        <ClientLogosWithToggle companies={mockClients} />
       </div>
     </div>
   );
@@ -592,104 +649,84 @@ const TimelineLayout = () => {
 /* 8. BENTO — Asymmetric masonry-like grid */
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
-    {/* Known For — spans 2 cols */}
     <div className="sm:col-span-2">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" />
+        <KnownForWithToggle items={mockKnownFor} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Client logos - single col */}
     <div>
       <PortfolioSectionWrapper title="Written For" index={7}>
-        <SectionClientLogos companies={mockClients} variant="grid" />
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Large featured loglines - spans 2 cols */}
     <div className="sm:col-span-2 lg:col-span-2">
       <PortfolioSectionWrapper title="Original Work" index={0}>
-        <SectionLoglineShowcase items={mockLoglines} />
+        <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Services - single col */}
     <div>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <SectionServices items={mockServices} compact />
+        <ServicesWithToggle items={mockServices} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Credits - full width */}
     <div className="sm:col-span-2 lg:col-span-3">
       <PortfolioSectionWrapper title="Produced Credits" index={2}>
-        <SectionProjects items={mockCredits} profileType="screenwriter" layout="poster" />
+        <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Scripts - spans 2 */}
     <div className="sm:col-span-2">
       <PortfolioSectionWrapper title="Script Library" index={3}>
-        <SectionScriptLibrary items={mockScripts} />
+        <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Testimonials - single */}
     <div>
       <PortfolioSectionWrapper title="Testimonials" index={4}>
-        <SectionTestimonials items={mockTestimonials} />
+        <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Awards */}
     <div>
       <PortfolioSectionWrapper title="Awards" index={5}>
-        <SectionAwards items={mockAwards} />
+        <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
     </div>
-
-    {/* Press - spans 2 */}
     <div className="sm:col-span-2">
       <PortfolioSectionWrapper title="Press & Reviews" index={6}>
-        <SectionPress items={mockPress} />
+        <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
     </div>
   </div>
 );
 
 /* 9. MINIMAL — Maximum whitespace, essentials only */
-const MinimalLayout = () => {
-  const theme = usePortfolioTheme();
-  return (
-    <div className="max-w-2xl mx-auto space-y-16">
-      <div>
-        <PortfolioSectionWrapper title="Known For" index={-1}>
-          <SectionKnownFor items={mockKnownFor} variant="strip" />
-        </PortfolioSectionWrapper>
-      </div>
-      <div>
-        <PortfolioSectionWrapper title="Work" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div>
-        <PortfolioSectionWrapper title="Credits" index={1}>
-          <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
-        </PortfolioSectionWrapper>
-      </div>
-      <div>
-        <PortfolioSectionWrapper title="Recognition" index={2}>
-          <SectionAwards items={mockAwards} />
-        </PortfolioSectionWrapper>
-      </div>
-      <div>
-        <PortfolioSectionWrapper title="Words" index={3}>
-          <SectionTestimonials items={mockTestimonials} />
-        </PortfolioSectionWrapper>
-      </div>
+const MinimalLayout = () => (
+  <div className="max-w-2xl mx-auto space-y-16">
+    <div>
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <KnownForWithToggle items={mockKnownFor} />
+      </PortfolioSectionWrapper>
     </div>
-  );
-};
+    <div>
+      <PortfolioSectionWrapper title="Work" index={0}>
+        <LoglinesWithToggle items={mockLoglines} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div>
+      <PortfolioSectionWrapper title="Credits" index={1}>
+        <CreditsWithToggle items={mockCredits} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div>
+      <PortfolioSectionWrapper title="Recognition" index={2}>
+        <AwardsWithToggle items={mockAwards} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div>
+      <PortfolioSectionWrapper title="Words" index={3}>
+        <TestimonialsWithToggle items={mockTestimonials} />
+      </PortfolioSectionWrapper>
+    </div>
+  </div>
+);
 
 /* 10. DASHBOARD — Stats-forward, data cards */
 const DashboardLayout = () => {
@@ -704,7 +741,6 @@ const DashboardLayout = () => {
 
   return (
     <>
-      {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         {statCards.map(s => (
           <GlassCard key={s.label} className="p-4 text-center">
@@ -715,60 +751,53 @@ const DashboardLayout = () => {
           </GlassCard>
         ))}
       </div>
-
-      {/* Known For + Client Logos */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
-          <SectionKnownFor items={mockKnownFor} variant="grid" display="image" />
+          <KnownForWithToggle items={mockKnownFor} display="image" />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
-          <SectionClientLogos companies={mockClients} variant="grid" />
+          <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
       </div>
-
-      {/* Main grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Active Projects</h3>
-          <SectionLoglineShowcase items={mockLoglines} />
+          <LoglinesWithToggle items={mockLoglines} />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Script Library</h3>
-          <SectionScriptLibrary items={mockScripts} />
+          <ScriptsWithToggle items={mockScripts} />
         </GlassCard>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-8">
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Produced Credits</h3>
-          <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
+          <CreditsWithToggle items={mockCredits} />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Testimonials</h3>
-          <SectionTestimonials items={mockTestimonials} />
+          <TestimonialsWithToggle items={mockTestimonials} />
         </GlassCard>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Awards</h3>
-          <SectionAwards items={mockAwards} />
+          <AwardsWithToggle items={mockAwards} />
         </GlassCard>
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Press</h3>
-          <SectionPress items={mockPress} />
+          <PressWithToggle items={mockPress} />
         </GlassCard>
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
-          <SectionServices items={mockServices} compact />
+          <ServicesWithToggle items={mockServices} />
         </GlassCard>
       </div>
     </>
   );
 };
-
 /* ══════════════════════ MAIN PAGE ══════════════════════ */
 
 const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
@@ -787,7 +816,11 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
-  const [knownForVariant, setKnownForVariant] = useState<KnownForVariant>("strip");
+  const [variants, setVariants] = useState<SectionVariants>(defaultVariants);
+
+  const setVariant = <K extends keyof SectionVariants>(key: K, value: SectionVariants[K]) => {
+    setVariants(prev => ({ ...prev, [key]: value }));
+  };
 
   useEffect(() => {
     const url = getAllThemeFontsUrl();
@@ -809,7 +842,7 @@ const DemoScreenwriter = () => {
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
-    <KnownForVariantCtx.Provider value={{ variant: knownForVariant, setVariant: setKnownForVariant }}>
+    <SectionVariantsCtx.Provider value={{ variants, setVariant }}>
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
@@ -873,7 +906,7 @@ const DemoScreenwriter = () => {
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
     </PortfolioThemeProvider>
-    </KnownForVariantCtx.Provider>
+    </SectionVariantsCtx.Provider>
   );
 };
 
