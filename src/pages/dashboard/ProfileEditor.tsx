@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Save } from "lucide-react";
+import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 
 interface ProfileForm {
   display_name: string;
@@ -144,9 +145,9 @@ const ProfileEditor = () => {
             <div><Label>Last Name</Label><Input value={form.last_name} onChange={update("last_name")} /></div>
           </div>
           <div><Label>Display Name</Label><Input value={form.display_name} onChange={update("display_name")} /></div>
-          <div><Label>Tagline</Label><Input value={form.tagline} onChange={update("tagline")} placeholder="e.g. Award-winning screenwriter" /></div>
+          <div><Label>Tagline <GlossaryTooltip term="tagline" /></Label><Input value={form.tagline} onChange={update("tagline")} placeholder="e.g. Award-winning screenwriter" /></div>
           <div><Label>Location</Label><Input value={form.location} onChange={update("location")} placeholder="e.g. Los Angeles, CA" /></div>
-          <div><Label>Bio</Label><Textarea value={form.bio} onChange={update("bio")} rows={6} placeholder="Tell your story..." /></div>
+          <div><Label>Bio <GlossaryTooltip term="bio" /></Label><Textarea value={form.bio} onChange={update("bio")} rows={6} placeholder="Tell your story..." /></div>
         </CardContent>
       </Card>
     </div>

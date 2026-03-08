@@ -1,6 +1,6 @@
 import {
   User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
-  Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users
+  Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
@@ -42,6 +42,7 @@ const contentNav = [
 const systemNav = [
   { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
+  { title: "Insights", url: "/dashboard/insights", icon: Lightbulb },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
