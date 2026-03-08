@@ -52,7 +52,12 @@ const ClassicLayout = () => (
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Case Studies" index={0}>
+      <PortfolioSectionWrapper title="Published Work" index={0}>
+        <PublishedWorkWithToggle items={mockPublishedWork} />
+      </PortfolioSectionWrapper>
+    </div>
+    <div className="mb-10">
+      <PortfolioSectionWrapper title="Case Studies" index={1}>
         <CaseStudiesWithToggle items={mockCaseStudies} />
       </PortfolioSectionWrapper>
     </div>
