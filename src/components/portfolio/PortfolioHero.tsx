@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapPin, Briefcase, Star, Calendar, Mail, ArrowRight } from "lucide-react";
 import BookingModal from "./BookingModal";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   profile: {
+    id?: string;
     display_name: string | null;
     first_name: string | null;
     last_name: string | null;
@@ -35,9 +37,44 @@ const typeLabels: Record<string, string> = {
   multi_hyphenate: "Multi-Hyphenate",
 };
 
+const platformIcons: Record<string, string> = {
+  imdb: "🎬",
+  instagram: "📸",
+  twitter: "𝕏",
+  x: "𝕏",
+  linkedin: "in",
+  youtube: "▶",
+  vimeo: "▷",
+  tiktok: "♪",
+  website: "🌐",
+  spotlight: "★",
+};
+
 const PortfolioHero = ({ profile }: Props) => {
   const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Untitled";
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
+  const [scrollY, setScrollY] = useState(0);
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  // Fetch social links for hero display
+  useEffect(() => {
+    if (!profile.id) return;
+    supabase
+      .from("social_links")
+      .select("*")
+      .eq("profile_id", profile.id)
+      .order("display_order")
+      .then(({ data }) => setSocialLinks(data || []));
+  }, [profile.id]);
+
+  // Parallax
+  useEffect(() => {
+    if (!profile.banner_url) return;
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [profile.banner_url]);
 
   const handleCta = () => {
     const type = profile.cta_type || "contact_form";
@@ -69,11 +106,16 @@ const PortfolioHero = ({ profile }: Props) => {
 
   return (
     <header className="relative">
-      {/* Banner */}
+      {/* Banner with parallax */}
       {profile.banner_url ? (
-        <div className="h-56 sm:h-72 md:h-80 w-full overflow-hidden">
-          <img src={profile.banner_url} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 h-56 sm:h-72 md:h-80" style={{ background: "linear-gradient(to bottom, transparent 40%, hsl(var(--portfolio-bg)) 100%)" }} />
+        <div ref={bannerRef} className="h-56 sm:h-72 md:h-80 w-full overflow-hidden relative">
+          <img
+            src={profile.banner_url}
+            alt=""
+            className="w-full h-full object-cover"
+            style={{ transform: `translateY(${scrollY * 0.25}px)`, transition: "transform 0.05s linear" }}
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 40%, hsl(var(--portfolio-bg)) 100%)" }} />
         </div>
       ) : (
         <div className="h-32 sm:h-40 w-full" style={{ backgroundColor: "hsl(var(--portfolio-muted))" }} />
@@ -82,11 +124,23 @@ const PortfolioHero = ({ profile }: Props) => {
       {/* Profile content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          {/* Avatar */}
+          {/* Avatar with reveal */}
           {profile.profile_photo_url ? (
-            <img src={profile.profile_photo_url} alt={name} className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 shadow-lg" style={{ borderColor: "hsl(var(--portfolio-bg))" }} />
+            <img
+              src={profile.profile_photo_url}
+              alt={name}
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 shadow-lg"
+              style={{ borderColor: "hsl(var(--portfolio-bg))", animation: "word-reveal 0.6s ease-out both" }}
+            />
           ) : (
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg border-4" style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-accent-fg))", borderColor: "hsl(var(--portfolio-bg))" }}>
+            <div
+              className="w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg border-4"
+              style={{
+                backgroundColor: "hsl(var(--portfolio-accent))",
+                color: "hsl(var(--portfolio-accent-fg))",
+                borderColor: "hsl(var(--portfolio-bg))",
+              }}
+            >
               {name.charAt(0)}
             </div>
           )}
@@ -94,16 +148,23 @@ const PortfolioHero = ({ profile }: Props) => {
           {/* Info */}
           <div className="flex-1 pt-2 sm:pt-6 space-y-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)" }}>
+              <h1
+                className="text-3xl sm:text-4xl font-bold tracking-tight"
+                style={{
+                  fontFamily: "var(--portfolio-heading-font)",
+                  animation: "word-reveal 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s both",
+                }}
+              >
                 {name}
               </h1>
               {showCta && (
                 <button
                   onClick={handleCta}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all hover:opacity-90 shadow-md shrink-0"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all hover:scale-[1.03] hover:shadow-lg shrink-0"
                   style={{
                     backgroundColor: "hsl(var(--portfolio-accent))",
                     color: "hsl(var(--portfolio-accent-fg))",
+                    boxShadow: "0 4px 14px -4px hsl(var(--portfolio-accent) / 0.4)",
                   }}
                 >
                   {ctaIcon()}
@@ -113,7 +174,7 @@ const PortfolioHero = ({ profile }: Props) => {
             </div>
 
             {profile.tagline && (
-              <p className="text-lg" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>
+              <p className="text-lg" style={{ color: "hsl(var(--portfolio-muted-fg))", animation: "word-reveal 0.6s ease-out 0.2s both" }}>
                 {profile.tagline}
               </p>
             )}
@@ -132,19 +193,54 @@ const PortfolioHero = ({ profile }: Props) => {
                 </span>
               )}
               {profile.available_for_hire && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.15)", color: "hsl(var(--portfolio-accent))" }}>
+                <span
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                  style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.15)", color: "hsl(var(--portfolio-accent))" }}
+                >
                   <Star className="w-3 h-3" /> Available
                 </span>
               )}
               {profile.seeking_representation && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.10)", color: "hsl(var(--portfolio-accent))" }}>
+                <span
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                  style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.10)", color: "hsl(var(--portfolio-accent))" }}
+                >
                   Seeking Representation
                 </span>
               )}
             </div>
 
+            {/* Social links in hero */}
+            {socialLinks.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {socialLinks.map((link) => {
+                  const icon = platformIcons[link.platform?.toLowerCase()] || "🔗";
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-all hover:scale-105"
+                      style={{
+                        backgroundColor: "hsl(var(--portfolio-muted))",
+                        color: "hsl(var(--portfolio-muted-fg))",
+                        border: "1px solid hsl(var(--portfolio-border))",
+                      }}
+                    >
+                      <span>{icon}</span>
+                      {link.label || link.platform}
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+
             {profile.bio && (
-              <p className="mt-4 max-w-2xl leading-relaxed whitespace-pre-line" style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}>
+              <p
+                className="mt-4 max-w-2xl leading-relaxed whitespace-pre-line"
+                style={{ color: "hsl(var(--portfolio-fg) / 0.85)" }}
+              >
                 {profile.bio}
               </p>
             )}

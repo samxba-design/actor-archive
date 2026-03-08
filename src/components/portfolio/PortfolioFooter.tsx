@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Send, ExternalLink } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface Props {
   profile: {
@@ -10,6 +10,19 @@ interface Props {
   };
   showContact: boolean;
 }
+
+const platformIcons: Record<string, string> = {
+  imdb: "🎬",
+  instagram: "📸",
+  twitter: "𝕏",
+  x: "𝕏",
+  linkedin: "in",
+  youtube: "▶",
+  vimeo: "▷",
+  tiktok: "♪",
+  website: "🌐",
+  spotlight: "★",
+};
 
 const PortfolioFooter = ({ profile, showContact }: Props) => {
   const [socialLinks, setSocialLinks] = useState<any[]>([]);
@@ -42,6 +55,7 @@ const PortfolioFooter = ({ profile, showContact }: Props) => {
 
   return (
     <footer
+      id="contact-section"
       className="mt-16 py-12 px-4"
       style={{
         backgroundColor: "hsl(var(--portfolio-muted))",
@@ -103,7 +117,7 @@ const PortfolioFooter = ({ profile, showContact }: Props) => {
               <button
                 type="submit"
                 disabled={sending}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-opacity"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all hover:shadow-md"
                 style={{
                   backgroundColor: "hsl(var(--portfolio-accent))",
                   color: "hsl(var(--portfolio-accent-fg))",
@@ -125,29 +139,41 @@ const PortfolioFooter = ({ profile, showContact }: Props) => {
         )}
 
         {socialLinks.length > 0 && (
-          <div className="flex justify-center gap-4 mb-6">
-            {socialLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm transition-colors hover:opacity-80"
-                style={{ color: "hsl(var(--portfolio-muted-fg))" }}
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                {link.label || link.platform}
-              </a>
-            ))}
+          <div className="flex justify-center flex-wrap gap-3 mb-6">
+            {socialLinks.map((link) => {
+              const icon = platformIcons[link.platform?.toLowerCase()] || "🔗";
+              return (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105"
+                  style={{
+                    backgroundColor: "hsl(var(--portfolio-card))",
+                    color: "hsl(var(--portfolio-muted-fg))",
+                    border: "1px solid hsl(var(--portfolio-border))",
+                  }}
+                >
+                  <span>{icon}</span>
+                  {link.label || link.platform}
+                </a>
+              );
+            })}
           </div>
         )}
 
-        <p
-          className="text-center text-xs"
-          style={{ color: "hsl(var(--portfolio-muted-fg) / 0.6)" }}
-        >
-          © {new Date().getFullYear()} {profile.display_name}
-        </p>
+        <div className="text-center space-y-1">
+          <p
+            className="text-xs"
+            style={{ color: "hsl(var(--portfolio-muted-fg) / 0.6)" }}
+          >
+            © {new Date().getFullYear()} {profile.display_name}
+          </p>
+          <p className="text-[10px]" style={{ color: "hsl(var(--portfolio-muted-fg) / 0.3)" }}>
+            Powered by <a href="/" className="hover:underline">CreativeSlate</a>
+          </p>
+        </div>
       </div>
     </footer>
   );
