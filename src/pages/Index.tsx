@@ -157,7 +157,7 @@ const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: strin
   );
 };
 
-const ThemeShowcase = () => {
+const ThemeShowcase = forwardRef<HTMLDivElement>((_, _ref) => {
   const [active, setActive] = useState(0);
   const { ref, inView } = useInView();
 
@@ -247,7 +247,8 @@ const ThemeShowcase = () => {
       </div>
     </div>
   );
-};
+});
+ThemeShowcase.displayName = "ThemeShowcase";
 
 /* ── page ── */
 const Index = () => {
