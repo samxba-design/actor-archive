@@ -5,8 +5,17 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Loader2, Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
-  ArrowRight, ExternalLink, CheckCircle2, AlertCircle
+  ArrowRight, ExternalLink, CheckCircle2, AlertCircle, Camera, FileText, MessageSquare,
+  Award, Link2, Sparkles, type LucideIcon
 } from "lucide-react";
+import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
+
+interface SmartAction {
+  label: string;
+  description: string;
+  icon: LucideIcon;
+  route: string;
+}
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -17,22 +26,34 @@ const DashboardHome = () => {
   const [unreadInbox, setUnreadInbox] = useState(0);
   const [pipelineCounts, setPipelineCounts] = useState<Record<string, number>>({});
   const [projectCount, setProjectCount] = useState(0);
+  const [testimonialCount, setTestimonialCount] = useState(0);
+  const [socialCount, setSocialCount] = useState(0);
+  const [awardCount, setAwardCount] = useState(0);
+  const [galleryCount, setGalleryCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const [profileRes, viewsRes, inboxRes, pipelineRes, projectsRes] = await Promise.all([
+      const [profileRes, viewsRes, inboxRes, pipelineRes, projectsRes, testimonialsRes, socialsRes, awardsRes, galleryRes] = await Promise.all([
         supabase.from("profiles").select("display_name, slug, is_published, profile_type, profile_photo_url, onboarding_completed, bio, tagline").eq("id", user.id).single(),
         supabase.from("page_views").select("id", { count: "exact", head: true }).eq("profile_id", user.id).gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
         supabase.from("contact_submissions").select("id", { count: "exact", head: true }).eq("profile_id", user.id).eq("is_read", false),
         supabase.from("pipeline_submissions").select("status").eq("profile_id", user.id),
         supabase.from("projects").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
+        supabase.from("testimonials").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
+        supabase.from("social_links").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
+        supabase.from("awards").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
+        supabase.from("gallery_images").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
       ]);
 
       setProfile(profileRes.data);
       setRecentViews(viewsRes.count || 0);
       setUnreadInbox(inboxRes.count || 0);
       setProjectCount(projectsRes.count || 0);
+      setTestimonialCount(testimonialsRes.count || 0);
+      setSocialCount(socialsRes.count || 0);
+      setAwardCount(awardsRes.count || 0);
+      setGalleryCount(galleryRes.count || 0);
 
       const counts: Record<string, number> = {};
       (pipelineRes.data || []).forEach((s) => { counts[s.status] = (counts[s.status] || 0) + 1; });
@@ -47,17 +68,39 @@ const DashboardHome = () => {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8" style={{ color: "hsl(var(--landing-muted))" }} /></div>;
   }
 
-  // Profile readiness score
-  const checks = [
-    { label: "Profile photo", done: !!profile?.profile_photo_url },
-    { label: "Bio", done: !!profile?.bio },
-    { label: "Tagline", done: !!profile?.tagline },
-    { label: "At least 1 project", done: projectCount > 0 },
-    { label: "Published", done: !!profile?.is_published },
-  ];
-  const readinessScore = Math.round((checks.filter(c => c.done).length / checks.length) * 100);
-
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
+
+  // Build smart actions based on missing data
+  const smartActions: SmartAction[] = [];
+  if (!profile?.profile_photo_url) {
+    smartActions.push({ label: "Upload your headshot", description: "A professional photo builds instant trust", icon: Camera, route: "/dashboard/gallery" });
+  }
+  if (!profile?.bio) {
+    smartActions.push({ label: "Write your bio", description: "Tell visitors about your experience and background", icon: FileText, route: "/dashboard/profile" });
+  }
+  if (projectCount === 0) {
+    smartActions.push({ label: "Add your first project", description: "Projects are the core of your portfolio", icon: FolderOpen, route: "/dashboard/projects" });
+  }
+  if (testimonialCount === 0) {
+    smartActions.push({ label: "Add a testimonial", description: "Social proof drives hiring decisions", icon: MessageSquare, route: "/dashboard/testimonials" });
+  }
+  if (socialCount === 0) {
+    smartActions.push({ label: "Connect social links", description: "Link your IMDb, LinkedIn, or social profiles", icon: Link2, route: "/dashboard/social-links" });
+  }
+  if (awardCount === 0) {
+    smartActions.push({ label: "Add awards or fellowships", description: "Festival laurels and wins build credibility", icon: Award, route: "/dashboard/awards" });
+  }
+  if (!profile?.is_published && profile?.slug) {
+    smartActions.push({ label: "Publish your portfolio", description: "Make your portfolio visible to the world", icon: Globe, route: "#publish" });
+  }
+
+  // If all smart actions are done, show power-user actions
+  if (smartActions.length === 0) {
+    smartActions.push(
+      { label: "View your portfolio", description: "See how visitors experience your page", icon: ExternalLink, route: `/p/${profile?.slug}` },
+      { label: "Check analytics", description: "See who's viewing your portfolio", icon: Eye, route: "/dashboard/analytics" },
+    );
+  }
 
   return (
     <div className="max-w-4xl space-y-6" style={{ color: "hsl(var(--landing-fg))" }}>
@@ -114,25 +157,41 @@ const DashboardHome = () => {
         ))}
       </div>
 
-      {/* Profile readiness */}
+      {/* Profile Readiness — consolidated from ProfileReadiness component */}
+      <ProfileReadiness />
+
+      {/* Smart Next Steps */}
       <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>Profile Readiness</h2>
-          <span className="text-sm font-bold px-2 py-0.5 rounded-full" style={{ background: readinessScore === 100 ? "hsl(140 40% 45% / 0.2)" : "hsl(var(--landing-card))", color: readinessScore === 100 ? "hsl(140 50% 65%)" : "hsl(var(--landing-muted))" }}>{readinessScore}%</span>
-        </div>
-        <div className="w-full rounded-full h-2 mb-4" style={{ background: "hsl(var(--landing-border))" }}>
-          <div className="h-2 rounded-full transition-all" style={{ width: `${readinessScore}%`, background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }} />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {checks.map((c) => (
-            <div key={c.label} className="flex items-center gap-2 text-sm">
-              {c.done ? (
-                <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: "hsl(140 50% 55%)" }} />
-              ) : (
-                <AlertCircle className="h-4 w-4 shrink-0" style={{ color: "hsl(var(--landing-muted))" }} />
-              )}
-              <span style={{ color: c.done ? "hsl(var(--landing-fg))" : "hsl(var(--landing-muted))" }}>{c.label}</span>
-            </div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: "hsl(var(--landing-fg))" }}>
+          <Sparkles className="h-5 w-5" style={{ color: "hsl(var(--landing-champagne))" }} />
+          Next Steps
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {smartActions.slice(0, 4).map((action, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (action.route === "#publish") {
+                  // Trigger publish
+                  supabase.from("profiles").update({ is_published: true }).eq("id", user!.id).then(() => {
+                    setProfile((p: any) => ({ ...p, is_published: true }));
+                  });
+                } else if (action.route.startsWith("/p/")) {
+                  window.open(action.route, "_blank");
+                } else {
+                  navigate(action.route);
+                }
+              }}
+              className="text-left p-4 rounded-lg border transition-all hover:border-opacity-80 group flex items-start gap-3"
+              style={{ borderColor: "hsl(var(--landing-border))", background: "transparent" }}
+            >
+              <action.icon className="h-5 w-5 shrink-0 mt-0.5" style={{ color: "hsl(var(--landing-champagne))" }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium group-hover:underline" style={{ color: "hsl(var(--landing-fg))" }}>{action.label}</p>
+                <p className="text-xs mt-0.5" style={{ color: "hsl(var(--landing-muted))" }}>{action.description}</p>
+              </div>
+              <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5" style={{ color: "hsl(var(--landing-muted))" }} />
+            </button>
           ))}
         </div>
       </div>
