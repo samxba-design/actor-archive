@@ -481,6 +481,39 @@ const Index = () => {
         <ThemeShowcase />
       </section>
 
+      {/* Testimonials */}
+      <section className="py-24 px-6 relative z-10" style={{ borderTop: "1px solid hsl(var(--landing-border))" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Loved by creatives</h2>
+            <p style={{ color: "hsl(var(--landing-muted))" }}>Hear from entertainment professionals who switched to CreativeSlate.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {testimonials.map((t, i) => {
+              const { ref: tRef, inView: tInView } = useInView();
+              return (
+                <div key={i} ref={tRef} className="relative p-6 rounded-xl border glass-card"
+                  style={{
+                    opacity: tInView ? 1 : 0, transform: tInView ? "translateY(0)" : "translateY(24px)",
+                    transition: `all 0.6s ease ${i * 100}ms`,
+                    background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))",
+                  }}>
+                  <Quote className="h-5 w-5 mb-3" style={{ color: "hsl(var(--landing-accent) / 0.4)" }} />
+                  <p className="text-sm leading-relaxed mb-4" style={{ color: "hsl(var(--landing-fg) / 0.85)" }}>"{t.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <img src={t.photo} alt={t.author} className="w-9 h-9 rounded-full object-cover" />
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>{t.author}</p>
+                      <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative py-28 px-6 overflow-hidden z-10">
         <div className="absolute inset-0 pointer-events-none"
@@ -502,19 +535,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t relative z-10" style={{ borderColor: "hsl(345 15% 10%)", background: "hsl(345 25% 5%)" }}>
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm"
-          style={{ color: "hsl(var(--landing-muted) / 0.6)" }}>
-          <span>© {new Date().getFullYear()} CreativeSlate</span>
-          <div className="flex gap-6">
-            <Link to="/how-it-works" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>How It Works</Link>
-            <Link to="/demo/screenwriter" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Demo</Link>
-            <Link to="/login" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Log in</Link>
-            <Link to="/signup" className="transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Sign up</Link>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 };
