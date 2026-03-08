@@ -442,3 +442,39 @@ All colors MUST be HSL.
     transform: translateY(120px) rotate(720deg) scale(0.3);
   }
 }
+
+/* ═══ Glass shine sweep ═══ */
+@keyframes glass-shine {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
+
+.glass-shine-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-shine-card::after {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(0 0% 100% / 0.04) 40%,
+    hsl(0 0% 100% / 0.06) 50%,
+    hsl(0 0% 100% / 0.04) 60%,
+    transparent 100%
+  );
+  animation: glass-shine 10s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ═══ Ambient drift glow ═══ */
+@keyframes ambient-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.03; }
+  33% { transform: translate(5vw, -3vh) scale(1.1); opacity: 0.04; }
+  66% { transform: translate(-3vw, 5vh) scale(0.95); opacity: 0.025; }
+}
