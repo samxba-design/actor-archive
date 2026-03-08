@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface WritingAssistantProps {
   text: string;
-  field: "logline" | "description";
+  field: "logline" | "description" | "headline" | "bio";
   title?: string;
   genre?: string[];
   format?: string;
@@ -45,8 +45,10 @@ export function WritingAssistant({ text, field, title, genre, format, onApply }:
   const [showDetails, setShowDetails] = useState(false);
 
   const isLogline = field === "logline";
-  const evalType = isLogline ? "evaluate_logline" : "evaluate_synopsis";
-  const suggestType = isLogline ? "suggest_logline" : "suggest_synopsis";
+  const isHeadline = field === "headline";
+  const isBio = field === "bio";
+  const evalType = isLogline ? "evaluate_logline" : isHeadline ? "evaluate_headline" : isBio ? "improve_bio" : "evaluate_synopsis";
+  const suggestType = isLogline ? "suggest_logline" : isHeadline ? "suggest_headline" : isBio ? "improve_bio" : "suggest_synopsis";
 
   const callAssist = async (type: string) => {
     if (!text || text.trim().length < 5) {
