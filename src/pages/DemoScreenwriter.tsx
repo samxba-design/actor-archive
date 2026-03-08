@@ -124,10 +124,9 @@ const ClassicLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <>
-      {/* Known For — poster strip */}
       <div className="mb-10">
         <PortfolioSectionWrapper title="Known For" index={-1}>
-          <SectionKnownFor items={mockKnownFor} variant="strip" />
+          <SectionKnownFor items={mockKnownFor} variant="carousel" />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
@@ -261,10 +260,9 @@ const CreditHeroCard = ({ project }: { project: any }) => {
 /* 2. STANDARD — Dense grid with sidebar modules */
 const StandardLayout = () => (
   <>
-    {/* Known For — full-width strip at top */}
     <div className="mb-10">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" display="both" />
+        <SectionKnownFor items={mockKnownFor} variant="carousel" display="both" />
       </PortfolioSectionWrapper>
     </div>
     {/* Client logos bar */}
@@ -306,10 +304,9 @@ const StandardLayout = () => (
 /* 3. CINEMATIC — Full-width hero, poster gallery */
 const CinematicLayout = () => (
   <>
-    {/* Full-width Known For strip */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" />
+        <SectionKnownFor items={mockKnownFor} variant="carousel" />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
