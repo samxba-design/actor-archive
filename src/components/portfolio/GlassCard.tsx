@@ -10,7 +10,7 @@ interface Props {
 const GlassCard = ({ children, className = "", featured, style }: Props) => {
   const theme = usePortfolioTheme();
 
-  const shineClass = theme.glassEnabled ? "glass-shine-card" : "";
+  const shineClass = "glass-shine-card";
 
   return (
     <div

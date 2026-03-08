@@ -315,7 +315,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             {featuredProject && (
               <div className="w-full lg:w-[380px] shrink-0" style={stagger(3)}>
                 <div
-                  className="overflow-hidden transition-all duration-300 flex"
+                  className="overflow-hidden transition-all duration-300 flex group/feat"
                   style={{
                     backgroundColor: theme.bgSecondary,
                     border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
@@ -325,14 +325,25 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                 >
                   {/* Poster (2:3) on left */}
                   {(featuredProject.poster_url || featuredProject.backdrop_url || featuredProject.custom_image_url) && (
-                    <div className="w-[110px] shrink-0 overflow-hidden">
-                      <img
-                        src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
-                        alt={featuredProject.title}
-                        className="w-full h-full object-cover"
-                        style={{ minHeight: '165px' }}
-                      />
-                    </div>
+                    {featuredProject.imdb_link ? (
+                      <a href={featuredProject.imdb_link} target="_blank" rel="noopener noreferrer" className="w-[110px] shrink-0 overflow-hidden block">
+                        <img
+                          src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
+                          alt={featuredProject.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover/feat:scale-105"
+                          style={{ minHeight: '165px' }}
+                        />
+                      </a>
+                    ) : (
+                      <div className="w-[110px] shrink-0 overflow-hidden">
+                        <img
+                          src={featuredProject.poster_url || featuredProject.custom_image_url || featuredProject.backdrop_url}
+                          alt={featuredProject.title}
+                          className="w-full h-full object-cover"
+                          style={{ minHeight: '165px' }}
+                        />
+                      </div>
+                    )}
                   )}
 
                   {/* Info on right — solid bg, always readable */}
@@ -367,15 +378,21 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                       <p
                         className="text-[12px] leading-relaxed line-clamp-3"
                         style={{
-                          fontFamily: theme.fontLogline,
-                          fontStyle: theme.loglineStyle,
+                          fontFamily: theme.fontBody,
+                          fontStyle: 'normal',
                           color: theme.textSecondary,
                         }}
                       >
                         "{featuredProject.logline}"
                       </p>
                     )}
-                    <PortfolioCTA label="Read Script" href={featuredProject.script_pdf_url || "#"} />
+                    {featuredProject.imdb_link ? (
+                      <a href={featuredProject.imdb_link} target="_blank" rel="noopener noreferrer">
+                        <PortfolioCTA label="View on IMDb" />
+                      </a>
+                    ) : featuredProject.script_pdf_url ? (
+                      <PortfolioCTA label="Read Script" href={featuredProject.script_pdf_url} />
+                    ) : null}
                   </div>
                 </div>
               </div>
