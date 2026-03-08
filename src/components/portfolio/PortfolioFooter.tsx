@@ -38,7 +38,7 @@ const platformIcons: Record<string, string> = {
 const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }: Props) => {
   const theme = usePortfolioTheme();
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
-  const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "" });
+  const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "", website: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
@@ -55,6 +55,8 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sender_name || !form.sender_email || !form.message) return;
+    // Honeypot: if the hidden field is filled, it's a bot
+    if (form.website) return;
     // Rate limit: 1 submission per 30 seconds
     const now = Date.now();
     if (now - lastSubmitTime < 30000) {
