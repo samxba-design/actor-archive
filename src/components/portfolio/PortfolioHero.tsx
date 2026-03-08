@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { renderSimpleMarkdown } from "@/lib/simpleMarkdown";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import CompanyLogo from "@/components/CompanyLogo";
+import { PosterCard } from "./sections/SectionKnownFor";
 
 const PRESET_GRADIENTS: Record<string, string> = {
   "cinematic-dark": "linear-gradient(135deg, #1a0a0f 0%, #2d1520 40%, #0d0d1a 100%)",

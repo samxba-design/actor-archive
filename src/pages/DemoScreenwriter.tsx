@@ -873,6 +873,7 @@ const DemoScreenwriter = () => {
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
     </PortfolioThemeProvider>
+    </KnownForVariantCtx.Provider>
   );
 };
 
