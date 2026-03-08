@@ -125,13 +125,22 @@ const AnalyticsOverview = () => {
     <div className="max-w-4xl space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-6 flex items-center gap-3">
             <Eye className="h-8 w-8 text-primary" />
             <div>
               <p className="text-2xl font-bold text-foreground">{totalViews}</p>
               <p className="text-sm text-muted-foreground">Total Views</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6 flex items-center gap-3">
+            <Download className="h-8 w-8 text-primary" />
+            <div>
+              <p className="text-2xl font-bold text-foreground">{totalDownloads}</p>
+              <p className="text-sm text-muted-foreground">Downloads</p>
             </div>
           </CardContent>
         </Card>
