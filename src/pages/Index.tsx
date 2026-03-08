@@ -66,6 +66,18 @@ const FeatureCard = ({ icon: Icon, title, desc, index }: { icon: any; title: str
   );
 };
 
+const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
+  const { ref, inView } = useInView();
+  return (
+    <div ref={ref} className="text-center transition-all duration-500"
+      style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(16px)", transitionDelay: `${index * 120}ms` }}>
+      <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(40 80% 60%)" }} />
+      <div className="text-2xl sm:text-3xl font-bold text-white">{value}</div>
+      <div className="text-xs mt-1" style={{ color: "hsl(220 10% 45%)" }}>{label}</div>
+    </div>
+  );
+};
+
 const ThemeShowcase = () => {
   const [active, setActive] = useState(0);
   const { ref, inView } = useInView();
