@@ -213,7 +213,12 @@ const HowItWorks = () => {
     <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`}
       style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
 
-      <CinematicBackground />
+      <SEOHead
+        title="How It Works — Build Your Portfolio in Minutes"
+        description="Three simple steps to a professional portfolio. Choose your profile type, add your work, and go live with a custom URL."
+        path="/how-it-works"
+      />
+      <CinematicBackground bokehCount={10} />
       <div className="spotlight-follow" />
 
       <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />

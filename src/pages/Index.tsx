@@ -277,6 +277,12 @@ const Index = () => {
     <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`}
       style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
 
+      <SEOHead
+        title="CreativeSlate — Professional Portfolios for Film & TV"
+        description="Build a stunning portfolio in minutes. Showcase scripts, reels, credits, and headshots with 10+ premium themes. Free forever."
+        path="/"
+        jsonLd={jsonLd}
+      />
       {/* Cinematic background layers */}
       <CinematicBackground />
 
