@@ -445,8 +445,8 @@ All colors MUST be HSL.
 
 /* ═══ Glass shine sweep ═══ */
 @keyframes glass-shine {
-  0% { transform: translateX(-100%) rotate(25deg); }
-  100% { transform: translateX(200%) rotate(25deg); }
+  0% { left: -60%; }
+  100% { left: 120%; }
 }
 
 .glass-shine-card {
@@ -457,14 +457,16 @@ All colors MUST be HSL.
 .glass-shine-card::after {
   content: '';
   position: absolute;
-  inset: -50%;
-  width: 40%;
+  top: -50%;
+  left: -60%;
+  width: 35%;
+  height: 200%;
   background: linear-gradient(
-    90deg,
+    105deg,
     transparent 0%,
-    hsl(0 0% 100% / 0.04) 40%,
+    hsl(0 0% 100% / 0.03) 35%,
     hsl(0 0% 100% / 0.06) 50%,
-    hsl(0 0% 100% / 0.04) 60%,
+    hsl(0 0% 100% / 0.03) 65%,
     transparent 100%
   );
   animation: glass-shine 10s ease-in-out infinite;

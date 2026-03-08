@@ -23,6 +23,7 @@ interface Props {
     profile_type: string | null;
     available_for_hire: boolean | null;
     seeking_representation: boolean | null;
+    professional_status?: string | null;
     cta_label: string | null;
     cta_url: string | null;
     cta_type: string | null;
@@ -243,13 +244,13 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
                     {profile.location}
                   </span>
                 )}
-                {profile.available_for_hire && (
+                {profile.professional_status && (
                   <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest" style={{ color: theme.statusAvailable }}>
                     <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30" style={{ backgroundColor: theme.statusAvailable }} />
                       <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: theme.statusAvailable }} />
                     </span>
-                    Available
+                    {profile.professional_status}
                   </span>
                 )}
                 {/* Social links inline */}
