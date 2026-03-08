@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
+import { PortfolioThemeProvider, usePortfolioTheme } from "@/themes/ThemeProvider";
 import { getAllThemeFontsUrl } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
@@ -95,6 +95,39 @@ const mockServices = [
 
 const featuredProject = mockCredits[0];
 
+/* ── Ambient Background Glow ── */
+const AmbientGlow = () => {
+  const theme = usePortfolioTheme();
+  // Only for dark themes
+  const isDark = theme.bgPrimary.startsWith('#0') || theme.bgPrimary.startsWith('#1') || theme.bgPrimary.startsWith('#2');
+  if (!isDark) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+      <div
+        className="absolute w-[60vw] h-[40vh] rounded-full"
+        style={{
+          top: '20%',
+          left: '10%',
+          background: `radial-gradient(circle, ${theme.accentPrimary}08 0%, transparent 70%)`,
+          filter: 'blur(80px)',
+          animation: 'ambient-drift 18s ease-in-out infinite',
+        }}
+      />
+      <div
+        className="absolute w-[50vw] h-[35vh] rounded-full"
+        style={{
+          bottom: '10%',
+          right: '5%',
+          background: `radial-gradient(circle, ${theme.accentPrimary}05 0%, transparent 70%)`,
+          filter: 'blur(100px)',
+          animation: 'ambient-drift 24s ease-in-out infinite reverse',
+        }}
+      />
+    </div>
+  );
+};
+
 const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
 
@@ -128,7 +161,7 @@ const DemoScreenwriter = () => {
         </span>
       </div>
 
-      {/* Hero — includes representation inline */}
+      {/* Hero */}
       <PortfolioHero
         profile={mockProfile}
         socialLinks={mockSocialLinks}
@@ -137,38 +170,49 @@ const DemoScreenwriter = () => {
         stats={stats}
       />
 
-      {/* Sections — tighter spacing */}
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 relative z-10">
-        <PortfolioSectionWrapper title="Logline Showcase" index={0}>
-          <SectionLoglineShowcase items={mockLoglines} />
-        </PortfolioSectionWrapper>
+      {/* Body — dense grid layout */}
+      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+        <AmbientGlow />
 
-        <PortfolioSectionWrapper title="Script Library" index={1}>
-          <SectionScriptLibrary items={mockScripts} />
-        </PortfolioSectionWrapper>
-
-        <PortfolioSectionWrapper title="Produced Credits" index={2}>
-          <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
-        </PortfolioSectionWrapper>
-
-        {/* Awards + Press side by side on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <PortfolioSectionWrapper title="Awards & Recognition" index={3}>
-            <SectionAwards items={mockAwards} />
+        {/* Row 1: Loglines (main) + Services (sidebar) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+          <PortfolioSectionWrapper title="Original Work" index={0}>
+            <SectionLoglineShowcase items={mockLoglines} />
           </PortfolioSectionWrapper>
 
-          <PortfolioSectionWrapper title="Press & Reviews" index={4}>
-            <SectionPress items={mockPress} />
+          <PortfolioSectionWrapper title="Services" index={1}>
+            <SectionServices items={mockServices} compact />
           </PortfolioSectionWrapper>
         </div>
 
-        <PortfolioSectionWrapper title="Testimonials" index={5}>
-          <SectionTestimonials items={mockTestimonials} />
-        </PortfolioSectionWrapper>
+        {/* Row 2: Script Library full width */}
+        <div className="mb-10">
+          <PortfolioSectionWrapper title="Script Library" index={2}>
+            <SectionScriptLibrary items={mockScripts} />
+          </PortfolioSectionWrapper>
+        </div>
 
-        <PortfolioSectionWrapper title="Services" index={6}>
-          <SectionServices items={mockServices} />
-        </PortfolioSectionWrapper>
+        {/* Row 3: Credits (main) + Testimonials (sidebar) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 mb-10">
+          <PortfolioSectionWrapper title="Produced Credits" index={3}>
+            <SectionProjects items={mockCredits} profileType="screenwriter" isCredits />
+          </PortfolioSectionWrapper>
+
+          <PortfolioSectionWrapper title="Testimonials" index={4}>
+            <SectionTestimonials items={mockTestimonials} />
+          </PortfolioSectionWrapper>
+        </div>
+
+        {/* Row 4: Awards + Press side by side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PortfolioSectionWrapper title="Awards & Recognition" index={5}>
+            <SectionAwards items={mockAwards} />
+          </PortfolioSectionWrapper>
+
+          <PortfolioSectionWrapper title="Press & Reviews" index={6}>
+            <SectionPress items={mockPress} />
+          </PortfolioSectionWrapper>
+        </div>
       </div>
 
       {/* Discreet platform CTA */}

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Film, Tv, BookOpen, FileText, ExternalLink, Play, X } from "lucide-react";
 import { extractYouTubeId, extractVimeoId } from "@/lib/videoEmbed";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import GlassCard from "@/components/portfolio/GlassCard";
+import CompanyLogo from "@/components/CompanyLogo";
 
 interface Props {
   items: any[];
@@ -14,100 +16,79 @@ const typeIcons: Record<string, any> = {
   film: Film, tv_show: Tv, screenplay: FileText, pilot: Tv, novel: BookOpen, book: BookOpen,
 };
 
-const CreditHero = ({ project }: { project: any }) => {
-  const theme = usePortfolioTheme();
-  const image = project.backdrop_url || project.poster_url || project.custom_image_url;
-  if (!image) return null;
-
-  return (
-    <div className="relative overflow-hidden group cursor-default" style={{ borderRadius: theme.cardRadius, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}` }}>
-      <div className="aspect-[21/9] sm:aspect-[3/1] overflow-hidden">
-        <img src={image} alt={project.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-      </div>
-      <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8" style={{ background: `linear-gradient(to top, ${theme.bgPrimary}f2 0%, ${theme.bgPrimary}99 40%, transparent 100%)` }}>
-        {project.network_or_studio && (
-          <span className="inline-block text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded mb-3 self-start" style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent, letterSpacing: "0.1em" }}>
-            {project.network_or_studio}
-          </span>
-        )}
-        {project.genre?.length > 0 && (
-          <div className="flex gap-1.5 mb-2">
-            {project.genre.slice(0, 3).map((g: string) => (
-              <span key={g} className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>{g}</span>
-            ))}
-          </div>
-        )}
-        <h3 className="text-xl sm:text-2xl font-bold" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
-          {project.title}
-          {project.year && <span className="ml-2 text-sm font-normal" style={{ color: theme.textSecondary }}>({project.year})</span>}
-        </h3>
-        {project.role_name && (
-          <p className="text-sm font-semibold mt-1.5" style={{ color: theme.accentPrimary }}>
-            {project.role_name}
-            {project.role_type && <span className="font-normal" style={{ color: theme.textSecondary }}> · {project.role_type}</span>}
-          </p>
-        )}
-        {project.logline && <p className="text-sm mt-1 max-w-xl" style={{ color: theme.textSecondary }}>{project.logline}</p>}
-      </div>
-    </div>
-  );
-};
-
-const CreditCard = ({ project, profileSlug }: { project: any; profileSlug?: string }) => {
+/* ── Compact table-style credit row ── */
+const CreditRow = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
   const Icon = typeIcons[project.project_type] || FileText;
 
   return (
-    <div className="flex gap-0 overflow-hidden transition-all" style={{ backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary, backdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, borderRadius: theme.cardRadius, transitionDuration: theme.hoverTransitionDuration }}>
-      <div className="relative w-28 sm:w-36 shrink-0">
-        {image ? <img src={image} alt={project.title} className="w-full h-full object-cover" loading="lazy" /> : (
-          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: theme.bgElevated }}>
-            <Icon className="w-8 h-8" style={{ color: theme.textTertiary }} />
+    <div
+      className="flex items-center gap-3 px-3 py-2.5 transition-all group"
+      style={{
+        borderLeft: project.is_featured ? `2px solid ${theme.accentPrimary}` : '2px solid transparent',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}80`)}
+      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+    >
+      {/* Thumbnail */}
+      <div className="w-10 h-10 rounded shrink-0 overflow-hidden" style={{ backgroundColor: theme.bgElevated }}>
+        {image ? (
+          <img src={image} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Icon className="w-4 h-4" style={{ color: theme.textTertiary }} />
           </div>
         )}
       </div>
-      <div className="flex-1 p-4 flex flex-col justify-center gap-1.5 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            {project.network_or_studio && (
-              <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded mb-1" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>{project.network_or_studio}</span>
-            )}
-            <h3 className="font-semibold text-sm leading-tight" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>{project.title}</h3>
-          </div>
-          {project.year && <span className="text-lg font-bold shrink-0 tabular-nums" style={{ color: `${theme.accentPrimary}50`, fontFamily: theme.fontDisplay }}>{project.year}</span>}
-        </div>
+
+      {/* Title + role */}
+      <div className="flex-1 min-w-0">
+        <h4 className="text-[13px] font-semibold leading-tight truncate" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
+          {project.title}
+        </h4>
         {project.role_name && (
-          <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full self-start" style={{ backgroundColor: theme.accentSubtle, color: theme.accentPrimary }}>
-            {project.role_name}{project.role_type && ` · ${project.role_type}`}
+          <span className="text-[11px]" style={{ color: theme.accentPrimary }}>
+            {project.role_name}{project.role_type ? ` · ${project.role_type}` : ''}
           </span>
         )}
-        {project.genre?.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {project.genre.slice(0, 3).map((g: string) => (
-              <span key={g} className="text-[10px] px-1.5 py-0.5 rounded-full" style={{ backgroundColor: theme.bgElevated, color: theme.textSecondary }}>{g}</span>
-            ))}
-          </div>
-        )}
-        <div className="flex items-center gap-3 mt-1">
-          {project.imdb_link && (
-            <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs" style={{ color: theme.accentPrimary }}>
-              <ExternalLink className="w-3 h-3" /> IMDb
-            </a>
-          )}
-        </div>
       </div>
+
+      {/* Network badge */}
+      {project.network_or_studio && (
+        <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+          <CompanyLogo companyName={project.network_or_studio} size={16} grayscale />
+          <span className="text-[10px] font-medium uppercase tracking-wider" style={{ color: theme.textSecondary }}>
+            {project.network_or_studio}
+          </span>
+        </div>
+      )}
+
+      {/* Year */}
+      {project.year && (
+        <span className="text-[12px] tabular-nums font-medium shrink-0" style={{ color: theme.textTertiary }}>
+          {project.year}
+        </span>
+      )}
+
+      {/* IMDb */}
+      {project.imdb_link && (
+        <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentPrimary }}>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      )}
     </div>
   );
 };
 
+/* ── Full project card (non-credits) ── */
 const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { project: any; profileSlug?: string; playingVideo: string | null; onPlay: (id: string) => void; onStop: () => void }) => {
   const theme = usePortfolioTheme();
   const Icon = typeIcons[project.project_type] || FileText;
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
 
   return (
-    <div className="group overflow-hidden transition-all" style={{ backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary, backdropFilter: theme.glassEnabled ? `blur(${theme.glassBlur})` : undefined, border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`, borderRadius: theme.cardRadius, transitionDuration: theme.hoverTransitionDuration }}>
+    <GlassCard className="group overflow-hidden">
       <div className="relative">
         {playingVideo === project.id ? (
           <div className="aspect-video">
@@ -150,45 +131,33 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
             ))}
           </div>
         )}
-        <div className="flex items-center gap-3 mt-2">
-          {project.imdb_link && (
-            <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs" style={{ color: theme.accentPrimary }}>
-              <ExternalLink className="w-3 h-3" /> IMDb
-            </a>
-          )}
-        </div>
       </div>
-    </div>
+    </GlassCard>
   );
 };
 
 const SectionProjects = ({ items, profileType, profileSlug, isCredits }: Props) => {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const theme = usePortfolioTheme();
   const featured = items.filter(p => p.is_featured);
   const rest = items.filter(p => !p.is_featured);
   const sorted = [...featured, ...rest];
-  const heroProject = featured.length > 0 ? featured[0] : null;
-  const remainingProjects = heroProject ? sorted.filter(p => p.id !== heroProject.id) : sorted;
 
   if (isCredits) {
     return (
-      <div className="space-y-3">
-        {heroProject && <CreditHero project={heroProject} />}
-        <div className="space-y-3">
-          {remainingProjects.map(project => <CreditCard key={project.id} project={project} profileSlug={profileSlug} />)}
-        </div>
-      </div>
+      <GlassCard className="divide-y" style={{ borderColor: theme.borderDefault }}>
+        {sorted.map(project => (
+          <CreditRow key={project.id} project={project} />
+        ))}
+      </GlassCard>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {heroProject && (heroProject.backdrop_url || heroProject.poster_url) && <CreditHero project={heroProject} />}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {remainingProjects.map(project => (
-          <ProjectCard key={project.id} project={project} profileSlug={profileSlug} playingVideo={playingVideo} onPlay={setPlayingVideo} onStop={() => setPlayingVideo(null)} />
-        ))}
-      </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sorted.map(project => (
+        <ProjectCard key={project.id} project={project} profileSlug={profileSlug} playingVideo={playingVideo} onPlay={setPlayingVideo} onStop={() => setPlayingVideo(null)} />
+      ))}
     </div>
   );
 };
