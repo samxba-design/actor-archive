@@ -22,6 +22,7 @@ import SectionWritingSamples from "./sections/SectionWritingSamples";
 import SectionResultsWall from "./sections/SectionResultsWall";
 import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
 import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
+import SectionClientLogos from "./sections/SectionClientLogos";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
@@ -214,6 +215,11 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
+        case "client_logos": {
+          const { data } = await supabase.from("client_logos_profile").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
         default:
           break;
       }
@@ -296,6 +302,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionVideoPortfolio items={data} />;
       case "campaign_timeline":
         return <SectionCampaignTimeline items={data} />;
+      case "client_logos":
+        return <SectionClientLogos items={data} />;
       default:
         return null;
     }
