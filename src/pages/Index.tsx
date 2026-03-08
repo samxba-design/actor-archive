@@ -448,21 +448,35 @@ const Index = () => {
               <div className="flex-1 space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs"
                   style={{ background: "hsl(var(--landing-accent) / 0.1)", color: "hsl(var(--landing-champagne))" }}>
-                  <Sparkles className="h-3 w-3" /> Live Example
+                  <Sparkles className="h-3 w-3" /> Live Examples
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>
                   See what a finished portfolio looks like
                 </h2>
                 <p className="text-sm leading-relaxed" style={{ color: "hsl(var(--landing-muted))" }}>
-                  Explore a fully fleshed-out screenwriter portfolio with produced credits, awards, script library, testimonials, and more.
+                  Explore fully fleshed-out demo portfolios for different creative professions — with all customization options live.
                 </p>
-                <Button size="lg" asChild
-                  className="font-semibold border-0 text-white"
-                  style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-                  <Link to="/demo/screenwriter">
-                    View Live Demo <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "Screenwriter", path: "/demo/screenwriter", icon: Pen },
+                    { label: "Actor", path: "/demo/actor", icon: Mic2 },
+                  ].map(demo => (
+                    <Link
+                      key={demo.path}
+                      to={demo.path}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-all hover:scale-[1.02] no-underline"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))",
+                        color: "white",
+                        boxShadow: "0 4px 20px -6px hsl(var(--landing-accent) / 0.3)",
+                      }}
+                    >
+                      <demo.icon className="h-3.5 w-3.5" />
+                      {demo.label} Demo
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  ))}
+                </div>
               </div>
               {/* Mini preview card */}
               <div className="w-full md:w-64 flex-shrink-0 rounded-xl overflow-hidden shadow-2xl"
