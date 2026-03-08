@@ -103,12 +103,12 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
 
       switch (sectionKey) {
         case "projects": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "credits": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["film", "tv_show"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["film", "tv_show"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -166,37 +166,37 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           return;
         }
         case "demo_reels": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("video_url", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).not("video_url", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "logline_showcase": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).not("logline", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).not("logline", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "script_library": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["screenplay", "pilot", "spec_script", "play", "series_bible", "comedy_packet"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "bookshelf": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["novel", "book", "short_story"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["novel", "book", "short_story"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "article_feed": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["article"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["article"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "case_studies": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["case_study"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "writing_samples": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["writing_sample"]).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["writing_sample"]).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -206,17 +206,17 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "results_wall": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["case_study"]).not("metric_callouts", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["case_study"]).not("metric_callouts", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "video_portfolio": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "video"]).not("video_url", "is", null).order("display_order", orderOpts);
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["campaign", "video"]).not("video_url", "is", null).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
         case "campaign_timeline": {
-          const { data } = await supabase.from("projects").select("*").eq("profile_id", profileId).in("project_type", ["campaign", "case_study"]).order("year", { ascending: false });
+          const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).in("project_type", ["campaign", "case_study"]).order("year", { ascending: false });
           rows = data || [];
           break;
         }
