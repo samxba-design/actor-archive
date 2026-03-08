@@ -38,6 +38,13 @@ interface SectionVariants {
   press: 'feed' | 'cards' | 'quotes';
   services: 'full' | 'compact' | 'pricing';
   clientLogos: 'bar' | 'grid' | 'marquee';
+  education: 'list' | 'cards' | 'timeline';
+  gallery: 'grid' | 'masonry' | 'carousel';
+  demoReels: 'grid' | 'featured' | 'list';
+  representation: 'cards' | 'compact' | 'inline';
+  skills: 'tags' | 'bars' | 'grouped';
+  events: 'list' | 'calendar' | 'cards';
+  productions: 'list' | 'cards' | 'timeline';
 }
 
 const defaultVariants: SectionVariants = {
@@ -50,6 +57,13 @@ const defaultVariants: SectionVariants = {
   press: 'feed',
   services: 'full',
   clientLogos: 'bar',
+  education: 'list',
+  gallery: 'grid',
+  demoReels: 'grid',
+  representation: 'cards',
+  skills: 'tags',
+  events: 'list',
+  productions: 'list',
 };
 
 const SectionVariantsCtx = createContext<{
@@ -87,6 +101,27 @@ const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label: strin
   ],
   clientLogos: [
     { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
+  ],
+  education: [
+    { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
+  ],
+  gallery: [
+    { key: 'grid', label: 'Grid' }, { key: 'masonry', label: 'Masonry' }, { key: 'carousel', label: 'Carousel' },
+  ],
+  demoReels: [
+    { key: 'grid', label: 'Grid' }, { key: 'featured', label: 'Featured' }, { key: 'list', label: 'List' },
+  ],
+  representation: [
+    { key: 'cards', label: 'Cards' }, { key: 'compact', label: 'Compact' }, { key: 'inline', label: 'Inline' },
+  ],
+  skills: [
+    { key: 'tags', label: 'Tags' }, { key: 'bars', label: 'Bars' }, { key: 'grouped', label: 'Grouped' },
+  ],
+  events: [
+    { key: 'list', label: 'List' }, { key: 'calendar', label: 'Calendar' }, { key: 'cards', label: 'Cards' },
+  ],
+  productions: [
+    { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
   ],
 };
 
