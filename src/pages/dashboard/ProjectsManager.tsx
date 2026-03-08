@@ -16,6 +16,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { searchBooks, type BookResult } from "@/lib/googleBooks";
+import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
 
 type Project = Tables<"projects">;
 
@@ -39,11 +40,14 @@ function generateSlug(title: string): string {
 const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { isPro } = useSubscription();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
 
   // Google Books search state
   const [bookSearching, setBookSearching] = useState(false);
@@ -229,7 +233,10 @@ const ProjectsManager = () => {
         <h1 className="text-2xl font-bold text-foreground">Projects</h1>
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />Add Project</Button>
+            <Button disabled={atProjectLimit}>
+              <Plus className="mr-2 h-4 w-4" />
+              {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : "Add Project"}
+            </Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>

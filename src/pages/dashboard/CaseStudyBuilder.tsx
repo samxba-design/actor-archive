@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, Save, Wand2 } from "lucide-react";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 const CaseStudyBuilder = () => {
   const { user } = useAuth();
@@ -106,6 +107,7 @@ const CaseStudyBuilder = () => {
   };
 
   return (
+    <UpgradeGate feature="case_study_builder" label="Case Study Builder">
     <div className="max-w-2xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Case Study Builder</h1>
@@ -154,6 +156,7 @@ const CaseStudyBuilder = () => {
         Save as Case Study Project
       </Button>
     </div>
+    </UpgradeGate>
   );
 };
 

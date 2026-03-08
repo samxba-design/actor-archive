@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Sparkles, Film, Save } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 type Project = Tables<"projects">;
 
@@ -79,6 +80,7 @@ const CompTitleMatcher = () => {
   }
 
   return (
+    <UpgradeGate feature="comp_matcher" label="Comp Title Matcher">
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Comp Title Matcher</h1>
@@ -145,6 +147,7 @@ const CompTitleMatcher = () => {
         </>
       )}
     </div>
+    </UpgradeGate>
   );
 };
 

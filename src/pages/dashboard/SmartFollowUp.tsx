@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Eye, Download, Clock, MapPin, Monitor, Smartphone, Globe } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 interface ViewEntry {
   id: string;
@@ -60,6 +61,7 @@ const SmartFollowUp = () => {
   };
 
   return (
+    <UpgradeGate feature="smart_followup" label="Smart Follow-Up">
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Smart Follow-Up</h1>
@@ -159,6 +161,7 @@ const SmartFollowUp = () => {
         </CardContent>
       </Card>
     </div>
+    </UpgradeGate>
   );
 };
 

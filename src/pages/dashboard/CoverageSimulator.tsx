@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, FileText, Star, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import type { Tables } from "@/integrations/supabase/types";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 type Project = Tables<"projects">;
 
@@ -100,6 +101,7 @@ const CoverageSimulator = () => {
   const cfg = report ? ratingConfig[report.rating] : null;
 
   return (
+    <UpgradeGate feature="coverage_sim" label="Coverage Simulator">
     <div className="max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Coverage Simulator</h1>
@@ -211,6 +213,7 @@ const CoverageSimulator = () => {
         </>
       )}
     </div>
+    </UpgradeGate>
   );
 };
 

@@ -16,6 +16,7 @@ import PublicProfile from "./pages/PublicProfile";
 import ProjectPitchPage from "./pages/ProjectPitchPage";
 import DemoScreenwriter from "./pages/DemoScreenwriter";
 import HowItWorks from "./pages/HowItWorks";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ const App = () => (
             <Route path="/p/:slug/:projectSlug" element={<ProjectPitchPage />} />
             <Route path="/demo/screenwriter" element={<DemoScreenwriter />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

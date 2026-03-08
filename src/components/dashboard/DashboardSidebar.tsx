@@ -1,11 +1,12 @@
 import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
-  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2
+  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import {
   Sidebar,
   SidebarContent,
@@ -74,6 +75,7 @@ export function DashboardSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { user, signOut } = useAuth();
+  const { isPro, tier } = useSubscription();
   const navigate = useNavigate();
   const [slug, setSlug] = useState<string | null>(null);
   const [profileType, setProfileType] = useState<string | null>(null);
@@ -137,6 +139,26 @@ export function DashboardSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-2 space-y-1">
+        {!isPro && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start border-primary/30 text-primary hover:bg-primary/10"
+            asChild
+          >
+            <Link to="/pricing">
+              <Crown className="mr-2 h-4 w-4 shrink-0" />
+              {!collapsed && <span>Upgrade to Pro</span>}
+            </Link>
+          </Button>
+        )}
+        {isPro && !collapsed && (
+          <div className="px-2 py-1">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary">
+              <Crown className="h-2.5 w-2.5" /> PRO
+            </span>
+          </div>
+        )}
         {slug && (
           <Button
             variant="ghost"

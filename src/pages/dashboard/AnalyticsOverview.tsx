@@ -4,11 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Eye, Globe, Smartphone, Monitor, Tablet } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { useSubscription } from "@/hooks/useSubscription";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--accent))"];
 
 const AnalyticsOverview = () => {
   const { user } = useAuth();
+  const { isPro } = useSubscription();
   const [loading, setLoading] = useState(true);
   const [totalViews, setTotalViews] = useState(0);
   const [dailyViews, setDailyViews] = useState<{ date: string; views: number }[]>([]);
@@ -117,6 +120,7 @@ const AnalyticsOverview = () => {
         </Card>
       </div>
 
+      <UpgradeGate feature="full_analytics" label="Full Analytics">
       <Card>
         <CardHeader><CardTitle>Views (Last 30 Days)</CardTitle></CardHeader>
         <CardContent>
@@ -173,6 +177,7 @@ const AnalyticsOverview = () => {
           </CardContent>
         </Card>
       </div>
+      </UpgradeGate>
     </div>
   );
 };
