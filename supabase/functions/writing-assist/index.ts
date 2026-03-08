@@ -54,6 +54,70 @@ BIO RULES:
 - NEVER fabricate credits, awards, or affiliations
 - If limited information is provided, write a shorter, honest bio`;
 
+const LOGLINE_GENERATOR_RULES = `You are a Hollywood development executive and pitch specialist. Generate compelling loglines from provided story details.
+
+RULES:
+- Generate 4 distinct logline variations, each with a different angle/approach
+- Each logline MUST be 25–50 words, one to two sentences
+- Present tense, active voice
+- Identify a specific protagonist with a defining trait
+- State the inciting incident and central conflict
+- Include irony, a hook, or a compelling contrast
+- Avoid character names — use descriptors
+- No spoilers
+- Genre implied through word choice
+- Each variation should take a meaningfully different approach (tone, emphasis, hook)
+- Base everything ONLY on the provided text — do not invent story elements`;
+
+const BIO_BUILDER_RULES = `You are a creative industry career consultant and professional bio writer. Generate a polished, compelling professional bio from structured career data.
+
+RULES:
+- Write in third person, professional tone
+- 150–300 words
+- Lead with the most impressive/distinctive credential
+- Weave in achievements, specializations, and career highlights naturally
+- If industry awards or notable clients are mentioned, lead with those
+- Match tone to the professional type (e.g., corporate for copywriters, literary for authors, cinematic for filmmakers)
+- End with current focus, availability, or what they're seeking
+- NEVER fabricate or embellish — only use provided facts
+- If limited info, write a shorter but polished bio`;
+
+const PITCH_EMAIL_RULES = `You are an entertainment industry pitch expert and professional communications consultant. Write targeted, compelling pitch emails and query letters.
+
+RULES:
+- Professional, warm, but not overly casual
+- Opening line should immediately establish relevance (why you're contacting THIS person/company)
+- Clearly state what you're pitching and why it matters
+- Include a brief, compelling hook (logline, key result, unique angle)
+- Mention 1-2 relevant credentials concisely
+- Clear call to action (what you want them to do next)
+- Keep under 250 words — brevity is crucial
+- Adapt tone to the industry context (Hollywood vs. publishing vs. corporate)
+- NEVER fabricate credentials — only use provided facts
+- Generate 2 variations: one formal, one conversational`;
+
+const SERVICE_DESC_RULES = `You are a professional copywriter who specializes in writing compelling service descriptions for creative professionals.
+
+RULES:
+- Write a clear, persuasive service description (80-150 words)
+- Lead with the value/outcome the client gets, not the process
+- Use active, benefit-driven language
+- Include 3-5 specific deliverables as bullet points
+- Suggest a professional turnaround time if relevant
+- Match tone to the service type (creative, corporate, technical)
+- NEVER fabricate capabilities — only work with provided information`;
+
+const CASE_STUDY_DRAFT_RULES = `You are a B2B marketing specialist who writes compelling case studies that showcase client results.
+
+RULES:
+- Write in clear, professional prose
+- Challenge section: Set up the problem with context (industry, scale, urgency). 2-3 sentences.
+- Solution section: Describe the approach and methodology. Focus on strategy, not just tactics. 2-3 sentences.
+- Results section: Lead with the most impressive outcome. Use specific numbers. 2-3 sentences.
+- If metric data is provided, weave numbers into the narrative naturally
+- Professional but engaging tone — not dry or overly technical
+- NEVER fabricate results or details — only elaborate on provided facts`;
+
 function buildToolDef(name: string, description: string, properties: Record<string, any>, required: string[]) {
   return {
     type: "function" as const,
@@ -182,6 +246,103 @@ function getPromptAndTools(type: string, text: string, context: string) {
           changes_made: { type: "array", items: { type: "string" }, description: "What was changed and why" },
         }, ["improved_text", "changes_made"])],
         toolChoice: { type: "function", function: { name: "bio_improvement" } },
+      };
+
+    // ── NEW AI FEATURES ──
+
+    case "generate_loglines":
+      return {
+        systemPrompt: LOGLINE_GENERATOR_RULES,
+        userPrompt: `Generate 4 distinct logline variations from this story information:\n\n${text}`,
+        tools: [buildToolDef("logline_variations", "Return 4 logline variations", {
+          variations: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                text: { type: "string", description: "The logline (25-50 words)" },
+                approach: { type: "string", description: "Brief label: what angle this takes (e.g. 'Emotional hook', 'High-concept', 'Character-driven', 'Genre-forward')" },
+                word_count: { type: "number" },
+              },
+              required: ["text", "approach", "word_count"],
+              additionalProperties: false,
+            },
+          },
+        }, ["variations"])],
+        toolChoice: { type: "function", function: { name: "logline_variations" } },
+      };
+
+    case "build_bio":
+      return {
+        systemPrompt: BIO_BUILDER_RULES,
+        userPrompt: `Build a professional bio from this structured career data:\n\n${text}`,
+        tools: [buildToolDef("bio_built", "Return a crafted professional bio", {
+          bio_text: { type: "string", description: "The polished bio, 150-300 words" },
+          highlights_used: { type: "array", items: { type: "string" }, description: "Key facts/achievements woven into the bio" },
+          tone: { type: "string", description: "The tone used (e.g. 'authoritative and warm', 'cinematic and bold')" },
+        }, ["bio_text", "highlights_used", "tone"])],
+        toolChoice: { type: "function", function: { name: "bio_built" } },
+      };
+
+    case "generate_pitch_email":
+      return {
+        systemPrompt: PITCH_EMAIL_RULES,
+        userPrompt: `Write pitch emails based on this context:\n\n${text}`,
+        tools: [buildToolDef("pitch_emails", "Return 2 pitch email variations", {
+          emails: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                subject_line: { type: "string" },
+                body: { type: "string" },
+                tone: { type: "string", description: "e.g. 'Formal & professional' or 'Warm & conversational'" },
+                word_count: { type: "number" },
+              },
+              required: ["subject_line", "body", "tone", "word_count"],
+              additionalProperties: false,
+            },
+          },
+          tips: { type: "array", items: { type: "string" }, description: "2-3 tips for personalizing this email further" },
+        }, ["emails", "tips"])],
+        toolChoice: { type: "function", function: { name: "pitch_emails" } },
+      };
+
+    case "generate_service_description":
+      return {
+        systemPrompt: SERVICE_DESC_RULES,
+        userPrompt: `Write a compelling service description from these notes:\n\n${text}`,
+        tools: [buildToolDef("service_description", "Return a polished service description", {
+          description: { type: "string", description: "80-150 word service description" },
+          suggested_deliverables: { type: "array", items: { type: "string" }, description: "3-5 specific deliverables" },
+          suggested_turnaround: { type: "string", description: "Suggested turnaround time" },
+        }, ["description", "suggested_deliverables", "suggested_turnaround"])],
+        toolChoice: { type: "function", function: { name: "service_description" } },
+      };
+
+    case "draft_case_study":
+      return {
+        systemPrompt: CASE_STUDY_DRAFT_RULES,
+        userPrompt: `Draft a compelling case study narrative from these bullet points:\n\n${text}`,
+        tools: [buildToolDef("case_study_draft", "Return a structured case study draft", {
+          challenge: { type: "string", description: "The challenge section, 2-3 sentences" },
+          solution: { type: "string", description: "The solution section, 2-3 sentences" },
+          results: { type: "string", description: "The results section, 2-3 sentences" },
+          suggested_metrics: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                label: { type: "string" },
+                value: { type: "string" },
+              },
+              required: ["label", "value"],
+              additionalProperties: false,
+            },
+            description: "2-3 suggested metric callouts extracted from the text",
+          },
+        }, ["challenge", "solution", "results", "suggested_metrics"])],
+        toolChoice: { type: "function", function: { name: "case_study_draft" } },
       };
 
     default:
