@@ -117,6 +117,42 @@ const AmbientGlow = () => {
   );
 };
 
+/* Mid-scroll CTA that appears after scrolling 60% */
+const MidScrollCTA = () => {
+  const theme = usePortfolioTheme();
+  const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+      if (scrollPercent > 0.35 && scrollPercent < 0.85) {
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  if (dismissed || !visible) return null;
+
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+      <div className="flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl border"
+        style={{ background: theme.bgElevated, borderColor: theme.borderDefault, backdropFilter: 'blur(16px)' }}>
+        <span className="text-sm font-medium" style={{ color: theme.textPrimary }}>Like what you see?</span>
+        <Link to="/signup" className="text-sm font-semibold px-3 py-1 rounded-full text-white no-underline"
+          style={{ background: `linear-gradient(135deg, ${theme.accentPrimary}, ${theme.accentPrimary}dd)` }}>
+          Create yours free
+        </Link>
+        <button onClick={() => setDismissed(true)} className="text-xs ml-1" style={{ color: theme.textTertiary }}>✕</button>
+      </div>
+    </div>
+  );
+};
+
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
 
 /* 1. CLASSIC — Traditional vertical stack (matches original screenshot) */
