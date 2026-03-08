@@ -150,6 +150,28 @@ const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc:
 });
 FeatureCard.displayName = "FeatureCard";
 
+const TestimonialCard = ({ quote, author, role, photo, index }: { quote: string; author: string; role: string; photo: string; index: number }) => {
+  const { ref, inView } = useInView();
+  return (
+    <div ref={ref} className="relative p-6 rounded-xl border glass-card"
+      style={{
+        opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)",
+        transition: `all 0.6s ease ${index * 100}ms`,
+        background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))",
+      }}>
+      <Quote className="h-5 w-5 mb-3" style={{ color: "hsl(var(--landing-accent) / 0.4)" }} />
+      <p className="text-sm leading-relaxed mb-4" style={{ color: "hsl(var(--landing-fg) / 0.85)" }}>"{quote}"</p>
+      <div className="flex items-center gap-3">
+        <img src={photo} alt={author} className="w-9 h-9 rounded-full object-cover" />
+        <div>
+          <p className="text-sm font-semibold" style={{ color: "hsl(var(--landing-fg))" }}>{author}</p>
+          <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{role}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const StatItem = ({ icon: Icon, value, label, index }: { icon: any; value: string; label: string; index: number }) => {
   const { ref, inView } = useInView();
   const [displayed, setDisplayed] = useState(value);
