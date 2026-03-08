@@ -31,6 +31,8 @@ interface NavItem {
   visibleTo?: string[];
   /** Table name to count items for badge. */
   countTable?: string;
+  /** If true, count only unread items (is_read = false) */
+  countUnread?: boolean;
 }
 
 const mainNav: NavItem[] = [
@@ -71,7 +73,7 @@ const trackingNav: NavItem[] = [
 ];
 
 const systemNav: NavItem[] = [
-  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox, countTable: "contact_submissions" },
+  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox, countTable: "contact_submissions", countUnread: true },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
   { title: "Insights", url: "/dashboard/insights", icon: Lightbulb },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
@@ -94,6 +96,7 @@ export function DashboardSidebar() {
   const [slug, setSlug] = useState<string | null>(null);
   const [profileType, setProfileType] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -123,6 +126,14 @@ export function DashboardSidebar() {
       setCounts(Object.fromEntries(results));
     };
     fetchCounts();
+
+    // Fetch unread inbox count
+    supabase
+      .from("contact_submissions")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", user.id)
+      .eq("is_read", false)
+      .then(({ count }) => setUnreadCount(count || 0));
   }, [user]);
 
   const filterItems = (items: NavItem[]) =>
@@ -152,7 +163,18 @@ export function DashboardSidebar() {
                     {!collapsed && (
                       <>
                         <span className="flex-1">{item.title}</span>
-                        {item.countTable && counts[item.countTable] !== undefined && (
+                        {item.countUnread && unreadCount > 0 ? (
+                          <span
+                            className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                            style={{
+                              background: "hsl(var(--primary))",
+                              color: "hsl(var(--primary-foreground))",
+                            }}
+                            aria-label={`${unreadCount} unread`}
+                          >
+                            {unreadCount}
+                          </span>
+                        ) : item.countTable && counts[item.countTable] !== undefined ? (
                           <span
                             className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full"
                             style={{
@@ -166,7 +188,7 @@ export function DashboardSidebar() {
                           >
                             {counts[item.countTable]}
                           </span>
-                        )}
+                        ) : null}
                       </>
                     )}
                   </NavLink>
