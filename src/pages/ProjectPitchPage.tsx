@@ -54,7 +54,7 @@ const ProjectPitchPage = () => {
         path: `/p/${slug}/${projectSlug}`,
         referrer: document.referrer || null,
         user_agent: navigator.userAgent,
-        device_type: window.innerWidth < 768 ? "mobile" : "tablet",
+        device_type: window.innerWidth < 768 ? "mobile" : window.innerWidth < 1024 ? "tablet" : "desktop",
       });
 
       setLoading(false);

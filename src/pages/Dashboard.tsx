@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import DashboardHome from "@/pages/dashboard/DashboardHome";
 import ProfileEditor from "@/pages/dashboard/ProfileEditor";
 import ProjectsManager from "@/pages/dashboard/ProjectsManager";
 import GalleryManager from "@/pages/dashboard/GalleryManager";
@@ -29,7 +30,8 @@ const Dashboard = () => {
   return (
     <Routes>
       <Route element={<DashboardLayout />}>
-        <Route index element={<ProfileEditor />} />
+        <Route index element={<DashboardHome />} />
+        <Route path="profile" element={<ProfileEditor />} />
         <Route path="projects" element={<ProjectsManager />} />
         <Route path="gallery" element={<GalleryManager />} />
         <Route path="social" element={<SocialLinksManager />} />

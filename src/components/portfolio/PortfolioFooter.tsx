@@ -7,10 +7,25 @@ interface Props {
     id: string;
     display_name: string | null;
     show_contact_form: boolean | null;
+    auto_responder_enabled?: boolean | null;
+    auto_responder_message?: string | null;
   };
   showContact: boolean;
   socialLinks?: any[];
 }
+
+const SUBJECT_OPTIONS = [
+  { value: "general", label: "General Inquiry" },
+  { value: "script_request", label: "Script Request" },
+  { value: "commission", label: "Commission" },
+  { value: "meeting", label: "Meeting Request" },
+  { value: "press", label: "Press / Interview" },
+  { value: "representation", label: "Representation" },
+  { value: "casting", label: "Casting" },
+  { value: "rights_enquiry", label: "Rights Enquiry" },
+  { value: "quote_request", label: "Quote Request" },
+  { value: "booking", label: "Booking" },
+];
 
 const platformIcons: Record<string, string> = {
   imdb: "🎬",
@@ -27,7 +42,7 @@ const platformIcons: Record<string, string> = {
 
 const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }: Props) => {
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
-  const [form, setForm] = useState({ sender_name: "", sender_email: "", message: "" });
+  const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -51,10 +66,18 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
       profile_id: profile.id,
       sender_name: form.sender_name,
       sender_email: form.sender_email,
+      subject_type: form.subject_type as any,
       message: form.message,
     });
     setSending(false);
     setSent(true);
+  };
+
+  const inputStyle = {
+    backgroundColor: "hsl(var(--portfolio-bg))",
+    border: "1px solid hsl(var(--portfolio-border))",
+    color: "hsl(var(--portfolio-fg))",
+    borderRadius: "var(--portfolio-radius)",
   };
 
   return (
@@ -83,12 +106,7 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                 onChange={(e) => setForm((f) => ({ ...f, sender_name: e.target.value }))}
                 required
                 className="w-full px-3 py-2 rounded text-sm"
-                style={{
-                  backgroundColor: "hsl(var(--portfolio-bg))",
-                  border: "1px solid hsl(var(--portfolio-border))",
-                  color: "hsl(var(--portfolio-fg))",
-                  borderRadius: "var(--portfolio-radius)",
-                }}
+                style={inputStyle}
               />
               <input
                 type="email"
@@ -97,13 +115,18 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                 onChange={(e) => setForm((f) => ({ ...f, sender_email: e.target.value }))}
                 required
                 className="w-full px-3 py-2 rounded text-sm"
-                style={{
-                  backgroundColor: "hsl(var(--portfolio-bg))",
-                  border: "1px solid hsl(var(--portfolio-border))",
-                  color: "hsl(var(--portfolio-fg))",
-                  borderRadius: "var(--portfolio-radius)",
-                }}
+                style={inputStyle}
               />
+              <select
+                value={form.subject_type}
+                onChange={(e) => setForm((f) => ({ ...f, subject_type: e.target.value }))}
+                className="w-full px-3 py-2 rounded text-sm"
+                style={inputStyle}
+              >
+                {SUBJECT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
               <textarea
                 placeholder="Your message"
                 value={form.message}
@@ -111,12 +134,7 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                 required
                 rows={4}
                 className="w-full px-3 py-2 rounded text-sm resize-none"
-                style={{
-                  backgroundColor: "hsl(var(--portfolio-bg))",
-                  border: "1px solid hsl(var(--portfolio-border))",
-                  color: "hsl(var(--portfolio-fg))",
-                  borderRadius: "var(--portfolio-radius)",
-                }}
+                style={inputStyle}
               />
               <button
                 type="submit"
@@ -137,9 +155,16 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
         )}
 
         {sent && (
-          <p className="text-center mb-8 text-sm" style={{ color: "hsl(var(--portfolio-accent))" }}>
-            Thank you! Your message has been sent.
-          </p>
+          <div className="text-center mb-8">
+            <p className="text-sm mb-2" style={{ color: "hsl(var(--portfolio-accent))" }}>
+              Thank you! Your message has been sent.
+            </p>
+            {profile.auto_responder_enabled && profile.auto_responder_message && (
+              <p className="text-sm max-w-md mx-auto" style={{ color: "hsl(var(--portfolio-muted-fg))" }}>
+                {profile.auto_responder_message}
+              </p>
+            )}
+          </div>
         )}
 
         {socialLinks.length > 0 && (

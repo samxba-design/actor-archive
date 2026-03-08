@@ -4,32 +4,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock } from "lucide-react";
 import { themes } from "@/lib/themes";
-
-const ALL_SECTIONS = [
-  { key: "projects", label: "Projects" },
-  { key: "gallery", label: "Gallery" },
-  { key: "services", label: "Services" },
-  { key: "awards", label: "Awards" },
-  { key: "education", label: "Education & Training" },
-  { key: "events", label: "Events" },
-  { key: "press", label: "Press & Reviews" },
-  { key: "testimonials", label: "Testimonials" },
-  { key: "skills", label: "Skills" },
-  { key: "representation", label: "Representation" },
-];
+import { getProfileTypeConfig, getMergedSections, type SectionConfig } from "@/config/profileSections";
 
 const SettingsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [profileType, setProfileType] = useState<string | null>(null);
+  const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [form, setForm] = useState({
     slug: "",
     theme: "minimal",
@@ -42,21 +33,74 @@ const SettingsPage = () => {
     cta_url: "",
     cta_type: "contact_form",
     booking_url: "",
+    auto_responder_enabled: false,
+    auto_responder_message: "",
   });
-  const [sectionOrder, setSectionOrder] = useState<string[]>(ALL_SECTIONS.map(s => s.key));
-  const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>(
-    Object.fromEntries(ALL_SECTIONS.map(s => [s.key, true]))
-  );
+  const [sectionOrder, setSectionOrder] = useState<string[]>([]);
+  const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
+  const [allSections, setAllSections] = useState<{ key: string; label: string }[]>([]);
+
+  // Password change
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         if (data) {
+          const pt = data.profile_type || null;
+          const st = (data as any).secondary_types || [];
+          setProfileType(pt);
+          setSecondaryTypes(st);
+
+          // Build sections list from profile type config
+          let sections: { key: string; label: string }[] = [];
+          if (pt) {
+            const sectionConfigs = pt === "multi_hyphenate"
+              ? getMergedSections(pt, st)
+              : (getProfileTypeConfig(pt)?.sections || []);
+            sections = sectionConfigs
+              .filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact")
+              .map((s: SectionConfig) => ({ key: s.key, label: s.label }));
+          }
+          // Fallback if no sections found
+          if (sections.length === 0) {
+            sections = [
+              { key: "projects", label: "Projects" },
+              { key: "gallery", label: "Gallery" },
+              { key: "services", label: "Services" },
+              { key: "awards", label: "Awards" },
+              { key: "education", label: "Education & Training" },
+              { key: "events", label: "Events" },
+              { key: "press", label: "Press & Reviews" },
+              { key: "testimonials", label: "Testimonials" },
+              { key: "skills", label: "Skills" },
+              { key: "representation", label: "Representation" },
+            ];
+          }
+          setAllSections(sections);
+
+          // Build section order - use saved order if available, otherwise from config
+          const savedOrder = data.section_order || [];
+          const sectionKeys = sections.map(s => s.key);
+          // Merge: keep saved order for known keys, append any new ones
+          const merged = savedOrder.filter((k: string) => sectionKeys.includes(k));
+          sectionKeys.forEach(k => { if (!merged.includes(k)) merged.push(k); });
+          setSectionOrder(merged);
+
+          const defaultVisible = Object.fromEntries(sectionKeys.map(k => [k, true]));
+          if (data.sections_visible && typeof data.sections_visible === "object") {
+            setSectionsVisible({ ...defaultVisible, ...(data.sections_visible as Record<string, boolean>) });
+          } else {
+            setSectionsVisible(defaultVisible);
+          }
+
           setForm({
             slug: data.slug || "",
             theme: data.theme || "minimal",
@@ -69,13 +113,9 @@ const SettingsPage = () => {
             cta_url: (data as any).cta_url || "",
             cta_type: (data as any).cta_type || "contact_form",
             booking_url: (data as any).booking_url || "",
+            auto_responder_enabled: (data as any).auto_responder_enabled || false,
+            auto_responder_message: (data as any).auto_responder_message || "",
           });
-          if (data.section_order && data.section_order.length > 0) {
-            setSectionOrder(data.section_order);
-          }
-          if (data.sections_visible && typeof data.sections_visible === "object") {
-            setSectionsVisible({ ...Object.fromEntries(ALL_SECTIONS.map(s => [s.key, true])), ...(data.sections_visible as Record<string, boolean>) });
-          }
         }
         setLoading(false);
       });
@@ -100,6 +140,8 @@ const SettingsPage = () => {
         booking_url: form.booking_url || null,
         section_order: sectionOrder,
         sections_visible: sectionsVisible,
+        auto_responder_enabled: form.auto_responder_enabled,
+        auto_responder_message: form.auto_responder_message || null,
       } as any)
       .eq("id", user.id);
 
@@ -109,6 +151,27 @@ const SettingsPage = () => {
       toast({ title: "Saved", description: "Settings updated." });
     }
     setSaving(false);
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: "Error", description: "Password must be at least 6 characters.", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: "Error", description: "Passwords don't match.", variant: "destructive" });
+      return;
+    }
+    setChangingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Password updated", description: "Your password has been changed." });
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+    setChangingPassword(false);
   };
 
   const moveSection = (index: number, direction: -1 | 1) => {
@@ -199,7 +262,7 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* CTA Configuration */}
+      {/* CTA */}
       <Card>
         <CardHeader>
           <CardTitle>Call-to-Action Button</CardTitle>
@@ -257,6 +320,32 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Auto-Responder */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Auto-Responder</CardTitle>
+          <CardDescription>Automatically acknowledge incoming contact messages</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label>Enable Auto-Responder</Label>
+            <Switch checked={form.auto_responder_enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, auto_responder_enabled: v }))} />
+          </div>
+          {form.auto_responder_enabled && (
+            <div>
+              <Label>Response Message</Label>
+              <Textarea
+                value={form.auto_responder_message}
+                onChange={(e) => setForm((f) => ({ ...f, auto_responder_message: e.target.value }))}
+                rows={4}
+                placeholder="Thanks for reaching out! I'll get back to you within 48 hours."
+              />
+              <p className="text-xs text-muted-foreground mt-1">This message will be shown to visitors after they submit a contact form</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Section Visibility & Reorder */}
       <Card>
         <CardHeader>
@@ -265,7 +354,7 @@ const SettingsPage = () => {
         </CardHeader>
         <CardContent className="space-y-2">
           {sectionOrder.map((key, index) => {
-            const section = ALL_SECTIONS.find(s => s.key === key);
+            const section = allSections.find(s => s.key === key);
             if (!section) return null;
             const visible = sectionsVisible[key] !== false;
             return (
@@ -287,6 +376,27 @@ const SettingsPage = () => {
               </div>
             );
           })}
+        </CardContent>
+      </Card>
+
+      {/* Change Password */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" />Change Password</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>New Password</Label>
+            <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
+          </div>
+          <div>
+            <Label>Confirm Password</Label>
+            <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" />
+          </div>
+          <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
+            {changingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Update Password
+          </Button>
         </CardContent>
       </Card>
     </div>

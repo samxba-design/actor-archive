@@ -89,7 +89,8 @@ const ProfileEditor = () => {
         location: form.location || null,
         profile_photo_url: form.profile_photo_url || null,
         banner_url: form.banner_url || null,
-      })
+        primary_goal: form.primary_goal || null,
+      } as any)
       .eq("id", user.id);
 
     if (error) {
