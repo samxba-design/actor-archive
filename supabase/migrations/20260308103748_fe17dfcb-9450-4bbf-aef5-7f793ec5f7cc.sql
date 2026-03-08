@@ -1,0 +1,2 @@
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS chapters jsonb DEFAULT '[]'::jsonb;
+COMMENT ON COLUMN public.projects.chapters IS 'Timestamped chapter markers for video reels, format: [{time: "0:00", label: "Comedy"}, ...]';

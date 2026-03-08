@@ -869,6 +869,7 @@ export type Database = {
           beat: string | null
           cast_size_notation: string | null
           challenge: string | null
+          chapters: Json | null
           client: string | null
           comparable_titles: Json | null
           coverage_excerpt: string | null
@@ -934,6 +935,7 @@ export type Database = {
           beat?: string | null
           cast_size_notation?: string | null
           challenge?: string | null
+          chapters?: Json | null
           client?: string | null
           comparable_titles?: Json | null
           coverage_excerpt?: string | null
@@ -999,6 +1001,7 @@ export type Database = {
           beat?: string | null
           cast_size_notation?: string | null
           challenge?: string | null
+          chapters?: Json | null
           client?: string | null
           comparable_titles?: Json | null
           coverage_excerpt?: string | null
