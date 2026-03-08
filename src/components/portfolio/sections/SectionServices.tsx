@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Star } from "lucide-react";
 
 interface Props {
   items: any[];
@@ -9,13 +9,22 @@ const SectionServices = ({ items }: Props) => (
     {items.map((s) => (
       <div
         key={s.id}
-        className="p-5 space-y-2"
+        className="relative p-5 space-y-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
         style={{
           backgroundColor: "hsl(var(--portfolio-card))",
           border: s.is_featured ? "2px solid hsl(var(--portfolio-accent))" : "1px solid hsl(var(--portfolio-border))",
           borderRadius: "var(--portfolio-radius)",
+          boxShadow: s.is_featured ? "0 4px 20px -6px hsl(var(--portfolio-accent) / 0.2)" : undefined,
         }}
       >
+        {/* Popular badge for featured */}
+        {s.is_featured && (
+          <div className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1"
+            style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-accent-fg))" }}>
+            <Star className="w-2.5 h-2.5" /> Popular
+          </div>
+        )}
+
         <div className="flex items-baseline justify-between">
           <h4 className="font-semibold text-sm" style={{ color: "hsl(var(--portfolio-card-fg))" }}>{s.name}</h4>
           {s.starting_price && (

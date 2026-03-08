@@ -40,7 +40,6 @@ const StepProfileType = ({ data, updateData, onNext }: Props) => {
         secondaryTypes: [],
       });
     } else {
-      // Multi-hyphenate: first selected is primary, rest are secondary
       updateData({
         profileType: "multi_hyphenate" as any,
         secondaryTypes: selected,
@@ -59,13 +58,13 @@ const StepProfileType = ({ data, updateData, onNext }: Props) => {
           You are a...
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Select your creative discipline. Pick more than one to build a multi-hyphenate profile 
+          Select your creative discipline. Pick more than one to build a multi-hyphenate profile
           — you can always customise and add sections later.
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {PROFILE_TYPES.filter((pt) => pt.key !== "multi_hyphenate").map((pt) => {
+        {PROFILE_TYPES.filter((pt) => pt.key !== "multi_hyphenate").map((pt, idx) => {
           const Icon = ICON_MAP[pt.icon] || PenTool;
           const isSelected = selected.includes(pt.key);
 
@@ -78,6 +77,13 @@ const StepProfileType = ({ data, updateData, onNext }: Props) => {
                   ? "border-primary bg-primary/5 shadow-sm"
                   : "border-border hover:border-primary/40 bg-card"
               }`}
+              style={{
+                animationName: "fade-in",
+                animationDuration: "0.4s",
+                animationTimingFunction: "ease-out",
+                animationFillMode: "backwards",
+                animationDelay: `${idx * 50}ms`,
+              }}
             >
               {isSelected && (
                 <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">

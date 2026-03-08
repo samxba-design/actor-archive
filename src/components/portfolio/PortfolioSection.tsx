@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import SectionProjects from "./sections/SectionProjects";
 import SectionGallery from "./sections/SectionGallery";
@@ -33,6 +33,20 @@ const sectionLabels: Record<string, string> = {
 const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [inView, setInView] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Scroll-triggered animation
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.unobserve(el); } },
+      { threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -134,7 +148,14 @@ const PortfolioSection = ({ sectionKey, profileId, profileType }: Props) => {
   };
 
   return (
-    <section>
+    <section
+      ref={sectionRef}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? "translateY(0)" : "translateY(24px)",
+        transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+      }}
+    >
       <h2
         className="text-2xl font-bold mb-6 tracking-tight"
         style={{ fontFamily: "var(--portfolio-heading-font)" }}
