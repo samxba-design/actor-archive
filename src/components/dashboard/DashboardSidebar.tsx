@@ -1,5 +1,5 @@
 import {
-  User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, ChevronLeft
+  User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,6 +24,8 @@ const navItems = [
   { title: "Profile", url: "/dashboard", icon: User },
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen },
   { title: "Gallery", url: "/dashboard/gallery", icon: Image },
+  { title: "Social Links", url: "/dashboard/social", icon: Link2 },
+  { title: "Inbox", url: "/dashboard/inbox", icon: Inbox },
   { title: "Analytics", url: "/dashboard/analytics", icon: BarChart3 },
   { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
