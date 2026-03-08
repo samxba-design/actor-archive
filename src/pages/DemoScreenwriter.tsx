@@ -809,6 +809,7 @@ const DemoScreenwriter = () => {
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
 
   return (
+    <KnownForVariantCtx.Provider value={{ variant: knownForVariant, setVariant: setKnownForVariant }}>
     <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
       {/* Demo banner */}
       <div
