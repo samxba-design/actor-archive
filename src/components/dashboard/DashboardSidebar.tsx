@@ -1,7 +1,7 @@
 import {
   User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
-  FileText, Sparkles, PenTool, Heart, Compass
+  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, QrCode, Share2
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +46,12 @@ const toolsNav = [
   { title: "Case Study Builder", url: "/dashboard/case-study", icon: PenTool },
   { title: "Endorsements", url: "/dashboard/endorsements", icon: Heart },
   { title: "Industry Tools", url: "/dashboard/industry", icon: Compass },
+];
+
+const trackingNav = [
+  { title: "Pipeline Tracker", url: "/dashboard/pipeline", icon: GitBranch },
+  { title: "Smart Follow-Up", url: "/dashboard/follow-up", icon: Bell },
+  { title: "Embed & Share", url: "/dashboard/embed", icon: Share2 },
 ];
 
 const systemNav = [
@@ -103,6 +109,7 @@ export function DashboardSidebar() {
         {renderGroup("Portfolio", mainNav)}
         {renderGroup("Content", contentNav)}
         {renderGroup("Smart Tools", toolsNav)}
+        {renderGroup("Tracking", trackingNav)}
         {renderGroup("System", systemNav)}
       </SidebarContent>
 
