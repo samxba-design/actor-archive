@@ -21,7 +21,7 @@ const SectionWritingSamples = ({ items }: Props) => {
             {category}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {samples.map((sample: any) => (
+            {(samples as any[]).map((sample: any) => (
               <a
                 key={sample.id}
                 href={sample.article_url || sample.script_pdf_url || "#"}
