@@ -151,13 +151,13 @@ export const PosterCard = ({
 /* ════════════════════ VARIANTS ════════════════════ */
 
 /* Strip — static left-aligned horizontal row */
-const StripVariant = ({ items, display }: { items: KnownForItem[]; display: Props['display'] }) => {
+const StripVariant = ({ items, display, onRemoveItem, editable }: { items: KnownForItem[]; display: Props['display']; onRemoveItem?: (id: string) => void; editable?: boolean }) => {
   const cardWidth = display === 'text' ? undefined : '130px';
   return (
     <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
       <div className="flex gap-3">
         {items.slice(0, 6).map(item => (
-          <PosterCard key={item.id} item={item} width={cardWidth} display={display} />
+          <PosterCard key={item.id} item={item} width={cardWidth} display={display} onRemove={onRemoveItem} editable={editable} />
         ))}
       </div>
     </div>
