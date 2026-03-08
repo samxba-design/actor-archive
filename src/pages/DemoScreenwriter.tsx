@@ -124,10 +124,9 @@ const ClassicLayout = () => {
   const theme = usePortfolioTheme();
   return (
     <>
-      {/* Known For — poster strip */}
       <div className="mb-10">
         <PortfolioSectionWrapper title="Known For" index={-1}>
-          <SectionKnownFor items={mockKnownFor} variant="strip" />
+          <SectionKnownFor items={mockKnownFor} variant="carousel" />
         </PortfolioSectionWrapper>
       </div>
       <div className="mb-10">
@@ -261,10 +260,9 @@ const CreditHeroCard = ({ project }: { project: any }) => {
 /* 2. STANDARD — Dense grid with sidebar modules */
 const StandardLayout = () => (
   <>
-    {/* Known For — full-width strip at top */}
     <div className="mb-10">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" display="both" />
+        <SectionKnownFor items={mockKnownFor} variant="carousel" display="both" />
       </PortfolioSectionWrapper>
     </div>
     {/* Client logos bar */}
@@ -306,10 +304,9 @@ const StandardLayout = () => (
 /* 3. CINEMATIC — Full-width hero, poster gallery */
 const CinematicLayout = () => (
   <>
-    {/* Full-width Known For strip */}
     <div className="mb-12">
       <PortfolioSectionWrapper title="Known For" index={-1}>
-        <SectionKnownFor items={mockKnownFor} variant="strip" />
+        <SectionKnownFor items={mockKnownFor} variant="carousel" />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
@@ -350,13 +347,19 @@ const CinematicLayout = () => (
   </>
 );
 
-/* 4. COMPACT — Maximum density */
+/* 4. COMPACT — Maximum density, fixed spacing */
 const CompactLayout = () => (
   <>
+    {/* Known For carousel — full width with breathing room */}
+    <div className="mb-8">
+      <PortfolioSectionWrapper title="Known For" index={-1}>
+        <SectionKnownFor items={mockKnownFor} variant="carousel" display="image" />
+      </PortfolioSectionWrapper>
+    </div>
     <div className="mb-4">
       <SectionClientLogos companies={mockClients} variant="bar" />
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-4 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 mb-8">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <SectionLoglineShowcase items={mockLoglines} />
       </PortfolioSectionWrapper>
@@ -364,7 +367,7 @@ const CompactLayout = () => (
         <SectionServices items={mockServices} compact />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <PortfolioSectionWrapper title="Script Library" index={2}>
         <SectionScriptLibrary items={mockScripts} />
       </PortfolioSectionWrapper>
@@ -372,13 +375,15 @@ const CompactLayout = () => (
         <SectionProjects items={mockCredits} profileType="screenwriter" layout="table" />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <PortfolioSectionWrapper title="Awards" index={4}>
         <SectionAwards items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press" index={5}>
         <SectionPress items={mockPress} />
       </PortfolioSectionWrapper>
+    </div>
+    <div>
       <PortfolioSectionWrapper title="Testimonials" index={6}>
         <SectionTestimonials items={mockTestimonials} />
       </PortfolioSectionWrapper>
