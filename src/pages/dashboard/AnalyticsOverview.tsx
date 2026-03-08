@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeGate } from "@/components/UpgradeGate";
 
-const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--accent))"];
+const COLORS = ["hsl(var(--primary))", "hsl(var(--muted-foreground))", "hsl(var(--accent))", "hsl(var(--destructive))", "hsl(var(--secondary))"];
 
 const AnalyticsOverview = () => {
   const { user } = useAuth();
@@ -17,6 +17,8 @@ const AnalyticsOverview = () => {
   const [dailyViews, setDailyViews] = useState<{ date: string; views: number }[]>([]);
   const [deviceBreakdown, setDeviceBreakdown] = useState<{ name: string; value: number }[]>([]);
   const [topReferrers, setTopReferrers] = useState<{ referrer: string; count: number }[]>([]);
+  const [topCountries, setTopCountries] = useState<{ country: string; count: number }[]>([]);
+  const [topCities, setTopCities] = useState<{ city: string; count: number }[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -73,6 +75,28 @@ const AnalyticsOverview = () => {
           .sort((a, b) => b[1] - a[1])
           .slice(0, 5)
           .map(([referrer, count]) => ({ referrer, count }))
+      );
+
+      // Geographic breakdown
+      const countries: Record<string, number> = {};
+      const cities: Record<string, number> = {};
+      views.forEach((v) => {
+        const c = v.country || "Unknown";
+        countries[c] = (countries[c] || 0) + 1;
+        const city = v.city || "Unknown";
+        if (city !== "Unknown") cities[city] = (cities[city] || 0) + 1;
+      });
+      setTopCountries(
+        Object.entries(countries)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([country, count]) => ({ country, count }))
+      );
+      setTopCities(
+        Object.entries(cities)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([city, count]) => ({ city, count }))
       );
 
       setLoading(false);
@@ -170,6 +194,42 @@ const AnalyticsOverview = () => {
                   <div key={r.referrer} className="flex items-center justify-between">
                     <span className="text-sm text-foreground truncate">{r.referrer}</span>
                     <span className="text-sm font-medium text-muted-foreground">{r.count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader><CardTitle>Top Countries</CardTitle></CardHeader>
+          <CardContent>
+            {topCountries.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No geographic data yet</p>
+            ) : (
+              <div className="space-y-3">
+                {topCountries.map((c) => (
+                  <div key={c.country} className="flex items-center justify-between">
+                    <span className="text-sm text-foreground truncate">{c.country}</span>
+                    <span className="text-sm font-medium text-muted-foreground">{c.count}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle>Top Cities</CardTitle></CardHeader>
+          <CardContent>
+            {topCities.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No city data yet</p>
+            ) : (
+              <div className="space-y-3">
+                {topCities.map((c) => (
+                  <div key={c.city} className="flex items-center justify-between">
+                    <span className="text-sm text-foreground truncate">{c.city}</span>
+                    <span className="text-sm font-medium text-muted-foreground">{c.count}</span>
                   </div>
                 ))}
               </div>

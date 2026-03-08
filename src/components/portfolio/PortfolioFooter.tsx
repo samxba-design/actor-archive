@@ -41,6 +41,8 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
+  const [rateLimited, setRateLimited] = useState(false);
 
   const socialLinks = socialLinksProp || fetchedLinks;
 
@@ -53,6 +55,14 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sender_name || !form.sender_email || !form.message) return;
+    // Rate limit: 1 submission per 30 seconds
+    const now = Date.now();
+    if (now - lastSubmitTime < 30000) {
+      setRateLimited(true);
+      setTimeout(() => setRateLimited(false), 5000);
+      return;
+    }
+    setLastSubmitTime(now);
     setSending(true);
     await supabase.from("contact_submissions").insert({
       profile_id: profile.id,
@@ -109,6 +119,11 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp }:
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {sending ? "Sending..." : "Send Message"}
               </button>
+              {rateLimited && (
+                <p className="text-xs text-center" style={{ color: theme.accentPrimary }}>
+                  Please wait a moment before sending again.
+                </p>
+              )}
             </form>
           </div>
         )}
