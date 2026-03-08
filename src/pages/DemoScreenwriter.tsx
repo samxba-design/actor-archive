@@ -14,6 +14,8 @@ import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import SectionPress from "@/components/portfolio/sections/SectionPress";
 import SectionTestimonials from "@/components/portfolio/sections/SectionTestimonials";
 import SectionServices from "@/components/portfolio/sections/SectionServices";
+import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 
@@ -99,6 +101,8 @@ const mockServices = [
 
 const featuredProject = mockCredits[0];
 
+const mockKnownFor = mockCredits; // reuse credits as known-for items
+const mockClients = ["HBO", "FX", "A24", "NBC", "Netflix", "Amazon Studios"];
 /* ══════════════════════ SHARED ══════════════════════ */
 
 const AmbientGlow = () => {
