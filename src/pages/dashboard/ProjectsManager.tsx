@@ -47,10 +47,14 @@ const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
+  const [profileType, setProfileType] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const labels = getTypeAwareLabels(profileType);
   const [saving, setSaving] = useState(false);
 
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
