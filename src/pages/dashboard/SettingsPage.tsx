@@ -270,7 +270,36 @@ const SettingsPage = () => {
         </Button>
       </div>
 
-      {/* Publish */}
+      {/* Profile Type Switcher */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Type</CardTitle>
+          <CardDescription>Your profile type determines which sections, labels, and tools are shown throughout the dashboard</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {PROFILE_TYPES.filter(pt => pt.key !== "multi_hyphenate").map((pt) => (
+              <button
+                key={pt.key}
+                onClick={() => handleProfileTypeChange(pt.key)}
+                className={`text-left p-3 rounded-lg border transition-all text-sm ${
+                  profileType === pt.key
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">{pt.label}</span>
+                  {profileType === pt.key && <Check className="h-3.5 w-3.5 text-primary" />}
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{pt.description.split(".")[0]}.</p>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">⚠️ Changing type will reset your section layout to match the new profile type.</p>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
