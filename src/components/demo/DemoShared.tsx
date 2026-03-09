@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
