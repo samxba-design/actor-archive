@@ -81,6 +81,7 @@ const ProjectsManager = () => {
     isbn: "",
     page_count: "",
     purchase_links: [] as PurchaseLink[],
+    client: "",
     // Advanced fields
     imdb_link: "",
     network_or_studio: "",
