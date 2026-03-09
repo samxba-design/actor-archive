@@ -55,7 +55,6 @@ const ProjectsManager = () => {
   const [saving, setSaving] = useState(false);
 
   const labels = getTypeAwareLabels(profileType);
-  const [saving, setSaving] = useState(false);
 
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
 
