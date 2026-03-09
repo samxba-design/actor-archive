@@ -133,22 +133,34 @@ export default function AdminModeration() {
     setLoadingPreview(true);
 
     // Fetch the content based on type
-    const tableMap: Record<string, string> = {
-      project: "projects",
-      testimonial: "testimonials",
-      profile: "profiles",
-      press: "press",
-      service: "services",
-    };
-
-    const table = tableMap[flag.content_type];
-    if (table) {
-      const { data } = await supabase
-        .from(table)
-        .select("*")
-        .eq("id", flag.content_id)
-        .single();
+    // Fetch the content based on type
+    try {
+      let data = null;
+      switch (flag.content_type) {
+        case "project":
+          const { data: projectData } = await supabase.from("projects").select("*").eq("id", flag.content_id).single();
+          data = projectData;
+          break;
+        case "testimonial":
+          const { data: testimonialData } = await supabase.from("testimonials").select("*").eq("id", flag.content_id).single();
+          data = testimonialData;
+          break;
+        case "profile":
+          const { data: profileData } = await supabase.from("profiles").select("*").eq("id", flag.content_id).single();
+          data = profileData;
+          break;
+        case "press":
+          const { data: pressData } = await supabase.from("press").select("*").eq("id", flag.content_id).single();
+          data = pressData;
+          break;
+        case "service":
+          const { data: serviceData } = await supabase.from("services").select("*").eq("id", flag.content_id).single();
+          data = serviceData;
+          break;
+      }
       setPreviewDialog(prev => ({ ...prev, content: data }));
+    } catch (e) {
+      console.error("Failed to fetch content:", e);
     }
     setLoadingPreview(false);
   };

@@ -14,7 +14,7 @@ interface AuditLog {
   action_type: string;
   target_type: string | null;
   target_id: string | null;
-  details: Record<string, any> | null;
+  details: any;
   created_at: string | null;
 }
 
