@@ -21,6 +21,8 @@ import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { LoglineGenerator } from "@/components/dashboard/LoglineGenerator";
 import { searchBooks, type BookResult } from "@/lib/googleBooks";
 import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import PageHeader from "@/components/dashboard/PageHeader";
 
 type Project = Tables<"projects">;
 
@@ -45,11 +47,14 @@ const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
+  const [profileType, setProfileType] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const labels = getTypeAwareLabels(profileType);
 
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
 
@@ -75,6 +80,7 @@ const ProjectsManager = () => {
     isbn: "",
     page_count: "",
     purchase_links: [] as PurchaseLink[],
+    client: "",
     // Advanced fields
     imdb_link: "",
     network_or_studio: "",
@@ -99,10 +105,16 @@ const ProjectsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchProjects(); }, [user]);
+  useEffect(() => {
+    fetchProjects();
+    if (user) {
+      supabase.from("profiles").select("profile_type").eq("id", user.id).single()
+        .then(({ data }) => setProfileType(data?.profile_type || null));
+    }
+  }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
+    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], client: "", imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
     setEditing(null);
     setBookResults([]);
     setShowBookResults(false);
@@ -128,6 +140,7 @@ const ProjectsManager = () => {
       isbn: p.isbn || "",
       page_count: p.page_count?.toString() || "",
       purchase_links: links,
+      client: p.client || "",
       imdb_link: p.imdb_link || "",
       network_or_studio: p.network_or_studio || "",
       is_featured: p.is_featured || false,
@@ -205,6 +218,7 @@ const ProjectsManager = () => {
       status: form.status || null,
       poster_url: form.poster_url || null,
       role_name: form.role_name || null,
+      client: form.client || null,
       // Advanced fields
       imdb_link: form.imdb_link || null,
       network_or_studio: form.network_or_studio || null,
@@ -261,12 +275,15 @@ const ProjectsManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Projects</h1>
+        <PageHeader
+          title={labels.projects}
+          description={labels.projectsDescription}
+        />
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
             <Button disabled={atProjectLimit}>
               <Plus className="mr-2 h-4 w-4" />
-              {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : "Add Project"}
+              {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : `Add ${labels.project}`}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
@@ -343,7 +360,7 @@ const ProjectsManager = () => {
 
               <div>
                 <div className="flex items-center justify-between">
-                  <Label>{isBookType ? "Synopsis" : "Logline"} <GlossaryTooltip term="logline" /></Label>
+                  <Label>{labels.logline} <GlossaryTooltip term="logline" /></Label>
                   <div className="flex items-center gap-1">
                     <WritingAssistant
                       text={form.logline}
@@ -430,15 +447,24 @@ const ProjectsManager = () => {
                 </>
               )}
 
+              {/* Client / Company field — shown for types that need it */}
+              {labels.showClientField && (
+                <div>
+                  <Label>{labels.client}</Label>
+                  <Input value={form.client} onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))} placeholder={labels.clientPlaceholder} />
+                  <p className="text-xs text-muted-foreground mt-1">Associate this work with a brand or company</p>
+                </div>
+              )}
+
               {/* Non-book fields */}
               {!isBookType && (
                 <>
-                  <div><Label>Director <GlossaryTooltip term="director" /></Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
-                  <div><Label>Video URL <GlossaryTooltip term="video_url" /></Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
+                  <div><Label>{labels.directorLabel} <GlossaryTooltip term="director" /></Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
+                  <div><Label>{labels.videoLabel} <GlossaryTooltip term="video_url" /></Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
                 </>
               )}
 
-              <div><Label>Role / Credit <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={isBookType ? "e.g. Author, Co-Author" : "e.g. Writer, Lead Actor"} /></div>
+              <div><Label>{labels.roleLabel} <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={labels.rolePlaceholder} /></div>
               <div><Label>{isBookType ? "Cover Image URL" : "Poster URL"} <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
 
               {/* Advanced Portfolio Display Options */}
@@ -530,8 +556,9 @@ const ProjectsManager = () => {
                 )}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-foreground truncate">{p.title}</h3>
-                  <div className="flex gap-2 mt-1">
+                  <div className="flex gap-2 mt-1 flex-wrap">
                     <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
+                    {p.client && <Badge variant="outline" className="text-xs">{p.client}</Badge>}
                     {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
                     {p.project_slug && <span className="text-xs text-muted-foreground">/{p.project_slug}</span>}
                   </div>

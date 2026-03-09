@@ -10,10 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, ShieldOff } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, ShieldOff, Check } from "lucide-react";
 import { themes } from "@/lib/themes";
 import { fontPairings } from "@/lib/fontPairings";
-import { getProfileTypeConfig, getMergedSections, type SectionConfig } from "@/config/profileSections";
+import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
 
@@ -135,6 +135,57 @@ const SettingsPage = () => {
       });
   }, [user]);
 
+  const rebuildSections = (pt: string | null, st: string[]) => {
+    let sections: { key: string; label: string }[] = [];
+    if (pt) {
+      const sectionConfigs = pt === "multi_hyphenate"
+        ? getMergedSections(pt, st)
+        : (getProfileTypeConfig(pt)?.sections || []);
+      sections = sectionConfigs
+        .filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact")
+        .map((s: SectionConfig) => ({ key: s.key, label: s.label }));
+    }
+    if (sections.length === 0) {
+      sections = [
+        { key: "projects", label: "Projects" },
+        { key: "gallery", label: "Gallery" },
+        { key: "services", label: "Services" },
+        { key: "awards", label: "Awards" },
+        { key: "education", label: "Education & Training" },
+        { key: "events", label: "Events" },
+        { key: "press", label: "Press & Reviews" },
+        { key: "testimonials", label: "Testimonials" },
+        { key: "skills", label: "Skills" },
+        { key: "representation", label: "Representation" },
+      ];
+    }
+    setAllSections(sections);
+    const sectionKeys = sections.map(s => s.key);
+    setSectionOrder(sectionKeys);
+    setSectionsVisible(Object.fromEntries(sectionKeys.map(k => [k, true])));
+  };
+
+  const handleProfileTypeChange = async (newType: string) => {
+    if (!user) return;
+    setProfileType(newType);
+    setSecondaryTypes([]);
+
+    // Save immediately
+    const { error } = await supabase
+      .from("profiles")
+      .update({ profile_type: newType, secondary_types: [] } as any)
+      .eq("id", user.id);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    // Rebuild sections for new type
+    rebuildSections(newType, []);
+    toast({ title: "Profile type updated", description: `Switched to ${PROFILE_TYPES.find(p => p.key === newType)?.label || newType}. Section layout has been reset.` });
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
@@ -219,7 +270,36 @@ const SettingsPage = () => {
         </Button>
       </div>
 
-      {/* Publish */}
+      {/* Profile Type Switcher */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Type</CardTitle>
+          <CardDescription>Your profile type determines which sections, labels, and tools are shown throughout the dashboard</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {PROFILE_TYPES.filter(pt => pt.key !== "multi_hyphenate").map((pt) => (
+              <button
+                key={pt.key}
+                onClick={() => handleProfileTypeChange(pt.key)}
+                className={`text-left p-3 rounded-lg border transition-all text-sm ${
+                  profileType === pt.key
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">{pt.label}</span>
+                  {profileType === pt.key && <Check className="h-3.5 w-3.5 text-primary" />}
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{pt.description.split(".")[0]}.</p>
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">⚠️ Changing type will reset your section layout to match the new profile type.</p>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

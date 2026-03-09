@@ -1,41 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { Outlet } from "react-router-dom";
 import DashboardTour from "./DashboardTour";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
-import { Keyboard } from "lucide-react";
+import { Keyboard, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 export default function DashboardLayout() {
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [slug, setSlug] = useState<string | null>(null);
   const shortcuts = useKeyboardShortcuts(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("slug")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => setSlug(data?.slug || null));
+  }, [user]);
 
   // Add ? shortcut to show help
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
-      const target = e.target as HTMLElement;
-      if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
-        e.preventDefault();
-        setShowShortcuts(true);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== "INPUT" && target.tagName !== "TEXTAREA") {
+          e.preventDefault();
+          setShowShortcuts(true);
+        }
       }
-    }
-  };
-
-  useState(() => {
+    };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  });
+  }, []);
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
+      <div className="dashboard-shell min-h-screen flex w-full bg-background text-foreground">
         <DashboardSidebar />
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-12 flex items-center border-b px-4 shrink-0" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.9)", backdropFilter: "blur(12px)" }}>
-            <SidebarTrigger className="text-current" />
-            <div className="ml-auto">
+          <header className="h-12 flex items-center border-b border-border px-4 shrink-0 bg-background/90 backdrop-blur-xl">
+            <SidebarTrigger className="text-foreground" />
+            <div className="ml-auto flex items-center gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+                      onClick={() => {
+                        if (slug) {
+                          window.open(`/p/${slug}`, "_blank");
+                        }
+                      }}
+                      disabled={!slug}
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Preview
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {slug ? `Open /p/${slug} in new tab` : "Set your URL slug in Settings first"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Button
                 variant="ghost"
                 size="icon"
