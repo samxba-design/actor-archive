@@ -1,4 +1,4 @@
-import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield } from "lucide-react";
+import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield, History, UserCog } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -18,7 +18,9 @@ import { Button } from "@/components/ui/button";
 const adminNav = [
   { title: "Dashboard", url: "/admin", icon: Home },
   { title: "User Management", url: "/admin/users", icon: Users },
+  { title: "Role Management", url: "/admin/roles", icon: UserCog },
   { title: "Content Moderation", url: "/admin/moderation", icon: Flag },
+  { title: "Audit Logs", url: "/admin/audit-logs", icon: History },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];

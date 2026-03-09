@@ -31,7 +31,9 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminRoles = lazy(() => import("./pages/admin/AdminRoles"));
 const AdminModeration = lazy(() => import("./pages/admin/AdminModeration"));
+const AdminAuditLogs = lazy(() => import("./pages/admin/AdminAuditLogs"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 
@@ -84,7 +86,9 @@ const App = () => (
               >
                 <Route index element={<AdminDashboard />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="roles" element={<AdminRoles />} />
                 <Route path="moderation" element={<AdminModeration />} />
+                <Route path="audit-logs" element={<AdminAuditLogs />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
