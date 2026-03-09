@@ -134,6 +134,7 @@ const ProjectsManager = () => {
       isbn: p.isbn || "",
       page_count: p.page_count?.toString() || "",
       purchase_links: links,
+      client: p.client || "",
       imdb_link: p.imdb_link || "",
       network_or_studio: p.network_or_studio || "",
       is_featured: p.is_featured || false,
