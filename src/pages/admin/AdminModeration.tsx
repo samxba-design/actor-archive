@@ -6,6 +6,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CheckCircle, XCircle, Eye, Clock, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
@@ -25,37 +27,46 @@ interface ContentFlag {
 export default function AdminModeration() {
   const { user: adminUser } = useAdmin();
   const [flags, setFlags] = useState<ContentFlag[]>([]);
+  const [allFlags, setAllFlags] = useState<ContentFlag[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("pending");
+  const [selectedFlags, setSelectedFlags] = useState<Set<string>>(new Set());
+  const [previewDialog, setPreviewDialog] = useState<{ open: boolean; flag: ContentFlag | null; content: any }>({ open: false, flag: null, content: null });
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
-  const fetchFlags = async (status: string) => {
+  const fetchFlags = async () => {
     setLoading(true);
-    let query = supabase
+    const { data, error } = await supabase
       .from("content_flags")
       .select(`
         *,
         profiles:profile_id (display_name, slug)
       `)
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(200);
 
-    if (status !== "all") {
-      query = query.eq("status", status);
-    }
-
-    const { data, error } = await query;
     if (error) {
       toast.error("Failed to fetch flags");
       console.error(error);
     } else {
-      setFlags(data || []);
+      setAllFlags(data || []);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchFlags(activeTab);
-  }, [activeTab]);
+    fetchFlags();
+  }, []);
+
+  // Filter flags based on active tab
+  useEffect(() => {
+    if (activeTab === "all") {
+      setFlags(allFlags);
+    } else {
+      setFlags(allFlags.filter(f => f.status === activeTab));
+    }
+    setSelectedFlags(new Set());
+  }, [activeTab, allFlags]);
 
   const updateFlagStatus = async (flagId: string, newStatus: string) => {
     if (!adminUser) return;
@@ -81,8 +92,77 @@ export default function AdminModeration() {
       });
 
       toast.success(`Flag marked as ${newStatus}`);
-      fetchFlags(activeTab);
+      fetchFlags();
     }
+  };
+
+  const handleBulkAction = async (newStatus: string) => {
+    if (selectedFlags.size === 0 || !adminUser) return;
+
+    const flagIds = Array.from(selectedFlags);
+    const { error } = await supabase
+      .from("content_flags")
+      .update({
+        status: newStatus,
+        reviewed_by: adminUser.id,
+        reviewed_at: new Date().toISOString(),
+      })
+      .in("id", flagIds);
+
+    if (error) {
+      toast.error("Failed to update flags");
+    } else {
+      for (const id of flagIds) {
+        await supabase.from("admin_audit_logs").insert({
+          admin_id: adminUser.id,
+          action_type: "content_flag_review",
+          target_type: "content_flag",
+          target_id: id,
+          details: { new_status: newStatus, bulk: true },
+        });
+      }
+
+      toast.success(`${flagIds.length} flags updated`);
+      setSelectedFlags(new Set());
+      fetchFlags();
+    }
+  };
+
+  const handlePreview = async (flag: ContentFlag) => {
+    setPreviewDialog({ open: true, flag, content: null });
+    setLoadingPreview(true);
+
+    // Fetch the content based on type
+    // Fetch the content based on type
+    try {
+      let data = null;
+      switch (flag.content_type) {
+        case "project":
+          const { data: projectData } = await supabase.from("projects").select("*").eq("id", flag.content_id).single();
+          data = projectData;
+          break;
+        case "testimonial":
+          const { data: testimonialData } = await supabase.from("testimonials").select("*").eq("id", flag.content_id).single();
+          data = testimonialData;
+          break;
+        case "profile":
+          const { data: profileData } = await supabase.from("profiles").select("*").eq("id", flag.content_id).single();
+          data = profileData;
+          break;
+        case "press":
+          const { data: pressData } = await supabase.from("press").select("*").eq("id", flag.content_id).single();
+          data = pressData;
+          break;
+        case "service":
+          const { data: serviceData } = await supabase.from("services").select("*").eq("id", flag.content_id).single();
+          data = serviceData;
+          break;
+      }
+      setPreviewDialog(prev => ({ ...prev, content: data }));
+    } catch (e) {
+      console.error("Failed to fetch content:", e);
+    }
+    setLoadingPreview(false);
   };
 
   const getStatusBadge = (status: string) => {
@@ -92,7 +172,7 @@ export default function AdminModeration() {
       case "reviewed":
         return <Badge variant="outline" className="text-blue-500 border-blue-500"><Eye className="mr-1 h-3 w-3" />Reviewed</Badge>;
       case "resolved":
-        return <Badge variant="default" className="bg-green-500"><CheckCircle className="mr-1 h-3 w-3" />Resolved</Badge>;
+        return <Badge className="bg-green-500"><CheckCircle className="mr-1 h-3 w-3" />Resolved</Badge>;
       case "dismissed":
         return <Badge variant="secondary"><XCircle className="mr-1 h-3 w-3" />Dismissed</Badge>;
       default:
@@ -100,7 +180,26 @@ export default function AdminModeration() {
     }
   };
 
-  const pendingCount = flags.filter(f => f.status === "pending").length;
+  const toggleSelect = (id: string) => {
+    const newSet = new Set(selectedFlags);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedFlags(newSet);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedFlags.size === flags.length) {
+      setSelectedFlags(new Set());
+    } else {
+      setSelectedFlags(new Set(flags.map(f => f.id)));
+    }
+  };
+
+  // Correct pending count from all flags
+  const pendingCount = allFlags.filter(f => f.status === "pending").length;
 
   return (
     <div className="space-y-6">
@@ -121,15 +220,31 @@ export default function AdminModeration() {
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
-              <TabsTrigger value="resolved">Resolved</TabsTrigger>
-              <TabsTrigger value="dismissed">Dismissed</TabsTrigger>
-              <TabsTrigger value="all">All</TabsTrigger>
-            </TabsList>
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="pending">Pending ({allFlags.filter(f => f.status === "pending").length})</TabsTrigger>
+                <TabsTrigger value="reviewed">Reviewed</TabsTrigger>
+                <TabsTrigger value="resolved">Resolved</TabsTrigger>
+                <TabsTrigger value="dismissed">Dismissed</TabsTrigger>
+                <TabsTrigger value="all">All</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value={activeTab} className="mt-4">
+              {selectedFlags.size > 0 && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">{selectedFlags.size} selected</span>
+                  <Button size="sm" variant="outline" onClick={() => handleBulkAction("resolved")}>
+                    <CheckCircle className="h-4 w-4 mr-1" />
+                    Resolve All
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => handleBulkAction("dismissed")}>
+                    <XCircle className="h-4 w-4 mr-1" />
+                    Dismiss All
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <TabsContent value={activeTab} className="mt-0">
               {loading ? (
                 <div className="flex justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -142,6 +257,12 @@ export default function AdminModeration() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-10">
+                        <Checkbox
+                          checked={selectedFlags.size === flags.length && flags.length > 0}
+                          onCheckedChange={toggleSelectAll}
+                        />
+                      </TableHead>
                       <TableHead>Content</TableHead>
                       <TableHead>Reason</TableHead>
                       <TableHead>Owner</TableHead>
@@ -153,6 +274,12 @@ export default function AdminModeration() {
                   <TableBody>
                     {flags.map((flag) => (
                       <TableRow key={flag.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedFlags.has(flag.id)}
+                            onCheckedChange={() => toggleSelect(flag.id)}
+                          />
+                        </TableCell>
                         <TableCell>
                           <div>
                             <Badge variant="outline">{flag.content_type}</Badge>
@@ -184,6 +311,13 @@ export default function AdminModeration() {
                           {format(new Date(flag.created_at), "MMM d, yyyy")}
                         </TableCell>
                         <TableCell className="text-right space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePreview(flag)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
                           {flag.status === "pending" && (
                             <>
                               <Button
@@ -214,6 +348,41 @@ export default function AdminModeration() {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Content Preview Dialog */}
+      <Dialog open={previewDialog.open} onOpenChange={(open) => setPreviewDialog({ open, flag: null, content: null })}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Content Preview</DialogTitle>
+            <DialogDescription>
+              {previewDialog.flag?.content_type} • {previewDialog.flag?.content_id.slice(0, 8)}...
+            </DialogDescription>
+          </DialogHeader>
+
+          {loadingPreview ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+          ) : previewDialog.content ? (
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                <div className="text-sm font-medium text-destructive">Flag Reason: {previewDialog.flag?.reason}</div>
+                {previewDialog.flag?.details && (
+                  <p className="text-sm mt-1">{previewDialog.flag.details}</p>
+                )}
+              </div>
+
+              <div className="border rounded-lg p-4">
+                <pre className="text-xs overflow-x-auto whitespace-pre-wrap">
+                  {JSON.stringify(previewDialog.content, null, 2)}
+                </pre>
+              </div>
+            </div>
+          ) : (
+            <p className="text-muted-foreground">Content not found or has been deleted.</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

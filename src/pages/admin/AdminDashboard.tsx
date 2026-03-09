@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, FolderOpen, Flag, Eye, TrendingUp, AlertTriangle } from "lucide-react";
@@ -60,7 +61,7 @@ export default function AdminDashboard() {
     { label: "Total Projects", value: stats.totalProjects, icon: FolderOpen, color: "text-green-500" },
     { label: "Page Views", value: stats.totalPageViews, icon: Eye, color: "text-purple-500" },
     { label: "Pending Flags", value: stats.pendingFlags, icon: Flag, color: "text-orange-500" },
-    { label: "Suspended Users", value: stats.suspendedUsers, icon: AlertTriangle, color: "text-red-500" },
+    { label: "Suspended Users", value: stats.suspendedUsers, icon: AlertTriangle, color: "text-destructive" },
     { label: "Signups (7 days)", value: stats.recentSignups, icon: TrendingUp, color: "text-emerald-500" },
   ];
 
@@ -107,18 +108,26 @@ export default function AdminDashboard() {
             <CardDescription>Common admin tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a href="/admin/users" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+            <Link to="/admin/users" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
               <div className="font-medium">Manage Users</div>
               <div className="text-sm text-muted-foreground">View, edit, or suspend user accounts</div>
-            </a>
-            <a href="/admin/moderation" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+            </Link>
+            <Link to="/admin/moderation" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
               <div className="font-medium">Review Flagged Content</div>
               <div className="text-sm text-muted-foreground">{stats.pendingFlags} items pending review</div>
-            </a>
-            <a href="/admin/settings" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+            </Link>
+            <Link to="/admin/roles" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+              <div className="font-medium">Role Management</div>
+              <div className="text-sm text-muted-foreground">Assign admin and moderator roles</div>
+            </Link>
+            <Link to="/admin/audit-logs" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+              <div className="font-medium">Audit Logs</div>
+              <div className="text-sm text-muted-foreground">View admin action history</div>
+            </Link>
+            <Link to="/admin/settings" className="block p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
               <div className="font-medium">Platform Settings</div>
               <div className="text-sm text-muted-foreground">Configure limits, features, and more</div>
-            </a>
+            </Link>
           </CardContent>
         </Card>
 
