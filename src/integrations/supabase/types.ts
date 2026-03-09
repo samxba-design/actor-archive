@@ -118,6 +118,39 @@ export type Database = {
           },
         ]
       }
+      admin_audit_logs: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
       awards: {
         Row: {
           category: string | null
@@ -305,6 +338,59 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_flags: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string | null
+          details: string | null
+          flagged_by: string | null
+          id: string
+          profile_id: string | null
+          reason: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          details?: string | null
+          flagged_by?: string | null
+          id?: string
+          profile_id?: string | null
+          reason: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          details?: string | null
+          flagged_by?: string | null
+          id?: string
+          profile_id?: string | null
+          reason?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_flags_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -754,6 +840,39 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       press: {
         Row: {
           article_url: string | null
@@ -914,6 +1033,7 @@ export type Database = {
           id: string
           is_draft: boolean | null
           is_published: boolean | null
+          is_suspended: boolean | null
           last_name: string | null
           layout_density: string | null
           location: string | null
@@ -931,6 +1051,9 @@ export type Database = {
           subscription_tier:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          suspended_at: string | null
+          suspended_by: string | null
+          suspended_reason: string | null
           tagline: string | null
           theme: string | null
           updated_at: string | null
@@ -962,6 +1085,7 @@ export type Database = {
           id: string
           is_draft?: boolean | null
           is_published?: boolean | null
+          is_suspended?: boolean | null
           last_name?: string | null
           layout_density?: string | null
           location?: string | null
@@ -979,6 +1103,9 @@ export type Database = {
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           tagline?: string | null
           theme?: string | null
           updated_at?: string | null
@@ -1010,6 +1137,7 @@ export type Database = {
           id?: string
           is_draft?: boolean | null
           is_published?: boolean | null
+          is_suspended?: boolean | null
           last_name?: string | null
           layout_density?: string | null
           location?: string | null
@@ -1027,6 +1155,9 @@ export type Database = {
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           tagline?: string | null
           theme?: string | null
           updated_at?: string | null
