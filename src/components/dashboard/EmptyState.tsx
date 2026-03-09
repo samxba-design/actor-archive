@@ -78,17 +78,30 @@ const EmptyState = ({ icon: Icon, title, description, actionLabel, onAction, pro
   }
 
   return (
-    <Card>
-      <CardContent className="py-16 flex flex-col items-center text-center gap-4">
-        <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center">
-          <Icon className="h-7 w-7 text-muted-foreground" />
+    <Card className="overflow-hidden">
+      <CardContent className="py-16 flex flex-col items-center text-center gap-4 relative">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
+          backgroundSize: "24px 24px"
+        }} />
+        
+        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center relative animate-in fade-in zoom-in duration-500">
+          <div className="absolute inset-0 rounded-full bg-primary/5 animate-pulse" />
+          <Icon className="h-7 w-7 text-muted-foreground relative" />
         </div>
-        <div className="space-y-1.5 max-w-sm">
-          <h3 className="font-semibold text-foreground">{title}</h3>
+        
+        <div className="space-y-2 max-w-sm animate-in fade-in slide-in-from-bottom-2 duration-500 delay-100">
+          <h3 className="font-semibold text-foreground text-lg">{title}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{displayDescription}</p>
         </div>
+        
         {actionLabel && onAction && (
-          <Button onClick={onAction} className="mt-2">
+          <Button 
+            onClick={onAction} 
+            className="mt-3 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200"
+            data-shortcut="new"
+          >
             <Plus className="mr-2 h-4 w-4" />
             {actionLabel}
           </Button>
