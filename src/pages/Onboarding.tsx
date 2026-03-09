@@ -12,6 +12,7 @@ import StepTheme from "@/components/onboarding/StepTheme";
 import StepServices from "@/components/onboarding/StepServices";
 import StepComplete from "@/components/onboarding/StepComplete";
 import StepSpecializations from "@/components/onboarding/StepSpecializations";
+import OnboardingProgress from "@/components/onboarding/OnboardingProgress";
 import type { Database } from "@/integrations/supabase/types";
 
 type ProfileType = Database["public"]["Enums"]["profile_type"];
@@ -248,31 +249,52 @@ const Onboarding = () => {
 
   const currentProgress = Math.min(step + 1, totalSteps);
 
+  // Generate step labels for progress bar
+  const stepLabels = stepKeys.map(key => {
+    switch (key) {
+      case "type": return "Role";
+      case "goal": return "Goal";
+      case "basic": return "Info";
+      case "slug": return "URL";
+      case "actor": return "Stats";
+      case "specializations": return "Skills";
+      case "theme": return "Theme";
+      case "services": return "Services";
+      case "complete": return "Launch";
+      default: return key;
+    }
+  });
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center">
-        <div className="flex-1 h-1 bg-muted">
-          <div
-            className="h-full bg-primary transition-all duration-500 ease-out"
-            style={{ width: `${(currentProgress / totalSteps) * 100}%` }}
-          />
+      <div className="fixed top-0 left-0 right-0 z-50 px-4 pt-3 pb-2 bg-background/80 backdrop-blur-sm border-b border-border/50">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <OnboardingProgress
+                currentStep={currentProgress}
+                totalSteps={totalSteps}
+                stepLabels={stepLabels}
+              />
+            </div>
+            {/* Skip button — always visible except on complete step */}
+            {stepKeys[step] !== "complete" && (
+              <button
+                onClick={async () => {
+                  await persistDraft();
+                  await supabase.from("profiles").update({ onboarding_completed: true, is_draft: false }).eq("id", user!.id);
+                  try { localStorage.removeItem(STORAGE_KEY); } catch {}
+                  navigate("/dashboard");
+                }}
+                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap rounded-full border border-border hover:border-foreground/20"
+              >
+                Skip →
+              </button>
+            )}
+          </div>
         </div>
-        {/* Skip button — always visible except on complete step */}
-        {stepKeys[step] !== "complete" && (
-          <button
-            onClick={async () => {
-              await persistDraft();
-              await supabase.from("profiles").update({ onboarding_completed: true, is_draft: false }).eq("id", user!.id);
-              try { localStorage.removeItem(STORAGE_KEY); } catch {}
-              navigate("/dashboard");
-            }}
-            className="px-3 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
-          >
-            Skip for now →
-          </button>
-        )}
       </div>
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-24">
         {renderStep()}
       </div>
     </div>

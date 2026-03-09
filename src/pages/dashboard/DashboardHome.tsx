@@ -260,11 +260,11 @@ const DashboardHome = () => {
           { icon: GitBranch, value: totalPipeline, label: "In pipeline", route: "/dashboard/pipeline" },
         ].map((s, i) => (
           <div key={i} onClick={() => navigate(s.route)}
-            className="cursor-pointer rounded-xl border p-5 flex items-center gap-3 transition-all hover:border-opacity-80"
+            className="cursor-pointer rounded-xl border p-5 flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/5 active:scale-[0.98] group"
             style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
-            <s.icon className="h-8 w-8 shrink-0" style={{ color: "hsl(var(--landing-champagne))" }} />
+            <s.icon className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:scale-110" style={{ color: "hsl(var(--landing-champagne))" }} />
             <div>
-              <p className="text-2xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>{s.value}</p>
+              <p className="text-2xl font-bold transition-colors" style={{ color: "hsl(var(--landing-fg))" }}>{s.value}</p>
               <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{s.label}</p>
             </div>
           </div>
@@ -293,15 +293,15 @@ const DashboardHome = () => {
                   navigate(action.route);
                 }
               }}
-              className="text-left p-4 rounded-lg border transition-all hover:border-opacity-80 group flex items-start gap-3"
+              className="text-left p-4 rounded-lg border transition-all duration-300 hover:border-opacity-80 hover:bg-primary/5 hover:scale-[1.01] active:scale-[0.99] group flex items-start gap-3"
               style={{ borderColor: "hsl(var(--landing-border))", background: "transparent" }}
             >
-              <action.icon className="h-5 w-5 shrink-0 mt-0.5" style={{ color: "hsl(var(--landing-champagne))" }} />
+              <action.icon className="h-5 w-5 shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110" style={{ color: "hsl(var(--landing-champagne))" }} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium group-hover:underline" style={{ color: "hsl(var(--landing-fg))" }}>{action.label}</p>
+                <p className="text-sm font-medium group-hover:underline transition-all" style={{ color: "hsl(var(--landing-fg))" }}>{action.label}</p>
                 <p className="text-xs mt-0.5" style={{ color: "hsl(var(--landing-muted))" }}>{action.description}</p>
               </div>
-              <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5" style={{ color: "hsl(var(--landing-muted))" }} />
+              <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 mt-0.5" style={{ color: "hsl(var(--landing-muted))" }} />
             </button>
           ))}
         </div>
