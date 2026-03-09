@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -16,6 +17,7 @@ import {
   Briefcase, Share2, Copy, Check, type LucideIcon
 } from "lucide-react";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
+import { PROFILE_TYPES } from "@/config/profileSections";
 
 interface SmartAction {
   label: string;
@@ -137,11 +139,12 @@ const DashboardHome = () => {
 
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
   const profileType = profile?.profile_type as string | null;
+  const profileTypeLabel = PROFILE_TYPES.find(pt => pt.key === profileType)?.label;
 
   // Build smart actions based on missing data + profile type
   const smartActions: SmartAction[] = [];
   if (!profile?.profile_photo_url) {
-    smartActions.push({ label: "Upload your headshot", description: "A professional photo builds instant trust", icon: Camera, route: "/dashboard/gallery" });
+    smartActions.push({ label: "Upload your headshot", description: "A professional photo builds instant trust", icon: Camera, route: "/dashboard/profile" });
   }
   if (!profile?.bio) {
     smartActions.push({ label: "Write your bio", description: "Tell visitors about your experience and background", icon: FileText, route: "/dashboard/profile" });
@@ -214,18 +217,24 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="max-w-4xl space-y-6" style={{ color: "hsl(var(--landing-fg))" }}>
+    <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "hsl(var(--landing-fg))" }}>
+          <h1 className="text-2xl font-bold text-foreground">
             Welcome back{profile?.display_name ? `, ${profile.display_name}` : ""}
           </h1>
-          <p className="text-sm mt-1" style={{ color: "hsl(var(--landing-muted))" }}>Here's how your portfolio is performing</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-muted-foreground">Here's how your portfolio is performing</p>
+            {profileTypeLabel && (
+              <Badge variant="secondary" className="text-[10px] cursor-pointer hover:bg-accent" onClick={() => navigate("/dashboard/settings")}>
+                {profileTypeLabel}
+              </Badge>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {profile?.slug && profile?.is_published && (
-            <Button variant="ghost" size="sm" onClick={handleCopyLink}
-              style={{ color: "hsl(var(--landing-fg))" }}>
+            <Button variant="ghost" size="sm" onClick={handleCopyLink}>
               {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
               {copied ? "Copied!" : "Share Link"}
             </Button>
@@ -260,12 +269,11 @@ const DashboardHome = () => {
           { icon: GitBranch, value: totalPipeline, label: "In pipeline", route: "/dashboard/pipeline" },
         ].map((s, i) => (
           <div key={i} onClick={() => navigate(s.route)}
-            className="cursor-pointer rounded-xl border p-5 flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/5 active:scale-[0.98] group"
-            style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
-            <s.icon className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:scale-110" style={{ color: "hsl(var(--landing-champagne))" }} />
+            className="cursor-pointer rounded-xl border border-border p-5 flex items-center gap-3 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] group bg-card/60">
+            <s.icon className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:scale-110 text-primary" />
             <div>
-              <p className="text-2xl font-bold transition-colors" style={{ color: "hsl(var(--landing-fg))" }}>{s.value}</p>
-              <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{s.label}</p>
+              <p className="text-2xl font-bold text-foreground">{s.value}</p>
+              <p className="text-xs text-muted-foreground">{s.label}</p>
             </div>
           </div>
         ))}
@@ -275,9 +283,9 @@ const DashboardHome = () => {
       <ProfileReadiness />
 
       {/* Smart Next Steps */}
-      <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
-        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: "hsl(var(--landing-fg))" }}>
-          <Sparkles className="h-5 w-5" style={{ color: "hsl(var(--landing-champagne))" }} />
+      <div className="rounded-xl border border-border p-6 bg-card/60">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-foreground">
+          <Sparkles className="h-5 w-5 text-primary" />
           Next Steps
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -293,27 +301,25 @@ const DashboardHome = () => {
                   navigate(action.route);
                 }
               }}
-              className="text-left p-4 rounded-lg border transition-all duration-300 hover:border-opacity-80 hover:bg-primary/5 hover:scale-[1.01] active:scale-[0.99] group flex items-start gap-3"
-              style={{ borderColor: "hsl(var(--landing-border))", background: "transparent" }}
+              className="text-left p-4 rounded-lg border border-border transition-all duration-300 hover:border-primary/30 hover:bg-accent/50 hover:scale-[1.01] active:scale-[0.99] group flex items-start gap-3"
             >
-              <action.icon className="h-5 w-5 shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110" style={{ color: "hsl(var(--landing-champagne))" }} />
+              <action.icon className="h-5 w-5 shrink-0 mt-0.5 transition-transform duration-300 group-hover:scale-110 text-primary" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium group-hover:underline transition-all" style={{ color: "hsl(var(--landing-fg))" }}>{action.label}</p>
-                <p className="text-xs mt-0.5" style={{ color: "hsl(var(--landing-muted))" }}>{action.description}</p>
+                <p className="text-sm font-medium text-foreground group-hover:underline transition-all">{action.label}</p>
+                <p className="text-xs mt-0.5 text-muted-foreground">{action.description}</p>
               </div>
-              <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 mt-0.5" style={{ color: "hsl(var(--landing-muted))" }} />
+              <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 mt-0.5 text-muted-foreground" />
             </button>
           ))}
         </div>
       </div>
 
       {/* Quick actions */}
-      <div className="rounded-xl border p-6" style={{ background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))" }}>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: "hsl(var(--landing-fg))" }}>Quick Actions</h2>
+      <div className="rounded-xl border border-border p-6 bg-card/60">
+        <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {quickActions.map((qa, i) => (
-            <Button key={i} variant="outline" className="justify-start" onClick={() => navigate(qa.route)}
-              style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
+            <Button key={i} variant="outline" className="justify-start" onClick={() => navigate(qa.route)}>
               <qa.icon className="mr-2 h-4 w-4" />{qa.label}
             </Button>
           ))}

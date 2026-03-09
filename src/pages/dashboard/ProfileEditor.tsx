@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Save, Wand2, ChevronDown, ChevronUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User } from "lucide-react";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
 import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { BioBuilderWizard } from "@/components/dashboard/BioBuilderWizard";
@@ -32,6 +32,7 @@ interface ProfileForm {
   hero_bg_type: string;
   hero_bg_solid_color: string;
   hero_bg_video_url: string;
+  slug: string;
 }
 
 const ProfileEditor = () => {
@@ -58,13 +59,14 @@ const ProfileEditor = () => {
     hero_bg_type: "preset",
     hero_bg_solid_color: "",
     hero_bg_video_url: "",
+    slug: "",
   });
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset, hero_bg_type, hero_bg_solid_color, hero_bg_video_url")
+      .select("display_name, first_name, last_name, headline, tagline, bio, location, profile_photo_url, banner_url, profile_type, primary_goal, hero_style, hero_background_preset, hero_bg_type, hero_bg_solid_color, hero_bg_video_url, slug")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -86,6 +88,7 @@ const ProfileEditor = () => {
             hero_bg_type: (data as any).hero_bg_type || "preset",
             hero_bg_solid_color: (data as any).hero_bg_solid_color || "",
             hero_bg_video_url: (data as any).hero_bg_video_url || "",
+            slug: data.slug || "",
           });
         }
         setLoading(false);
@@ -128,7 +131,6 @@ const ProfileEditor = () => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
-    // Compress image before upload
     const maxDim = bucket === "headshots" ? 800 : 1920;
     const compressed = await compressImage(file, { maxWidth: maxDim, maxHeight: maxDim, quality: 0.85 });
 
@@ -141,12 +143,16 @@ const ProfileEditor = () => {
     }
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
     setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
+    toast({ title: "Photo uploaded", description: "Don't forget to save your changes." });
+  };
+
+  const handleRemovePhoto = () => {
+    setForm((prev) => ({ ...prev, profile_photo_url: "" }));
   };
 
   const handleGenerateBio = async () => {
     setGeneratingBio(true);
     try {
-      // Fetch context: projects and awards
       const [projectsRes, awardsRes] = await Promise.all([
         supabase.from("projects").select("title, project_type, role_name, year").eq("profile_id", user!.id).order("year", { ascending: false }).limit(10),
         supabase.from("awards").select("name, organization, result, year").eq("profile_id", user!.id).limit(10),
@@ -200,22 +206,61 @@ const ProfileEditor = () => {
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Edit Profile</h1>
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-          Save
-        </Button>
+        <div className="flex items-center gap-2">
+          {form.slug && (
+            <Button variant="outline" size="sm" onClick={() => window.open(`/p/${form.slug}`, "_blank")}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Preview
+            </Button>
+          )}
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            Save
+          </Button>
+        </div>
       </div>
 
       <ProfileReadiness />
 
+      {/* Profile Photo Card */}
       <Card>
-        <CardHeader><CardTitle>Profile Photo</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Profile Photo</CardTitle>
+          <CardDescription>This photo appears as your main headshot on your portfolio</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            {form.profile_photo_url && (
-              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover mb-2" />
+          <div className="flex items-center gap-4">
+            {form.profile_photo_url ? (
+              <img src={form.profile_photo_url} alt="Profile" className="w-20 h-20 rounded-full object-cover border-2 border-border" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-border">
+                <User className="h-8 w-8 text-muted-foreground" />
+              </div>
             )}
-            <Input type="file" accept="image/*" onChange={(e) => handlePhotoUpload(e, "headshots", "profile_photo_url")} />
+            <div className="flex-1 space-y-2">
+              <p className="text-sm font-medium text-foreground">
+                {form.profile_photo_url ? "✓ Profile photo set" : "No profile photo yet"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {form.profile_photo_url
+                  ? "Upload a new photo to replace, or remove the current one."
+                  : "Upload a professional headshot or portrait photo."}
+              </p>
+              <div className="flex items-center gap-2">
+                <label className="cursor-pointer">
+                  <Input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoUpload(e, "headshots", "profile_photo_url")} />
+                  <span className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
+                    {form.profile_photo_url ? "Replace Photo" : "Upload Photo"}
+                  </span>
+                </label>
+                {form.profile_photo_url && (
+                  <Button variant="ghost" size="sm" onClick={handleRemovePhoto} className="text-destructive hover:text-destructive">
+                    <Trash2 className="mr-1 h-3.5 w-3.5" />
+                    Remove
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -234,20 +279,30 @@ const ProfileEditor = () => {
       )}
 
       <Card>
-        <CardHeader><CardTitle>Basic Info</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Basic Info</CardTitle>
+          <CardDescription>Your name, tagline, and location as displayed on the portfolio</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div><Label>First Name</Label><Input value={form.first_name} onChange={update("first_name")} /></div>
             <div><Label>Last Name</Label><Input value={form.last_name} onChange={update("last_name")} /></div>
           </div>
-          <div><Label>Display Name</Label><Input value={form.display_name} onChange={update("display_name")} /></div>
+          <div>
+            <Label>Display Name</Label>
+            <Input value={form.display_name} onChange={update("display_name")} />
+            <p className="text-xs text-muted-foreground mt-1">How your name appears on the portfolio — can be a stage name or brand</p>
+          </div>
           <div><Label>Tagline <GlossaryTooltip term="tagline" /></Label><Input value={form.tagline} onChange={update("tagline")} placeholder="e.g. Award-winning screenwriter" /></div>
           <div><Label>Location</Label><Input value={form.location} onChange={update("location")} placeholder="e.g. Los Angeles, CA" /></div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Headline & Bio</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Headline & Bio</CardTitle>
+          <CardDescription>Your pitch and story — these appear prominently on your portfolio</CardDescription>
+        </CardHeader>
         <CardContent className="space-y-4">
           {/* Headline */}
           <div>
@@ -291,7 +346,7 @@ const ProfileEditor = () => {
                   size="sm"
                   onClick={handleGenerateBio}
                   disabled={generatingBio}
-                  className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+                  className="h-7 px-2 text-xs"
                 >
                   {generatingBio ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Wand2 className="h-3 w-3 mr-1" />}
                   Generate
@@ -317,7 +372,7 @@ const ProfileEditor = () => {
               )}
             </div>
             {bioIsTruncatable && (
-              <div className="mt-2 p-3 rounded-md bg-muted/50 text-sm leading-relaxed whitespace-pre-line">
+              <div className="mt-2 p-3 rounded-md bg-muted/50 text-sm leading-relaxed whitespace-pre-line text-foreground">
                 {bioExpanded ? form.bio : `${form.bio.slice(0, bioPreviewLength)}...`}
               </div>
             )}

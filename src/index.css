@@ -107,6 +107,37 @@ All colors MUST be HSL.
   }
 }
 
+/* ═══ Dashboard shell — remap standard tokens to dark landing palette ═══ */
+.dashboard-shell {
+  --background: var(--landing-bg);
+  --foreground: var(--landing-fg);
+  --card: var(--landing-card);
+  --card-foreground: var(--landing-fg);
+  --popover: var(--landing-card);
+  --popover-foreground: var(--landing-fg);
+  --primary: var(--landing-accent);
+  --primary-foreground: 0 0% 100%;
+  --secondary: 345 18% 16%;
+  --secondary-foreground: var(--landing-fg);
+  --muted: 345 15% 18%;
+  --muted-foreground: var(--landing-muted);
+  --accent: 345 20% 16%;
+  --accent-foreground: var(--landing-fg);
+  --destructive: 0 62.8% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: var(--landing-border);
+  --input: var(--landing-border);
+  --ring: var(--landing-accent);
+  --sidebar-background: 345 22% 10%;
+  --sidebar-foreground: var(--landing-fg);
+  --sidebar-primary: var(--landing-accent);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 345 18% 16%;
+  --sidebar-accent-foreground: var(--landing-fg);
+  --sidebar-border: var(--landing-border);
+  --sidebar-ring: var(--landing-accent);
+}
+
 /* ═══ Landing page cinematic effects ═══ */
 
 /* Film grain overlay — removed */
