@@ -1,0 +1,26 @@
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AdminSidebar } from "./AdminSidebar";
+import { Outlet } from "react-router-dom";
+import { Shield } from "lucide-react";
+
+export default function AdminLayout() {
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background text-foreground">
+        <AdminSidebar />
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="h-12 flex items-center border-b px-4 shrink-0 bg-destructive/5 border-destructive/20">
+            <SidebarTrigger className="text-current" />
+            <div className="ml-4 flex items-center gap-2 text-destructive font-semibold">
+              <Shield className="h-4 w-4" />
+              <span>Admin Panel</span>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto p-6">
+            <Outlet />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}
