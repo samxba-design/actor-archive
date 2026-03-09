@@ -218,6 +218,7 @@ const ProjectsManager = () => {
       status: form.status || null,
       poster_url: form.poster_url || null,
       role_name: form.role_name || null,
+      client: form.client || null,
       // Advanced fields
       imdb_link: form.imdb_link || null,
       network_or_studio: form.network_or_studio || null,
