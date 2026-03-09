@@ -108,7 +108,7 @@ const ProjectsManager = () => {
   useEffect(() => { fetchProjects(); }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
+    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], client: "", imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
     setEditing(null);
     setBookResults([]);
     setShowBookResults(false);
