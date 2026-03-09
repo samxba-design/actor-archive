@@ -1,7 +1,7 @@
 import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
-  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2
+  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
@@ -98,6 +98,7 @@ export function DashboardSidebar() {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -135,6 +136,10 @@ export function DashboardSidebar() {
       .eq("profile_id", user.id)
       .eq("is_read", false)
       .then(({ count }) => setUnreadCount(count || 0));
+
+    // Check if user is admin
+    supabase.rpc("has_role", { _user_id: user.id, _role: "admin" })
+      .then(({ data }) => setIsAdmin(data === true));
   }, [user]);
 
   const filterItems = (items: NavItem[]) =>
@@ -213,6 +218,19 @@ export function DashboardSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-2 space-y-1">
+        {isAdmin && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start border-destructive/30 text-destructive hover:bg-destructive/10"
+            asChild
+          >
+            <Link to="/admin">
+              <Shield className="mr-2 h-4 w-4 shrink-0" />
+              {!collapsed && <span>Admin Panel</span>}
+            </Link>
+          </Button>
+        )}
         {!isPro && (
           <Button
             variant="outline"
