@@ -272,7 +272,7 @@ const ScriptCard = ({ item: p, theme, isFeatured, profileId }: { item: any; them
           )}
           <div className="flex items-center justify-between gap-2 pt-1">
             {p.script_pdf_url ? (
-              <button onClick={handleAccessClick}
+              <button type="button" onClick={handleAccessClick}
                 className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest font-medium transition-colors group cursor-pointer bg-transparent border-none"
                 style={{ color: accessColor }}>
                 <AccessIcon className="w-3 h-3" />
@@ -294,14 +294,14 @@ const ScriptCard = ({ item: p, theme, isFeatured, profileId }: { item: any; them
               <h3 className="text-base font-semibold" style={{ color: theme.textPrimary, fontFamily: theme.fontDisplay }}>
                 <Lock className="inline w-4 h-4 mr-2" style={{ color: '#C9A96E' }} />Password Required
               </h3>
-              <button onClick={() => { setShowPasswordModal(false); setPassword(""); setError(""); }} className="p-1"><X className="w-4 h-4" style={{ color: theme.textTertiary }} /></button>
+              <button type="button" onClick={() => { setShowPasswordModal(false); setPassword(""); setError(""); }} className="p-1"><X className="w-4 h-4" style={{ color: theme.textTertiary }} /></button>
             </div>
             <p className="text-sm mb-4" style={{ color: theme.textSecondary }}>Enter the password to access "{p.title}"</p>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handlePasswordSubmit()}
               placeholder="Enter password" className="w-full px-3 py-2 rounded-lg text-sm mb-2 outline-none"
               style={{ backgroundColor: theme.bgSecondary, border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary }} autoFocus />
             {error && <p className="text-xs mb-2" style={{ color: '#C41E1E' }}>{error}</p>}
-            <button onClick={handlePasswordSubmit} disabled={verifying} className="w-full py-2 rounded-lg text-sm font-medium transition-opacity"
+            <button type="button" onClick={handlePasswordSubmit} disabled={verifying} className="w-full py-2 rounded-lg text-sm font-medium transition-opacity"
               style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent, opacity: verifying ? 0.7 : 1 }}>
               {verifying ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Unlock Script"}
             </button>
@@ -316,7 +316,7 @@ const ScriptCard = ({ item: p, theme, isFeatured, profileId }: { item: any; them
               <h3 className="text-base font-semibold" style={{ color: theme.textPrimary, fontFamily: theme.fontDisplay }}>
                 <Mail className="inline w-4 h-4 mr-2" style={{ color: '#6B9FD4' }} />Access Script
               </h3>
-              <button onClick={() => { setShowEmailModal(false); setEmail(""); setName(""); }} className="p-1"><X className="w-4 h-4" style={{ color: theme.textTertiary }} /></button>
+              <button type="button" onClick={() => { setShowEmailModal(false); setEmail(""); setName(""); }} className="p-1"><X className="w-4 h-4" style={{ color: theme.textTertiary }} /></button>
             </div>
             <p className="text-sm mb-4" style={{ color: theme.textSecondary }}>Enter your details to access "{p.title}"</p>
             <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Your name"
@@ -325,7 +325,7 @@ const ScriptCard = ({ item: p, theme, isFeatured, profileId }: { item: any; them
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleEmailSubmit()}
               placeholder="your@email.com" className="w-full px-3 py-2 rounded-lg text-sm mb-3 outline-none"
               style={{ backgroundColor: theme.bgSecondary, border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary }} autoFocus />
-            <button onClick={handleEmailSubmit} disabled={verifying || !email.trim()} className="w-full py-2 rounded-lg text-sm font-medium transition-opacity"
+            <button type="button" onClick={handleEmailSubmit} disabled={verifying || !email.trim()} className="w-full py-2 rounded-lg text-sm font-medium transition-opacity"
               style={{ backgroundColor: theme.accentPrimary, color: theme.textOnAccent, opacity: verifying ? 0.7 : 1 }}>
               {verifying ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Get Access"}
             </button>
