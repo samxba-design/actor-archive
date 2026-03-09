@@ -1,4 +1,5 @@
 import { useState, forwardRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { LayoutGrid, ChevronUp, ChevronDown } from "lucide-react";
 
 export type LayoutPreset =
@@ -40,9 +41,10 @@ interface Props {
 const LayoutSwitcher = forwardRef<HTMLDivElement, Props>(({ currentLayout, onLayoutChange }, ref) => {
   const [expanded, setExpanded] = useState(false);
   const current = LAYOUT_PRESETS.find(l => l.id === currentLayout);
+  const isMobile = useIsMobile();
 
   return (
-    <div ref={ref} className="fixed bottom-6 left-6 z-50 max-sm:left-3 max-sm:bottom-16">
+    <div ref={ref} className="fixed bottom-6 left-6 z-50 max-sm:left-3 max-sm:bottom-3">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"
@@ -76,11 +78,11 @@ const LayoutSwitcher = forwardRef<HTMLDivElement, Props>(({ currentLayout, onLay
 
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2.5 px-4 py-2.5 rounded-full shadow-xl transition-all hover:scale-105"
+        className="flex items-center gap-2.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-xl transition-all hover:scale-105"
         style={{ backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.12)' }}
       >
         <LayoutGrid className="w-3.5 h-3.5 text-white/50" />
-        <span className="text-[11px] font-medium text-white/70">{current?.name || 'Layout'}</span>
+        {!isMobile && <span className="text-[11px] font-medium text-white/70">{current?.name || 'Layout'}</span>}
         {expanded ? <ChevronDown className="w-3 h-3 text-white/40" /> : <ChevronUp className="w-3 h-3 text-white/40" />}
       </button>
     </div>

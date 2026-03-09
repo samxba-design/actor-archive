@@ -1,4 +1,5 @@
 import { useState, forwardRef } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { portfolioThemeList } from "@/themes/themes";
 import { Palette } from "lucide-react";
 
@@ -10,9 +11,10 @@ interface Props {
 const ThemeSwitcher = forwardRef<HTMLDivElement, Props>(({ currentThemeId, onThemeChange }, ref) => {
   const [expanded, setExpanded] = useState(false);
   const current = portfolioThemeList.find(t => t.id === currentThemeId);
+  const isMobile = useIsMobile();
 
   return (
-    <div ref={ref} className="fixed bottom-6 right-6 z-50 max-sm:right-3 max-sm:bottom-16">
+    <div ref={ref} className="fixed bottom-6 right-6 z-50 max-sm:right-3 max-sm:bottom-3">
       {expanded && (
         <div
           className="mb-3 p-4 rounded-xl shadow-2xl animate-in fade-in slide-in-from-bottom-2 duration-200"
@@ -50,7 +52,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, Props>(({ currentThemeId, onThe
 
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2.5 px-4 py-2.5 rounded-full shadow-xl transition-all hover:scale-105"
+        className="flex items-center gap-2.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full shadow-xl transition-all hover:scale-105"
         style={{ backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.12)' }}
       >
         <Palette className="w-3.5 h-3.5 text-white/50" />
@@ -59,7 +61,7 @@ const ThemeSwitcher = forwardRef<HTMLDivElement, Props>(({ currentThemeId, onThe
             <div key={i} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c, border: '1px solid rgba(255,255,255,0.2)' }} />
           ))}
         </div>
-        <span className="text-[11px] font-medium text-white/70">{current?.name || 'Theme'}</span>
+        {!isMobile && <span className="text-[11px] font-medium text-white/70">{current?.name || 'Theme'}</span>}
       </button>
     </div>
   );

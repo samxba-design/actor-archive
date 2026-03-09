@@ -335,7 +335,7 @@ export const AmbientGlow = () => {
 };
 
 /* ── Mid-scroll CTA ── */
-export const MidScrollCTA = () => {
+export const MidScrollCTA = forwardRef<HTMLDivElement>((_, _ref) => {
   const theme = usePortfolioTheme();
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -368,7 +368,8 @@ export const MidScrollCTA = () => {
       </div>
     </div>
   );
-};
+});
+MidScrollCTA.displayName = "MidScrollCTA";
 
 /* ── Credit Hero Card ── */
 export const CreditHeroCard = ({ project }: { project: any }) => {
