@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import SectionOptionsBar from "@/components/portfolio/SectionOptionsBar";
@@ -335,7 +335,7 @@ export const AmbientGlow = () => {
 };
 
 /* ── Mid-scroll CTA ── */
-export const MidScrollCTA = () => {
+export const MidScrollCTA = forwardRef<HTMLDivElement>((_, _ref) => {
   const theme = usePortfolioTheme();
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -368,7 +368,8 @@ export const MidScrollCTA = () => {
       </div>
     </div>
   );
-};
+});
+MidScrollCTA.displayName = "MidScrollCTA";
 
 /* ── Credit Hero Card ── */
 export const CreditHeroCard = ({ project }: { project: any }) => {

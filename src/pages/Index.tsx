@@ -307,7 +307,7 @@ const Index = () => {
             Portfolio platform for entertainment professionals
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-6" style={{ textShadow: '0 2px 20px hsl(var(--landing-bg) / 0.7), 0 0 40px hsl(var(--landing-bg) / 0.5)' }}>
             <span className="block">
               <span className="hero-word inline-block" style={{ animationDelay: "0ms", color: "hsl(var(--landing-fg))" }}>Your&nbsp;</span>
               <span className="hero-word inline-block" style={{ animationDelay: "80ms", color: "hsl(var(--landing-fg))" }}>work&nbsp;</span>
@@ -317,7 +317,7 @@ const Index = () => {
           </h1>
 
           <p className="text-base sm:text-lg max-w-2xl mx-auto mb-10 animate-fade-in"
-            style={{ color: "hsl(var(--landing-muted))", animationDelay: "500ms", animationFillMode: "backwards" }}>
+            style={{ color: "hsl(var(--landing-muted))", animationDelay: "500ms", animationFillMode: "backwards", textShadow: '0 1px 12px hsl(var(--landing-bg) / 0.6)' }}>
             Build a stunning portfolio in minutes. Showcase screenplays, reels, headshots, and credits —
             all in one professional page designed for the entertainment industry.
           </p>

@@ -126,12 +126,12 @@ export const PosterCard = ({
               {item.title}
             </h4>
             {item.role_name && (
-              <p className="text-[9px] uppercase tracking-wider truncate" style={{ color: theme.accentPrimary }}>
+              <p className="text-[9px] uppercase tracking-wider line-clamp-2" style={{ color: theme.accentPrimary }}>
                 {item.role_name}
               </p>
             )}
             {item.network_or_studio && (
-              <p className="text-[8px] uppercase tracking-widest truncate" style={{ color: theme.textTertiary }}>
+              <p className="text-[8px] uppercase tracking-widest line-clamp-1" style={{ color: theme.textTertiary }}>
                 {item.network_or_studio}
               </p>
             )}
