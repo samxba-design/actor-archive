@@ -286,11 +286,6 @@ const ProjectsManager = () => {
               {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : `Add ${labels.project}`}
             </Button>
           </DialogTrigger>
-            <Button disabled={atProjectLimit}>
-              <Plus className="mr-2 h-4 w-4" />
-              {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : "Add Project"}
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Project" : "New Project"}</DialogTitle>
