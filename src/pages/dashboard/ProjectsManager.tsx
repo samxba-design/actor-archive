@@ -556,8 +556,9 @@ const ProjectsManager = () => {
                 )}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-foreground truncate">{p.title}</h3>
-                  <div className="flex gap-2 mt-1">
+                  <div className="flex gap-2 mt-1 flex-wrap">
                     <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
+                    {p.client && <Badge variant="outline" className="text-xs">{p.client}</Badge>}
                     {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
                     {p.project_slug && <span className="text-xs text-muted-foreground">/{p.project_slug}</span>}
                   </div>
