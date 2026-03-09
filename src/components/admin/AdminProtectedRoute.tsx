@@ -1,8 +1,10 @@
 import { useAdmin } from "@/hooks/useAdmin";
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
 export default function AdminProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin, loading } = useAdmin();
+  const { user } = useAuth();
 
   if (loading) {
     return (
@@ -12,8 +14,12 @@ export default function AdminProtectedRoute({ children }: { children: React.Reac
     );
   }
 
-  if (!isAdmin) {
+  if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
