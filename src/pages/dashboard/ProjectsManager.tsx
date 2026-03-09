@@ -360,7 +360,7 @@ const ProjectsManager = () => {
 
               <div>
                 <div className="flex items-center justify-between">
-                  <Label>{isBookType ? "Synopsis" : "Logline"} <GlossaryTooltip term="logline" /></Label>
+                  <Label>{labels.logline} <GlossaryTooltip term="logline" /></Label>
                   <div className="flex items-center gap-1">
                     <WritingAssistant
                       text={form.logline}
