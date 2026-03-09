@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useInView } from "@/hooks/useInView";
 import { themes } from "@/lib/themes";
@@ -12,6 +12,8 @@ import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
 import { CinematicBackground } from "@/components/CinematicBackground";
 import SEOHead from "@/components/SEOHead";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import SocialProofToast from "@/components/SocialProofToast";
 
 /* ── data ── */
 const features = [
@@ -253,6 +255,7 @@ ThemeShowcase.displayName = "ThemeShowcase";
 /* ── page ── */
 const Index = () => {
   const spotlightRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [glassMode, setGlassMode] = useState(() => {
     try { return localStorage.getItem("glass-mode") !== "false"; } catch { return true; }
   });
@@ -278,6 +281,17 @@ const Index = () => {
   return (
     <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`}
       style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
+
+      {/* Exit intent popup */}
+      <ExitIntentPopup
+        title="Wait! Your portfolio awaits"
+        description="Join 2,400+ creatives who've built their professional presence. It only takes 2 minutes to get started."
+        ctaText="Start Free Portfolio"
+        onCtaClick={() => navigate("/signup")}
+      />
+
+      {/* Social proof notifications */}
+      <SocialProofToast enabled={true} minDelay={45000} maxDelay={120000} maxPerSession={3} />
 
       <SEOHead
         title="CreativeSlate — Professional Portfolios for Film & TV"
