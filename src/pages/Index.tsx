@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useInView } from "@/hooks/useInView";
 import { themes } from "@/lib/themes";
@@ -12,6 +12,8 @@ import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
 import { CinematicBackground } from "@/components/CinematicBackground";
 import SEOHead from "@/components/SEOHead";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import SocialProofToast from "@/components/SocialProofToast";
 
 /* ── data ── */
 const features = [
