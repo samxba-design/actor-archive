@@ -7,11 +7,13 @@ interface SEOHeadProps {
   type?: string;
   image?: string;
   jsonLd?: Record<string, any>;
+  profileSlug?: string; // For dynamic OG images
 }
 
 const SITE_URL = "https://actor-archive.lovable.app";
 const SITE_NAME = "CreativeSlate";
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 const SEOHead = ({
   title,
@@ -20,10 +22,15 @@ const SEOHead = ({
   type = "website",
   image,
   jsonLd,
+  profileSlug,
 }: SEOHeadProps) => {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canonical = `${SITE_URL}${path}`;
-  const ogImage = image || DEFAULT_IMAGE;
+  
+  // Use dynamic OG image for profiles, fallback to provided image or default
+  const ogImage = profileSlug 
+    ? `${SUPABASE_URL}/functions/v1/og-image?slug=${profileSlug}`
+    : (image || DEFAULT_IMAGE);
 
   return (
     <Helmet>
