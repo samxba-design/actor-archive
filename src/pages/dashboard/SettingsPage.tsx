@@ -135,6 +135,57 @@ const SettingsPage = () => {
       });
   }, [user]);
 
+  const rebuildSections = (pt: string | null, st: string[]) => {
+    let sections: { key: string; label: string }[] = [];
+    if (pt) {
+      const sectionConfigs = pt === "multi_hyphenate"
+        ? getMergedSections(pt, st)
+        : (getProfileTypeConfig(pt)?.sections || []);
+      sections = sectionConfigs
+        .filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact")
+        .map((s: SectionConfig) => ({ key: s.key, label: s.label }));
+    }
+    if (sections.length === 0) {
+      sections = [
+        { key: "projects", label: "Projects" },
+        { key: "gallery", label: "Gallery" },
+        { key: "services", label: "Services" },
+        { key: "awards", label: "Awards" },
+        { key: "education", label: "Education & Training" },
+        { key: "events", label: "Events" },
+        { key: "press", label: "Press & Reviews" },
+        { key: "testimonials", label: "Testimonials" },
+        { key: "skills", label: "Skills" },
+        { key: "representation", label: "Representation" },
+      ];
+    }
+    setAllSections(sections);
+    const sectionKeys = sections.map(s => s.key);
+    setSectionOrder(sectionKeys);
+    setSectionsVisible(Object.fromEntries(sectionKeys.map(k => [k, true])));
+  };
+
+  const handleProfileTypeChange = async (newType: string) => {
+    if (!user) return;
+    setProfileType(newType);
+    setSecondaryTypes([]);
+
+    // Save immediately
+    const { error } = await supabase
+      .from("profiles")
+      .update({ profile_type: newType, secondary_types: [] } as any)
+      .eq("id", user.id);
+
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    // Rebuild sections for new type
+    rebuildSections(newType, []);
+    toast({ title: "Profile type updated", description: `Switched to ${PROFILE_TYPES.find(p => p.key === newType)?.label || newType}. Section layout has been reset.` });
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
