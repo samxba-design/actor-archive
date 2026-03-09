@@ -21,6 +21,8 @@ import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { LoglineGenerator } from "@/components/dashboard/LoglineGenerator";
 import { searchBooks, type BookResult } from "@/lib/googleBooks";
 import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import PageHeader from "@/components/dashboard/PageHeader";
 
 type Project = Tables<"projects">;
 
