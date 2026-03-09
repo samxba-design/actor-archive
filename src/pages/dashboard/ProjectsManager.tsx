@@ -105,7 +105,13 @@ const ProjectsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchProjects(); }, [user]);
+  useEffect(() => {
+    fetchProjects();
+    if (user) {
+      supabase.from("profiles").select("profile_type").eq("id", user.id).single()
+        .then(({ data }) => setProfileType(data?.profile_type || null));
+    }
+  }, [user]);
 
   const resetForm = () => {
     setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], client: "", imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
