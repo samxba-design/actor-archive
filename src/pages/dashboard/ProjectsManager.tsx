@@ -275,9 +275,17 @@ const ProjectsManager = () => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Projects</h1>
+        <PageHeader
+          title={labels.projects}
+          description={labels.projectsDescription}
+        />
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
+            <Button disabled={atProjectLimit}>
+              <Plus className="mr-2 h-4 w-4" />
+              {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : `Add ${labels.project}`}
+            </Button>
+          </DialogTrigger>
             <Button disabled={atProjectLimit}>
               <Plus className="mr-2 h-4 w-4" />
               {atProjectLimit ? `Limit reached (${FREE_PROJECT_LIMIT})` : "Add Project"}
