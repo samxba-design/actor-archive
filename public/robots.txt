@@ -1,8 +1,14 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /onboarding
+Disallow: /reset-password
 
 User-agent: Bingbot
 Allow: /
+Disallow: /dashboard
+Disallow: /admin
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +18,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /onboarding
+Disallow: /reset-password
+
+Sitemap: https://actor-archive.lovable.app/sitemap.xml
