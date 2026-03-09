@@ -447,15 +447,24 @@ const ProjectsManager = () => {
                 </>
               )}
 
+              {/* Client / Company field — shown for types that need it */}
+              {labels.showClientField && (
+                <div>
+                  <Label>{labels.client}</Label>
+                  <Input value={form.client} onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))} placeholder={labels.clientPlaceholder} />
+                  <p className="text-xs text-muted-foreground mt-1">Associate this work with a brand or company</p>
+                </div>
+              )}
+
               {/* Non-book fields */}
               {!isBookType && (
                 <>
-                  <div><Label>Director <GlossaryTooltip term="director" /></Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
-                  <div><Label>Video URL <GlossaryTooltip term="video_url" /></Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
+                  <div><Label>{labels.directorLabel} <GlossaryTooltip term="director" /></Label><Input value={form.director} onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))} /></div>
+                  <div><Label>{labels.videoLabel} <GlossaryTooltip term="video_url" /></Label><Input value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} placeholder="YouTube or Vimeo link" /></div>
                 </>
               )}
 
-              <div><Label>Role / Credit <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={isBookType ? "e.g. Author, Co-Author" : "e.g. Writer, Lead Actor"} /></div>
+              <div><Label>{labels.roleLabel} <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={labels.rolePlaceholder} /></div>
               <div><Label>{isBookType ? "Cover Image URL" : "Poster URL"} <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
 
               {/* Advanced Portfolio Display Options */}
