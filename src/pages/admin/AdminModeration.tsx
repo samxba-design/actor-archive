@@ -112,15 +112,16 @@ export default function AdminModeration() {
     if (error) {
       toast.error("Failed to update flags");
     } else {
-      for (const id of flagIds) {
-        await supabase.from("admin_audit_logs").insert({
+      // Batch insert all audit logs at once
+      await supabase.from("admin_audit_logs").insert(
+        flagIds.map((id) => ({
           admin_id: adminUser.id,
           action_type: "content_flag_review",
           target_type: "content_flag",
           target_id: id,
           details: { new_status: newStatus, bulk: true },
-        });
-      }
+        }))
+      );
 
       toast.success(`${flagIds.length} flags updated`);
       setSelectedFlags(new Set());
