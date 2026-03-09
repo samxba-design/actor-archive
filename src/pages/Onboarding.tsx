@@ -81,6 +81,7 @@ const Onboarding = () => {
     try { const s = localStorage.getItem(STORAGE_KEY); return s ? { ...INITIAL_DATA, ...JSON.parse(s).data } : INITIAL_DATA; } catch { return INITIAL_DATA; }
   });
   const [saving, setSaving] = useState(false);
+  const [skipping, setSkipping] = useState(false);
 
   // Persist to localStorage on every change
   useEffect(() => {
@@ -280,15 +281,25 @@ const Onboarding = () => {
             {/* Skip button — always visible except on complete step */}
             {stepKeys[step] !== "complete" && (
               <button
+                disabled={skipping}
                 onClick={async () => {
-                  await persistDraft();
-                  await supabase.from("profiles").update({ onboarding_completed: true, is_draft: false }).eq("id", user!.id);
-                  try { localStorage.removeItem(STORAGE_KEY); } catch {}
-                  navigate("/dashboard");
+                  if (skipping) return;
+                  setSkipping(true);
+                  try {
+                    // Single update that marks onboarding complete without resetting other data
+                    await supabase
+                      .from("profiles")
+                      .update({ onboarding_completed: true, is_draft: false })
+                      .eq("id", user!.id);
+                    localStorage.removeItem(STORAGE_KEY);
+                    navigate("/dashboard", { replace: true });
+                  } catch (e) {
+                    setSkipping(false);
+                  }
                 }}
-                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap rounded-full border border-border hover:border-foreground/20"
+                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap rounded-full border border-border hover:border-foreground/20 disabled:opacity-50"
               >
-                Skip →
+                {skipping ? "Skipping..." : "Skip →"}
               </button>
             )}
           </div>
