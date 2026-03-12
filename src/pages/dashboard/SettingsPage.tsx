@@ -10,21 +10,52 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, ShieldOff, Check } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns } from "lucide-react";
 import { themes } from "@/lib/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import type { HeroLayout } from "@/components/portfolio/PortfolioHero";
+
+const HERO_LAYOUTS: { id: HeroLayout; label: string; description: string }[] = [
+  { id: "classic", label: "Classic", description: "Photo left, text right" },
+  { id: "centered", label: "Centered", description: "Everything centered" },
+  { id: "split", label: "Split", description: "50/50 photo and text" },
+  { id: "minimal", label: "Minimal", description: "Text-only, compact" },
+  { id: "banner", label: "Banner", description: "Full-width background image" },
+  { id: "sidebar", label: "Sidebar", description: "Photo in sidebar column" },
+  { id: "editorial", label: "Editorial", description: "Magazine-style layout" },
+  { id: "card", label: "Card", description: "Contained card layout" },
+  { id: "stacked", label: "Stacked", description: "Vertical stack layout" },
+  { id: "cinematic", label: "Cinematic", description: "Widescreen, dramatic" },
+  { id: "compact", label: "Compact", description: "Minimal height hero" },
+];
+
+const LAYOUT_PRESETS = [
+  { id: "classic", label: "Classic", description: "Traditional single-column layout" },
+  { id: "standard", label: "Standard", description: "Clean, professional look" },
+  { id: "cinematic", label: "Cinematic", description: "Widescreen, high-impact" },
+  { id: "compact", label: "Compact", description: "Dense, information-rich" },
+  { id: "magazine", label: "Magazine", description: "Editorial multi-column" },
+  { id: "spotlight", label: "Spotlight", description: "Focus on featured work" },
+  { id: "timeline", label: "Timeline", description: "Chronological career view" },
+  { id: "bento", label: "Bento", description: "Grid-based card layout" },
+  { id: "minimal", label: "Minimal", description: "Maximum whitespace" },
+  { id: "dashboard", label: "Dashboard", description: "Metrics-forward layout" },
+];
 
 const SettingsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
+  const { profileType: contextProfileType, setProfileType: setContextProfileType, setSlug: setContextSlug } = useProfileTypeContext();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
+  const [heroStyle, setHeroStyle] = useState<string>("full");
   const [form, setForm] = useState({
     slug: "",
     theme: "minimal",
@@ -58,7 +89,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode, hero_style")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -67,6 +98,7 @@ const SettingsPage = () => {
           const st = (data as any).secondary_types || [];
           setProfileType(pt);
           setSecondaryTypes(st);
+          setHeroStyle((data as any).hero_style || "full");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
@@ -78,7 +110,6 @@ const SettingsPage = () => {
               .filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact")
               .map((s: SectionConfig) => ({ key: s.key, label: s.label }));
           }
-          // Fallback if no sections found
           if (sections.length === 0) {
             sections = [
               { key: "projects", label: "Projects" },
@@ -95,10 +126,8 @@ const SettingsPage = () => {
           }
           setAllSections(sections);
 
-          // Build section order - use saved order if available, otherwise from config
           const savedOrder = data.section_order || [];
           const sectionKeys = sections.map(s => s.key);
-          // Merge: keep saved order for known keys, append any new ones
           const merged = savedOrder.filter((k: string) => sectionKeys.includes(k));
           sectionKeys.forEach(k => { if (!merged.includes(k)) merged.push(k); });
           setSectionOrder(merged);
@@ -169,8 +198,8 @@ const SettingsPage = () => {
     if (!user) return;
     setProfileType(newType);
     setSecondaryTypes([]);
+    setContextProfileType(newType);
 
-    // Save immediately
     const { error } = await supabase
       .from("profiles")
       .update({ profile_type: newType, secondary_types: [] } as any)
@@ -181,7 +210,6 @@ const SettingsPage = () => {
       return;
     }
 
-    // Rebuild sections for new type
     rebuildSections(newType, []);
     toast({ title: "Profile type updated", description: `Switched to ${PROFILE_TYPES.find(p => p.key === newType)?.label || newType}. Section layout has been reset.` });
   };
@@ -212,12 +240,15 @@ const SettingsPage = () => {
         layout_density: form.layout_density || "spacious",
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
+        hero_style: heroStyle || "full",
       } as any)
       .eq("id", user.id);
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
+      // Update context slug
+      setContextSlug(form.slug || null);
       toast({ title: "Saved", description: "Settings updated." });
     }
     setSaving(false);
@@ -300,6 +331,64 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Hero Layout Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Columns className="h-4 w-4" /> Hero Layout</CardTitle>
+          <CardDescription>Choose how your hero section is structured on the portfolio</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {HERO_LAYOUTS.map((layout) => (
+              <button
+                key={layout.id}
+                onClick={() => setHeroStyle(layout.id)}
+                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                  heroStyle === layout.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground">{layout.label}</span>
+                  {heroStyle === layout.id && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{layout.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Layout Preset Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Layout className="h-4 w-4" /> Layout Preset</CardTitle>
+          <CardDescription>Structural layout of your portfolio page — affects how sections are arranged</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {LAYOUT_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => setForm(f => ({ ...f, layout_density: preset.id }))}
+                className={`text-left p-3 rounded-lg border transition-all text-sm ${
+                  form.layout_density === preset.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-foreground">{preset.label}</span>
+                  {form.layout_density === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">{preset.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -373,11 +462,11 @@ const SettingsPage = () => {
 
       {/* Theme */}
       <Card>
-        <CardHeader><CardTitle>Theme</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Theme & Typography</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
             <div className="flex items-center gap-2">
-              <Label>Theme</Label>
+              <Label>Visual Theme</Label>
               {!isPro && <ProBadge />}
             </div>
             <Select value={form.theme} onValueChange={(v) => setForm((f) => ({ ...f, theme: v }))} disabled={!isPro && form.theme === "minimal"}>
@@ -412,20 +501,6 @@ const SettingsPage = () => {
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-1">Override the theme's default fonts</p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <Label>Layout Density</Label>
-              {!isPro && <ProBadge />}
-            </div>
-            <Select value={form.layout_density} onValueChange={(v) => setForm((f) => ({ ...f, layout_density: v }))} disabled={!isPro}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="compact">Compact</SelectItem>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="spacious">Spacious</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
@@ -564,7 +639,7 @@ const SettingsPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>Portfolio Sections</CardTitle>
-          <CardDescription>Toggle visibility and reorder sections on your portfolio</CardDescription>
+          <CardDescription>Toggle visibility and reorder sections on your portfolio. Changes are saved when you click Save above.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           {sectionOrder.map((key, index) => {

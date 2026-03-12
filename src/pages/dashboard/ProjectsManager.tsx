@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2, Star, Upload } from "lucide-react";
 import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -23,11 +23,26 @@ import { searchBooks, type BookResult } from "@/lib/googleBooks";
 import { useSubscription, FREE_PROJECT_LIMIT } from "@/hooks/useSubscription";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import PageHeader from "@/components/dashboard/PageHeader";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import { compressImage } from "@/lib/imageCompression";
 
 type Project = Tables<"projects">;
 
 const PROJECT_TYPES = Constants.public.Enums.project_type;
 const BOOK_TYPES = ["novel", "book", "short_story"];
+
+// Map profile types to default project types
+const DEFAULT_PROJECT_TYPE: Record<string, string> = {
+  screenwriter: "screenplay",
+  tv_writer: "pilot",
+  playwright: "play",
+  author: "novel",
+  journalist: "article",
+  copywriter: "case_study",
+  actor: "film",
+  director_producer: "film",
+  corporate_video: "video",
+};
 
 interface PurchaseLink {
   label: string;
@@ -47,15 +62,17 @@ const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
-  const [profileType, setProfileType] = useState<string | null>(null);
+  const { profileType } = useProfileTypeContext();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingPoster, setUploadingPoster] = useState(false);
 
   const labels = getTypeAwareLabels(profileType);
 
+  const defaultProjectType = profileType ? (DEFAULT_PROJECT_TYPE[profileType] || "screenplay") : "screenplay";
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
 
   // Google Books search state
@@ -65,7 +82,7 @@ const ProjectsManager = () => {
 
   const [form, setForm] = useState({
     title: "",
-    project_type: "screenplay" as string,
+    project_type: defaultProjectType,
     project_slug: "",
     logline: "",
     description: "",
@@ -85,6 +102,7 @@ const ProjectsManager = () => {
     imdb_link: "",
     network_or_studio: "",
     is_featured: false,
+    is_notable: false,
     custom_image_url: "",
     backdrop_url: "",
     role_type: "",
@@ -107,14 +125,13 @@ const ProjectsManager = () => {
 
   useEffect(() => {
     fetchProjects();
-    if (user) {
-      supabase.from("profiles").select("profile_type").eq("id", user.id).single()
-        .then(({ data }) => setProfileType(data?.profile_type || null));
-    }
   }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", project_type: "screenplay", project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], client: "", imdb_link: "", network_or_studio: "", is_featured: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "" });
+    setForm({
+      title: "", project_type: defaultProjectType, project_slug: "", logline: "", description: "", genre: "", year: "", director: "", role_name: "", status: "", video_url: "", poster_url: "", publisher: "", isbn: "", page_count: "", purchase_links: [], client: "",
+      imdb_link: "", network_or_studio: "", is_featured: false, is_notable: false, custom_image_url: "", backdrop_url: "", role_type: "", format: "", production_company: "",
+    });
     setEditing(null);
     setBookResults([]);
     setShowBookResults(false);
@@ -144,6 +161,7 @@ const ProjectsManager = () => {
       imdb_link: p.imdb_link || "",
       network_or_studio: p.network_or_studio || "",
       is_featured: p.is_featured || false,
+      is_notable: p.is_notable || false,
       custom_image_url: p.custom_image_url || "",
       backdrop_url: p.backdrop_url || "",
       role_type: p.role_type || "",
@@ -202,6 +220,25 @@ const ProjectsManager = () => {
     setForm((f) => ({ ...f, purchase_links: f.purchase_links.filter((_, i) => i !== idx) }));
   };
 
+  const handlePosterUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingPoster(true);
+    const compressed = await compressImage(file, { maxWidth: 800, maxHeight: 1200, quality: 0.85 });
+    const ext = compressed.name.split(".").pop();
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("project-images").upload(path, compressed, { upsert: true });
+    if (error) {
+      toast({ title: "Upload error", description: error.message, variant: "destructive" });
+      setUploadingPoster(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("project-images").getPublicUrl(path);
+    setForm((f) => ({ ...f, poster_url: urlData.publicUrl }));
+    toast({ title: "Image uploaded" });
+    setUploadingPoster(false);
+  };
+
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
@@ -223,6 +260,7 @@ const ProjectsManager = () => {
       imdb_link: form.imdb_link || null,
       network_or_studio: form.network_or_studio || null,
       is_featured: form.is_featured,
+      is_notable: form.is_notable,
       custom_image_url: form.custom_image_url || null,
       backdrop_url: form.backdrop_url || null,
       role_type: form.role_type || null,
@@ -288,7 +326,7 @@ const ProjectsManager = () => {
           </DialogTrigger>
           <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editing ? "Edit Project" : "New Project"}</DialogTitle>
+              <DialogTitle>{editing ? `Edit ${labels.project}` : `New ${labels.project}`}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <div>
@@ -318,6 +356,15 @@ const ProjectsManager = () => {
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Used for the project pitch page URL</p>
               </div>
+
+              {/* Client / Company field — shown for types that need it */}
+              {labels.showClientField && (
+                <div>
+                  <Label>{labels.client}</Label>
+                  <Input value={form.client} onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))} placeholder={labels.clientPlaceholder} />
+                  <p className="text-xs text-muted-foreground mt-1">Associate this work with a brand or company</p>
+                </div>
+              )}
 
               {/* Google Books search for book types */}
               {isBookType && (
@@ -382,11 +429,11 @@ const ProjectsManager = () => {
                     )}
                   </div>
                 </div>
-                <Textarea value={form.logline} onChange={(e) => setForm((f) => ({ ...f, logline: e.target.value }))} rows={2} />
+                <Textarea value={form.logline} onChange={(e) => setForm((f) => ({ ...f, logline: e.target.value }))} rows={2} placeholder={labels.loglinePlaceholder} />
               </div>
               <div>
                 <div className="flex items-center justify-between">
-                  <Label>{isBookType ? "Book Description" : "Description"} <GlossaryTooltip term="description" /></Label>
+                  <Label>{labels.description} <GlossaryTooltip term="description" /></Label>
                   <WritingAssistant
                     text={form.description}
                     field="description"
@@ -396,7 +443,7 @@ const ProjectsManager = () => {
                     onApply={(t) => setForm((f) => ({ ...f, description: t }))}
                   />
                 </div>
-                <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} />
+                <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} placeholder={labels.descriptionPlaceholder} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div><Label>{isBookType ? "Publication Year" : "Year"} <GlossaryTooltip term="year" /></Label><Input value={form.year} onChange={(e) => setForm((f) => ({ ...f, year: e.target.value }))} type="number" /></div>
@@ -447,15 +494,6 @@ const ProjectsManager = () => {
                 </>
               )}
 
-              {/* Client / Company field — shown for types that need it */}
-              {labels.showClientField && (
-                <div>
-                  <Label>{labels.client}</Label>
-                  <Input value={form.client} onChange={(e) => setForm((f) => ({ ...f, client: e.target.value }))} placeholder={labels.clientPlaceholder} />
-                  <p className="text-xs text-muted-foreground mt-1">Associate this work with a brand or company</p>
-                </div>
-              )}
-
               {/* Non-book fields */}
               {!isBookType && (
                 <>
@@ -465,7 +503,24 @@ const ProjectsManager = () => {
               )}
 
               <div><Label>{labels.roleLabel} <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={labels.rolePlaceholder} /></div>
-              <div><Label>{isBookType ? "Cover Image URL" : "Poster URL"} <GlossaryTooltip term="poster_url" /></Label><Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} /></div>
+
+              {/* Poster with upload */}
+              <div>
+                <Label>{isBookType ? "Cover Image" : "Poster Image"}</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} placeholder="Paste URL or upload" className="flex-1" />
+                  <label className="cursor-pointer shrink-0">
+                    <Input type="file" accept="image/*" className="hidden" onChange={handlePosterUpload} />
+                    <span className="inline-flex items-center justify-center rounded-md text-xs font-medium h-9 px-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
+                      {uploadingPoster ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3 mr-1" />}
+                      Upload
+                    </span>
+                  </label>
+                </div>
+                {form.poster_url && (
+                  <img src={form.poster_url} alt="Poster preview" className="mt-2 w-16 h-24 object-cover rounded border border-border" />
+                )}
+              </div>
 
               {/* Advanced Portfolio Display Options */}
               <Collapsible>
@@ -476,7 +531,7 @@ const ProjectsManager = () => {
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-3 pt-3">
-                  <p className="text-xs text-muted-foreground">These settings control how your project appears on your public portfolio. Add links, images, and metadata to make your work stand out.</p>
+                  <p className="text-xs text-muted-foreground">These settings control how your project appears on your public portfolio.</p>
 
                   <div className="flex items-center justify-between rounded-md border border-border p-3">
                     <div>
@@ -486,17 +541,38 @@ const ProjectsManager = () => {
                     <Switch checked={form.is_featured} onCheckedChange={(v) => setForm((f) => ({ ...f, is_featured: v }))} />
                   </div>
 
+                  <div className="flex items-center justify-between rounded-md border border-border p-3">
+                    <div>
+                      <Label className="text-sm flex items-center gap-1.5">
+                        <Star className="h-3.5 w-3.5 text-yellow-500" />
+                        Known For (Notable)
+                      </Label>
+                      <p className="text-xs text-muted-foreground">Show in the "Known For" strip on your hero section</p>
+                    </div>
+                    <Switch checked={form.is_notable} onCheckedChange={(v) => setForm((f) => ({ ...f, is_notable: v }))} />
+                  </div>
+
+                  {/* Client field for non-showClientField types */}
+                  {!labels.showClientField && (
+                    <div>
+                      <Label>{labels.studioLabel}</Label>
+                      <Input value={form.network_or_studio} onChange={(e) => setForm((f) => ({ ...f, network_or_studio: e.target.value }))} placeholder={labels.studioPlaceholder} />
+                      <p className="text-xs text-muted-foreground mt-1">Displays as a badge on your portfolio</p>
+                    </div>
+                  )}
+
                   <div>
                     <Label>IMDb / External Link</Label>
                     <Input value={form.imdb_link} onChange={(e) => setForm((f) => ({ ...f, imdb_link: e.target.value }))} placeholder="https://imdb.com/title/..." />
                     <p className="text-xs text-muted-foreground mt-1">Visitors can click through to the full page</p>
                   </div>
 
-                  <div>
-                    <Label>Network / Studio</Label>
-                    <Input value={form.network_or_studio} onChange={(e) => setForm((f) => ({ ...f, network_or_studio: e.target.value }))} placeholder="e.g. HBO, A24, Netflix" />
-                    <p className="text-xs text-muted-foreground mt-1">Displays as a badge on your portfolio</p>
-                  </div>
+                  {labels.showClientField && (
+                    <div>
+                      <Label>{labels.studioLabel}</Label>
+                      <Input value={form.network_or_studio} onChange={(e) => setForm((f) => ({ ...f, network_or_studio: e.target.value }))} placeholder={labels.studioPlaceholder} />
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
@@ -529,7 +605,7 @@ const ProjectsManager = () => {
 
               <Button onClick={handleSave} disabled={saving} className="w-full">
                 {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editing ? "Update" : "Create"} Project
+                {editing ? "Update" : "Create"} {labels.project}
               </Button>
             </div>
           </DialogContent>
@@ -538,8 +614,13 @@ const ProjectsManager = () => {
 
       {projects.length === 0 ? (
         <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No projects yet. Click "Add Project" to get started.
+          <CardContent className="py-12 text-center space-y-3">
+            <p className="text-muted-foreground">No {labels.projects.toLowerCase()} yet.</p>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto">{labels.projectsDescription}</p>
+            <Button variant="outline" onClick={() => setDialogOpen(true)} disabled={atProjectLimit}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add your first {labels.project.toLowerCase()}
+            </Button>
           </CardContent>
         </Card>
       ) : (
@@ -555,12 +636,15 @@ const ProjectsManager = () => {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-foreground truncate">{p.title}</h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-foreground truncate">{p.title}</h3>
+                    {p.is_notable && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" fill="currentColor" />}
+                  </div>
                   <div className="flex gap-2 mt-1 flex-wrap">
                     <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
                     {p.client && <Badge variant="outline" className="text-xs">{p.client}</Badge>}
+                    {p.network_or_studio && <Badge variant="outline" className="text-xs">{p.network_or_studio}</Badge>}
                     {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
-                    {p.project_slug && <span className="text-xs text-muted-foreground">/{p.project_slug}</span>}
                   </div>
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

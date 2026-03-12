@@ -28,6 +28,9 @@ import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import SectionClientLogos from "./sections/SectionClientLogos";
 import SectionPublishedWork from "./sections/SectionPublishedWork";
 import SectionCustom from "./sections/SectionCustom";
+import SectionBio from "./sections/SectionBio";
+import SectionSocialLinks from "./sections/SectionSocialLinks";
+import SectionAvailability from "./sections/SectionAvailability";
 import { getProfileTypeConfig } from "@/config/profileSections";
 
 interface Props {
@@ -36,6 +39,8 @@ interface Props {
   profileType: string | null;
   profileSlug?: string;
   sectionIndex?: number;
+  /** Pass bio text for the bio section */
+  bio?: string | null;
 }
 
 const defaultSectionLabels: Record<string, string> = {
@@ -67,6 +72,12 @@ const defaultSectionLabels: Record<string, string> = {
   campaign_timeline: "Campaign Timeline",
   published_work: "Published Work",
   custom_sections: "Custom Sections",
+  bio: "About",
+  social_links: "Connect",
+  availability: "Availability",
+  staffing_info: "Staffing",
+  diversity_programs: "Programs & Fellowships",
+  publication_logos: "Publications",
 };
 
 function getContextualLabel(sectionKey: string, profileType: string | null): string {
@@ -80,7 +91,7 @@ function getContextualLabel(sectionKey: string, profileType: string | null): str
   return defaultSectionLabels[sectionKey] || sectionKey;
 }
 
-const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sectionIndex }: Props) => {
+const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sectionIndex, bio }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -104,6 +115,38 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       const orderOpts = { ascending: true } as const;
 
       switch (sectionKey) {
+        case "bio": {
+          // Bio uses profile-level data, no table fetch needed
+          setData([]);
+          setLoading(false);
+          return;
+        }
+        case "social_links": {
+          const { data } = await supabase.from("social_links").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+          rows = data || [];
+          break;
+        }
+        case "availability": {
+          const { data } = await supabase.from("actor_stats").select("*").eq("profile_id", profileId).maybeSingle();
+          setSingleData(data);
+          setData([]);
+          setLoading(false);
+          return;
+        }
+        case "staffing_info":
+        case "diversity_programs":
+        case "publication_logos": {
+          // These use client_logos_profile table as a fallback (publication logos = client logos for journalists)
+          if (sectionKey === "publication_logos") {
+            const { data } = await supabase.from("client_logos_profile").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
+            rows = data || [];
+          } else {
+            // staffing_info and diversity_programs are text-based — render from custom_sections
+            const { data } = await supabase.from("custom_sections").select("*").eq("profile_id", profileId).eq("section_type", sectionKey).eq("is_visible", true).order("display_order", orderOpts);
+            rows = data || [];
+          }
+          break;
+        }
         case "projects": {
           const { data } = await supabase.from("projects").select(SAFE_PROJECT_COLS).eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
@@ -250,6 +293,66 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
 
   if (loading) return null;
 
+  // Bio section — special handling
+  if (sectionKey === "bio") {
+    if (!bio) return null;
+    const label = getContextualLabel(sectionKey, profileType);
+    const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
+    return (
+      <section
+        ref={sectionRef}
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(24px)",
+          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+        }}
+      >
+        <div className="flex items-baseline gap-3 mb-2">
+          {indexNum && (
+            <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
+              {indexNum}
+            </span>
+          )}
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
+            {label}
+          </h2>
+        </div>
+        <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+        <SectionBio bio={bio} />
+      </section>
+    );
+  }
+
+  // Availability section — uses singleData
+  if (sectionKey === "availability") {
+    if (!singleData) return null;
+    const label = getContextualLabel(sectionKey, profileType);
+    const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
+    return (
+      <section
+        ref={sectionRef}
+        style={{
+          opacity: inView ? 1 : 0,
+          transform: inView ? "translateY(0)" : "translateY(24px)",
+          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+        }}
+      >
+        <div className="flex items-baseline gap-3 mb-2">
+          {indexNum && (
+            <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
+              {indexNum}
+            </span>
+          )}
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
+            {label}
+          </h2>
+        </div>
+        <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+        <SectionAvailability stats={singleData} />
+      </section>
+    );
+  }
+
   // stats_bar is special: uses singleData, not array
   if (sectionKey === "stats_bar") {
     if (!singleData) return null;
@@ -320,11 +423,16 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "campaign_timeline":
         return <SectionCampaignTimeline items={data} />;
       case "client_logos":
+      case "publication_logos":
         return <SectionClientLogos items={data} />;
       case "published_work":
         return <SectionPublishedWork items={data} />;
       case "custom_sections":
+      case "staffing_info":
+      case "diversity_programs":
         return <SectionCustom sections={data} />;
+      case "social_links":
+        return <SectionSocialLinks items={data} />;
       default:
         return null;
     }
