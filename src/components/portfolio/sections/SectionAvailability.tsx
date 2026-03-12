@@ -52,11 +52,11 @@ const SectionAvailability = ({ stats }: Props) => {
             <div
               key={i}
               className="flex items-center gap-3 p-3 rounded-lg border"
-              style={{ borderColor: `${theme.accent}22`, fontFamily: theme.fontBody }}
+              style={{ borderColor: theme.borderDefault, fontFamily: theme.fontBody }}
             >
-              <item.icon className="h-4 w-4 shrink-0" style={{ color: theme.accent }} />
+              <item.icon className="h-4 w-4 shrink-0" style={{ color: theme.accentPrimary }} />
               <div>
-                <p className="text-xs uppercase tracking-wider" style={{ color: theme.textMuted }}>
+                <p className="text-xs uppercase tracking-wider" style={{ color: theme.textTertiary }}>
                   {item.label}
                 </p>
                 <p className="text-sm font-medium" style={{ color: theme.textPrimary }}>

@@ -34,7 +34,7 @@ const SectionSocialLinks = ({ items }: Props) => {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border transition-all hover:scale-105"
           style={{
-            borderColor: `${theme.accent}33`,
+            borderColor: theme.borderDefault,
             color: theme.textPrimary,
             fontFamily: theme.fontBody,
           }}
