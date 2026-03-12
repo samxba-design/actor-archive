@@ -7,6 +7,7 @@ import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import {
   Sidebar,
   SidebarContent,
@@ -93,26 +94,14 @@ export function DashboardSidebar() {
   const collapsed = state === "collapsed";
   const { user, signOut } = useAuth();
   const { isPro, tier } = useSubscription();
+  const { profileType, slug } = useProfileTypeContext();
   const navigate = useNavigate();
-  const [slug, setSlug] = useState<string | null>(null);
-  const [profileType, setProfileType] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
-
-    // Fetch profile info
-    supabase
-      .from("profiles")
-      .select("slug, profile_type")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => {
-        setSlug(data?.slug || null);
-        setProfileType(data?.profile_type || null);
-      });
 
     // Fetch counts for all countable tables in parallel
     const fetchCounts = async () => {

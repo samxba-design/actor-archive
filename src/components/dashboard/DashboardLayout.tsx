@@ -7,25 +7,13 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import { Keyboard, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { ProfileTypeProvider, useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
-export default function DashboardLayout() {
+function DashboardLayoutInner() {
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const [slug, setSlug] = useState<string | null>(null);
   const shortcuts = useKeyboardShortcuts(true);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("profiles")
-      .select("slug")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => setSlug(data?.slug || null));
-  }, [user]);
+  const { slug } = useProfileTypeContext();
 
   // Add ? shortcut to show help
   useEffect(() => {
@@ -92,5 +80,13 @@ export default function DashboardLayout() {
       </div>
       <KeyboardShortcutsHelp open={showShortcuts} onOpenChange={setShowShortcuts} shortcuts={shortcuts} />
     </SidebarProvider>
+  );
+}
+
+export default function DashboardLayout() {
+  return (
+    <ProfileTypeProvider>
+      <DashboardLayoutInner />
+    </ProfileTypeProvider>
   );
 }
