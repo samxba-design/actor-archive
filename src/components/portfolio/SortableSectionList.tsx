@@ -28,6 +28,7 @@ interface Props {
   profileId: string;
   profileType: string | null;
   profileSlug?: string;
+  bio?: string | null;
 }
 
 const SortableSectionList = ({ allSections, profileId, profileType, profileSlug }: Props) => {

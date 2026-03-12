@@ -262,6 +262,7 @@ const PublicProfile = () => {
             profileId={profile.id}
             profileType={profile.profile_type}
             profileSlug={profile.slug || undefined}
+            bio={profile.bio}
           />
         </main>
 
