@@ -94,7 +94,7 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
       profile_id: profile.id,
       sender_name: form.sender_name,
       sender_email: form.sender_email,
-      subject_type: form.subject_type as any,
+      subject_type: form.subject_type as Database["public"]["Enums"]["contact_subject_type"],
       message: form.message,
     });
     supabase.functions.invoke("contact-notify", {

@@ -144,6 +144,7 @@ const GalleryManager = () => {
         title={labels.galleryTitle}
         description={labels.galleryDescription}
       />
+      <ManagerHelpBanner id="gallery" title="Images show in your Gallery section" description="Upload headshots, production stills, and artwork. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       <Card>
         <CardContent className="py-6 space-y-4">

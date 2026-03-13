@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Lock, Eye, Mail, Shield, Download } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription } from "@/hooks/useSubscription";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 type Project = Tables<"projects">;
 

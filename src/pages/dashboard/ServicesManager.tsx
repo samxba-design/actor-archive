@@ -16,6 +16,7 @@ import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
 import { ServiceDescriptionAI } from "@/components/dashboard/ServiceDescriptionAI";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Service {
   id: string;

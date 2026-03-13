@@ -409,6 +409,10 @@ const ProjectsManager = () => {
           title={labels.projects}
           description={labels.projectsDescription}
         />
+      </div>
+      <ManagerHelpBanner id="projects" title="These appear in your Projects / Credits section" description="Add your work here — it shows on your public portfolio. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
+      <div className="flex items-center justify-between">
+        <div />
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
             <Button disabled={atProjectLimit}>
