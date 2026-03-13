@@ -415,16 +415,16 @@ const SettingsPage = () => {
             {LAYOUT_PRESETS.map((preset) => (
               <button
                 key={preset.id}
-                onClick={() => setForm(f => ({ ...f, layout_density: preset.id }))}
+                onClick={() => setForm(f => ({ ...f, layout_preset: preset.id }))}
                 className={`text-left p-3 rounded-lg border transition-all text-sm ${
-                  form.layout_density === preset.id
+                  form.layout_preset === preset.id
                     ? "border-primary bg-primary/10 ring-1 ring-primary"
                     : "border-border hover:border-primary/40 hover:bg-accent/50"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-foreground">{preset.label}</span>
-                  {form.layout_density === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                  {form.layout_preset === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">{preset.description}</p>
               </button>
