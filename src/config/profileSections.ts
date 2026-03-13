@@ -57,7 +57,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Screenwriter",
     description: "Feature films, shorts, and original screenplays. Showcase your scripts, loglines, and produced credits.",
     icon: "PenTool",
-    defaultTheme: "screenplay",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
