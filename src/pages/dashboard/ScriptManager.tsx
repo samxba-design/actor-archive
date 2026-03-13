@@ -345,7 +345,7 @@ const ScriptManager = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
+      <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as downloadable cards with access control badges" demoUrl="/demo/screenwriter" />
 
       {scripts.length === 0 ? (
         <Card>

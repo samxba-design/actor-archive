@@ -118,7 +118,7 @@ const ClientManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
       </div>
-      <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
+      <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as a scrolling logo bar on your portfolio" demoUrl="/demo/copywriter" />
 
       {items.length === 0 ? (
         <EmptyState

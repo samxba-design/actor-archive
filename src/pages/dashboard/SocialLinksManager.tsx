@@ -117,7 +117,7 @@ const SocialLinksManager = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <ManagerHelpBanner id="social-links" title="Links appear as icons on your portfolio" description="Add your IMDb, Instagram, website, and other profiles. They show on your public page." learnMoreRoute="/dashboard/settings" />
+      <ManagerHelpBanner id="social-links" title="Links appear as icons on your portfolio" description="Add your IMDb, Instagram, website, and other profiles. They show on your public page." learnMoreRoute="/dashboard/settings" previewText="Appears as a row of clickable icons in your hero section or footer" demoUrl="/demo/actor" />
 
       {links.length === 0 ? (
         <Card>
