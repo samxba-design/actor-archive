@@ -118,6 +118,7 @@ const SettingsPage = () => {
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
+          setClientLogosPosition((data as any).client_logos_position || "body_section");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
