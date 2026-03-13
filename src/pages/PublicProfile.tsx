@@ -72,8 +72,8 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
-  const [knownFor, setKnownFor] = useState<any[]>([]);
-  const [exportData, setExportData] = useState<{ projects: any[]; awards: any[]; skills: any[]; education: any[] }>({ projects: [], awards: [], skills: [], education: [] });
+  const [knownFor, setKnownFor] = useState<Record<string, unknown>[]>([]);
+  const [exportData, setExportData] = useState<{ projects: Record<string, unknown>[]; awards: Record<string, unknown>[]; skills: Record<string, unknown>[]; education: Record<string, unknown>[] }>({ projects: [], awards: [], skills: [], education: [] });
 
   useEffect(() => {
     if (!slug) return;
