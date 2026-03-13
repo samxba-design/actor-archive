@@ -87,6 +87,9 @@ const DashboardHome = () => {
   const [showPublishConfirm, setShowPublishConfirm] = useState(false);
   const [publishAction, setPublishAction] = useState<"publish" | "unpublish">("publish");
   const [copied, setCopied] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [urlOpen, setUrlOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
