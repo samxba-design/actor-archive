@@ -31,7 +31,7 @@ interface Props {
   bio?: string | null;
 }
 
-const SortableSectionList = ({ allSections, profileId, profileType, profileSlug }: Props) => {
+const SortableSectionList = ({ allSections, profileId, profileType, profileSlug, bio }: Props) => {
   const { editMode, sectionOrder, setSectionOrder, sectionsVisible } = useEditMode();
 
   const sensors = useSensors(
