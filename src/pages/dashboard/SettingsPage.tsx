@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles, Mail, AlertTriangle, Trash2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles, Mail, AlertTriangle, Trash2, Download } from "lucide-react";
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
@@ -99,19 +100,14 @@ const SettingsPage = () => {
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
   const [allSections, setAllSections] = useState<{ key: string; label: string }[]>([]);
-
-  // Password change
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
-
-  // Email change
   const [newEmail, setNewEmail] = useState("");
   const [changingEmail, setChangingEmail] = useState(false);
-
-  // Account deletion
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -135,7 +131,6 @@ const SettingsPage = () => {
           setStatusBadgeColor((data as any).status_badge_color || "green");
           setStatusBadgeAnimation((data as any).status_badge_animation || "pulse");
 
-          // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
           if (pt) {
             const sectionConfigs = pt === "multi_hyphenate"
@@ -147,16 +142,11 @@ const SettingsPage = () => {
           }
           if (sections.length === 0) {
             sections = [
-              { key: "projects", label: "Projects" },
-              { key: "gallery", label: "Gallery" },
-              { key: "services", label: "Services" },
-              { key: "awards", label: "Awards" },
-              { key: "education", label: "Education & Training" },
-              { key: "events", label: "Events" },
-              { key: "press", label: "Press & Reviews" },
-              { key: "testimonials", label: "Testimonials" },
-              { key: "skills", label: "Skills" },
-              { key: "representation", label: "Representation" },
+              { key: "projects", label: "Projects" }, { key: "gallery", label: "Gallery" },
+              { key: "services", label: "Services" }, { key: "awards", label: "Awards" },
+              { key: "education", label: "Education & Training" }, { key: "events", label: "Events" },
+              { key: "press", label: "Press & Reviews" }, { key: "testimonials", label: "Testimonials" },
+              { key: "skills", label: "Skills" }, { key: "representation", label: "Representation" },
             ];
           }
           setAllSections(sections);
@@ -175,25 +165,15 @@ const SettingsPage = () => {
           }
 
           setForm({
-            slug: data.slug || "",
-            theme: data.theme || "cinematic-dark",
-            accent_color: data.accent_color || "#C41E3A",
-            is_published: data.is_published || false,
-            show_contact_form: data.show_contact_form !== false,
-            available_for_hire: data.available_for_hire || false,
-            seeking_representation: data.seeking_representation || false,
-            cta_label: (data as any).cta_label || "",
-            cta_url: (data as any).cta_url || "",
-            cta_type: (data as any).cta_type || "contact_form",
-            booking_url: (data as any).booking_url || "",
-            contact_mode: (data as any).contact_mode || "form",
-            auto_responder_enabled: (data as any).auto_responder_enabled || false,
-            auto_responder_message: (data as any).auto_responder_message || "",
-            font_pairing: (data as any).font_pairing || "default",
-            layout_density: (data as any).layout_density || "spacious",
-            layout_preset: (data as any).layout_preset || "classic",
-            custom_css: (data as any).custom_css || "",
-            seo_indexable: (data as any).seo_indexable || false,
+            slug: data.slug || "", theme: data.theme || "cinematic-dark", accent_color: data.accent_color || "#C41E3A",
+            is_published: data.is_published || false, show_contact_form: data.show_contact_form !== false,
+            available_for_hire: data.available_for_hire || false, seeking_representation: data.seeking_representation || false,
+            cta_label: (data as any).cta_label || "", cta_url: (data as any).cta_url || "",
+            cta_type: (data as any).cta_type || "contact_form", booking_url: (data as any).booking_url || "",
+            contact_mode: (data as any).contact_mode || "form", auto_responder_enabled: (data as any).auto_responder_enabled || false,
+            auto_responder_message: (data as any).auto_responder_message || "", font_pairing: (data as any).font_pairing || "default",
+            layout_density: (data as any).layout_density || "spacious", layout_preset: (data as any).layout_preset || "classic",
+            custom_css: (data as any).custom_css || "", seo_indexable: (data as any).seo_indexable || false,
             ga_measurement_id: (data as any).ga_measurement_id || "",
           });
         }
@@ -204,25 +184,16 @@ const SettingsPage = () => {
   const rebuildSections = (pt: string | null, st: string[]) => {
     let sections: { key: string; label: string }[] = [];
     if (pt) {
-      const sectionConfigs = pt === "multi_hyphenate"
-        ? getMergedSections(pt, st)
-        : (getProfileTypeConfig(pt)?.sections || []);
-      sections = sectionConfigs
-        .filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact")
-        .map((s: SectionConfig) => ({ key: s.key, label: s.label }));
+      const sectionConfigs = pt === "multi_hyphenate" ? getMergedSections(pt, st) : (getProfileTypeConfig(pt)?.sections || []);
+      sections = sectionConfigs.filter((s: SectionConfig) => s.key !== "hero" && s.key !== "contact").map((s: SectionConfig) => ({ key: s.key, label: s.label }));
     }
     if (sections.length === 0) {
       sections = [
-        { key: "projects", label: "Projects" },
-        { key: "gallery", label: "Gallery" },
-        { key: "services", label: "Services" },
-        { key: "awards", label: "Awards" },
-        { key: "education", label: "Education & Training" },
-        { key: "events", label: "Events" },
-        { key: "press", label: "Press & Reviews" },
-        { key: "testimonials", label: "Testimonials" },
-        { key: "skills", label: "Skills" },
-        { key: "representation", label: "Representation" },
+        { key: "projects", label: "Projects" }, { key: "gallery", label: "Gallery" },
+        { key: "services", label: "Services" }, { key: "awards", label: "Awards" },
+        { key: "education", label: "Education & Training" }, { key: "events", label: "Events" },
+        { key: "press", label: "Press & Reviews" }, { key: "testimonials", label: "Testimonials" },
+        { key: "skills", label: "Skills" }, { key: "representation", label: "Representation" },
       ];
     }
     setAllSections(sections);
@@ -236,17 +207,8 @@ const SettingsPage = () => {
     setProfileType(newType);
     setSecondaryTypes([]);
     setContextProfileType(newType);
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({ profile_type: newType, secondary_types: [] } as any)
-      .eq("id", user.id);
-
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-      return;
-    }
-
+    const { error } = await supabase.from("profiles").update({ profile_type: newType, secondary_types: [] } as any).eq("id", user.id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     rebuildSections(newType, []);
     toast({ title: "Profile type updated", description: `Switched to ${PROFILE_TYPES.find(p => p.key === newType)?.label || newType}. Section layout has been reset.` });
   };
@@ -254,71 +216,34 @@ const SettingsPage = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        slug: form.slug || null,
-        theme: form.theme,
-        accent_color: form.accent_color || null,
-        is_published: form.is_published,
-        show_contact_form: form.show_contact_form,
-        available_for_hire: form.available_for_hire,
-        seeking_representation: form.seeking_representation,
-        cta_label: form.cta_label || null,
-        cta_url: form.cta_url || null,
-        cta_type: form.cta_type || "contact_form",
-        booking_url: form.booking_url || null,
-        contact_mode: form.contact_mode || "form",
-        section_order: sectionOrder,
-        sections_visible: sectionsVisible,
-        auto_responder_enabled: form.auto_responder_enabled,
-        auto_responder_message: form.auto_responder_message || null,
-        font_pairing: form.font_pairing || "default",
-        layout_density: form.layout_density || "spacious",
-        layout_preset: form.layout_preset || "classic",
-        custom_css: form.custom_css || null,
-        seo_indexable: form.seo_indexable,
-        ga_measurement_id: form.ga_measurement_id || null,
-        hero_style: heroStyle || "full",
-        headshot_style: headshotStyle || "circle",
-        known_for_position: knownForPosition || "hero_above_name",
-        cta_style: ctaStyle || null,
-        client_logos_position: clientLogosPosition || "body_section",
-        professional_status: professionalStatus || null,
-        status_badge_color: statusBadgeColor || "green",
-        status_badge_animation: statusBadgeAnimation || "pulse",
-      } as any)
-      .eq("id", user.id);
-
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      // Update context slug
-      setContextSlug(form.slug || null);
-      toast({ title: "Saved", description: "Settings updated." });
-      clearDraft();
-    }
+    const { error } = await supabase.from("profiles").update({
+      slug: form.slug || null, theme: form.theme, accent_color: form.accent_color || null,
+      is_published: form.is_published, show_contact_form: form.show_contact_form,
+      available_for_hire: form.available_for_hire, seeking_representation: form.seeking_representation,
+      cta_label: form.cta_label || null, cta_url: form.cta_url || null, cta_type: form.cta_type || "contact_form",
+      booking_url: form.booking_url || null, contact_mode: form.contact_mode || "form",
+      section_order: sectionOrder, sections_visible: sectionsVisible,
+      auto_responder_enabled: form.auto_responder_enabled, auto_responder_message: form.auto_responder_message || null,
+      font_pairing: form.font_pairing || "default", layout_density: form.layout_density || "spacious",
+      layout_preset: form.layout_preset || "classic", custom_css: form.custom_css || null,
+      seo_indexable: form.seo_indexable, ga_measurement_id: form.ga_measurement_id || null,
+      hero_style: heroStyle || "full", headshot_style: headshotStyle || "circle",
+      known_for_position: knownForPosition || "hero_above_name", cta_style: ctaStyle || null,
+      client_logos_position: clientLogosPosition || "body_section", professional_status: professionalStatus || null,
+      status_badge_color: statusBadgeColor || "green", status_badge_animation: statusBadgeAnimation || "pulse",
+    } as any).eq("id", user.id);
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+    else { setContextSlug(form.slug || null); toast({ title: "Saved", description: "Settings updated." }); clearDraft(); }
     setSaving(false);
   };
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) {
-      toast({ title: "Error", description: "Password must be at least 6 characters.", variant: "destructive" });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast({ title: "Error", description: "Passwords don't match.", variant: "destructive" });
-      return;
-    }
+    if (newPassword.length < 6) { toast({ title: "Error", description: "Password must be at least 6 characters.", variant: "destructive" }); return; }
+    if (newPassword !== confirmPassword) { toast({ title: "Error", description: "Passwords don't match.", variant: "destructive" }); return; }
     setChangingPassword(true);
     const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Password updated", description: "Your password has been changed." });
-      setNewPassword("");
-      setConfirmPassword("");
-    }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+    else { toast({ title: "Password updated", description: "Your password has been changed." }); setNewPassword(""); setConfirmPassword(""); }
     setChangingPassword(false);
   };
 
@@ -334,6 +259,40 @@ const SettingsPage = () => {
     setSectionsVisible(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  const handleExportData = async () => {
+    if (!user) return;
+    setExporting(true);
+    try {
+      const [projects, testimonials, contacts, awards, skills, education, services] = await Promise.all([
+        supabase.from("projects").select("*").eq("profile_id", user.id),
+        supabase.from("testimonials").select("*").eq("profile_id", user.id),
+        supabase.from("contact_submissions").select("*").eq("profile_id", user.id),
+        supabase.from("awards").select("*").eq("profile_id", user.id),
+        supabase.from("skills").select("*").eq("profile_id", user.id),
+        supabase.from("education").select("*").eq("profile_id", user.id),
+        supabase.from("services").select("*").eq("profile_id", user.id),
+      ]);
+      const exportPayload = {
+        exported_at: new Date().toISOString(),
+        projects: projects.data || [],
+        testimonials: testimonials.data || [],
+        contact_submissions: contacts.data || [],
+        awards: awards.data || [],
+        skills: skills.data || [],
+        education: education.data || [],
+        services: services.data || [],
+      };
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `creativeslate-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click(); URL.revokeObjectURL(url);
+      toast({ title: "Export complete", description: "Your data has been downloaded as JSON." });
+    } catch (err: any) {
+      toast({ title: "Export failed", description: err.message, variant: "destructive" });
+    } finally { setExporting(false); }
+  };
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
@@ -341,11 +300,11 @@ const SettingsPage = () => {
   const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">Themes, layouts, sections, and visibility — everything here is fully customizable</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Themes, layouts, sections, and visibility</p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -353,844 +312,617 @@ const SettingsPage = () => {
         </Button>
       </div>
 
-      {/* Profile Type Switcher */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Type</CardTitle>
-          <CardDescription>Your profile type determines which sections, labels, and tools are shown throughout the dashboard</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {PROFILE_TYPES.filter(pt => pt.key !== "multi_hyphenate").map((pt) => (
-              <button
-                key={pt.key}
-                onClick={() => handleProfileTypeChange(pt.key)}
-                className={`text-left p-3 rounded-lg border transition-all text-sm ${
-                  profileType === pt.key
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">{pt.label}</span>
-                  {profileType === pt.key && <Check className="h-3.5 w-3.5 text-primary" />}
-                </div>
-                <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{pt.description.split(".")[0]}.</p>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground mt-3">⚠️ Changing type will reset your section layout to match the new profile type.</p>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="general" className="w-full">
+        <TabsList className="w-full grid grid-cols-5">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="appearance">Appearance</TabsTrigger>
+          <TabsTrigger value="seo">SEO & Publish</TabsTrigger>
+          <TabsTrigger value="sections">Sections</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
+        </TabsList>
 
-      {/* Hero Layout Picker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Columns className="h-4 w-4" /> Hero Layout</CardTitle>
-          <CardDescription>Choose how your hero section is structured on the portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-            {HERO_LAYOUTS.map((layout) => (
-              <button
-                key={layout.id}
-                onClick={() => setHeroStyle(layout.id)}
-                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
-                  heroStyle === layout.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-foreground">{layout.label}</span>
-                  {heroStyle === layout.id && <Check className="h-3 w-3 text-primary" />}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{layout.description}</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Headshot Style Picker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Circle className="h-4 w-4" /> Headshot Style</CardTitle>
-          <CardDescription>Choose how your profile photo appears on the portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-            {[
-              { id: "circle", label: "Circular", icon: <div className="w-8 h-8 rounded-full bg-muted border-2 border-primary/30" />, desc: "Classic round crop" },
-              { id: "rounded", label: "Rounded", icon: <div className="w-8 h-8 rounded-xl bg-muted border-2 border-primary/30" />, desc: "Soft corners" },
-              { id: "square", label: "Square", icon: <div className="w-8 h-8 rounded-none bg-muted border-2 border-primary/30" />, desc: "Sharp edges" },
-              { id: "frame", label: "Framed", icon: <div className="w-8 h-8 rounded-lg bg-muted border-2 border-primary ring-2 ring-primary/30" />, desc: "Accent border" },
-              { id: "hidden", label: "Hidden", icon: <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><UserX className="h-4 w-4 text-muted-foreground" /></div>, desc: "Name only" },
-            ].map((style) => (
-              <button
-                key={style.id}
-                onClick={() => setHeadshotStyle(style.id)}
-                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${
-                  headshotStyle === style.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                {style.icon}
-                <div className="text-center">
-                  <p className="text-xs font-medium text-foreground">{style.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{style.desc}</p>
-                </div>
-                {headshotStyle === style.id && <Check className="h-3 w-3 text-primary" />}
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Known For / Highlights Position Picker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> {getTypeAwareLabels(profileType).knownForTitle} Position</CardTitle>
-          <CardDescription>Choose where your "{getTypeAwareLabels(profileType).knownForTitle}" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {KNOWN_FOR_POSITIONS.map((pos) => (
-              <button
-                key={pos.id}
-                onClick={() => setKnownForPosition(pos.id)}
-                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
-                  knownForPosition === pos.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-foreground">{pos.label}</span>
-                  {knownForPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Client Logos Position Picker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><RectangleHorizontal className="h-4 w-4" /> Client Logos Position</CardTitle>
-          <CardDescription>Choose where your client/company logos appear on the portfolio page</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { id: "below_hero", label: "Below Hero", description: "Right after the hero section" },
-              { id: "above_sections", label: "Above Sections", description: "Before main content sections" },
-              { id: "body_section", label: "Body Section", description: "As a regular content section" },
-              { id: "hidden", label: "Hidden", description: "Don't show client logos" },
-            ].map((pos) => (
-              <button
-                key={pos.id}
-                onClick={() => setClientLogosPosition(pos.id)}
-                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
-                  clientLogosPosition === pos.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-foreground">{pos.label}</span>
-                  {clientLogosPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Layout Preset Picker */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Layout className="h-4 w-4" /> Layout Preset</CardTitle>
-          <CardDescription>Structural layout of your portfolio page — affects how sections are arranged</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {LAYOUT_PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                onClick={() => setForm(f => ({ ...f, layout_preset: preset.id }))}
-                className={`text-left p-3 rounded-lg border transition-all text-sm ${
-                  form.layout_preset === preset.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">{preset.label}</span>
-                  {form.layout_preset === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
-                </div>
-                <p className="text-xs text-muted-foreground mt-0.5">{preset.description}</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Publish Portfolio</CardTitle>
-              <CardDescription>Make your portfolio visible to the public</CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant={form.is_published ? "default" : "secondary"}>
-                {form.is_published ? "Live" : "Draft"}
-              </Badge>
-              <Switch checked={form.is_published} onCheckedChange={(v) => setForm((f) => ({ ...f, is_published: v }))} />
-            </div>
-          </div>
-        </CardHeader>
-        {form.is_published && form.slug && (
-          <CardContent className="space-y-4">
-            <a href={`/p/${form.slug}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary flex items-center gap-1 hover:underline">
-              /p/{form.slug} <ExternalLink className="h-3 w-3" />
-            </a>
-            <div className="pt-3 border-t border-border space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="flex items-center gap-2">
-                    <Search className="h-3.5 w-3.5" />
-                    Allow Search Engine Indexing
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    {form.seo_indexable
-                      ? "Your portfolio can be found via Google and other search engines"
-                      : "Your portfolio is only accessible via direct link (recommended for privacy)"}
-                  </p>
-                </div>
-                <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
-              </div>
-              {/* Google Analytics */}
-              <div className="pt-3 border-t border-border space-y-2">
-                <Label className="flex items-center gap-2">
-                  <Search className="h-3.5 w-3.5" />
-                  Google Analytics
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  Add your GA4 Measurement ID (e.g. G-XXXXXXXXXX) to track visitor analytics on your public portfolio.
-                </p>
-                <Input
-                  placeholder="G-XXXXXXXXXX"
-                  value={form.ga_measurement_id}
-                  onChange={(e) => setForm((f) => ({ ...f, ga_measurement_id: e.target.value }))}
-                  className="max-w-xs"
-                />
-              </div>
-            </div>
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Custom Domain - Coming Soon */}
-      <Card className="opacity-70">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <CardTitle>Custom Domain</CardTitle>
-            <ProBadge />
-            <Badge variant="outline" className="text-[10px]">Coming Soon</Badge>
-          </div>
-          <CardDescription>Connect your own domain (e.g. yourname.com) to your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3">
-            <Input placeholder="yourname.com" disabled className="flex-1 opacity-50" />
-            <Button disabled variant="outline" size="sm">Connect</Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">Custom domains will be available soon for Pro users. Stay tuned!</p>
-        </CardContent>
-      </Card>
-
-      {/* URL */}
-      <Card>
-        <CardHeader><CardTitle>Portfolio URL</CardTitle></CardHeader>
-        <CardContent>
-          <Label>Slug</Label>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm text-muted-foreground">/p/</span>
-            <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="your-name" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Theme */}
-      <Card>
-        <CardHeader><CardTitle>Theme & Typography</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Label>Visual Theme</Label>
-              {!isPro && <ProBadge />}
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {portfolioThemeList.map((t) => {
-                const isFree = ["cinematic-dark", "modern-minimal"].includes(t.id);
-                const isLocked = !isPro && !isFree;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => !isLocked && setForm((f) => ({ ...f, theme: t.id }))}
-                    disabled={isLocked}
-                    className={`text-left p-3 rounded-lg border transition-all text-sm ${
-                      form.theme === t.id
-                        ? "border-primary bg-primary/10 ring-1 ring-primary"
-                        : isLocked
-                          ? "border-border opacity-50 cursor-not-allowed"
-                          : "border-border hover:border-primary/40 hover:bg-accent/50"
-                    }`}
-                  >
+        {/* ═══ GENERAL TAB ═══ */}
+        <TabsContent value="general" className="space-y-6 mt-6">
+          {/* Profile Type */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile Type</CardTitle>
+              <CardDescription>Determines which sections, labels, and tools are shown</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {PROFILE_TYPES.filter(pt => pt.key !== "multi_hyphenate").map((pt) => (
+                  <button key={pt.key} onClick={() => handleProfileTypeChange(pt.key)}
+                    className={`text-left p-3 rounded-lg border transition-all text-sm ${profileType === pt.key ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground text-xs">{t.name}</span>
-                      {form.theme === t.id && <Check className="h-3 w-3 text-primary" />}
-                      {isLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                      <span className="font-medium text-foreground">{pt.label}</span>
+                      {profileType === pt.key && <Check className="h-3.5 w-3.5 text-primary" />}
                     </div>
-                    <div className="flex gap-1 mt-1.5">
-                      {t.previewColors.slice(0, 5).map((c, i) => (
-                        <div key={i} className="w-4 h-4 rounded-full border border-border/50" style={{ backgroundColor: c }} />
-                      ))}
-                    </div>
-                    <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">{t.description}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{pt.description.split(".")[0]}.</p>
                   </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3">⚠️ Changing type will reset your section layout.</p>
+            </CardContent>
+          </Card>
+
+          {/* URL */}
+          <Card>
+            <CardHeader><CardTitle>Portfolio URL</CardTitle></CardHeader>
+            <CardContent>
+              <Label>Slug</Label>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-sm text-muted-foreground">/p/</span>
+                <Input value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") }))} placeholder="your-name" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* CTA */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Call-to-Action Button</CardTitle>
+              <CardDescription>Configure the main action button on your portfolio</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>CTA Type</Label>
+                <Select value={form.cta_type} onValueChange={(v) => setForm((f) => ({ ...f, cta_type: v }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="contact_form">Scroll to Contact Form</SelectItem>
+                    <SelectItem value="calendar">Open Calendar Booking</SelectItem>
+                    <SelectItem value="email">Send Email</SelectItem>
+                    <SelectItem value="custom_url">Custom URL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>CTA Style</Label>
+                <div className="grid grid-cols-3 gap-2 mt-1">
+                  {[
+                    { id: "filled", label: "Filled", desc: "Solid accent color" },
+                    { id: "outlined", label: "Outlined", desc: "Transparent with border" },
+                    { id: "gradient", label: "Gradient", desc: "Accent gradient fill" },
+                  ].map((s) => (
+                    <button key={s.id} onClick={() => setCtaStyle(s.id)}
+                      className={`text-left p-2.5 rounded-lg border transition-all text-xs ${ctaStyle === s.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium text-foreground">{s.label}</span>
+                        {ctaStyle === s.id && <Check className="h-3 w-3 text-primary" />}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{s.desc}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label>Button Label</Label>
+                <Input value={form.cta_label} onChange={(e) => setForm((f) => ({ ...f, cta_label: e.target.value }))} placeholder="e.g. Hire Me, Book a Call" />
+              </div>
+              {(form.cta_type === "email" || form.cta_type === "custom_url") && (
+                <div>
+                  <Label>{form.cta_type === "email" ? "Email Address" : "URL"}</Label>
+                  <Input value={form.cta_url} onChange={(e) => setForm((f) => ({ ...f, cta_url: e.target.value }))} placeholder={form.cta_type === "email" ? "you@email.com" : "https://..."} />
+                </div>
+              )}
+              {form.cta_type === "calendar" && (
+                <div>
+                  <Label>Booking URL</Label>
+                  <Input value={form.booking_url} onChange={(e) => setForm((f) => ({ ...f, booking_url: e.target.value }))} placeholder="https://calendly.com/your-name" />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Contact & Privacy */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact & Privacy</CardTitle>
+              <CardDescription>Control how visitors can reach you</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Contact Mode</Label>
+                <Select value={form.contact_mode} onValueChange={(v) => setForm((f) => ({ ...f, contact_mode: v }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="form">Contact Form Only</SelectItem>
+                    <SelectItem value="agent">Agent/Rep Info Only</SelectItem>
+                    <SelectItem value="both">Both Form & Agent Info</SelectItem>
+                    <SelectItem value="none">Hidden (No Contact)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center justify-between">
+                <Label>Show Contact Form</Label>
+                <Switch checked={form.show_contact_form} onCheckedChange={(v) => setForm((f) => ({ ...f, show_contact_form: v }))} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Auto-Responder */}
+          <Card className={!isPro ? "opacity-60" : ""}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CardTitle>Auto-Responder</CardTitle>
+                {!isPro && <ProBadge />}
+              </div>
+              <CardDescription>Automatically acknowledge incoming contact messages</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Enable Auto-Responder</Label>
+                <Switch checked={form.auto_responder_enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, auto_responder_enabled: v }))} disabled={!isPro} />
+              </div>
+              {form.auto_responder_enabled && isPro && (
+                <div>
+                  <Label>Response Message</Label>
+                  <Textarea value={form.auto_responder_message} onChange={(e) => setForm((f) => ({ ...f, auto_responder_message: e.target.value }))} rows={3} placeholder="Thanks for reaching out! I'll get back to you within 48 hours." />
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ═══ APPEARANCE TAB ═══ */}
+        <TabsContent value="appearance" className="space-y-6 mt-6">
+          {/* Hero Layout */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Columns className="h-4 w-4" /> Hero Layout</CardTitle>
+              <CardDescription>Choose how your hero section is structured</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {HERO_LAYOUTS.map((layout) => (
+                  <button key={layout.id} onClick={() => setHeroStyle(layout.id)}
+                    className={`text-left p-2.5 rounded-lg border transition-all text-xs ${heroStyle === layout.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">{layout.label}</span>
+                      {heroStyle === layout.id && <Check className="h-3 w-3 text-primary" />}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{layout.description}</p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Headshot Style */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Circle className="h-4 w-4" /> Headshot Style</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                {[
+                  { id: "circle", label: "Circular", icon: <div className="w-8 h-8 rounded-full bg-muted border-2 border-primary/30" /> },
+                  { id: "rounded", label: "Rounded", icon: <div className="w-8 h-8 rounded-xl bg-muted border-2 border-primary/30" /> },
+                  { id: "square", label: "Square", icon: <div className="w-8 h-8 rounded-none bg-muted border-2 border-primary/30" /> },
+                  { id: "frame", label: "Framed", icon: <div className="w-8 h-8 rounded-lg bg-muted border-2 border-primary ring-2 ring-primary/30" /> },
+                  { id: "hidden", label: "Hidden", icon: <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><UserX className="h-4 w-4 text-muted-foreground" /></div> },
+                ].map((style) => (
+                  <button key={style.id} onClick={() => setHeadshotStyle(style.id)}
+                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${headshotStyle === style.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                    {style.icon}
+                    <p className="text-xs font-medium text-foreground">{style.label}</p>
+                    {headshotStyle === style.id && <Check className="h-3 w-3 text-primary" />}
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Known For Position */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> {getTypeAwareLabels(profileType).knownForTitle} Position</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {KNOWN_FOR_POSITIONS.map((pos) => (
+                  <button key={pos.id} onClick={() => setKnownForPosition(pos.id)}
+                    className={`text-left p-2.5 rounded-lg border transition-all text-xs ${knownForPosition === pos.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">{pos.label}</span>
+                      {knownForPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Client Logos Position */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><RectangleHorizontal className="h-4 w-4" /> Client Logos Position</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { id: "below_hero", label: "Below Hero", desc: "Right after the hero" },
+                  { id: "above_sections", label: "Above Sections", desc: "Before main content" },
+                  { id: "body_section", label: "Body Section", desc: "Regular content section" },
+                  { id: "hidden", label: "Hidden", desc: "Don't show logos" },
+                ].map((pos) => (
+                  <button key={pos.id} onClick={() => setClientLogosPosition(pos.id)}
+                    className={`text-left p-2.5 rounded-lg border transition-all text-xs ${clientLogosPosition === pos.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">{pos.label}</span>
+                      {clientLogosPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{pos.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Layout Preset */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Layout className="h-4 w-4" /> Layout Preset</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {LAYOUT_PRESETS.map((preset) => (
+                  <button key={preset.id} onClick={() => setForm(f => ({ ...f, layout_preset: preset.id }))}
+                    className={`text-left p-3 rounded-lg border transition-all text-sm ${form.layout_preset === preset.id ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground">{preset.label}</span>
+                      {form.layout_preset === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">{preset.description}</p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Theme & Typography */}
+          <Card>
+            <CardHeader><CardTitle>Theme & Typography</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Label>Visual Theme</Label>
+                  {!isPro && <ProBadge />}
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {portfolioThemeList.map((t) => {
+                    const isFree = ["cinematic-dark", "modern-minimal"].includes(t.id);
+                    const isLocked = !isPro && !isFree;
+                    return (
+                      <button key={t.id} onClick={() => !isLocked && setForm((f) => ({ ...f, theme: t.id }))} disabled={isLocked}
+                        className={`text-left p-3 rounded-lg border transition-all text-sm ${form.theme === t.id ? "border-primary bg-primary/10 ring-1 ring-primary" : isLocked ? "border-border opacity-50 cursor-not-allowed" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-foreground text-xs">{t.name}</span>
+                          {form.theme === t.id && <Check className="h-3 w-3 text-primary" />}
+                          {isLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                        </div>
+                        <div className="flex gap-1 mt-1.5">
+                          {t.previewColors.slice(0, 5).map((c, i) => (
+                            <div key={i} className="w-4 h-4 rounded-full border border-border/50" style={{ backgroundColor: c }} />
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <Label>Accent Color</Label>
+                <div className="flex items-center gap-3 mt-1">
+                  <input type="color" value={form.accent_color} onChange={(e) => setForm((f) => ({ ...f, accent_color: e.target.value }))} className="w-10 h-10 rounded cursor-pointer border border-border" />
+                  <span className="text-sm text-muted-foreground">{form.accent_color}</span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Label>Font Pairing</Label>
+                  {!isPro && <ProBadge />}
+                </div>
+                <Select value={form.font_pairing} onValueChange={(v) => setForm((f) => ({ ...f, font_pairing: v }))} disabled={!isPro}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.values(fontPairings).map((fp) => (
+                      <SelectItem key={fp.key} value={fp.key}>{fp.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Custom CSS */}
+          <Card className={!isPro ? "opacity-60 pointer-events-none" : ""}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CardTitle>Custom CSS</CardTitle>
+                {!isPro && <ProBadge />}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Textarea value={form.custom_css} onChange={(e) => setForm((f) => ({ ...f, custom_css: e.target.value }))} rows={5} placeholder={`.portfolio-container h2 {\n  text-transform: uppercase;\n}`} className="font-mono text-xs" disabled={!isPro} />
+            </CardContent>
+          </Card>
+
+          {/* Status Badge */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Status Badge</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="mb-2 block">Quick Select</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {(() => {
+                    const sharedPresets = ["Available for Hire", "Open to Opportunities", "Not Currently Available"];
+                    const typePresets: Record<string, string[]> = {
+                      actor: ["Available for Auditions", "Seeking Representation", "On Set"],
+                      screenwriter: ["Open to Assignments", "Seeking Representation", "In Writers' Room"],
+                      copywriter: ["Available for Projects", "Accepting Clients"],
+                    };
+                    const presets = [...(typePresets[profileType || ""] || []), ...sharedPresets];
+                    return presets.map((p) => (
+                      <button key={p} onClick={() => setProfessionalStatus(p)}
+                        className={`text-xs px-2.5 py-1 rounded-full border transition-all ${professionalStatus === p ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                        {p}
+                      </button>
+                    ));
+                  })()}
+                </div>
+              </div>
+              <div>
+                <Label>Custom Status Text</Label>
+                <Input value={professionalStatus} onChange={(e) => setProfessionalStatus(e.target.value)} placeholder="Type a custom status..." className="mt-1" />
+              </div>
+              <div>
+                <Label className="mb-2 block">Badge Color</Label>
+                <div className="flex gap-2">
+                  {[
+                    { id: "green", color: "#22c55e" }, { id: "blue", color: "#3b82f6" },
+                    { id: "gold", color: "#f59e0b" }, { id: "red", color: "#ef4444" },
+                    { id: "purple", color: "#a855f7" }, { id: "accent", color: form.accent_color },
+                  ].map((c) => (
+                    <button key={c.id} onClick={() => setStatusBadgeColor(c.id)}
+                      className={`w-7 h-7 rounded-full border-2 transition-all ${statusBadgeColor === c.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-border"}`}
+                      style={{ backgroundColor: c.color }} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Label className="mb-2 block">Effect</Label>
+                <div className="flex gap-1.5">
+                  {[{ id: "pulse", label: "Pulse" }, { id: "glow", label: "Glow" }, { id: "static", label: "Static" }, { id: "none", label: "None" }].map((a) => (
+                    <button key={a.id} onClick={() => setStatusBadgeAnimation(a.id)}
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border transition-all ${statusBadgeAnimation === a.id ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/40"}`}>
+                      {a.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ═══ SEO & PUBLISH TAB ═══ */}
+        <TabsContent value="seo" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Publish Portfolio</CardTitle>
+                  <CardDescription>Make your portfolio visible to the public</CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={form.is_published ? "default" : "secondary"}>{form.is_published ? "Live" : "Draft"}</Badge>
+                  <Switch checked={form.is_published} onCheckedChange={(v) => setForm((f) => ({ ...f, is_published: v }))} />
+                </div>
+              </div>
+            </CardHeader>
+            {form.is_published && form.slug && (
+              <CardContent className="space-y-4">
+                <a href={`/p/${form.slug}`} target="_blank" rel="noopener noreferrer" className="text-sm text-primary flex items-center gap-1 hover:underline">
+                  /p/{form.slug} <ExternalLink className="h-3 w-3" />
+                </a>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="flex items-center gap-2"><Search className="h-3.5 w-3.5" /> Allow Search Engine Indexing</Label>
+                    <p className="text-xs text-muted-foreground">{form.seo_indexable ? "Your portfolio can be found via Google" : "Only accessible via direct link"}</p>
+                  </div>
+                  <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
+                </div>
+              </CardContent>
+            )}
+          </Card>
+
+          {/* Google Analytics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Search className="h-4 w-4" /> Google Analytics</CardTitle>
+              <CardDescription>Add your GA4 Measurement ID to track visitor analytics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Input placeholder="G-XXXXXXXXXX" value={form.ga_measurement_id} onChange={(e) => setForm((f) => ({ ...f, ga_measurement_id: e.target.value }))} className="max-w-xs" />
+            </CardContent>
+          </Card>
+
+          {/* Custom Domain */}
+          <Card className="opacity-70">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <CardTitle>Custom Domain</CardTitle>
+                <ProBadge />
+                <Badge variant="outline" className="text-[10px]">Coming Soon</Badge>
+              </div>
+              <CardDescription>Connect your own domain (e.g. yourname.com)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-3">
+                <Input placeholder="yourname.com" disabled className="flex-1 opacity-50" />
+                <Button disabled variant="outline" size="sm">Connect</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ═══ SECTIONS TAB ═══ */}
+        <TabsContent value="sections" className="space-y-6 mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio Sections</CardTitle>
+              <CardDescription>Toggle visibility and reorder sections. Save to apply.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {sectionOrder.map((key, index) => {
+                const section = allSections.find(s => s.key === key);
+                if (!section) return null;
+                const visible = sectionsVisible[key] !== false;
+                return (
+                  <div key={key} className="flex items-center justify-between py-2 px-3 rounded-md border border-border">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-0.5">
+                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, -1)} disabled={index === 0}><ArrowUp className="h-3 w-3" /></Button>
+                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, 1)} disabled={index === sectionOrder.length - 1}><ArrowDown className="h-3 w-3" /></Button>
+                      </div>
+                      <span className={`text-sm font-medium ${visible ? "text-foreground" : "text-muted-foreground line-through"}`}>{section.label}</span>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => toggleSectionVisibility(key)}>
+                      {visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                    </Button>
+                  </div>
                 );
               })}
-            </div>
-          </div>
-          <div>
-            <Label>Accent Color</Label>
-            <div className="flex items-center gap-3 mt-1">
-              <input type="color" value={form.accent_color} onChange={(e) => setForm((f) => ({ ...f, accent_color: e.target.value }))} className="w-10 h-10 rounded cursor-pointer border border-border" />
-              <span className="text-sm text-muted-foreground">{form.accent_color}</span>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <Label>Font Pairing</Label>
-              {!isPro && <ProBadge />}
-            </div>
-            <Select value={form.font_pairing} onValueChange={(v) => setForm((f) => ({ ...f, font_pairing: v }))} disabled={!isPro}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {Object.values(fontPairings).map((fp) => (
-                  <SelectItem key={fp.key} value={fp.key}>{fp.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">Override the theme's default fonts</p>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Custom CSS */}
-      <Card className={!isPro ? "opacity-60 pointer-events-none" : ""}>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <CardTitle>Custom CSS</CardTitle>
-            {!isPro && <ProBadge />}
-          </div>
-          <CardDescription>Advanced: inject custom styles into your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={form.custom_css}
-            onChange={(e) => setForm((f) => ({ ...f, custom_css: e.target.value }))}
-            rows={6}
-            placeholder={`.portfolio-container h2 {\n  text-transform: uppercase;\n}`}
-            className="font-mono text-xs"
-            disabled={!isPro}
-          />
-          <p className="text-xs text-muted-foreground mt-1">CSS is scoped to your portfolio page only</p>
-        </CardContent>
-      </Card>
-
-      {/* CTA */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Call-to-Action Button</CardTitle>
-          <CardDescription>Configure the main action button on your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>CTA Type</Label>
-            <Select value={form.cta_type} onValueChange={(v) => setForm((f) => ({ ...f, cta_type: v }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="contact_form">Scroll to Contact Form</SelectItem>
-                <SelectItem value="calendar">Open Calendar Booking</SelectItem>
-                <SelectItem value="email">Send Email</SelectItem>
-                <SelectItem value="custom_url">Custom URL</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Button Style</Label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5">
-              {[
-                { id: "text-link", label: "Text Link", desc: "Minimal, underline on hover" },
-                { id: "outlined", label: "Outlined", desc: "Clean border style" },
-                { id: "underlined", label: "Underlined", desc: "Subtle underline" },
-                { id: "filled-subtle", label: "Filled Subtle", desc: "Soft background fill" },
-                { id: "glow-pulse", label: "Glow Pulse", desc: "Pulsing glow effect" },
-                { id: "shine-sweep", label: "Shine Sweep", desc: "Shimmer light sweep" },
-                { id: "neon-border", label: "Neon Border", desc: "Neon outline glow" },
-                { id: "filled-bold", label: "Filled Bold", desc: "Solid, impactful" },
-              ].map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setCtaStyle(s.id)}
-                  className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
-                    ctaStyle === s.id
-                      ? "border-primary bg-primary/10 ring-1 ring-primary"
-                      : "border-border hover:border-primary/40 hover:bg-accent/50"
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium text-foreground">{s.label}</span>
-                    {ctaStyle === s.id && <Check className="h-3 w-3 text-primary" />}
-                  </div>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{s.desc}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <Label>Button Label</Label>
-            <Input value={form.cta_label} onChange={(e) => setForm((f) => ({ ...f, cta_label: e.target.value }))} placeholder="e.g. Hire Me, Book a Call, Get in Touch" />
-          </div>
-          {(form.cta_type === "email" || form.cta_type === "custom_url") && (
-            <div>
-              <Label>{form.cta_type === "email" ? "Email Address" : "URL"}</Label>
-              <Input value={form.cta_url} onChange={(e) => setForm((f) => ({ ...f, cta_url: e.target.value }))} placeholder={form.cta_type === "email" ? "you@email.com" : "https://..."} />
-            </div>
-          )}
-          {form.cta_type === "calendar" && (
-            <div>
-              <Label>Booking URL</Label>
-              <Input value={form.booking_url} onChange={(e) => setForm((f) => ({ ...f, booking_url: e.target.value }))} placeholder="https://calendly.com/your-name or https://cal.com/your-name" />
-              <p className="text-xs text-muted-foreground mt-1">Paste your Calendly, Cal.com, or Acuity scheduling link</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Client Logos Position */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Client Logos Placement</CardTitle>
-          <CardDescription>Choose where your client/company logos appear on your portfolio</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { id: "below_hero", label: "Below Hero", desc: "Full-width strip right under the hero" },
-              { id: "above_sections", label: "Above Sections", desc: "Before the main content area" },
-              { id: "body_section", label: "Body Section", desc: "As a regular portfolio section" },
-              { id: "hidden", label: "Hidden", desc: "Don't show logos on the portfolio" },
-            ].map((pos) => (
-              <button
-                key={pos.id}
-                onClick={() => setClientLogosPosition(pos.id)}
-                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
-                  clientLogosPosition === pos.id
-                    ? "border-primary bg-primary/10 ring-1 ring-primary"
-                    : "border-border hover:border-primary/40 hover:bg-accent/50"
-                }`}
-              >
-                <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-foreground">{pos.label}</span>
-                  {clientLogosPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+        {/* ═══ ACCOUNT TAB ═══ */}
+        <TabsContent value="account" className="space-y-6 mt-6">
+          {/* Billing */}
+          {isPro && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> Billing & Subscription</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="default">Pro</Badge>
+                  <span className="text-sm text-muted-foreground">Active subscription</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.desc}</p>
-              </button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Contact & Privacy</CardTitle>
-          <CardDescription>Control how visitors can reach you</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Contact Mode</Label>
-            <Select value={form.contact_mode} onValueChange={(v) => setForm((f) => ({ ...f, contact_mode: v }))}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="form">Contact Form Only</SelectItem>
-                <SelectItem value="agent">Agent/Rep Info Only</SelectItem>
-                <SelectItem value="both">Both Form & Agent Info</SelectItem>
-                <SelectItem value="none">Hidden (No Contact)</SelectItem>
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              {form.contact_mode === "agent" ? "Visitors will see your agent/rep contact instead of a form" :
-               form.contact_mode === "both" ? "Both the contact form and your agent info will be shown" :
-               form.contact_mode === "none" ? "No contact options will be shown on your portfolio" :
-               "Visitors can message you directly via the contact form"}
-            </p>
-          </div>
-          <div className="flex items-center justify-between">
-            <Label>Show Contact Form</Label>
-            <Switch checked={form.show_contact_form} onCheckedChange={(v) => setForm((f) => ({ ...f, show_contact_form: v }))} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Status Badge */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Status Badge</CardTitle>
-          <CardDescription>The status indicator shown on your portfolio hero (e.g. "Available for Hire")</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Quick presets */}
-          <div>
-            <Label className="mb-2 block">Quick Select</Label>
-            <div className="flex flex-wrap gap-1.5">
-              {(() => {
-                const sharedPresets = ["Available for Hire", "Open to Opportunities", "Not Currently Available"];
-                const typePresets: Record<string, string[]> = {
-                  actor: ["Available for Auditions", "Seeking Representation", "On Set", "Between Projects"],
-                  screenwriter: ["Open to Assignments", "Seeking Representation", "In Writers' Room", "Staffing Season"],
-                  tv_writer: ["Open to Assignments", "Seeking Representation", "In Writers' Room", "Staffing Season"],
-                  director: ["Accepting Projects", "In Production", "In Post", "In Development"],
-                  producer: ["Accepting Projects", "In Production", "In Post", "In Development"],
-                  copywriter: ["Available for Projects", "Accepting Clients", "Booked Through Q2"],
-                  author: ["On Book Tour", "Accepting Submissions", "Writing Next Book"],
-                  journalist: ["Open to Commissions", "On Assignment"],
-                };
-                const presets = [...(typePresets[profileType || ""] || []), ...sharedPresets];
-                return presets.map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setProfessionalStatus(p)}
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
-                      professionalStatus === p
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ));
-              })()}
-            </div>
-          </div>
-          {/* Custom text */}
-          <div>
-            <Label>Custom Status Text</Label>
-            <Input
-              value={professionalStatus}
-              onChange={(e) => setProfessionalStatus(e.target.value)}
-              placeholder="Type a custom status..."
-              className="mt-1"
-            />
-          </div>
-          {/* Color */}
-          <div>
-            <Label className="mb-2 block">Badge Color</Label>
-            <div className="flex gap-2">
-              {[
-                { id: "green", color: "#22c55e" }, { id: "blue", color: "#3b82f6" },
-                { id: "gold", color: "#f59e0b" }, { id: "red", color: "#ef4444" },
-                { id: "purple", color: "#a855f7" }, { id: "white", color: "#ffffff" },
-                { id: "accent", color: form.accent_color },
-              ].map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setStatusBadgeColor(c.id)}
-                  className={`w-7 h-7 rounded-full border-2 transition-all ${
-                    statusBadgeColor === c.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-border"
-                  }`}
-                  style={{ backgroundColor: c.color }}
-                  title={c.id.charAt(0).toUpperCase() + c.id.slice(1)}
-                />
-              ))}
-            </div>
-          </div>
-          {/* Animation */}
-          <div>
-            <Label className="mb-2 block">Effect</Label>
-            <div className="flex gap-1.5">
-              {[
-                { id: "pulse", label: "Pulse", desc: "Animated ping dot" },
-                { id: "glow", label: "Glow", desc: "Soft shadow pulse" },
-                { id: "breathe", label: "Breathe", desc: "Opacity fade" },
-                { id: "static", label: "Static", desc: "No animation" },
-                { id: "none", label: "None", desc: "Text only" },
-              ].map((a) => (
-                <button
-                  key={a.id}
-                  onClick={() => setStatusBadgeAnimation(a.id)}
-                  className={`text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
-                    statusBadgeAnimation === a.id
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/40"
-                  }`}
-                  title={a.desc}
-                >
-                  {a.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* Preview */}
-          {professionalStatus && (
-            <div className="pt-3 border-t border-border">
-              <Label className="mb-2 block text-xs text-muted-foreground">Preview</Label>
-              <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest"
-                style={{
-                  color: statusBadgeColor === 'accent' ? form.accent_color
-                    : { green: '#22c55e', blue: '#3b82f6', gold: '#f59e0b', red: '#ef4444', purple: '#a855f7', white: '#ffffff' }[statusBadgeColor] || '#22c55e',
-                }}
-              >
-                {statusBadgeAnimation !== 'none' && (
-                  <span className="relative flex h-1.5 w-1.5">
-                    {statusBadgeAnimation === 'pulse' && (
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30"
-                        style={{ backgroundColor: 'currentColor' }} />
-                    )}
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5"
-                      style={{ backgroundColor: 'currentColor' }} />
-                  </span>
-                )}
-                {professionalStatus}
-              </div>
-            </div>
-          )}
-          {/* Hide badge */}
-          <div className="flex items-center justify-between pt-2">
-            <div>
-              <Label>Hide Badge</Label>
-              <p className="text-xs text-muted-foreground">Remove the status indicator entirely</p>
-            </div>
-            <Switch
-              checked={!professionalStatus}
-              onCheckedChange={(hidden) => {
-                if (hidden) setProfessionalStatus("");
-                else setProfessionalStatus("Available for Hire");
-              }}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Auto-Responder */}
-      <Card className={!isPro ? "opacity-60" : ""}>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <CardTitle>Auto-Responder</CardTitle>
-            {!isPro && <ProBadge />}
-          </div>
-          <CardDescription>Automatically acknowledge incoming contact messages</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label>Enable Auto-Responder</Label>
-            <Switch checked={form.auto_responder_enabled} onCheckedChange={(v) => setForm((f) => ({ ...f, auto_responder_enabled: v }))} disabled={!isPro} />
-          </div>
-          {form.auto_responder_enabled && isPro && (
-            <div>
-              <Label>Response Message</Label>
-              <Textarea
-                value={form.auto_responder_message}
-                onChange={(e) => setForm((f) => ({ ...f, auto_responder_message: e.target.value }))}
-                rows={4}
-                placeholder="Thanks for reaching out! I'll get back to you within 48 hours."
-              />
-              <p className="text-xs text-muted-foreground mt-1">This message will be shown to visitors after they submit a contact form</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Section Visibility & Reorder */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Portfolio Sections</CardTitle>
-          <CardDescription>Toggle visibility and reorder sections on your portfolio. Changes are saved when you click Save above.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {sectionOrder.map((key, index) => {
-            const section = allSections.find(s => s.key === key);
-            if (!section) return null;
-            const visible = sectionsVisible[key] !== false;
-            return (
-              <div key={key} className="flex items-center justify-between py-2 px-3 rounded-md border border-border">
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col gap-0.5">
-                    <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, -1)} disabled={index === 0}>
-                      <ArrowUp className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, 1)} disabled={index === sectionOrder.length - 1}>
-                      <ArrowDown className="h-3 w-3" />
-                    </Button>
-                  </div>
-                  <span className={`text-sm font-medium ${visible ? "text-foreground" : "text-muted-foreground line-through"}`}>{section.label}</span>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => toggleSectionVisibility(key)}>
-                  {visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+                <Button variant="outline" onClick={async () => {
+                  try {
+                    const { data, error } = await supabase.functions.invoke("customer-portal");
+                    if (error) throw error;
+                    if (data?.url) window.open(data.url, "_blank");
+                  } catch (err: any) { toast({ title: "Error", description: err.message || "Could not open billing portal", variant: "destructive" }); }
+                }}>
+                  <ExternalLink className="mr-2 h-4 w-4" /> Manage Billing
                 </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Data Export */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Download className="h-4 w-4" /> Export Data</CardTitle>
+              <CardDescription>Download all your portfolio data as a JSON file</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" onClick={handleExportData} disabled={exporting}>
+                {exporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+                Export All Data
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Change Password */}
+          <Card>
+            <CardHeader><CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" /> Change Password</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div><Label>New Password</Label><Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" /></div>
+              <div><Label>Confirm Password</Label><Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" /></div>
+              <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
+                {changingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update Password
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Change Email */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Mail className="h-4 w-4" /> Change Email</CardTitle>
+              <CardDescription>A confirmation link will be sent to the new address</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div><Label>Current email</Label><p className="text-sm text-muted-foreground">{user?.email || "—"}</p></div>
+              <div><Label>New Email</Label><Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="new@email.com" /></div>
+              <Button onClick={async () => {
+                if (!newEmail.trim() || !newEmail.includes("@")) { toast({ title: "Invalid email", variant: "destructive" }); return; }
+                setChangingEmail(true);
+                const { error } = await supabase.auth.updateUser({ email: newEmail });
+                if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+                else { toast({ title: "Confirmation sent", description: "Check your new email to confirm." }); setNewEmail(""); }
+                setChangingEmail(false);
+              }} disabled={changingEmail || !newEmail}>
+                {changingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Update Email
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Session Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" /> Session Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" onClick={async () => {
+                const { error } = await supabase.auth.signOut({ scope: 'others' });
+                if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+                else { toast({ title: "Done", description: "All other sessions have been signed out." }); }
+              }}>Sign Out Other Devices</Button>
+            </CardContent>
+          </Card>
+
+          {/* Danger Zone */}
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive"><AlertTriangle className="h-4 w-4" /> Danger Zone</CardTitle>
+              <CardDescription>Permanently delete your account and all data. Cannot be undone.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Type <span className="font-mono font-bold">DELETE</span> to confirm</Label>
+                <Input value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} placeholder="DELETE" className="max-w-xs" />
               </div>
-            );
-          })}
-        </CardContent>
-      </Card>
-
-      {/* Billing — Pro users */}
-      {isPro && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" />Billing & Subscription</CardTitle>
-            <CardDescription>Manage your Pro subscription, update payment method, or cancel.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="default">Pro</Badge>
-              <span className="text-sm text-muted-foreground">Active subscription</span>
-            </div>
-            <Button
-              variant="outline"
-              onClick={async () => {
-                try {
-                  const { data, error } = await supabase.functions.invoke("customer-portal");
-                  if (error) throw error;
-                  if (data?.url) window.open(data.url, "_blank");
-                } catch (err: any) {
-                  toast({ title: "Error", description: err.message || "Could not open billing portal", variant: "destructive" });
-                }
-              }}
-            >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Manage Billing
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Change Password */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" />Change Password</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>New Password</Label>
-            <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••" minLength={6} />
-          </div>
-          <div>
-            <Label>Confirm Password</Label>
-            <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" />
-          </div>
-          <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
-            {changingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Update Password
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Change Email */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Mail className="h-4 w-4" />Change Email</CardTitle>
-          <CardDescription>Update the email address associated with your account. A confirmation link will be sent to the new address.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Current email</Label>
-            <p className="text-sm text-muted-foreground">{user?.email || "—"}</p>
-          </div>
-          <div>
-            <Label>New Email Address</Label>
-            <Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="new@email.com" />
-          </div>
-          <Button onClick={async () => {
-            if (!newEmail.trim() || !newEmail.includes("@")) {
-              toast({ title: "Invalid email", variant: "destructive" });
-              return;
-            }
-            setChangingEmail(true);
-            const { error } = await supabase.auth.updateUser({ email: newEmail });
-            if (error) {
-              toast({ title: "Error", description: error.message, variant: "destructive" });
-            } else {
-              toast({ title: "Confirmation sent", description: "Check your new email to confirm the change." });
-              setNewEmail("");
-            }
-            setChangingEmail(false);
-          }} disabled={changingEmail || !newEmail}>
-            {changingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Update Email
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Sign Out All Devices */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" />Session Management</CardTitle>
-          <CardDescription>Sign out of all other browser sessions for security</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button variant="outline" onClick={async () => {
-            const { error } = await supabase.auth.signOut({ scope: 'others' });
-            if (error) {
-              toast({ title: "Error", description: error.message, variant: "destructive" });
-            } else {
-              toast({ title: "Done", description: "All other sessions have been signed out." });
-            }
-          }}>
-            Sign Out Other Devices
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Danger Zone */}
-      <Card className="border-destructive/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive"><AlertTriangle className="h-4 w-4" />Danger Zone</CardTitle>
-          <CardDescription>Permanently delete your account and all associated data. This action cannot be undone.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label>Type <span className="font-mono font-bold">DELETE</span> to confirm</Label>
-            <Input value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} placeholder="DELETE" className="max-w-xs" />
-          </div>
-          <Button variant="destructive" disabled={deleteConfirmText !== "DELETE" || deletingAccount}
-            onClick={async () => {
-              if (!user) return;
-              setDeletingAccount(true);
-              // Delete profile data (cascades handle related tables)
-              const { error } = await supabase.from("profiles").delete().eq("id", user.id);
-              if (error) {
-                toast({ title: "Error", description: "Could not delete account. Please contact support.", variant: "destructive" });
-                setDeletingAccount(false);
-                return;
-              }
-              await supabase.auth.signOut();
-              toast({ title: "Account deleted", description: "Your account and data have been removed." });
-              window.location.href = "/";
-            }}>
-            {deletingAccount ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
-            Delete Account Permanently
-          </Button>
-        </CardContent>
-      </Card>
+              <Button variant="destructive" disabled={deleteConfirmText !== "DELETE" || deletingAccount}
+                onClick={async () => {
+                  if (!user) return;
+                  setDeletingAccount(true);
+                  try {
+                    // Call edge function to properly delete auth user + profile
+                    const { error } = await supabase.functions.invoke("delete-account");
+                    if (error) throw error;
+                    await supabase.auth.signOut();
+                    toast({ title: "Account deleted", description: "Your account and data have been removed." });
+                    window.location.href = "/";
+                  } catch (err: any) {
+                    toast({ title: "Error", description: "Could not delete account. Please contact support.", variant: "destructive" });
+                    setDeletingAccount(false);
+                  }
+                }}>
+                {deletingAccount ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                Delete Account Permanently
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
