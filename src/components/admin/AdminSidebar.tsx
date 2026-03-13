@@ -1,4 +1,4 @@
-import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield, History, UserCog } from "lucide-react";
+import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield, History, UserCog, Palette } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -22,6 +22,7 @@ const adminNav = [
   { title: "Content Moderation", url: "/admin/moderation", icon: Flag },
   { title: "Audit Logs", url: "/admin/audit-logs", icon: History },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
+  { title: "Demo Profiles", url: "/admin/demo-profiles", icon: Palette },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
 

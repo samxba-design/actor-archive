@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "lucide-react";
-import { getCompanyLogoUrl } from "@/lib/companyLogos";
+import { getCompanyLogoUrl, COMPANY_DOMAINS } from "@/lib/companyLogos";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import CompanyLogoLibrary from "@/components/dashboard/CompanyLogoLibrary";
@@ -36,6 +36,7 @@ const ClientManager = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<{ name: string; logoUrl: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -188,11 +189,55 @@ const ClientManager = () => {
           <div className="space-y-4">
             <div>
               <Label>Company Name *</Label>
-              <Input
-                value={form.company_name}
-                onChange={(e) => setForm(f => ({ ...f, company_name: e.target.value }))}
-                placeholder="e.g. Microsoft, SoFi, Deloitte"
-              />
+              <div className="relative">
+                <Input
+                  value={form.company_name}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setForm(f => ({ ...f, company_name: val }));
+                    // Auto-suggest from COMPANY_DOMAINS
+                    if (val.length >= 2) {
+                      const matches = Object.keys(COMPANY_DOMAINS)
+                        .filter(name => name.toLowerCase().includes(val.toLowerCase()))
+                        .slice(0, 6)
+                        .map(name => ({ name, logoUrl: getCompanyLogoUrl(name) }));
+                      setSuggestions(matches);
+                    } else {
+                      setSuggestions([]);
+                    }
+                  }}
+                  onFocus={() => {
+                    if (form.company_name.length >= 2) {
+                      const matches = Object.keys(COMPANY_DOMAINS)
+                        .filter(name => name.toLowerCase().includes(form.company_name.toLowerCase()))
+                        .slice(0, 6)
+                        .map(name => ({ name, logoUrl: getCompanyLogoUrl(name) }));
+                      setSuggestions(matches);
+                    }
+                  }}
+                  placeholder="e.g. Microsoft, SoFi, Deloitte"
+                />
+                {suggestions.length > 0 && (
+                  <div className="absolute z-50 mt-1 w-full bg-popover border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s.name}
+                        type="button"
+                        onClick={() => {
+                          setForm(f => ({ ...f, company_name: s.name, logo_url: s.logoUrl }));
+                          setSuggestions([]);
+                        }}
+                        className="w-full flex items-center gap-3 p-2 hover:bg-accent text-left transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded bg-white border border-border flex items-center justify-center overflow-hidden shrink-0">
+                          <img src={s.logoUrl} alt="" className="w-6 h-6 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        </div>
+                        <span className="text-sm text-foreground">{s.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground mt-1">We'll auto-fetch the logo if we recognize the company</p>
             </div>
             <div>
