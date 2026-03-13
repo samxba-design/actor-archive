@@ -262,9 +262,9 @@ const DashboardHome = () => {
               )}
             </Button>
           )}
-          {profile?.slug && profile?.is_published && (
+          {profile?.slug && (
             <Button variant="outline" size="sm" onClick={() => window.open(`/p/${profile.slug}`, "_blank")}>
-              <ExternalLink className="mr-2 h-4 w-4" />View
+              <ExternalLink className="mr-2 h-4 w-4" />{profile?.is_published ? "View" : "Preview"}
             </Button>
           )}
         </div>
