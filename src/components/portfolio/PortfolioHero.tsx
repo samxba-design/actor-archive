@@ -46,6 +46,8 @@ interface Props {
     available_for_hire: boolean | null;
     seeking_representation: boolean | null;
     professional_status?: string | null;
+    status_badge_color?: string | null;
+    status_badge_animation?: string | null;
     cta_label: string | null;
     cta_url: string | null;
     cta_type: string | null;
