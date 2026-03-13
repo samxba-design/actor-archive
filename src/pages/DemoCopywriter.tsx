@@ -492,13 +492,13 @@ const DemoCopywriter = () => {
         <WithToggle sectionKey="ctaPreset" sectionName="CTA Button">
           {() => null}
         </WithToggle>
-        <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
+        <WithToggle sectionKey="heroKnownFor" sectionName="Highlights Style">
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
           {() => null}
         </WithToggle>
-        <WithToggle sectionKey="knownForPosition" sectionName="Known For Position">
+        <WithToggle sectionKey="knownForPosition" sectionName="Highlights Position">
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="heroBgType" sectionName="Background">
