@@ -80,7 +80,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "TV Writer",
     description: "Original pilots, spec scripts, and writers room experience. Show your career progression from Staff Writer to Showrunner.",
     icon: "Tv",
-    defaultTheme: "screenplay",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
