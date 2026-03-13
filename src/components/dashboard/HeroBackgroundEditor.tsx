@@ -272,7 +272,44 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
           <p className="text-xs text-muted-foreground">Animated gradient uses your theme's accent color with drifting radial overlays for a dynamic background.</p>
         )}
 
-        {heroStyle === "compact" && (
+        {currentMode === 'image' && (
+          <>
+            <div>
+              <Label className="text-xs text-muted-foreground mb-2 block">Stock Background Images</Label>
+              <div className="grid grid-cols-4 gap-2">
+                {STOCK_HERO_IMAGES.map((img) => (
+                  <button
+                    key={img.key}
+                    onClick={() => onUpdate({ hero_bg_image_url: img.url, hero_bg_type: 'image' })}
+                    className="relative rounded-md overflow-hidden aspect-[16/9] border-2 transition-all hover:scale-105"
+                    style={{
+                      borderColor: heroBgImageUrl === img.url ? "hsl(var(--primary))" : "transparent",
+                    }}
+                    title={img.label}
+                  >
+                    <img src={`${img.url}&w=192&q=40`} alt={img.label} className="w-full h-full object-cover" loading="lazy" />
+                    {heroBgImageUrl === img.url && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                    <span className="absolute bottom-0 inset-x-0 text-[8px] text-white/80 text-center py-0.5 bg-black/40">
+                      {img.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground mb-1.5 block">Or paste custom image URL</Label>
+              <Input
+                value={heroBgImageUrl || ''}
+                onChange={(e) => onUpdate({ hero_bg_image_url: e.target.value, hero_bg_type: 'image' })}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+          </>
+        )}
           <p className="text-xs text-muted-foreground">Compact mode uses a shorter hero section — ideal for text-focused portfolios.</p>
         )}
       </CardContent>
