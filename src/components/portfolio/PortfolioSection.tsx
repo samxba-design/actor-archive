@@ -73,6 +73,7 @@ const defaultSectionLabels: Record<string, string> = {
   published_work: "Published Work",
   custom_sections: "Custom Sections",
   bio: "About",
+  achievements: "Notable Achievements",
   social_links: "Connect",
   availability: "Availability",
   staffing_info: "Staffing",

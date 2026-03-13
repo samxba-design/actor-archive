@@ -231,6 +231,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     servicesDescription: "List your video production packages and pricing.",
     testimonialsTitle: "Client Testimonials",
     testimonialsDescription: "Client feedback and endorsements.",
+    knownForTitle: "Featured Work",
   },
 };
 

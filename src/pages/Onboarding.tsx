@@ -101,10 +101,13 @@ const Onboarding = () => {
     data.profileType === "copywriter" ||
     data.secondaryTypes.includes("copywriter");
 
+  const isSimpleGoal = data.primaryGoal === "simple_presence";
+
   const stepKeys: string[] = ["type", "goal", "basic", "slug"];
-  if (isActorType) stepKeys.push("actor");
-  if (isCopywriterType) stepKeys.push("specializations");
-  stepKeys.push("theme", "services", "complete");
+  if (isActorType && !isSimpleGoal) stepKeys.push("actor");
+  if (isCopywriterType && !isSimpleGoal) stepKeys.push("specializations");
+  if (!isSimpleGoal) stepKeys.push("theme", "services");
+  stepKeys.push("complete");
 
   const totalSteps = stepKeys.length;
 
