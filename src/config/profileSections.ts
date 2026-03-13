@@ -33,7 +33,10 @@ export type SectionKey =
   | "results_wall"
   | "video_portfolio"
   | "campaign_timeline"
-  | "published_work";
+  | "published_work"
+  | "social_links"
+  | "custom_sections"
+  | "education";
 
 export interface SectionConfig {
   key: SectionKey;
@@ -71,6 +74,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "client_logos", label: "Clients & Studios", description: "Companies you've worked with" },
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
       { key: "representation", label: "Representation", description: "Agent & manager info" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["screenplay", "film", "tv_show", "other"],
@@ -95,6 +100,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "client_logos", label: "Networks & Studios", description: "Companies you've worked with" },
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
       { key: "representation", label: "Representation", description: "Agent & manager info" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["pilot", "spec_script", "series_bible", "comedy_packet", "tv_show", "other"],
@@ -119,6 +126,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
       { key: "events", label: "Readings & Events", description: "Upcoming readings & performances" },
       { key: "representation", label: "Representation", description: "Agent info" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Rights enquiries & commissions" },
     ],
     projectTypes: ["play", "other"],
@@ -142,6 +151,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Author Photos", description: "Author photos & book covers" },
       { key: "events", label: "Readings & Tours", description: "Book signings & speaking" },
       { key: "representation", label: "Representation", description: "Literary agent" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["novel", "book", "short_story", "article", "other"],
@@ -164,7 +175,10 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "awards", label: "Awards", description: "Journalism awards" },
       { key: "client_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "gallery", label: "Media & Photos", description: "Event photos & media appearances" },
+      { key: "education", label: "Education", description: "Degrees & journalism training" },
       { key: "services", label: "Commissioning Info", description: "Rates & availability" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Pitch or commission" },
     ],
     projectTypes: ["article", "other"],
@@ -192,7 +206,10 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "press", label: "Press & Features", description: "Coverage and features" },
       { key: "awards", label: "Awards & Recognition", description: "Industry recognition" },
       { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
+      { key: "education", label: "Certifications & Training", description: "Google Ads, HubSpot, and other certifications" },
       { key: "gallery", label: "Campaign Gallery", description: "Campaign visuals & behind the scenes" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
     projectTypes: ["case_study", "writing_sample", "campaign", "article", "other"],
@@ -216,6 +233,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "press", label: "Press & Reviews", description: "Reviews and features" },
       { key: "representation", label: "Representation", description: "Agent & manager" },
       { key: "availability", label: "Availability", description: "Casting availability & self-tape" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Casting enquiries" },
     ],
     projectTypes: ["film", "tv_show", "play", "video", "other"],
@@ -239,6 +258,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "services", label: "Available For", description: "Types of projects" },
       { key: "client_logos", label: "Studios & Partners", description: "Companies you've worked with" },
       { key: "representation", label: "Representation", description: "Agent & manager" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["film", "tv_show", "video", "campaign", "other"],
@@ -261,7 +282,10 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "testimonials", label: "Testimonials", description: "Client feedback" },
       { key: "awards", label: "Awards", description: "Industry recognition" },
       { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
+      { key: "education", label: "Certifications", description: "Technical certifications & training" },
       { key: "press", label: "Press", description: "Features & coverage" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
     projectTypes: ["video", "campaign", "case_study", "other"],
