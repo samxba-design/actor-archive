@@ -105,7 +105,7 @@ const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
