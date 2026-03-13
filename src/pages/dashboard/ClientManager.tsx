@@ -35,6 +35,7 @@ const ClientManager = () => {
   const [form, setForm] = useState({ company_name: "", website_url: "", logo_url: "" });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const fetchItems = async () => {
     if (!user) return;
