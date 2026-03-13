@@ -84,28 +84,37 @@ const ExitIntentPopup = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md border-primary/20 bg-gradient-to-br from-background to-muted/50">
+      <DialogContent
+        className="sm:max-w-md border shadow-2xl"
+        style={{
+          borderColor: "hsl(var(--landing-border))",
+          background: "hsl(var(--landing-card))",
+          color: "hsl(var(--landing-fg))",
+        }}
+      >
         <button
           onClick={handleDismiss}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none"
+          className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none"
+          style={{ color: "hsl(var(--landing-muted))" }}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </button>
         <DialogHeader className="text-center sm:text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <Sparkles className="h-6 w-6 text-primary animate-pulse" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ background: "hsl(var(--landing-accent) / 0.1)" }}>
+            <Sparkles className="h-6 w-6 animate-pulse" style={{ color: "hsl(var(--landing-champagne))" }} />
           </div>
-          <DialogTitle className="text-xl">{title}</DialogTitle>
-          <DialogDescription className="text-base pt-2">
+          <DialogTitle className="text-xl" style={{ color: "hsl(var(--landing-fg))" }}>{title}</DialogTitle>
+          <DialogDescription className="text-base pt-2" style={{ color: "hsl(var(--landing-muted))" }}>
             {description}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3 pt-4">
-          <Button onClick={handleCta} className="w-full">
+          <Button onClick={handleCta} className="w-full font-semibold border-0 text-white"
+            style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
             {ctaText}
           </Button>
-          <Button variant="ghost" onClick={handleDismiss} className="w-full text-muted-foreground">
+          <Button variant="ghost" onClick={handleDismiss} className="w-full" style={{ color: "hsl(var(--landing-muted))" }}>
             Maybe later
           </Button>
         </div>

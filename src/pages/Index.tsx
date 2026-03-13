@@ -18,9 +18,9 @@ import SocialProofToast from "@/components/SocialProofToast";
 /* ── data ── */
 const features = [
   { icon: Palette, title: "10+ Stunning Themes", desc: "From minimal to brutalist — pick a look that matches your creative voice." },
-  { icon: Film, title: "TMDB Integration", desc: "Auto-fill film & TV credits with posters, cast, and metadata from TMDB." },
+  { icon: Film, title: "TMDB Integration", desc: "Auto-fill film & TV credits with posters, cast, and metadata from TMDB.", featured: true },
   { icon: BarChart3, title: "Built-in Analytics", desc: "Track page views, referrers, and device breakdowns in your dashboard." },
-  { icon: Shield, title: "Access Control", desc: "Password-protect scripts, gate content behind email capture, or keep it public." },
+  { icon: Shield, title: "Access Control", desc: "Password-protect scripts, gate content behind email capture, or keep it public.", featured: true },
   { icon: Zap, title: "Instant Publishing", desc: "Go live in seconds with your custom slug. Update anytime from the dashboard." },
   { icon: Globe, title: "Custom Domains", desc: "Connect your own domain for a fully branded portfolio experience." },
 ];
@@ -47,6 +47,13 @@ const testimonials = [
   { quote: "The best portfolio platform I've seen for the entertainment industry. Period.", author: "Sofia Ortiz", role: "Director", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" },
 ];
 
+const comparisonRows = [
+  { feature: "Industry-specific sections", creativeSlate: "Yes", generic: "No" },
+  { feature: "TMDB credit import", creativeSlate: "Yes", generic: "No" },
+  { feature: "Script access controls", creativeSlate: "5 levels", generic: "Plugin-only" },
+  { feature: "Built-in analytics", creativeSlate: "Included", generic: "Paid add-on" },
+];
+
 /* ── JSON-LD ── */
 const jsonLd = {
   "@context": "https://schema.org",
@@ -58,18 +65,18 @@ const jsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 
-const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc: string; index: number }>(({ icon: Icon, title, desc, index }, _ref) => {
+const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc: string; index: number; featured?: boolean }>(({ icon: Icon, title, desc, index, featured }, _ref) => {
   const { ref, inView } = useInView();
   return (
     <div
       ref={ref}
-      className="group relative p-6 rounded-xl border transition-all duration-500 glass-card"
+      className={`group relative p-6 rounded-xl border transition-all duration-500 glass-card ${featured ? "sm:col-span-2" : ""}`}
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(24px)",
         transitionDelay: `${index * 80}ms`,
-        background: "hsl(var(--landing-card) / 0.6)",
-        borderColor: "hsl(var(--landing-border))",
+        background: featured ? "hsl(var(--landing-card) / 0.75)" : "hsl(var(--landing-card) / 0.6)",
+        borderColor: featured ? "hsl(var(--landing-accent) / 0.35)" : "hsl(var(--landing-border))",
       }}
     >
       {/* hover glow */}
@@ -397,9 +404,27 @@ const Index = () => {
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Everything you need</h2>
           <p style={{ color: "hsl(var(--landing-muted))" }}>Professional tools without the complexity.</p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {features.map((f, i) => (
             <FeatureCard key={f.title} {...f} index={i} />
+          ))}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="max-w-5xl mx-auto px-6 pb-20 relative z-10">
+        <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-card) / 0.5)" }}>
+          <div className="grid grid-cols-3 text-xs uppercase tracking-wider border-b" style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-muted))" }}>
+            <div className="p-4">Feature</div>
+            <div className="p-4 text-center">CreativeSlate</div>
+            <div className="p-4 text-center">Generic Builders</div>
+          </div>
+          {comparisonRows.map((row) => (
+            <div key={row.feature} className="grid grid-cols-3 text-sm border-b last:border-b-0" style={{ borderColor: "hsl(var(--landing-border))" }}>
+              <div className="p-4" style={{ color: "hsl(var(--landing-fg))" }}>{row.feature}</div>
+              <div className="p-4 text-center font-semibold" style={{ color: "hsl(var(--landing-champagne))" }}>{row.creativeSlate}</div>
+              <div className="p-4 text-center" style={{ color: "hsl(var(--landing-muted))" }}>{row.generic}</div>
+            </div>
           ))}
         </div>
       </section>
@@ -457,7 +482,7 @@ const Index = () => {
                   />
                   <div className="p-3 space-y-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-800" />
+                      <div className="w-8 h-8 rounded-full" style={{ background: "hsl(var(--landing-accent))" }} />
                       <div>
                         <div className="h-2 w-20 rounded-full" style={{ background: "hsl(30 15% 25%)" }} />
                         <div className="h-1.5 w-14 rounded-full mt-1" style={{ background: "hsl(30 10% 70%)" }} />

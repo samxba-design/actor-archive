@@ -50,7 +50,7 @@ export default function MarketingFooter() {
 
         <div className="border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs" style={{ borderColor: "hsl(345 15% 12%)", color: "hsl(var(--landing-muted) / 0.5)" }}>
           <span>© {new Date().getFullYear()} CreativeSlate. All rights reserved.</span>
-          <span>Made for creatives, by creatives.</span>
+          <a href="mailto:hello@creativeslate.app" className="hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>hello@creativeslate.app</a>
         </div>
       </div>
     </footer>

@@ -43,7 +43,7 @@ const ForgotPassword = () => {
       </div>
 
       {!sent && (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
           <div className="space-y-2">
             <Label htmlFor="email" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>Email</Label>
             <Input
@@ -65,7 +65,7 @@ const ForgotPassword = () => {
       )}
 
       {sent && (
-        <div className="text-center">
+        <div className="text-center animate-fade-in">
           <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
             Didn't receive it? Check your spam folder or{" "}
             <button onClick={() => setSent(false)} className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>try again</button>.

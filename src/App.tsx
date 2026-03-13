@@ -40,8 +40,8 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const queryClient = new QueryClient();
 
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+  <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--landing-bg))" }}>
+    <div className="h-8 w-8 border-2 rounded-full animate-spin" style={{ borderColor: "hsl(var(--landing-accent))", borderTopColor: "transparent" }} />
   </div>
 );
 
