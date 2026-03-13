@@ -181,8 +181,8 @@ const Onboarding = () => {
           onboarding_completed: true,
           is_draft: false,
           section_order: defaultSectionOrder.length > 0 ? defaultSectionOrder : null,
-          sections_visible: Object.keys(defaultSectionsVisible).length > 0 ? defaultSectionsVisible : null,
-        } as any)
+          sections_visible: Object.keys(defaultSectionsVisible).length > 0 ? (defaultSectionsVisible as Record<string, boolean>) : null,
+        })
         .eq("id", user.id);
 
       if (profileError) throw profileError;
