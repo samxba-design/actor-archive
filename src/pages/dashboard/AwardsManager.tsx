@@ -33,6 +33,7 @@ const AwardsManager = () => {
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Award[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Award | null>(null);
   const [form, setForm] = useState({ name: "", organization: "", category: "", year: "", result: "nominated" });
@@ -40,8 +41,10 @@ const AwardsManager = () => {
 
   const fetchItems = async () => {
     if (!user) return;
-    const { data } = await supabase.from("awards").select("*").eq("profile_id", user.id).order("display_order");
-    setItems(data || []);
+    setError(null);
+    const { data, error: fetchError } = await supabase.from("awards").select("*").eq("profile_id", user.id).order("display_order");
+    if (fetchError) setError(fetchError.message);
+    else setItems(data || []);
     setLoading(false);
   };
 
