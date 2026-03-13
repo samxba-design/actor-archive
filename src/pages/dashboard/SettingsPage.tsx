@@ -17,7 +17,16 @@ import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionCon
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
-import type { HeroLayout } from "@/components/portfolio/PortfolioHero";
+import type { HeroLayout, KnownForPosition } from "@/components/portfolio/PortfolioHero";
+
+const KNOWN_FOR_POSITIONS: { id: KnownForPosition; label: string; description: string }[] = [
+  { id: "hero_above_name", label: "Above Name", description: "Posters displayed above your name in the hero" },
+  { id: "hero_below_cta", label: "Below CTA", description: "Posters displayed below your call-to-action button" },
+  { id: "hero_beside_photo", label: "Beside Photo", description: "Posters displayed next to your headshot" },
+  { id: "below_hero", label: "Below Hero", description: "Full-width strip right below the hero section" },
+  { id: "body_section", label: "Body Section", description: "As a regular section in the main content area" },
+  { id: "hidden", label: "Hidden", description: "Don't show Known For on your portfolio" },
+];
 
 const HERO_LAYOUTS: { id: HeroLayout; label: string; description: string }[] = [
   { id: "classic", label: "Classic", description: "Photo left, text right" },
