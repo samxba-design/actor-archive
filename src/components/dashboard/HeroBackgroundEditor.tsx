@@ -42,7 +42,7 @@ interface Props {
   onUpdate: (fields: Record<string, string>) => void;
 }
 
-const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerUrl, heroBgType, heroBgSolidColor, heroBgVideoUrl, onUpdate }: Props) => {
+const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerUrl, heroBgType, heroBgSolidColor, heroBgVideoUrl, heroBgImageUrl, onUpdate }: Props) => {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
 
