@@ -40,6 +40,7 @@ const CTA_CATEGORY: CategoryConfig = {
   label: "CTA",
   keys: [
     { key: "ctaPreset", label: "Button" },
+    { key: "ctaStyle", label: "Style" },
   ],
 };
 

@@ -856,6 +856,22 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
           </>
         );
+      case 'image': {
+        const imgUrl = heroBgImageUrl || '';
+        if (!imgUrl) {
+          return <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${theme.bgHero} 0%, ${theme.bgPrimary} 100%)` }} />;
+        }
+        return (
+          <>
+            <div className="absolute inset-0">
+              <img src={imgUrl} alt="" className="w-full h-full object-cover"
+                style={{ opacity: loaded ? 1 : 0.6, transition: 'opacity 1s ease-out' }} />
+            </div>
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)' }} />
+            <div className="absolute inset-x-0 bottom-0 h-1/3" style={{ background: `linear-gradient(to top, ${theme.bgPrimary} 0%, transparent 100%)` }} />
+          </>
+        );
+      }
       case 'preset':
       default:
         if (hasBannerImage) {
