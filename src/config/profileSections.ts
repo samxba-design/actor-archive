@@ -258,6 +258,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "services", label: "Available For", description: "Types of projects" },
       { key: "client_logos", label: "Studios & Partners", description: "Companies you've worked with" },
       { key: "representation", label: "Representation", description: "Agent & manager" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["film", "tv_show", "video", "campaign", "other"],
