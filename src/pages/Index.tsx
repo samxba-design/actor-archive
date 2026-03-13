@@ -505,7 +505,7 @@ const Index = () => {
       <section className="py-24 px-6 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Themes that match your voice</h2>
-          <p style={{ color: "hsl(var(--landing-muted))" }}>10 handcrafted themes designed for the entertainment industry. Preview them live.</p>
+          <p style={{ color: "hsl(var(--landing-muted))" }}>17 handcrafted themes designed for the entertainment industry. Preview them live.</p>
         </div>
         <ThemeShowcase />
       </section>

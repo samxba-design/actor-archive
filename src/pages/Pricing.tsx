@@ -126,7 +126,7 @@ const Pricing = () => {
     <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`} style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
       <SEOHead
         title="Pricing — Simple, Transparent Plans"
-        description="Start free forever. Upgrade to Pro for unlimited projects, 10+ themes, AI tools, analytics, and custom domains."
+        description="Start free forever. Upgrade to Pro for unlimited projects, 17 themes, AI tools, analytics, and custom domains."
         path="/pricing"
       />
       <CinematicBackground bokehCount={10} />

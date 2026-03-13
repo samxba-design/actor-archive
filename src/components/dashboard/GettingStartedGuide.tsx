@@ -47,7 +47,7 @@ const getSteps = (profileType: string | null): GuideStep[] => {
     },
     {
       title: "Choose your layout & theme",
-      description: "Pick from 10+ layout presets and multiple themes. Switch between Cinematic, Bento, Magazine, Timeline, and more — each one transforms your entire portfolio.",
+      description: "Pick from 17 stunning themes and multiple layout presets. Switch between Cinematic, Bento, Magazine, Timeline, and more — each one transforms your entire portfolio.",
       icon: Layout,
     },
     {
