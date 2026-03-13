@@ -35,6 +35,7 @@ export type SectionKey =
   | "campaign_timeline"
   | "published_work"
   | "social_links"
+  | "collections"
   | "custom_sections"
   | "education";
 
@@ -73,6 +74,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "press", label: "Press & Reviews", description: "Coverage and features" },
       { key: "testimonials", label: "Testimonials", description: "What collaborators say" },
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
+      { key: "education", label: "Education & Training", description: "Degrees, workshops, mentorships" },
       { key: "representation", label: "Representation", description: "Agent & manager info" },
       { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
       { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
@@ -142,6 +144,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "bookshelf", label: "Bookshelf", description: "Your published works" },
       { key: "credits", label: "Publications", description: "Short stories & essays" },
       { key: "awards", label: "Awards & Prizes", description: "Literary awards" },
@@ -169,6 +172,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "client_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "article_feed", label: "Article Feed", description: "Your published articles" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "published_work", label: "Published Work", description: "Featured articles & investigations" },
       { key: "publication_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "skills", label: "Beats & Expertise", description: "Your areas of focus" },
@@ -194,6 +198,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "client_logos", label: "Clients", description: "Brands you've worked with" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "published_work", label: "Published Work", description: "Featured articles & writing pieces with PDF previews" },
       { key: "results_wall", label: "Impact Numbers", description: "Aggregated metrics across campaigns" },
       { key: "case_studies", label: "Case Studies", description: "Client work with results" },
