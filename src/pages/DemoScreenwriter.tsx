@@ -159,17 +159,17 @@ const CinematicLayout = () => (
         <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
       <PortfolioSectionWrapper title="Awards" index={4}>
         <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press" index={5}>
         <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
-      <PortfolioSectionWrapper title="Services" index={6}>
-        <ServicesWithToggle items={mockServices} />
-      </PortfolioSectionWrapper>
     </div>
+    <PortfolioSectionWrapper title="Services" index={6}>
+      <ServicesWithToggle items={mockServices} />
+    </PortfolioSectionWrapper>
   </>
 );
 
