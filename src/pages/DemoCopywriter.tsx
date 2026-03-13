@@ -477,6 +477,7 @@ const DemoCopywriter = () => {
         testimonials={mockTestimonials}
         imageAnimation={variants.imageAnimation}
         heroBgType={variants.heroBgType}
+        knownForPosition={variants.knownForPosition}
       />
 
       {/* Hero & image customize bars */}
