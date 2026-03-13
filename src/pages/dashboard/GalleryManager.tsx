@@ -23,6 +23,8 @@ const GalleryManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
