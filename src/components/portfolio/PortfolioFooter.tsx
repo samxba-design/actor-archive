@@ -107,14 +107,15 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.sender_name || !form.sender_email || !form.message) return;
+    // Honeypot check
     if (form.website) return;
-    const now = Date.now();
-    if (now - lastSubmitTime < 30000) {
+    // Rate limit check
+    if (isRateLimited()) {
       setRateLimited(true);
       setTimeout(() => setRateLimited(false), 5000);
       return;
     }
-    setLastSubmitTime(now);
+    recordSubmission();
     setSending(true);
     await supabase.from("contact_submissions").insert({
       profile_id: profile.id,
