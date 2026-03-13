@@ -38,16 +38,17 @@ export function useDemoData(profileType: "screenwriter" | "actor" | "copywriter"
 
   useEffect(() => {
     const key = SETTING_KEYS[profileType];
-    supabase
-      .from("platform_settings")
-      .select("value")
-      .eq("key", key)
-      .maybeSingle()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("platform_settings")
+          .select("value")
+          .eq("key", key)
+          .maybeSingle();
         if (data?.value) setAdminOverride(data.value);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      } catch {}
+      setLoading(false);
+    })();
   }, [profileType]);
 
   const merged = useMemo(() => {
