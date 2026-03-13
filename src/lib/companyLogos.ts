@@ -320,6 +320,7 @@ function buildLogoDevUrl(domain: string, options?: { greyscale?: boolean; theme?
     token: LOGO_DEV_TOKEN,
     size: "200",
     format: "png",
+    retina: "true",
   });
   if (options?.greyscale) params.set("greyscale", "true");
   if (options?.theme) params.set("theme", options.theme);
