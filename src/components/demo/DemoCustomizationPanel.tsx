@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
-import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants } from "./DemoShared";
+import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants, STOCK_HERO_IMAGES } from "./DemoShared";
 import { ChevronDown, ChevronUp, Settings2, Eye, EyeOff, FileDown } from "lucide-react";
 
 interface CategoryConfig {
@@ -14,6 +14,7 @@ const HERO_CATEGORY: CategoryConfig = {
     { key: "heroLayout", label: "Layout" },
     { key: "heroRightContent", label: "Right Content" },
     { key: "heroBgType", label: "Background" },
+    { key: "heroBgImage", label: "Image" },
     { key: "imageAnimation", label: "Image Effects" },
   ],
 };
@@ -40,6 +41,7 @@ const CTA_CATEGORY: CategoryConfig = {
   label: "CTA",
   keys: [
     { key: "ctaPreset", label: "Button" },
+    { key: "ctaStyle", label: "Style" },
   ],
 };
 
@@ -67,26 +69,47 @@ const OptionRow = ({ variantKey, label }: { variantKey: keyof SectionVariants; l
   const options = VARIANT_OPTIONS[variantKey];
   if (!options || options.length === 0) return null;
 
+  // Conditionally hide heroBgImage row when heroBgType is not 'image'
+  if (variantKey === 'heroBgImage' && variants.heroBgType !== 'image') return null;
+
   return (
     <div className="flex flex-wrap items-center gap-1.5 py-1">
       <span className="text-[10px] font-medium uppercase tracking-wider w-20 shrink-0" style={{ color: theme.textTertiary }}>
         {label}
       </span>
       <div className="flex flex-wrap items-center gap-1">
-        {options.map(opt => (
-          <button
-            key={opt.key}
-            onClick={() => setVariant(variantKey, opt.key as SectionVariants[typeof variantKey])}
-            className="text-[10px] px-2 py-0.5 rounded-full transition-all duration-200"
-            style={{
-              backgroundColor: variants[variantKey] === opt.key ? theme.accentPrimary : 'transparent',
-              color: variants[variantKey] === opt.key ? theme.textOnAccent : theme.textSecondary,
-              border: `1px solid ${variants[variantKey] === opt.key ? theme.accentPrimary : theme.borderDefault}`,
-            }}
-          >
-            {opt.label}
-          </button>
-        ))}
+        {variantKey === 'heroBgImage' ? (
+          // Render image thumbnails instead of text buttons
+          STOCK_HERO_IMAGES.map(img => (
+            <button
+              key={img.key}
+              onClick={() => setVariant(variantKey, img.key as SectionVariants[typeof variantKey])}
+              className="relative w-12 h-8 rounded overflow-hidden transition-all duration-200"
+              title={img.label}
+              style={{
+                border: `2px solid ${variants[variantKey] === img.key ? theme.accentPrimary : theme.borderDefault}`,
+                opacity: variants[variantKey] === img.key ? 1 : 0.7,
+              }}
+            >
+              <img src={`${img.url}&w=96&q=40`} alt={img.label} className="w-full h-full object-cover" loading="lazy" />
+            </button>
+          ))
+        ) : (
+          options.map(opt => (
+            <button
+              key={opt.key}
+              onClick={() => setVariant(variantKey, opt.key as SectionVariants[typeof variantKey])}
+              className="text-[10px] px-2 py-0.5 rounded-full transition-all duration-200"
+              style={{
+                backgroundColor: variants[variantKey] === opt.key ? theme.accentPrimary : 'transparent',
+                color: variants[variantKey] === opt.key ? theme.textOnAccent : theme.textSecondary,
+                border: `1px solid ${variants[variantKey] === opt.key ? theme.accentPrimary : theme.borderDefault}`,
+              }}
+            >
+              {opt.label}
+            </button>
+          ))
+        )}
       </div>
     </div>
   );

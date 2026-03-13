@@ -27,7 +27,22 @@ import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 
 /* ── Unified section variants context ── */
-export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient' | 'image';
+
+export const STOCK_HERO_IMAGES: { key: string; label: string; url: string }[] = [
+  { key: 'theater', label: 'Theater', url: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&q=80&auto=format' },
+  { key: 'projector', label: 'Projector', url: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&q=80&auto=format' },
+  { key: 'filmset', label: 'Film Set', url: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1920&q=80&auto=format' },
+  { key: 'city-night', label: 'City Night', url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1920&q=80&auto=format' },
+  { key: 'neon-alley', label: 'Neon Alley', url: 'https://images.unsplash.com/photo-1545893835-abaa50cbe628?w=1920&q=80&auto=format' },
+  { key: 'marble', label: 'Dark Marble', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80&auto=format' },
+  { key: 'ink-water', label: 'Ink & Water', url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1920&q=80&auto=format' },
+  { key: 'typewriter', label: 'Typewriter', url: 'https://images.unsplash.com/photo-1505682634904-d7c8d95cdc50?w=1920&q=80&auto=format' },
+  { key: 'studio-light', label: 'Studio Light', url: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=1920&q=80&auto=format' },
+  { key: 'misty-forest', label: 'Misty Forest', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80&auto=format' },
+  { key: 'ocean-dusk', label: 'Ocean Dusk', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80&auto=format' },
+  { key: 'golden-ridge', label: 'Golden Ridge', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80&auto=format' },
+];
 
 export interface SectionVariants {
   knownFor: KnownForVariant;
@@ -55,8 +70,10 @@ export interface SectionVariants {
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
+  ctaStyle: 'text-link' | 'outlined' | 'filled-subtle' | 'underlined' | 'glow-pulse' | 'shine-sweep' | 'neon-border' | 'filled-bold';
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
+  heroBgImage: string;
   knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
   clientLogosPosition: 'below_hero' | 'above_sections' | 'body_section' | 'hidden';
   statusBadgeColor: 'green' | 'blue' | 'gold' | 'red' | 'purple' | 'white' | 'accent';
@@ -90,8 +107,10 @@ export const defaultVariants: SectionVariants = {
   heroLayout: 'classic',
   heroRightContent: 'featured',
   ctaPreset: 'script',
+  ctaStyle: 'shine-sweep',
   heroKnownFor: 'strip',
   heroBgType: 'preset',
+  heroBgImage: '',
   knownForPosition: 'hero_above_name',
   clientLogosPosition: 'body_section',
   statusBadgeColor: 'green',
@@ -193,6 +212,12 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'contact', label: 'Get in Touch' }, { key: 'reel', label: 'Watch Reel' },
     { key: 'book', label: 'Book Consult' }, { key: 'custom', label: 'View Work' },
   ],
+  ctaStyle: [
+    { key: 'shine-sweep', label: 'Shine' }, { key: 'filled-subtle', label: 'Glass Fill' },
+    { key: 'glow-pulse', label: 'Glow Pulse' }, { key: 'outlined', label: 'Outlined' },
+    { key: 'filled-bold', label: 'Bold Fill' }, { key: 'neon-border', label: 'Neon' },
+    { key: 'text-link', label: 'Text Link' }, { key: 'underlined', label: 'Underline' },
+  ],
   heroKnownFor: [
     { key: 'strip', label: 'Strip' }, { key: 'large', label: 'Large' },
     { key: 'text', label: 'Text' }, { key: 'hidden', label: 'Hidden' },
@@ -200,8 +225,9 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   heroBgType: [
     { key: 'preset', label: 'Preset' }, { key: 'solid', label: 'Solid Color' },
     { key: 'bokeh', label: 'Bokeh' }, { key: 'video', label: 'Video Loop' },
-    { key: 'gradient', label: 'Gradient' },
+    { key: 'gradient', label: 'Gradient' }, { key: 'image', label: 'Image' },
   ],
+  heroBgImage: STOCK_HERO_IMAGES.map(img => ({ key: img.key, label: img.label })),
   knownForPosition: [
     { key: 'hero_above_name', label: 'Above Name' },
     { key: 'hero_below_cta', label: 'Below CTA' },
@@ -228,7 +254,7 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'none', label: 'None' },
   ],
   showCustomization: [],
-};
+} as Record<keyof SectionVariants, { key: string; label: string }[]>;
 
 /* ── Toggle wrapper components ── */
 export const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {

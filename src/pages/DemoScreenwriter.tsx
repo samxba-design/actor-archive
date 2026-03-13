@@ -26,6 +26,7 @@ import {
   EducationWithToggle, GalleryWithToggle, DemoReelsWithToggle,
   RepresentationWithToggle, SkillsWithToggle, EventsWithToggle,
   ProductionsWithToggle, AmbientGlow, MidScrollCTA, CreditHeroCard, CTA_LABELS,
+  STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockRepresentation, mockLoglines,
@@ -550,7 +551,7 @@ const DemoScreenwriter = () => {
 
   return (
     <SectionVariantsCtx.Provider value={{ variants, setVariant }}>
-    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
+    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative" ctaStyleOverride={variants.ctaStyle}>
       {/* Demo banner */}
       <div
         className="text-center py-1.5 text-[11px] font-medium relative z-20"
@@ -580,6 +581,7 @@ const DemoScreenwriter = () => {
         testimonials={mockTestimonials}
         imageAnimation={variants.imageAnimation}
         heroBgType={variants.heroBgType}
+        heroBgImageUrl={variants.heroBgType === 'image' ? (STOCK_HERO_IMAGES.find(i => i.key === variants.heroBgImage)?.url || '') : undefined}
         knownForPosition={variants.knownForPosition}
       />
 

@@ -1029,6 +1029,7 @@ export type Database = {
           headline: string | null
           headshot_style: string | null
           hero_background_preset: string | null
+          hero_bg_image_url: string | null
           hero_bg_solid_color: string | null
           hero_bg_type: string | null
           hero_bg_video_url: string | null
@@ -1089,6 +1090,7 @@ export type Database = {
           headline?: string | null
           headshot_style?: string | null
           hero_background_preset?: string | null
+          hero_bg_image_url?: string | null
           hero_bg_solid_color?: string | null
           hero_bg_type?: string | null
           hero_bg_video_url?: string | null
@@ -1149,6 +1151,7 @@ export type Database = {
           headline?: string | null
           headshot_style?: string | null
           hero_background_preset?: string | null
+          hero_bg_image_url?: string | null
           hero_bg_solid_color?: string | null
           hero_bg_type?: string | null
           hero_bg_video_url?: string | null

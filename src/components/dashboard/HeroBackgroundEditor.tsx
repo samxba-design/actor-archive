@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ImageOff, Upload, Check, X, Minimize2, Maximize2, Palette, Video, Sparkles, Circle } from "lucide-react";
+import { ImageOff, Upload, Check, X, Minimize2, Maximize2, Palette, Video, Sparkles, Circle, ImageIcon } from "lucide-react";
+import { STOCK_HERO_IMAGES } from "@/components/demo/DemoShared";
 
 const PRESET_BACKGROUNDS = [
   { id: "cinematic-dark", label: "Cinematic Dark", gradient: "linear-gradient(135deg, #1a0a0f 0%, #2d1520 40%, #0d0d1a 100%)" },
@@ -18,10 +19,11 @@ const PRESET_BACKGROUNDS = [
   { id: "lavender-dusk", label: "Lavender Dusk", gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1548 40%, #0d0a1a 100%)" },
 ];
 
-type BgMode = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+type BgMode = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient' | 'image';
 
 const BG_MODES: { id: BgMode; label: string; icon: React.ReactNode }[] = [
   { id: 'preset', label: 'Preset', icon: <Palette className="h-3.5 w-3.5" /> },
+  { id: 'image', label: 'Image', icon: <ImageIcon className="h-3.5 w-3.5" /> },
   { id: 'solid', label: 'Solid', icon: <Circle className="h-3.5 w-3.5" /> },
   { id: 'bokeh', label: 'Bokeh', icon: <Sparkles className="h-3.5 w-3.5" /> },
   { id: 'video', label: 'Video', icon: <Video className="h-3.5 w-3.5" /> },
@@ -36,10 +38,11 @@ interface Props {
   heroBgType: string;
   heroBgSolidColor: string;
   heroBgVideoUrl: string;
+  heroBgImageUrl?: string;
   onUpdate: (fields: Record<string, string>) => void;
 }
 
-const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerUrl, heroBgType, heroBgSolidColor, heroBgVideoUrl, onUpdate }: Props) => {
+const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerUrl, heroBgType, heroBgSolidColor, heroBgVideoUrl, heroBgImageUrl, onUpdate }: Props) => {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
 
@@ -89,6 +92,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   const hasPreset = !!heroBackgroundPreset;
 
   const previewStyle = (): React.CSSProperties => {
+    if (currentMode === 'image' && heroBgImageUrl) return { backgroundImage: `url(${heroBgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' };
     if (currentMode === 'solid' && heroBgSolidColor) return { backgroundColor: heroBgSolidColor };
     if (currentMode === 'bokeh') return { background: 'linear-gradient(135deg, #0a0a0a, #1a0a2e, #0a0a0a)' };
     if (currentMode === 'video') return { background: 'linear-gradient(135deg, #111, #222)' };
@@ -99,6 +103,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   };
 
   const previewLabel = (): string => {
+    if (currentMode === 'image') return heroBgImageUrl ? 'Stock Image' : 'Select an image below';
     if (currentMode === 'solid') return heroBgSolidColor ? `Solid: ${heroBgSolidColor}` : 'Solid Color — pick below';
     if (currentMode === 'bokeh') return 'Bokeh + Spotlight';
     if (currentMode === 'video') return heroBgVideoUrl ? 'Video Loop' : 'Video Loop — paste URL below';
@@ -265,6 +270,45 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
 
         {currentMode === 'gradient' && (
           <p className="text-xs text-muted-foreground">Animated gradient uses your theme's accent color with drifting radial overlays for a dynamic background.</p>
+        )}
+
+        {currentMode === 'image' && (
+          <>
+            <div>
+              <Label className="text-xs text-muted-foreground mb-2 block">Stock Background Images</Label>
+              <div className="grid grid-cols-4 gap-2">
+                {STOCK_HERO_IMAGES.map((img) => (
+                  <button
+                    key={img.key}
+                    onClick={() => onUpdate({ hero_bg_image_url: img.url, hero_bg_type: 'image' })}
+                    className="relative rounded-md overflow-hidden aspect-[16/9] border-2 transition-all hover:scale-105"
+                    style={{
+                      borderColor: heroBgImageUrl === img.url ? "hsl(var(--primary))" : "transparent",
+                    }}
+                    title={img.label}
+                  >
+                    <img src={`${img.url}&w=192&q=40`} alt={img.label} className="w-full h-full object-cover" loading="lazy" />
+                    {heroBgImageUrl === img.url && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                        <Check className="h-4 w-4 text-white" />
+                      </div>
+                    )}
+                    <span className="absolute bottom-0 inset-x-0 text-[8px] text-white/80 text-center py-0.5 bg-black/40">
+                      {img.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground mb-1.5 block">Or paste custom image URL</Label>
+              <Input
+                value={heroBgImageUrl || ''}
+                onChange={(e) => onUpdate({ hero_bg_image_url: e.target.value, hero_bg_type: 'image' })}
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+          </>
         )}
 
         {heroStyle === "compact" && (
