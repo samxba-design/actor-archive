@@ -8,6 +8,17 @@ interface TourStep {
   profileTypes?: string[]; // If set, only show for these types
 }
 
+const getKnownForTitle = (profileType?: string): string => {
+  if (!profileType) return "Known For";
+  const map: Record<string, string> = {
+    copywriter: "Highlights",
+    corporate_video: "Highlights",
+    journalist: "Featured Articles",
+    author: "Featured Books",
+  };
+  return map[profileType] || "Known For";
+};
+
 const ALL_TOUR_STEPS: TourStep[] = [
   {
     targetId: "tour-identity",
@@ -16,9 +27,9 @@ const ALL_TOUR_STEPS: TourStep[] = [
   },
   {
     targetId: "tour-known-for",
-    title: "Known For",
+    title: "__KNOWN_FOR__", // replaced dynamically
     description: "Showcase up to 6 key credits with poster art. These auto-link to IMDb.",
-    profileTypes: ["screenwriter", "tv_writer", "playwright", "actor", "director_producer"],
+    profileTypes: ["screenwriter", "tv_writer", "playwright", "actor", "director_producer", "copywriter", "corporate_video", "journalist", "author"],
   },
   {
     targetId: "tour-featured",

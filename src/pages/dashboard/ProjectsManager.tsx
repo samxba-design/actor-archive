@@ -637,9 +637,9 @@ const ProjectsManager = () => {
                     <div>
                       <Label className="text-sm flex items-center gap-1.5">
                         <Star className="h-3.5 w-3.5 text-yellow-500" />
-                        Known For (Notable)
+                        {labels.knownForTitle} (Notable)
                       </Label>
-                      <p className="text-xs text-muted-foreground">Show in the "Known For" strip on your hero section</p>
+                      <p className="text-xs text-muted-foreground">Show in the "{labels.knownForTitle}" strip on your hero section</p>
                     </div>
                     <Switch checked={form.is_notable} onCheckedChange={(v) => setForm((f) => ({ ...f, is_notable: v }))} />
                   </div>
