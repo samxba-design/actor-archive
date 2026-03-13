@@ -20,7 +20,7 @@ export function useUndoDelete(
     const id = item.id;
     if (!id) return;
 
-    const { error } = await (supabase.from(tableName) as any).delete().eq("id", id);
+    const { error } = await (supabase as any).from(tableName).delete().eq("id", id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
       return;
