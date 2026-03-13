@@ -167,14 +167,19 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
 
   /* ── Shared sub-components ── */
 
+  const headshotStyle = (profile as any).headshot_style || 'circle';
+  const photoRadius = headshotStyle === 'circle' ? 'rounded-full' : headshotStyle === 'rounded' ? 'rounded-xl' : headshotStyle === 'square' ? 'rounded-none' : headshotStyle === 'frame' ? 'rounded-lg' : '';
+  const frameExtra = headshotStyle === 'frame' ? { border: '3px solid rgba(255,255,255,0.15)', boxShadow: `0 0 0 4px ${theme.accentPrimary}, ${theme.profilePhotoShadow || 'none'}` } : {};
+
   const PhotoEl = ({ size = theme.profilePhotoSize, className = '' }: { size?: string; className?: string }) => (
+    headshotStyle === 'hidden' ? null :
     profile.profile_photo_url ? (
       <img src={profile.profile_photo_url} alt={name}
-        className={`rounded-full object-cover shrink-0 ${className}`}
-        style={{ width: size, height: size, border: theme.profilePhotoBorder, boxShadow: theme.profilePhotoShadow }} />
+        className={`${photoRadius} object-cover shrink-0 ${className}`}
+        style={{ width: size, height: size, border: theme.profilePhotoBorder, boxShadow: theme.profilePhotoShadow, ...frameExtra }} />
     ) : (
-      <div className={`rounded-full flex items-center justify-center shrink-0 text-xl font-bold ${className}`}
-        style={{ width: size, height: size, backgroundColor: theme.accentSubtle, color: theme.accentPrimary, border: theme.profilePhotoBorder }}>
+      <div className={`${photoRadius} flex items-center justify-center shrink-0 text-xl font-bold ${className}`}
+        style={{ width: size, height: size, backgroundColor: theme.accentSubtle, color: theme.accentPrimary, border: theme.profilePhotoBorder, ...frameExtra }}>
         {initials}
       </div>
     )
