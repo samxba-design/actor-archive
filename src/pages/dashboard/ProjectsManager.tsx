@@ -392,6 +392,14 @@ const ProjectsManager = () => {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
 
+  if (error) {
+    return (
+      <div className="max-w-3xl">
+        <ManagerErrorState message={`Could not load projects: ${error}`} onRetry={fetchProjects} />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
