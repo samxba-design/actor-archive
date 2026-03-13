@@ -704,7 +704,7 @@ const ProjectsManager = () => {
           <SortableContext items={projects.map(p => p.id)} strategy={verticalListSortingStrategy}>
             <div className="space-y-3">
               {projects.map((p) => (
-                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} />
+                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} onDuplicate={handleDuplicate} />
               ))}
             </div>
           </SortableContext>
