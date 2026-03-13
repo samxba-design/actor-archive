@@ -575,6 +575,22 @@ const SettingsPage = () => {
                 </div>
                 <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
               </div>
+              {/* Google Analytics */}
+              <div className="pt-3 border-t border-border space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Search className="h-3.5 w-3.5" />
+                  Google Analytics
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Add your GA4 Measurement ID (e.g. G-XXXXXXXXXX) to track visitor analytics on your public portfolio.
+                </p>
+                <Input
+                  placeholder="G-XXXXXXXXXX"
+                  value={form.ga_measurement_id}
+                  onChange={(e) => setForm((f) => ({ ...f, ga_measurement_id: e.target.value }))}
+                  className="max-w-xs"
+                />
+              </div>
             </div>
           </CardContent>
         )}
