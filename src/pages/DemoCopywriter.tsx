@@ -29,7 +29,7 @@ import SectionCollections from "@/components/portfolio/sections/SectionCollectio
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
   mockTestimonials, mockClients, mockSkills, mockAwards, mockPress,
-  mockEducation, mockKnownFor, featuredProject, mockPublishedWork,
+  mockEducation, mockKnownFor, featuredProject, mockPublishedWork, mockCollections,
 } from "@/data/demoCopywriterData";
 
 /* ══════════════════════ COPYWRITER-SPECIFIC DEFAULTS ══════════════════════ */
