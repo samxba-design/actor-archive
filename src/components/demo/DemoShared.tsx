@@ -105,6 +105,7 @@ export const defaultVariants: SectionVariants = {
   imageAnimation: 'none',
   caseStudies: 'stack',
   publishedWork: 'magazine',
+  collections: 'grid',
   campaigns: 'timeline',
   heroLayout: 'classic',
   heroRightContent: 'featured',
