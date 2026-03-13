@@ -43,7 +43,15 @@ const CTA_CATEGORY: CategoryConfig = {
   ],
 };
 
-const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, CTA_CATEGORY];
+const STATUS_BADGE_CATEGORY: CategoryConfig = {
+  label: "Status Badge",
+  keys: [
+    { key: "statusBadgeColor", label: "Color" },
+    { key: "statusBadgeAnimation", label: "Effect" },
+  ],
+};
+
+const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY];
 
 interface Props {
   showCustomization: boolean;

@@ -12,6 +12,8 @@ export const mockProfile = {
   available_for_hire: true,
   seeking_representation: false,
   professional_status: "Seeking Representation",
+  status_badge_color: "green",
+  status_badge_animation: "pulse",
   cta_label: "Read My Latest Script",
   cta_url: "#",
   cta_type: "custom_url",
