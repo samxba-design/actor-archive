@@ -86,7 +86,7 @@ const AwardsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>
-      <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can link each award to a project." learnMoreRoute="/dashboard/settings" previewText="Displayed as laurel badges with year, category, and result" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can link each award to a project." learnMoreRoute="/dashboard/settings" previewText="Displayed as laurel badges with year, category, and result" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} />
       ) : (
