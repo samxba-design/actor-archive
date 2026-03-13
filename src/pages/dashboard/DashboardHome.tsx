@@ -282,6 +282,28 @@ const DashboardHome = () => {
         ))}
       </div>
 
+      {/* Profile Type Context Banner */}
+      {profileTypeLabel && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="rounded-lg bg-primary/10 p-2 shrink-0">
+              <Layers className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm text-foreground">
+                Your portfolio is configured as a <span className="font-semibold">{profileTypeLabel}</span> profile
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Sections, labels, and tools are purpose-built for your craft
+              </p>
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" className="shrink-0 text-primary hover:text-primary" onClick={() => navigate("/dashboard/settings")}>
+            Switch type <ArrowRight className="ml-1 h-3 w-3" />
+          </Button>
+        </div>
+      )}
+
       {/* How It Works Guide */}
       {!howItWorksDismissed && (
         <div className="rounded-xl border border-border p-6 bg-card/60">

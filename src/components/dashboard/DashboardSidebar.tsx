@@ -199,9 +199,46 @@ export function DashboardSidebar() {
     );
   };
 
+  const SIDEBAR_ICON_MAP: Record<string, React.ElementType> = {
+    PenTool, Tv, Theater, BookOpen, Newspaper, Type,
+    Clapperboard, Film, Video, Layers,
+  };
+
+  const currentTypeConfig = PROFILE_TYPES.find(pt => pt.key === profileType);
+  const TypeIcon = currentTypeConfig ? (SIDEBAR_ICON_MAP[currentTypeConfig.icon] || PenTool) : null;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
+        {/* Profile Type Badge */}
+        {currentTypeConfig && (
+          <div className="px-2 pt-3 pb-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => navigate("/dashboard/settings")}
+                  className={`w-full flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 transition-all hover:bg-primary/10 hover:border-primary/40 group ${collapsed ? "justify-center px-2" : ""}`}
+                >
+                  {TypeIcon && <TypeIcon className="h-4 w-4 shrink-0 text-primary" />}
+                  {!collapsed && (
+                    <>
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">{currentTypeConfig.label}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">Purpose-built portfolio</p>
+                      </div>
+                      <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </>
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p className="text-xs">Your sections, labels, and tools are tailored for <strong>{currentTypeConfig.label}</strong></p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">Click to switch type</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        )}
+
         {renderGroup("Portfolio", mainNav)}
         {renderGroup("Content", contentNav)}
         {renderGroup("Smart Tools", toolsNav)}
