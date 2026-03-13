@@ -68,11 +68,11 @@ export default function AdminUsers() {
     }
 
     if (tierFilter !== "all") {
-      query = query.eq("subscription_tier", tierFilter);
+      query = query.eq("subscription_tier", tierFilter as "free" | "pro" | "premium");
     }
 
     if (typeFilter !== "all") {
-      query = query.eq("profile_type", typeFilter);
+      query = query.eq("profile_type", typeFilter as Database["public"]["Enums"]["profile_type"]);
     }
 
     if (statusFilter === "published") {

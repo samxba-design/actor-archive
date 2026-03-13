@@ -1,5 +1,7 @@
 import { PROFILE_TYPES } from "@/config/profileSections";
 import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
+import type { Database } from "@/integrations/supabase/types";
+type ProfileType = Database["public"]["Enums"]["profile_type"];
 import {
   PenTool, Tv, Theater, BookOpen, Newspaper, Type,
   Clapperboard, Film, Video, Layers, Check
