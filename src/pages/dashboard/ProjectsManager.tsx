@@ -364,6 +364,24 @@ const ProjectsManager = () => {
   }, [user]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this project?", description: "This project and all its data will be permanently deleted." });
 
+  const handleDuplicate = async (project: Project) => {
+    if (!user) return;
+    const { id, created_at, updated_at, ...rest } = project;
+    const payload = {
+      ...rest,
+      title: `${project.title} (copy)`,
+      project_slug: project.project_slug ? `${project.project_slug}-copy` : null,
+      display_order: projects.length,
+    };
+    const { error } = await supabase.from("projects").insert(payload as any);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Duplicated", description: `"${project.title}" has been duplicated.` });
+      fetchProjects();
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
