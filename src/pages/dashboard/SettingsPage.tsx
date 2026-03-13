@@ -27,7 +27,7 @@ const KNOWN_FOR_POSITIONS: { id: KnownForPosition; label: string; description: s
   { id: "hero_beside_photo", label: "Beside Photo", description: "Posters displayed next to your headshot" },
   { id: "below_hero", label: "Below Hero", description: "Full-width strip right below the hero section" },
   { id: "body_section", label: "Body Section", description: "As a regular section in the main content area" },
-  { id: "hidden", label: "Hidden", description: "Don't show Known For on your portfolio" },
+  { id: "hidden", label: "Hidden", description: "Don't show this section on your portfolio" },
 ];
 
 const HERO_LAYOUTS: { id: HeroLayout; label: string; description: string }[] = [
