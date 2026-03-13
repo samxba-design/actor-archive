@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { Outlet } from "react-router-dom";
-import DashboardTour from "./DashboardTour";
+import GettingStartedGuide from "./GettingStartedGuide";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import { Keyboard, ExternalLink } from "lucide-react";
