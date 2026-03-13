@@ -58,8 +58,8 @@ const AwardsManager = () => {
 
   useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
-  const openAdd = () => { setEditing(null); setForm({ name: "", organization: "", category: "", year: "", result: "nominated" }); setDialogOpen(true); };
-  const openEdit = (item: Award) => { setEditing(item); setForm({ name: item.name, organization: item.organization || "", category: item.category || "", year: item.year?.toString() || "", result: item.result || "nominated" }); setDialogOpen(true); };
+  const openAdd = () => { setEditing(null); setForm({ name: "", organization: "", category: "", year: "", result: "nominated", project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Award) => { setEditing(item); setForm({ name: item.name, organization: item.organization || "", category: item.category || "", year: item.year?.toString() || "", result: item.result || "nominated", project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.name.trim()) return;
