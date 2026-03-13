@@ -28,7 +28,7 @@ export type HeroLayout = 'classic' | 'centered' | 'split' | 'minimal' | 'banner'
 export type HeroRightContent = 'featured' | 'services' | 'stats' | 'testimonial' | 'showreel' | 'none';
 export type HeroKnownForStyle = 'strip' | 'large' | 'text' | 'hidden';
 export type KnownForPosition = 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
-export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient' | 'image';
 
 interface Props {
   profile: {
