@@ -116,7 +116,7 @@ const CinematicLayout = () => (
       <SectionResultsWall items={mockCaseStudies} />
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
+      <PortfolioSectionWrapper title="Highlights" index={-1}>
         <KnownForWithToggle items={mockKnownFor} display="image" />
       </PortfolioSectionWrapper>
     </div>
