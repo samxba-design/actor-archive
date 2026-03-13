@@ -78,13 +78,13 @@ const CustomSectionsManager = () => {
 
   const addSection = async (template?: { title: string; icon: string; content: string }) => {
     if (!user) return;
-    const { error } = await supabase.from("custom_sections" as any).insert({
+    const { error } = await supabase.from("custom_sections").insert({
       profile_id: user.id,
       title: template?.title || "New Section",
       content: template?.content || "",
       icon: template?.icon || "Sparkles",
       display_order: sections.length,
-    } as any);
+    });
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
