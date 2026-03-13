@@ -441,8 +441,8 @@ const DashboardLayout = () => {
           <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
         <GlassCard className="p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
-          <ClientLogosWithToggle companies={mockClients} />
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
+          <SectionServices items={mockServices} variant="compact" />
         </GlassCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
