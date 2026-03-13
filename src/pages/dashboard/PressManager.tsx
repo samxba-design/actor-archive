@@ -64,7 +64,7 @@ const PressManager = () => {
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, title: form.title.trim(), publication: form.publication || null, date: form.date || null, article_url: form.article_url || null, pull_quote: form.pull_quote || null, excerpt: form.excerpt || null, star_rating: form.star_rating ? parseInt(form.star_rating) : null, is_featured: form.is_featured };
+    const payload = { profile_id: user.id, title: form.title.trim(), publication: form.publication || null, date: form.date || null, article_url: form.article_url || null, pull_quote: form.pull_quote || null, excerpt: form.excerpt || null, star_rating: form.star_rating ? parseInt(form.star_rating) : null, is_featured: form.is_featured, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("press").update(payload).eq("id", editing.id) : await supabase.from("press").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
