@@ -35,6 +35,7 @@ export type SectionKey =
   | "campaign_timeline"
   | "published_work"
   | "social_links"
+  | "collections"
   | "custom_sections"
   | "education";
 
