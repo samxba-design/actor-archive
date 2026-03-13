@@ -130,6 +130,17 @@ const AwardsManager = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
