@@ -67,6 +67,7 @@ export interface SectionVariants {
   imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
   caseStudies: 'stack' | 'magazine' | 'grid' | 'metrics';
   publishedWork: 'magazine' | 'grid' | 'list';
+  collections: 'grid' | 'accordion' | 'tabs';
   campaigns: 'timeline';
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
