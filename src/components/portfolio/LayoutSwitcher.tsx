@@ -23,13 +23,13 @@ interface LayoutDef {
 const LAYOUT_PRESETS: LayoutDef[] = [
   { id: 'classic', name: 'Classic', description: 'Traditional vertical stack, full-width sections' },
   { id: 'standard', name: 'Standard', description: 'Dense grid with sidebar modules' },
-  { id: 'cinematic', name: 'Cinematic', description: 'Full-width hero credits, poster gallery' },
-  { id: 'compact', name: 'Compact', description: 'Maximum information density' },
+  { id: 'cinematic', name: 'Cinematic', description: 'Full-width hero credits — best for actors & directors' },
+  { id: 'compact', name: 'Compact', description: 'Everything scannable in 15 seconds' },
   { id: 'magazine', name: 'Magazine', description: 'Editorial two-column with sidebar' },
   { id: 'spotlight', name: 'Spotlight', description: 'Accordion sections, one at a time' },
   { id: 'timeline', name: 'Timeline', description: 'Chronological vertical flow' },
   { id: 'bento', name: 'Bento', description: 'Asymmetric grid tiles' },
-  { id: 'minimal', name: 'Minimal', description: 'Essential info only, lots of whitespace' },
+  { id: 'minimal', name: 'Minimal', description: 'Perfect for a simple photo + bio + contact page' },
   { id: 'dashboard', name: 'Dashboard', description: 'Stats-forward, data-rich cards' },
 ];
 

@@ -9,6 +9,7 @@ export type SectionKey =
   | "script_library"
   | "credits"
   | "awards"
+  | "achievements"
   | "press"
   | "testimonials"
   | "training"
@@ -57,7 +58,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Screenwriter",
     description: "Feature films, shorts, and original screenplays. Showcase your scripts, loglines, and produced credits.",
     icon: "PenTool",
-    defaultTheme: "screenplay",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
@@ -80,7 +81,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "TV Writer",
     description: "Original pilots, spec scripts, and writers room experience. Show your career progression from Staff Writer to Showrunner.",
     icon: "Tv",
-    defaultTheme: "screenplay",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
@@ -104,7 +105,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Playwright",
     description: "Stage plays, musicals, and theatrical works. Manage your play catalogue with cast sizes, rights status, and production history.",
     icon: "Theater",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
@@ -128,7 +129,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Author / Novelist",
     description: "Books, novels, short stories, and non-fiction. Beautiful bookshelf display with purchase links and tour dates.",
     icon: "BookOpen",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
@@ -151,11 +152,12 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Journalist / Editorial",
     description: "Articles, features, investigations, and columns. Filterable article feed with publication logos and beats.",
     icon: "Newspaper",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "article_feed", label: "Article Feed", description: "Your published articles" },
+      { key: "published_work", label: "Published Work", description: "Featured articles & investigations" },
       { key: "publication_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "skills", label: "Beats & Expertise", description: "Your areas of focus" },
       { key: "press", label: "Media Appearances", description: "Podcasts, TV, radio" },
@@ -173,7 +175,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Copywriter / Content Strategist",
     description: "Case studies, writing samples, and client work. Showcase results with metrics and before/after examples.",
     icon: "Type",
-    defaultTheme: "corporate",
+    defaultTheme: "frost",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
@@ -188,7 +190,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "testimonials", label: "Testimonials", description: "Client feedback" },
       { key: "services", label: "Services & Rates", description: "What you offer" },
       { key: "press", label: "Press & Features", description: "Coverage and features" },
-      { key: "awards", label: "Awards", description: "Industry recognition" },
+      { key: "awards", label: "Awards & Recognition", description: "Industry recognition" },
+      { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
       { key: "gallery", label: "Campaign Gallery", description: "Campaign visuals & behind the scenes" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
@@ -200,7 +203,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Actor",
     description: "Headshots, demo reels, credits, and physical stats. Optimised for casting directors — everything scannable in 15 seconds.",
     icon: "Clapperboard",
-    defaultTheme: "cinematic",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Primary headshot, name" },
       { key: "stats_bar", label: "Physical Stats", description: "Height, age range, unions, accents" },
@@ -223,7 +226,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Director / Producer",
     description: "Filmography, festival laurels, production company info. Showcase your vision with cinematic layouts.",
     icon: "Film",
-    defaultTheme: "noir",
+    defaultTheme: "noir-classic",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your vision" },
@@ -246,7 +249,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Corporate / Video Professional",
     description: "Client work, brand videos, and corporate content. Service-focused with client logos and case studies.",
     icon: "Video",
-    defaultTheme: "corporate",
+    defaultTheme: "frost",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your expertise" },
@@ -257,6 +260,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Portfolio Gallery", description: "Production stills & screenshots" },
       { key: "testimonials", label: "Testimonials", description: "Client feedback" },
       { key: "awards", label: "Awards", description: "Industry recognition" },
+      { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
       { key: "press", label: "Press", description: "Features & coverage" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
@@ -268,7 +272,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Multi-Hyphenate / Custom",
     description: "You do it all. Select multiple creative disciplines and build a custom portfolio with exactly the sections you need.",
     icon: "Layers",
-    defaultTheme: "minimal",
+    defaultTheme: "modern-minimal",
     sections: [], // populated dynamically from selected types
     projectTypes: [], // all types available
     ctas: [],

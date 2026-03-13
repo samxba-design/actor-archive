@@ -33,6 +33,7 @@ export interface TypeAwareLabels {
   testimonialsDescription: string;
   skillsTitle: string;
   skillsDescription: string;
+  knownForTitle: string;
   showClientField: boolean;
   showVideoUrl: boolean;
 }
@@ -68,6 +69,7 @@ const defaults: TypeAwareLabels = {
   testimonialsDescription: "Collect quotes from collaborators and clients.",
   skillsTitle: "Skills",
   skillsDescription: "Highlight your areas of expertise and proficiency.",
+  knownForTitle: "Known For",
   showClientField: false,
   showVideoUrl: true,
 };
@@ -127,6 +129,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     eventsDescription: "Book signings, readings, and speaking engagements.",
     pressTitle: "Reviews & Press",
     pressDescription: "Add book reviews, interviews, and media coverage.",
+    knownForTitle: "Featured Books",
   },
   journalist: {
     logline: "Lede / Summary",
@@ -143,6 +146,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     showClientField: true,
     studioLabel: "Publication",
     studioPlaceholder: "e.g. NYT, Atlantic, Guardian",
+    knownForTitle: "Featured Articles",
     skillsTitle: "Beats & Expertise",
     skillsDescription: "Define your areas of coverage and domain expertise.",
     servicesTitle: "Commissioning Info",
@@ -176,6 +180,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     testimonialsDescription: "Client quotes and endorsements — your most powerful sales tool.",
     skillsTitle: "Specializations",
     skillsDescription: "Content strategy, UX writing, paid social, brand voice — list your niches.",
+    knownForTitle: "Highlights",
   },
   actor: {
     logline: "Role Description",
@@ -226,6 +231,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     servicesDescription: "List your video production packages and pricing.",
     testimonialsTitle: "Client Testimonials",
     testimonialsDescription: "Client feedback and endorsements.",
+    knownForTitle: "Featured Work",
   },
 };
 

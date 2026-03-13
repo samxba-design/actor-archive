@@ -73,6 +73,7 @@ const defaultSectionLabels: Record<string, string> = {
   published_work: "Published Work",
   custom_sections: "Custom Sections",
   bio: "About",
+  achievements: "Notable Achievements",
   social_links: "Connect",
   availability: "Availability",
   staffing_info: "Staffing",
@@ -162,7 +163,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
-        case "awards": {
+        case "awards":
+        case "achievements": {
           const { data } = await supabase.from("awards").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
@@ -384,6 +386,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "gallery":
         return <SectionGallery items={data} />;
       case "awards":
+      case "achievements":
         return <SectionAwards items={data} />;
       case "press":
         return <SectionPress items={data} />;

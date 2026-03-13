@@ -1,5 +1,5 @@
 import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
-import { Search, Briefcase, Megaphone, Globe, Check } from "lucide-react";
+import { Search, Briefcase, Megaphone, Globe, Sparkles, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const GOALS = [
@@ -26,6 +26,12 @@ const GOALS = [
     label: "Professional Presence",
     description: "I want a polished portfolio to share with the industry",
     icon: Globe,
+  },
+  {
+    key: "simple_presence",
+    label: "Just a Simple Profile",
+    description: "Photo, bio, and contact info — nothing else needed",
+    icon: Sparkles,
   },
 ] as const;
 

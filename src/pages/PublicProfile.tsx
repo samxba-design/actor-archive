@@ -17,6 +17,7 @@ import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import ShareButtons from "@/components/portfolio/ShareButtons";
 import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
@@ -274,7 +275,7 @@ const PublicProfile = () => {
         <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
           {/* Known For below hero or as body section */}
           {knownFor.length > 0 && (profile.known_for_position === 'below_hero' || profile.known_for_position === 'body_section') && (
-            <PortfolioSectionWrapper title="Known For" index={-1}>
+            <PortfolioSectionWrapper title={getTypeAwareLabels(profile.profile_type).knownForTitle} index={-1}>
               <SectionKnownFor items={knownFor} variant="strip" />
             </PortfolioSectionWrapper>
           )}
