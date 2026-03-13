@@ -364,8 +364,8 @@ const Index = () => {
                 Create Your Portfolio <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
-              style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
+            <Button variant="outline" size="lg" asChild className="btn-premium-glow text-base font-semibold px-8"
+              style={{ color: "hsl(var(--landing-champagne))" }}>
               <Link to="/demo/actor">
                 <Eye className="mr-2 h-4 w-4" /> Explore Live Demos
               </Link>
