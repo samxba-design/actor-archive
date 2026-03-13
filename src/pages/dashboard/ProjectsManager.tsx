@@ -28,6 +28,7 @@ import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { compressImage } from "@/lib/imageCompression";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 type Project = Tables<"projects">;
