@@ -66,11 +66,11 @@ const CustomSectionsManager = () => {
   const fetchSections = async () => {
     if (!user) return;
     const { data } = await supabase
-      .from("custom_sections" as any)
+      .from("custom_sections")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order");
-    setSections((data as any) || []);
+    setSections((data || []) as unknown as CustomSection[]);
     setLoading(false);
   };
 
