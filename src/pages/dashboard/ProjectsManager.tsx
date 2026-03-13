@@ -627,37 +627,15 @@ const ProjectsManager = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
-          {projects.map((p) => (
-            <Card key={p.id} className="group">
-              <CardContent className="flex items-center gap-4 py-4">
-                {p.poster_url ? (
-                  <img src={p.poster_url} alt={p.title} className="w-12 h-16 object-cover rounded" />
-                ) : (
-                  <div className="w-12 h-16 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs">
-                    {p.project_type.slice(0, 3)}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground truncate">{p.title}</h3>
-                    {p.is_notable && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" fill="currentColor" />}
-                  </div>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
-                    {p.client && <Badge variant="outline" className="text-xs">{p.client}</Badge>}
-                    {p.network_or_studio && <Badge variant="outline" className="text-xs">{p.network_or_studio}</Badge>}
-                    {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
-                  </div>
-                </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => requestDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={projects.map(p => p.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {projects.map((p) => (
+                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
       <DeleteConfirmDialog />
     </div>
