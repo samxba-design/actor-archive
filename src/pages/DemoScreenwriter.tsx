@@ -10,6 +10,7 @@ import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/Layout
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
 import SectionAwards from "@/components/portfolio/sections/SectionAwards";
+import SectionServices from "@/components/portfolio/sections/SectionServices";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
@@ -71,12 +72,12 @@ const StandardLayout = () => (
     <div className="mb-10">
       <ClientLogosWithToggle companies={mockClients} />
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 mb-10">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
@@ -158,29 +159,29 @@ const CinematicLayout = () => (
         <TestimonialsWithToggle items={mockTestimonials} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
       <PortfolioSectionWrapper title="Awards" index={4}>
         <AwardsWithToggle items={mockAwards} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Press" index={5}>
         <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
-      <PortfolioSectionWrapper title="Services" index={6}>
-        <ServicesWithToggle items={mockServices} />
-      </PortfolioSectionWrapper>
     </div>
+    <PortfolioSectionWrapper title="Services" index={6}>
+      <ServicesWithToggle items={mockServices} />
+    </PortfolioSectionWrapper>
   </>
 );
 
 /* 4. COMPACT — Maximum density, fixed spacing */
 const CompactLayout = () => (
   <>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 mb-8">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -237,7 +238,7 @@ const MagazineLayout = () => (
         <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={3}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Testimonials" index={6}>
         <TestimonialsWithToggle items={mockTestimonials} />
@@ -337,12 +338,7 @@ const TimelineLayout = () => {
 /* 8. BENTO — Asymmetric masonry-like grid */
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
-    <div className="sm:col-span-2">
-      <PortfolioSectionWrapper title="Written For" index={7}>
-        <ClientLogosWithToggle companies={mockClients} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div>
+    <div className="sm:col-span-2 lg:col-span-3">
       <PortfolioSectionWrapper title="Written For" index={7}>
         <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
@@ -354,7 +350,7 @@ const BentoLayout = () => (
     </div>
     <div>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="sm:col-span-2 lg:col-span-3">
@@ -445,8 +441,8 @@ const DashboardLayout = () => {
           <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
         <GlassCard className="p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
-          <ClientLogosWithToggle companies={mockClients} />
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
+          <SectionServices items={mockServices} variant="compact" />
         </GlassCard>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -480,7 +476,7 @@ const DashboardLayout = () => {
         </GlassCard>
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
-          <ServicesWithToggle items={mockServices} />
+          <SectionServices items={mockServices} variant="compact" />
         </GlassCard>
       </div>
     </>
