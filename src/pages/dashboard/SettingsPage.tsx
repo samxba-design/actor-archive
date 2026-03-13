@@ -278,6 +278,7 @@ const SettingsPage = () => {
         layout_preset: form.layout_preset || "classic",
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
+        ga_measurement_id: form.ga_measurement_id || null,
         hero_style: heroStyle || "full",
         headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
