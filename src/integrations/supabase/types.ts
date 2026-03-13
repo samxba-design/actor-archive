@@ -1017,6 +1017,7 @@ export type Database = {
           contact_mode: string | null
           created_at: string | null
           cta_label: string | null
+          cta_style: string | null
           cta_type: string | null
           cta_url: string | null
           custom_css: string | null
@@ -1072,6 +1073,7 @@ export type Database = {
           contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null
+          cta_style?: string | null
           cta_type?: string | null
           cta_url?: string | null
           custom_css?: string | null
@@ -1127,6 +1129,7 @@ export type Database = {
           contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null
+          cta_style?: string | null
           cta_type?: string | null
           cta_url?: string | null
           custom_css?: string | null
