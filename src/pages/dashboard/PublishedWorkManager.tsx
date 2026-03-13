@@ -85,6 +85,11 @@ const PublishedWorkManager = () => {
 
   useEffect(() => { fetchItems(); }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("work_collections").select("id, name").eq("profile_id", user.id).order("display_order").then(({ data }) => setCollections((data as any) || []));
+  }, [user]);
+
   const resetForm = () => {
     setForm({ title: "", summary: "", category: "", publication: "", date: "", read_time: "", cover_image_url: "", pdf_thumbnail_url: "", pdf_url: "", article_url: "", is_featured: false, show_text_overlay: true });
     setEditing(null);
