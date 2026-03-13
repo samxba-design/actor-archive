@@ -395,8 +395,8 @@ const BentoLayout = () => (
 const MinimalLayout = () => (
   <div className="max-w-2xl mx-auto space-y-16">
     <div>
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
+      <PortfolioSectionWrapper title="Written For" index={-1}>
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
     </div>
     <div>
