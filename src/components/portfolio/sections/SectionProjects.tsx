@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Film, Tv, BookOpen, FileText, ExternalLink, Play, X } from "lucide-react";
 import { extractYouTubeId, extractVimeoId } from "@/lib/videoEmbed";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
