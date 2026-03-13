@@ -298,8 +298,8 @@ const Onboarding = () => {
                 stepLabels={stepLabels}
               />
             </div>
-            {/* Skip button — always visible except on complete step */}
-            {stepKeys[step] !== "complete" && (
+            {/* Skip button — hidden on first 2 steps (type + goal are required) and complete step */}
+            {stepKeys[step] !== "complete" && step >= 2 && (
               <button
                 disabled={skipping}
                 onClick={async () => {

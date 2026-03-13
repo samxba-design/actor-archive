@@ -65,7 +65,31 @@ const TestimonialsManager = () => {
     setSaving(false);
   };
 
-  const performDelete = useCallback(async (id: string) => { await supabase.from("testimonials").delete().eq("id", id); fetchItems(); }, [user]);
+  const performDelete = useCallback(async (id: string) => {
+    const item = items.find(i => i.id === id);
+    const { error } = await supabase.from("testimonials").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+    // Show undo toast
+    toast({
+      title: "Testimonial deleted",
+      description: "This action can be undone.",
+      action: (
+        <button
+          className="text-xs font-semibold text-primary hover:underline px-2 py-1"
+          onClick={async () => {
+            if (item) await supabase.from("testimonials").insert(item as any);
+            fetchItems();
+          }}
+        >
+          Undo
+        </button>
+      ),
+    });
+    fetchItems();
+  }, [user, items]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this testimonial?", description: "This testimonial will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
@@ -82,7 +106,7 @@ const TestimonialsManager = () => {
       </div>
       <ManagerHelpBanner id="testimonials" title="Quotes show in your Testimonials section" description="Add endorsements from collaborators or clients. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as styled quote cards with author photo, name, and role" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
-        <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} />
+        <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} profileType={profileType} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

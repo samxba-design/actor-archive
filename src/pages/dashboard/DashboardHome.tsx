@@ -21,6 +21,7 @@ import { PROFILE_TYPES } from "@/config/profileSections";
 import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { BulkImporter } from "@/components/dashboard/BulkImporter";
+import GettingStartedGuide from "@/components/dashboard/GettingStartedGuide";
 
 interface SmartAction {
   label: string;
@@ -91,6 +92,7 @@ const DashboardHome = () => {
   const [urlOpen, setUrlOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [howItWorksDismissed, setHowItWorksDismissed] = useState(() => localStorage.getItem("hiw_dismissed") === "true");
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -201,6 +203,14 @@ const DashboardHome = () => {
     { label: "Theme & Appearance", icon: Palette, route: "/dashboard/settings" },
     { label: "Settings", icon: Settings, route: "/dashboard/settings" },
   ];
+
+  const handleReplayTour = async () => {
+    localStorage.removeItem("cs_dashboard_tour_seen");
+    if (user) {
+      await supabase.from("profiles").update({ tour_completed_at: null } as any).eq("id", user.id);
+    }
+    setShowTour(true);
+  };
 
   const isEmptyProfile = projectCount === 0 && !profile?.bio;
 
@@ -419,9 +429,14 @@ const DashboardHome = () => {
                 <qa.icon className="mr-2 h-4 w-4" />{qa.label}
               </Button>
             ))}
+            <Button variant="ghost" className="justify-start text-muted-foreground" onClick={handleReplayTour}>
+              <Sparkles className="mr-2 h-4 w-4" />Replay Tour
+            </Button>
           </div>
         </div>
       )}
+
+      {showTour && <GettingStartedGuide forceShow />}
 
       <ResumeImporter open={resumeOpen} onOpenChange={setResumeOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
       <URLImporter open={urlOpen} onOpenChange={setUrlOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />

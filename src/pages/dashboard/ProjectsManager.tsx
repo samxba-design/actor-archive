@@ -365,13 +365,29 @@ const ProjectsManager = () => {
   };
 
   const performDelete = useCallback(async (id: string) => {
+    const item = projects.find(p => p.id === id);
     const { error } = await supabase.from("projects").delete().eq("id", id);
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      fetchProjects();
+      return;
     }
-  }, [user]);
+    toast({
+      title: "Project deleted",
+      description: "This action can be undone.",
+      action: (
+        <button
+          className="text-xs font-semibold text-primary hover:underline px-2 py-1"
+          onClick={async () => {
+            if (item) await supabase.from("projects").insert(item as any);
+            fetchProjects();
+          }}
+        >
+          Undo
+        </button>
+      ),
+    });
+    fetchProjects();
+  }, [user, projects]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this project?", description: "This project and all its data will be permanently deleted." });
 
   const handleDuplicate = async (project: Project) => {

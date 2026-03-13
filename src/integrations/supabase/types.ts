@@ -1066,6 +1066,7 @@ export type Database = {
           suspended_reason: string | null
           tagline: string | null
           theme: string | null
+          tour_completed_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -1128,6 +1129,7 @@ export type Database = {
           suspended_reason?: string | null
           tagline?: string | null
           theme?: string | null
+          tour_completed_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -1190,6 +1192,7 @@ export type Database = {
           suspended_reason?: string | null
           tagline?: string | null
           theme?: string | null
+          tour_completed_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
