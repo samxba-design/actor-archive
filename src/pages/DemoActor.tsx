@@ -409,7 +409,7 @@ const DashboardLayoutComponent = () => {
           <CreditsWithToggle items={mockCredits} profileType="actor" />
         </GlassCard>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Awards</h3>
           <AwardsWithToggle items={mockAwards} />
@@ -421,6 +421,16 @@ const DashboardLayoutComponent = () => {
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Testimonials</h3>
           <TestimonialsWithToggle items={mockTestimonials} />
+        </GlassCard>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Gallery</h3>
+          <GalleryWithToggle items={mockGallery} />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Worked With</h3>
+          <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
       </div>
     </>
