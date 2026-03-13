@@ -77,6 +77,20 @@ const DEFAULT_SECTION_ORDER = [
   "education", "skills", "services", "testimonials", "events", "contact",
 ];
 
+// Client logos below hero helper
+const ClientLogosBelow = ({ profileId }: { profileId: string }) => {
+  const [logos, setLogos] = useState<{ company_name: string; logo_url?: string | null; website_url?: string | null }[]>([]);
+  useEffect(() => {
+    supabase.from("client_logos_profile").select("company_name, logo_url, website_url").eq("profile_id", profileId).order("display_order").then(({ data }) => setLogos(data || []));
+  }, [profileId]);
+  if (!logos.length) return null;
+  return (
+    <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <SectionClientLogos items={logos} variant="bar" />
+    </div>
+  );
+};
+
 const PublicProfile = () => {
   const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
