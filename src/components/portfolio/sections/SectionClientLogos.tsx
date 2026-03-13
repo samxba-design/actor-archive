@@ -30,19 +30,23 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
 
   const LogoItem = ({ client, size = 28 }: { client: ClientItem; size?: number }) => {
     const hasCustomLogo = !!client.logo_url;
-
     const [imgError, setImgError] = useState(false);
+
+    const filterClass =
+      colorMode === 'grayscale' ? 'grayscale hover:grayscale-0 transition-all duration-200' :
+      colorMode === 'theme' ? 'grayscale sepia brightness-75 hue-rotate-[var(--portfolio-accent-hue,0deg)] transition-all duration-200' :
+      'transition-all duration-200';
 
     const logoContent = hasCustomLogo && !imgError ? (
       <img
         src={client.logo_url!}
         alt={`${client.company_name} logo`}
-        className="object-contain grayscale hover:grayscale-0 transition-all duration-200"
+        className={`object-contain ${filterClass}`}
         style={{ maxHeight: `${size}px`, maxWidth: `${size * 2.5}px` }}
         onError={() => setImgError(true)}
       />
     ) : (
-      <CompanyLogo companyName={client.company_name} size={size} grayscale />
+      <CompanyLogo companyName={client.company_name} size={size} grayscale={colorMode === 'grayscale'} className={colorMode === 'theme' ? 'grayscale sepia brightness-75' : ''} />
     );
 
     const inner = (
