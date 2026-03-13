@@ -14,7 +14,7 @@ import {
   Eye, EyeOff, Globe, Inbox, GitBranch, User, FolderOpen, Settings,
   ArrowRight, ExternalLink, Camera, FileText, MessageSquare,
   Award, Link2, Sparkles, Image, Users, PenTool, Film, Mic2, BookOpen,
-  Briefcase, Share2, Copy, Check, type LucideIcon
+  Briefcase, Share2, Copy, Check, Layers, Palette, type LucideIcon
 } from "lucide-react";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 import { PROFILE_TYPES } from "@/config/profileSections";
