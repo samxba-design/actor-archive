@@ -33,14 +33,15 @@ interface Press {
 const PressManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Press[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Press | null>(null);
-  const [form, setForm] = useState({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false });
+  const [form, setForm] = useState({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false, project_id: "" });
   const [saving, setSaving] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
