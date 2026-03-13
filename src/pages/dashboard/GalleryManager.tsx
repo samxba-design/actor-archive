@@ -133,6 +133,10 @@ const GalleryManager = () => {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
 
+  if (error) {
+    return <div className="max-w-4xl"><ManagerErrorState message={`Could not load gallery: ${error}`} onRetry={fetchImages} /></div>;
+  }
+
   return (
     <div className="max-w-4xl space-y-6">
       <PageHeader
