@@ -17,6 +17,7 @@ import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import ShareButtons from "@/components/portfolio/ShareButtons";
 import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
