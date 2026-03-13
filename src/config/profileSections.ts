@@ -104,7 +104,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Playwright",
     description: "Stage plays, musicals, and theatrical works. Manage your play catalogue with cast sizes, rights status, and production history.",
     icon: "Theater",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
