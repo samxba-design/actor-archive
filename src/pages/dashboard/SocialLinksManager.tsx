@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Loader2, Plus, Pencil, Trash2, Globe, ExternalLink } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 type SocialLink = Tables<"social_links">;
 
