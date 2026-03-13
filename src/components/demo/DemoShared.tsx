@@ -434,11 +434,7 @@ export const PublishedWorkWithToggle = ({ items }: { items: any[] }) => (
 );
 
 export const CollectionsWithToggle = ({ collections, works }: { collections: any[]; works: any[] }) => (
-  <WithToggle sectionKey="collections" sectionName="Collections" variantOptions={[
-    { value: 'grid', label: 'Grid' },
-    { value: 'accordion', label: 'Accordion' },
-    { value: 'tabs', label: 'Tabs' },
-  ]}>
+  <WithToggle sectionKey="collections" sectionName="Collections">
     {(variant) => <SectionCollections collections={collections} works={works} variant={variant as any} />}
   </WithToggle>
 );
