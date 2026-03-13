@@ -120,14 +120,26 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
                   <Link to="/demo/actor" onClick={() => setOpen(false)} className="text-sm px-2 py-1.5 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Actor</Link>
                   <Link to="/demo/copywriter" onClick={() => setOpen(false)} className="text-sm px-2 py-1.5 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>Copywriter</Link>
                 </div>
-                <div className="border-t my-2" style={{ borderColor: "hsl(var(--landing-border))" }} />
-                <Link to="/login" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
-                  Log in
+                <Link to="/faq" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
+                  FAQ
                 </Link>
-                <Button asChild className="font-semibold border-0 text-white mt-2"
-                  style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-                  <Link to="/signup" onClick={() => setOpen(false)}>Get Started</Link>
-                </Button>
+                <div className="border-t my-2" style={{ borderColor: "hsl(var(--landing-border))" }} />
+                {user ? (
+                  <Button asChild className="font-semibold border-0 text-white mt-2"
+                    style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                    <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
+                      Log in
+                    </Link>
+                    <Button asChild className="font-semibold border-0 text-white mt-2"
+                      style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                      <Link to="/signup" onClick={() => setOpen(false)}>Get Started</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>

@@ -260,7 +260,7 @@ const Pricing = () => {
         {/* Footer note */}
         <div className="text-center mt-16 relative z-10">
           <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
-            Questions? <Link to="/" className="underline hover:no-underline" style={{ color: "hsl(var(--landing-champagne))" }}>Get in touch</Link>. Cancel anytime.
+            Questions? <Link to="/faq" className="underline hover:no-underline" style={{ color: "hsl(var(--landing-champagne))" }}>Check our FAQ</Link>. Cancel anytime.
           </p>
         </div>
       </div>
