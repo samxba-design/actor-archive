@@ -64,7 +64,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
               className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all"
               style={{
                 backgroundColor: activeTab === tab.id ? theme.accentPrimary : "transparent",
-                color: activeTab === tab.id ? theme.accentForeground : theme.textSecondary,
+                color: activeTab === tab.id ? theme.textOnAccent : theme.textSecondary,
               }}
             >
               {tab.label}
