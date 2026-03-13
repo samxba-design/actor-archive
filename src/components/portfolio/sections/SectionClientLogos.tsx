@@ -1,3 +1,4 @@
+import { useState } from "react";
 import CompanyLogo from "@/components/CompanyLogo";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
