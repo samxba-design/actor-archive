@@ -55,6 +55,7 @@ export interface SectionVariants {
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
+  knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
 }
 
 export const defaultVariants: SectionVariants = {
