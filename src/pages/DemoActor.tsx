@@ -474,7 +474,7 @@ const DemoActor = () => {
 
   return (
     <SectionVariantsCtx.Provider value={{ variants, setVariant }}>
-    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
+    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative" ctaStyleOverride={variants.ctaStyle}>
       {/* Demo banner */}
       <div
         className="text-center py-1.5 text-[11px] font-medium relative z-20"
