@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "lucide-react";
-import { getCompanyLogoUrl } from "@/lib/companyLogos";
+import { getCompanyLogoUrl, COMPANY_DOMAINS } from "@/lib/companyLogos";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import CompanyLogoLibrary from "@/components/dashboard/CompanyLogoLibrary";
