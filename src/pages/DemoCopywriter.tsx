@@ -82,7 +82,7 @@ const StandardLayout = () => (
         <PublishedWorkWithToggle items={mockPublishedWork} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Case Studies" index={0}>
         <CaseStudiesWithToggle items={mockCaseStudies} />
       </PortfolioSectionWrapper>
