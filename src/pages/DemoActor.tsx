@@ -41,6 +41,7 @@ const actorDefaultVariants: SectionVariants = {
   ctaPreset: 'contact',
   heroKnownFor: 'strip',
   heroBgType: 'gradient',
+  knownForPosition: 'hero_above_name',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
