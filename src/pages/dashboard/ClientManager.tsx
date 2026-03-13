@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "lucide-react";
 import { getCompanyLogoUrl } from "@/lib/companyLogos";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface ClientLogo {
   id: string;
