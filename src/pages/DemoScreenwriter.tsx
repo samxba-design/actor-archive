@@ -217,8 +217,8 @@ const CompactLayout = () => (
 const MagazineLayout = () => (
   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
     <div className="space-y-10">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
