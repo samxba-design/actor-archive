@@ -70,6 +70,7 @@ interface Props {
   heroBgType?: HeroBgType;
   heroBgSolidColor?: string;
   heroBgVideoUrl?: string;
+  heroBgImageUrl?: string;
   knownForPosition?: KnownForPosition;
 }
 
