@@ -241,6 +241,8 @@ const PublicProfile = () => {
       const el = document.getElementById("portfolio-jsonld"); if (el) el.remove();
       const robots = document.querySelector('meta[name="robots"]'); if (robots) robots.remove();
       const can = document.querySelector('link[rel="canonical"]'); if (can) can.remove();
+      const gaS = document.getElementById("ga-script"); if (gaS) gaS.remove();
+      const gaI = document.getElementById("ga-init"); if (gaI) gaI.remove();
       ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach(n => {
         const t = document.querySelector(`meta[name="${n}"]`); if (t) t.remove();
       });
