@@ -280,6 +280,9 @@ const PublicProfile = () => {
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
         />
 
+        {/* Client logos below hero */}
+        {profile.client_logos_position === 'below_hero' && <ClientLogosBelow profileId={profile.id} />}
+
         <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
           {/* Known For below hero or as body section */}
           {knownFor.length > 0 && (profile.known_for_position === 'below_hero' || profile.known_for_position === 'body_section') && (
