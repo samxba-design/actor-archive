@@ -18,6 +18,7 @@ import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 type GalleryImage = Tables<"gallery_images">;
 
