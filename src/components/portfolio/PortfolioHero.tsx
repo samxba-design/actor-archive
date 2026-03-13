@@ -306,6 +306,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
     );
   };
 
+  // Helper: should Known For render in a given position?
+  const showKnownForAt = (pos: KnownForPosition) => {
+    if (!knownFor?.length || heroKnownFor === 'hidden' || knownForPosition === 'hidden') return false;
+    return knownForPosition === pos;
+  };
+
   const StatsBar = ({ style: s = {} }: { style?: React.CSSProperties }) => stats && (stats.scripts > 0 || stats.developing > 0 || stats.awards > 0) ? (
     <div className="flex items-center gap-8 sm:gap-10" style={s}>
       {[
