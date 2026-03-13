@@ -77,7 +77,7 @@ const StandardLayout = () => (
     <div className="mb-10">
       <ClientLogosWithToggle companies={mockClients} />
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Demo Reels" index={0}>
         <DemoReelsWithToggle items={mockDemoReels} />
       </PortfolioSectionWrapper>
