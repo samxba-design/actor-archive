@@ -38,10 +38,11 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
   if (!clients.length) return null;
 
   const basePx = LOGO_SIZE_MAP[logoSize];
+
+  const LogoItem = ({ client, size = basePx }: { client: ClientItem; size?: number }) => {
     const hasCustomLogo = !!client.logo_url;
     const [imgError, setImgError] = useState(false);
 
-    // CSS filter for custom uploaded logos when colorMode is not original
     const filterClass =
       colorMode === 'grayscale' ? 'grayscale hover:grayscale-0 transition-all duration-200' :
       colorMode === 'theme' ? 'grayscale sepia brightness-75 transition-all duration-200' :

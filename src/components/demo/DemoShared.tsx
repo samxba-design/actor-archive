@@ -70,6 +70,8 @@ export const defaultVariants: SectionVariants = {
   press: 'feed',
   services: 'full',
   clientLogos: 'bar',
+  clientLogosColor: 'original',
+  clientLogosSize: 'md',
   education: 'list',
   gallery: 'grid',
   demoReels: 'grid',
