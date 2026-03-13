@@ -1,4 +1,5 @@
-import { getCompanyLogoUrl } from "@/lib/companyLogos";
+import { useState } from "react";
+import { getCompanyLogoUrl, getCompanyDomain, getFaviconUrl } from "@/lib/companyLogos";
 
 interface Props {
   companyName: string;
@@ -8,19 +9,37 @@ interface Props {
 }
 
 const CompanyLogo = ({ companyName, className = "", size = 40, grayscale = true }: Props) => {
-  const logoUrl = getCompanyLogoUrl(companyName, size * 2); // 2x for retina
+  const [stage, setStage] = useState<"primary" | "favicon" | "initials">("primary");
+
+  const src =
+    stage === "primary"
+      ? getCompanyLogoUrl(companyName, size * 2)
+      : stage === "favicon"
+        ? getFaviconUrl(getCompanyDomain(companyName), 128)
+        : null;
+
+  if (stage === "initials" || !src) {
+    return (
+      <div
+        className={`flex items-center justify-center rounded bg-muted text-muted-foreground font-bold text-xs uppercase ${className}`}
+        style={{ width: size, height: size }}
+      >
+        {companyName.slice(0, 2)}
+      </div>
+    );
+  }
 
   return (
     <img
-      src={logoUrl}
+      src={src}
       alt={`${companyName} logo`}
       className={`object-contain transition-all duration-200 ${
         grayscale ? "grayscale hover:grayscale-0" : ""
       } ${className}`}
       style={{ maxHeight: `${size}px`, maxWidth: `${size * 2.5}px` }}
-      onError={(e) => {
-        // Hide broken images
-        (e.target as HTMLImageElement).style.display = "none";
+      onError={() => {
+        if (stage === "primary") setStage("favicon");
+        else setStage("initials");
       }}
     />
   );

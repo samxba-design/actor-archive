@@ -27,12 +27,15 @@ const SectionClientLogos = ({ items, companies, variant = 'bar' }: Props) => {
   const LogoItem = ({ client, size = 28 }: { client: ClientItem; size?: number }) => {
     const hasCustomLogo = !!client.logo_url;
 
-    const logoContent = hasCustomLogo ? (
+    const [imgError, setImgError] = useState(false);
+
+    const logoContent = hasCustomLogo && !imgError ? (
       <img
         src={client.logo_url!}
         alt={`${client.company_name} logo`}
         className="object-contain grayscale hover:grayscale-0 transition-all duration-200"
         style={{ maxHeight: `${size}px`, maxWidth: `${size * 2.5}px` }}
+        onError={() => setImgError(true)}
       />
     ) : (
       <CompanyLogo companyName={client.company_name} size={size} grayscale />
