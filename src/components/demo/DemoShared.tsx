@@ -84,6 +84,7 @@ export const defaultVariants: SectionVariants = {
   ctaPreset: 'script',
   heroKnownFor: 'strip',
   heroBgType: 'preset',
+  knownForPosition: 'hero_above_name',
 };
 
 export const SectionVariantsCtx = createContext<{
