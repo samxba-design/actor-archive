@@ -38,6 +38,7 @@ export interface OnboardingData {
   basedInPrimary: string;
   selectedServices: { name: string; description: string }[];
   availableForHire: boolean;
+  specializations?: string[];
 }
 
 const INITIAL_DATA: OnboardingData = {
