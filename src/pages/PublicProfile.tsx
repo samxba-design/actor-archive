@@ -62,6 +62,7 @@ interface ProfileData {
   known_for_position?: string | null;
   auto_responder_enabled?: boolean | null;
   auto_responder_message?: string | null;
+  cta_style?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -250,7 +251,7 @@ const PublicProfile = () => {
   const profileName = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
 
   return (
-    <PortfolioThemeProvider themeId={themeId} className="min-h-screen relative">
+    <PortfolioThemeProvider themeId={themeId} ctaStyleOverride={profile.cta_style || undefined} className="min-h-screen relative">
       {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: sanitizeCSS(profile.custom_css) }} />}
 
       {/* Skip to content link for accessibility */}
