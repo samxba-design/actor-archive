@@ -135,6 +135,13 @@ const GalleryManager = () => {
   }, [images, user]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDeleteImg, { title: "Delete this image?", description: "This image will be permanently removed from your gallery." });
 
+  const handleSetAsProfile = useCallback(async (url: string) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ profile_photo_url: url } as any).eq("id", user.id);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Profile photo updated", description: "This image is now your main profile photo." });
+  }, [user]);
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
