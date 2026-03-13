@@ -14,6 +14,7 @@ import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "
 import { getCompanyLogoUrl } from "@/lib/companyLogos";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import CompanyLogoLibrary from "@/components/dashboard/CompanyLogoLibrary";
 
 interface ClientLogo {
   id: string;
@@ -34,6 +35,7 @@ const ClientManager = () => {
   const [form, setForm] = useState({ company_name: "", website_url: "", logo_url: "" });
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -109,6 +111,18 @@ const ClientManager = () => {
     description: "This client logo will be removed from your portfolio.",
   });
 
+  const handleAddFromLibrary = async (companyName: string, logoUrl: string) => {
+    if (!user) return;
+    await supabase.from("client_logos_profile").insert({
+      profile_id: user.id,
+      company_name: companyName,
+      logo_url: logoUrl,
+      display_order: items.length,
+    });
+    fetchItems();
+    toast({ title: "Added", description: `${companyName} added to your clients.` });
+  };
+
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
 
   return (
@@ -118,7 +132,10 @@ const ClientManager = () => {
           title="Clients"
           description="Add the brands and companies you've worked with. Logos are auto-fetched, or you can upload your own."
         />
-        <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setLibraryOpen(true)}>Browse Library</Button>
+          <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
+        </div>
       </div>
       <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as a scrolling logo bar on your portfolio" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
 
@@ -216,6 +233,12 @@ const ClientManager = () => {
         </DialogContent>
       </Dialog>
       <DeleteConfirmDialog />
+      <CompanyLogoLibrary
+        open={libraryOpen}
+        onOpenChange={setLibraryOpen}
+        existingCompanies={items.map(i => i.company_name)}
+        onAddCompany={handleAddFromLibrary}
+      />
     </div>
   );
 };

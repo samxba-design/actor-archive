@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, Trash2, Upload, GripVertical } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, GripVertical, User } from "lucide-react";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -24,7 +24,7 @@ type GalleryImage = Tables<"gallery_images">;
 
 const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "event_photo", "book_cover", "campaign_creative", "other"];
 
-const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (id: string) => void }) => {
+const SortableGalleryItem = ({ img, onDelete, onSetAsProfile }: { img: GalleryImage; onDelete: (id: string) => void; onSetAsProfile?: (url: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: img.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
@@ -33,7 +33,12 @@ const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (
         <GripVertical className="h-3.5 w-3.5 text-white" />
       </div>
       <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2">
+        {onSetAsProfile && (
+          <Button variant="secondary" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onSetAsProfile(img.image_url)} title="Set as profile photo">
+            <User className="h-4 w-4" />
+          </Button>
+        )}
         <Button variant="destructive" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onDelete(img.id)}>
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -130,6 +135,13 @@ const GalleryManager = () => {
   }, [images, user]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDeleteImg, { title: "Delete this image?", description: "This image will be permanently removed from your gallery." });
 
+  const handleSetAsProfile = useCallback(async (url: string) => {
+    if (!user) return;
+    const { error } = await supabase.from("profiles").update({ profile_photo_url: url } as any).eq("id", user.id);
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Profile photo updated", description: "This image is now your main profile photo." });
+  }, [user]);
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
@@ -182,7 +194,7 @@ const GalleryManager = () => {
           <SortableContext items={images.map(i => i.id)} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {images.map((img) => (
-                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} />
+                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} onSetAsProfile={handleSetAsProfile} />
               ))}
             </div>
           </SortableContext>

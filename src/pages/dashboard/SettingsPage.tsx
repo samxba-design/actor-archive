@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX } from "lucide-react";
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
@@ -67,6 +67,7 @@ const SettingsPage = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [heroStyle, setHeroStyle] = useState<string>("full");
+  const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [form, setForm] = useState({
     slug: "",
@@ -102,7 +103,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -112,6 +113,7 @@ const SettingsPage = () => {
           setProfileType(pt);
           setSecondaryTypes(st);
           setHeroStyle((data as any).hero_style || "full");
+          setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
 
           // Build sections list from profile type config
@@ -257,6 +259,7 @@ const SettingsPage = () => {
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
         hero_style: heroStyle || "full",
+        headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
       } as any)
       .eq("id", user.id);
@@ -377,6 +380,42 @@ const SettingsPage = () => {
                   {heroStyle === layout.id && <Check className="h-3 w-3 text-primary" />}
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{layout.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Headshot Style Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Circle className="h-4 w-4" /> Headshot Style</CardTitle>
+          <CardDescription>Choose how your profile photo appears on the portfolio</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {[
+              { id: "circle", label: "Circular", icon: <div className="w-8 h-8 rounded-full bg-muted border-2 border-primary/30" />, desc: "Classic round crop" },
+              { id: "rounded", label: "Rounded", icon: <div className="w-8 h-8 rounded-xl bg-muted border-2 border-primary/30" />, desc: "Soft corners" },
+              { id: "square", label: "Square", icon: <div className="w-8 h-8 rounded-none bg-muted border-2 border-primary/30" />, desc: "Sharp edges" },
+              { id: "frame", label: "Framed", icon: <div className="w-8 h-8 rounded-lg bg-muted border-2 border-primary ring-2 ring-primary/30" />, desc: "Accent border" },
+              { id: "hidden", label: "Hidden", icon: <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><UserX className="h-4 w-4 text-muted-foreground" /></div>, desc: "Name only" },
+            ].map((style) => (
+              <button
+                key={style.id}
+                onClick={() => setHeadshotStyle(style.id)}
+                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${
+                  headshotStyle === style.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                {style.icon}
+                <div className="text-center">
+                  <p className="text-xs font-medium text-foreground">{style.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{style.desc}</p>
+                </div>
+                {headshotStyle === style.id && <Check className="h-3 w-3 text-primary" />}
               </button>
             ))}
           </div>
