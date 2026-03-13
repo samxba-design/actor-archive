@@ -61,7 +61,7 @@ function generateSlug(title: string): string {
     .slice(0, 60);
 }
 
-const SortableProjectCard = ({ project, onEdit, onDelete }: { project: Project; onEdit: (p: Project) => void; onDelete: (id: string) => void }) => {
+const SortableProjectCard = ({ project, onEdit, onDelete, onDuplicate }: { project: Project; onEdit: (p: Project) => void; onDelete: (id: string) => void; onDuplicate: (p: Project) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
