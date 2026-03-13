@@ -19,6 +19,7 @@ interface MarketingNavProps {
 
 export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle = false }: MarketingNavProps) {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
