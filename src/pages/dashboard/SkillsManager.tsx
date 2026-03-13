@@ -33,13 +33,14 @@ const COPYWRITER_CATEGORIES = [
 const SkillsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Skill | null>(null);
   const [form, setForm] = useState({ name: "", category: "", proficiency: "proficient" });
   const [saving, setSaving] = useState(false);
-  const [profileType, setProfileType] = useState<string | null>(null);
 
   const fetchItems = async () => {
     if (!user) return;
