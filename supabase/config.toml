@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.scrape-profile-url]
 verify_jwt = false
+
+[functions.contact-reply]
+verify_jwt = false
