@@ -64,6 +64,28 @@ const Pricing = () => {
   const { isPro } = useSubscription();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const spotlightRef = useRef<HTMLDivElement>(null);
+  const [glassMode, setGlassMode] = useState(() => {
+    try { return localStorage.getItem("glass-mode") !== "false"; } catch { return true; }
+  });
+
+  const toggleGlass = () => {
+    setGlassMode((prev) => {
+      const next = !prev;
+      try { localStorage.setItem("glass-mode", String(next)); } catch {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    const handleMouse = (e: MouseEvent) => {
+      if (!spotlightRef.current) return;
+      spotlightRef.current.style.setProperty("--mx", `${e.clientX}px`);
+      spotlightRef.current.style.setProperty("--my", `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", handleMouse);
+    return () => window.removeEventListener("mousemove", handleMouse);
+  }, []);
 
   const handleUpgrade = async () => {
     if (!user) {
