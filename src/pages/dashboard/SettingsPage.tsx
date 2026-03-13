@@ -168,6 +168,7 @@ const SettingsPage = () => {
             auto_responder_message: (data as any).auto_responder_message || "",
             font_pairing: (data as any).font_pairing || "default",
             layout_density: (data as any).layout_density || "spacious",
+            layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "",
             seo_indexable: (data as any).seo_indexable || false,
           });
