@@ -61,25 +61,25 @@ const PDFExportModal = ({ profile, projects = [], awards = [], skills = [], educ
   };
 
   const generatePrintHTML = () => {
-    const creditsHtml = projects.slice(0, 12).map(p => {
+    const creditsHtml = projects.slice(0, 8).map(p => {
       const details = [p.role_name, p.year].filter(Boolean).join(" · ");
-      return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #eee;">
+      return `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #eee;">
         <span style="font-weight:500;">${p.title}</span>
-        <span style="color:#666;font-size:12px;">${details}</span>
+        <span style="color:#666;font-size:11px;">${details}</span>
       </div>`;
     }).join("");
 
-    const awardsHtml = awards.slice(0, 8).map(a => 
-      `<div style="padding:3px 0;"><span style="font-weight:500;">${a.name}</span>${a.organization ? ` — ${a.organization}` : ""}${a.result ? ` (${a.result})` : ""}${a.year ? `, ${a.year}` : ""}</div>`
+    const awardsHtml = awards.slice(0, 6).map(a => 
+      `<div style="padding:2px 0;font-size:12px;"><span style="font-weight:500;">${a.name}</span>${a.organization ? ` — ${a.organization}` : ""}${a.result ? ` (${a.result})` : ""}${a.year ? `, ${a.year}` : ""}</div>`
     ).join("");
 
-    const skillsHtml = skills.slice(0, 20).map(s => 
-      `<span style="display:inline-block;background:#f3f4f6;padding:3px 10px;border-radius:12px;font-size:12px;margin:2px 4px 2px 0;">${s.name}</span>`
+    const skillsHtml = skills.slice(0, 15).map(s => 
+      `<span style="display:inline-block;background:#f3f4f6;padding:2px 8px;border-radius:10px;font-size:11px;margin:1px 3px 1px 0;">${s.name}</span>`
     ).join("");
 
-    const eduHtml = education.slice(0, 4).map(e => {
+    const eduHtml = education.slice(0, 3).map(e => {
       const years = [e.year_start, e.year_end].filter(Boolean).join("–");
-      return `<div style="padding:3px 0;"><span style="font-weight:500;">${e.institution}</span>${e.degree_or_certificate ? ` — ${e.degree_or_certificate}` : ""}${years ? ` (${years})` : ""}</div>`;
+      return `<div style="padding:2px 0;font-size:12px;"><span style="font-weight:500;">${e.institution}</span>${e.degree_or_certificate ? ` — ${e.degree_or_certificate}` : ""}${years ? ` (${years})` : ""}</div>`;
     }).join("");
 
     return `<!DOCTYPE html>
@@ -87,18 +87,18 @@ const PDFExportModal = ({ profile, projects = [], awards = [], skills = [], educ
 <head>
   <title>${name} — Resume</title>
   <style>
-    @page { size: A4; margin: 0.75in; }
+    @page { size: A4; margin: 0.6in 0.7in; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; font-size: 13px; line-height: 1.5; }
-    .header { display: flex; align-items: flex-start; gap: 20px; padding-bottom: 16px; border-bottom: 2px solid #1a1a1a; margin-bottom: 20px; }
-    .header img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
-    .header-text h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 2px; }
-    .header-text .tagline { color: #555; font-size: 14px; }
-    .header-text .meta { color: #888; font-size: 12px; margin-top: 4px; }
-    .section { margin-bottom: 18px; }
-    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e5e5e5; }
-    .bio { font-size: 13px; line-height: 1.6; color: #333; max-height: 5.5em; overflow: hidden; }
-    .footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #e5e5e5; text-align: center; font-size: 11px; color: #999; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #1a1a1a; font-size: 12px; line-height: 1.4; }
+    .header { display: flex; align-items: flex-start; gap: 16px; padding-bottom: 12px; border-bottom: 2px solid #1a1a1a; margin-bottom: 14px; }
+    .header img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+    .header-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1px; }
+    .header-text .tagline { color: #555; font-size: 13px; }
+    .header-text .meta { color: #888; font-size: 11px; margin-top: 2px; }
+    .section { margin-bottom: 12px; }
+    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #999; margin-bottom: 5px; padding-bottom: 3px; border-bottom: 1px solid #e5e5e5; }
+    .bio { font-size: 12px; line-height: 1.5; color: #333; max-height: 4em; overflow: hidden; }
+    .footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #e5e5e5; text-align: center; font-size: 10px; color: #999; }
     @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
   </style>
 </head>
@@ -108,17 +108,17 @@ const PDFExportModal = ({ profile, projects = [], awards = [], skills = [], educ
     <div class="header-text">
       <h1>${name}</h1>
       ${profile.tagline ? `<div class="tagline">${profile.tagline}</div>` : ""}
-      <div class="meta">${[profile.location, profile.profile_type?.replace(/_/g, " ")].filter(Boolean).join(" · ")} · ${profileUrl}</div>
+      <div class="meta">${[profile.location, profile.profile_type?.replace(/_/g, " ")].filter(Boolean).join(" · ")}${profile.slug ? ` · ${profileUrl}` : ""}</div>
     </div>
   </div>
 
-  ${profile.bio ? `<div class="section"><div class="section-title">About</div><div class="bio">${profile.bio.slice(0, 400)}</div></div>` : ""}
+  ${profile.bio ? `<div class="section"><div class="section-title">About</div><div class="bio">${profile.bio.slice(0, 250)}</div></div>` : ""}
   ${creditsHtml ? `<div class="section"><div class="section-title">Selected Credits</div>${creditsHtml}</div>` : ""}
   ${awardsHtml ? `<div class="section"><div class="section-title">Awards & Recognition</div>${awardsHtml}</div>` : ""}
   ${eduHtml ? `<div class="section"><div class="section-title">Education & Training</div>${eduHtml}</div>` : ""}
   ${skillsHtml ? `<div class="section"><div class="section-title">Skills</div><div>${skillsHtml}</div></div>` : ""}
 
-  <div class="footer">${profileUrl}</div>
+  ${profile.slug ? `<div class="footer">${profileUrl}</div>` : ""}
 </body>
 </html>`;
   };

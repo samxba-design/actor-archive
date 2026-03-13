@@ -454,6 +454,40 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Client Logos Position Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><RectangleHorizontal className="h-4 w-4" /> Client Logos Position</CardTitle>
+          <CardDescription>Choose where your client/company logos appear on the portfolio page</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: "below_hero", label: "Below Hero", description: "Right after the hero section" },
+              { id: "above_sections", label: "Above Sections", description: "Before main content sections" },
+              { id: "body_section", label: "Body Section", description: "As a regular content section" },
+              { id: "hidden", label: "Hidden", description: "Don't show client logos" },
+            ].map((pos) => (
+              <button
+                key={pos.id}
+                onClick={() => setClientLogosPosition(pos.id)}
+                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                  clientLogosPosition === pos.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground">{pos.label}</span>
+                  {clientLogosPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Layout Preset Picker */}
       <Card>
         <CardHeader>
