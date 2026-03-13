@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
 import { ServiceDescriptionAI } from "@/components/dashboard/ServiceDescriptionAI";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Service {
   id: string;
