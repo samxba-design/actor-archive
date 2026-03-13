@@ -224,7 +224,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Director / Producer",
     description: "Filmography, festival laurels, production company info. Showcase your vision with cinematic layouts.",
     icon: "Film",
-    defaultTheme: "noir",
+    defaultTheme: "noir-classic",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your vision" },
