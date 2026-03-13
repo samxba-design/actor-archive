@@ -162,7 +162,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
-        case "awards": {
+        case "awards":
+        case "achievements": {
           const { data } = await supabase.from("awards").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
