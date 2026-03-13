@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CompanyLogo from "@/components/CompanyLogo";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import type { LogoColorMode } from "@/lib/companyLogos";
 
 interface ClientItem {
   company_name: string;
@@ -8,14 +9,12 @@ interface ClientItem {
   website_url?: string | null;
 }
 
-type ColorMode = 'original' | 'grayscale' | 'theme';
-
 interface Props {
   items?: ClientItem[];
-  /** Legacy prop — plain company names for Clearbit lookup */
+  /** Legacy prop — plain company names for lookup */
   companies?: string[];
   variant?: 'bar' | 'grid' | 'marquee';
-  colorMode?: ColorMode;
+  colorMode?: LogoColorMode;
 }
 
 const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original' }: Props) => {
@@ -32,9 +31,12 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
     const hasCustomLogo = !!client.logo_url;
     const [imgError, setImgError] = useState(false);
 
+    // CSS filter for custom uploaded logos when colorMode is not original
     const filterClass =
       colorMode === 'grayscale' ? 'grayscale hover:grayscale-0 transition-all duration-200' :
-      colorMode === 'theme' ? 'grayscale sepia brightness-75 hue-rotate-[var(--portfolio-accent-hue,0deg)] transition-all duration-200' :
+      colorMode === 'theme' ? 'grayscale sepia brightness-75 transition-all duration-200' :
+      colorMode === 'white' ? 'brightness-0 invert transition-all duration-200' :
+      colorMode === 'dark' ? 'brightness-0 transition-all duration-200' :
       'transition-all duration-200';
 
     const logoContent = hasCustomLogo && !imgError ? (
@@ -46,7 +48,12 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
         onError={() => setImgError(true)}
       />
     ) : (
-      <CompanyLogo companyName={client.company_name} size={size} grayscale={colorMode === 'grayscale'} className={colorMode === 'theme' ? 'grayscale sepia brightness-75' : ''} />
+      <CompanyLogo
+        companyName={client.company_name}
+        size={size}
+        colorMode={colorMode}
+        themeAccentHex={theme.accentPrimary}
+      />
     );
 
     const inner = (

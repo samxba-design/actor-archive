@@ -1,4 +1,4 @@
-// Company domain mapping for Clearbit logo auto-fetch
+// Company domain mapping for logo auto-fetch
 // Maps common entertainment/media company names to their domains
 
 export const COMPANY_DOMAINS: Record<string, string> = {
@@ -298,21 +298,205 @@ export const COMPANY_DOMAINS: Record<string, string> = {
 };
 
 /**
+ * SimpleIcons slug mapping for high-quality SVG logos
+ * See: https://simpleicons.org/
+ */
+export const SIMPLE_ICONS_SLUGS: Record<string, string> = {
+  // Studios & Streamers
+  "Netflix": "netflix",
+  "Amazon Studios": "amazon",
+  "Amazon": "amazon",
+  "Apple TV+": "appletv",
+  "Apple": "apple",
+  "Disney": "waltdisneyworld",
+  "Disney+": "disneyplus",
+  "Walt Disney": "waltdisneyworld",
+  "Paramount+": "paramount",
+  "Paramount": "paramount",
+  "Hulu": "hulu",
+  "HBO": "hbo",
+  "HBO Max": "hbo",
+  "Max": "hbo",
+  "Sony": "sony",
+  "Sony Pictures": "sony",
+
+  // UK Broadcasters
+  "BBC": "bbc",
+  "BBC Studios": "bbc",
+  "ITV": "itv",
+  "Channel 4": "channel4",
+  "Sky": "sky",
+
+  // Publications & Media
+  "The Guardian": "theguardian",
+  "Guardian": "theguardian",
+  "New York Times": "nytimes",
+  "NYT": "nytimes",
+  "The New York Times": "nytimes",
+  "Washington Post": "washingtonpost",
+  "Wired": "wired",
+  "Forbes": "forbes",
+  "Bloomberg": "bloomberg",
+  "Vice": "vice",
+  "BuzzFeed": "buzzfeed",
+  "Rolling Stone": "rollingstone",
+
+  // Tech & SaaS
+  "Google": "google",
+  "Meta": "meta",
+  "Facebook": "facebook",
+  "Microsoft": "microsoft",
+  "Spotify": "spotify",
+  "Airbnb": "airbnb",
+  "Uber": "uber",
+  "Slack": "slack",
+  "Shopify": "shopify",
+  "Stripe": "stripe",
+  "Notion": "notion",
+  "Figma": "figma",
+  "Adobe": "adobe",
+  "Salesforce": "salesforce",
+  "Oracle": "oracle",
+  "IBM": "ibm",
+  "LinkedIn": "linkedin",
+  "Twitter": "x",
+  "X": "x",
+  "TikTok": "tiktok",
+  "Pinterest": "pinterest",
+  "Reddit": "reddit",
+  "Snap": "snapchat",
+  "Snapchat": "snapchat",
+  "HubSpot": "hubspot",
+  "Mailchimp": "mailchimp",
+  "Zendesk": "zendesk",
+  "Twilio": "twilio",
+  "Datadog": "datadog",
+  "Snowflake": "snowflake",
+  "Zoom": "zoom",
+  "Dropbox": "dropbox",
+  "Asana": "asana",
+  "Canva": "canva",
+  "Webflow": "webflow",
+  "Squarespace": "squarespace",
+  "Wix": "wix",
+  "Atlassian": "atlassian",
+  "Jira": "jira",
+  "GitHub": "github",
+  "GitLab": "gitlab",
+
+  // Finance & Consulting
+  "Deloitte": "deloitte",
+  "Accenture": "accenture",
+  "Goldman Sachs": "goldmansachs",
+  "Visa": "visa",
+  "Mastercard": "mastercard",
+  "PayPal": "paypal",
+  "Coinbase": "coinbase",
+  "Robinhood": "robinhood",
+  "Binance": "binance",
+
+  // Consumer & Retail
+  "Nike": "nike",
+  "Adidas": "adidas",
+  "Puma": "puma",
+  "New Balance": "newbalance",
+  "Under Armour": "underarmour",
+  "Lululemon": "lululemon",
+  "Coca-Cola": "cocacola",
+  "Pepsi": "pepsi",
+  "McDonald's": "mcdonalds",
+  "Starbucks": "starbucks",
+  "Red Bull": "redbull",
+  "IKEA": "ikea",
+  "Zara": "zara",
+
+  // Food & Delivery
+  "DoorDash": "doordash",
+  "Instacart": "instacart",
+  "Lyft": "lyft",
+  "Grubhub": "grubhub",
+
+  // Hardware & Semiconductors
+  "Tesla": "tesla",
+  "Samsung": "samsung",
+  "Intel": "intel",
+  "AMD": "amd",
+  "Nvidia": "nvidia",
+  "NVIDIA": "nvidia",
+  "Cisco": "cisco",
+  "Dell": "dell",
+  "Lenovo": "lenovo",
+  "Siemens": "siemens",
+  "Qualcomm": "qualcomm",
+
+  // Telecom
+  "Verizon": "verizon",
+  "T-Mobile": "tmobile",
+  "Vodafone": "vodafone",
+};
+
+export type LogoColorMode = 'original' | 'grayscale' | 'white' | 'dark' | 'theme';
+
+/**
+ * Get the SimpleIcons slug for a company name
+ */
+export function getSimpleIconSlug(companyName: string): string | null {
+  return SIMPLE_ICONS_SLUGS[companyName] || null;
+}
+
+/**
+ * Get SimpleIcons CDN URL with optional color
+ * Color can be a hex (without #) or named color like "white"
+ */
+export function getSimpleIconUrl(slug: string, color?: string): string {
+  const base = `https://cdn.simpleicons.org/${slug}`;
+  return color ? `${base}/${color}` : base;
+}
+
+/**
  * Get the domain for a company name (exported for fallback logic)
  */
 export function getCompanyDomain(companyName: string): string {
   const domain = COMPANY_DOMAINS[companyName];
   if (domain) return domain;
-  // Try to guess domain from company name
   return companyName.toLowerCase().replace(/[^a-z0-9]+/g, "") + ".com";
 }
 
 /**
- * Get logo URL for a company using Hunter.io Logo API
+ * Get primary logo URL — tries SimpleIcons first, falls back to Hunter.io
  */
 export function getCompanyLogoUrl(companyName: string, _size = 200): string {
+  const slug = getSimpleIconSlug(companyName);
+  if (slug) return getSimpleIconUrl(slug);
   const domain = getCompanyDomain(companyName);
   return `https://logos.hunter.io/${domain}`;
+}
+
+/**
+ * Get logo URL with color mode applied (for SimpleIcons)
+ */
+export function getCompanyLogoUrlWithColor(
+  companyName: string,
+  colorMode: LogoColorMode = 'original',
+  themeAccentHex?: string
+): { url: string; isSimpleIcon: boolean } {
+  const slug = getSimpleIconSlug(companyName);
+
+  if (slug) {
+    let color: string | undefined;
+    switch (colorMode) {
+      case 'white': color = 'white'; break;
+      case 'dark': color = '000000'; break;
+      case 'grayscale': color = '999999'; break;
+      case 'theme': color = themeAccentHex?.replace('#', '') || undefined; break;
+      case 'original': default: color = undefined; break;
+    }
+    return { url: getSimpleIconUrl(slug, color), isSimpleIcon: true };
+  }
+
+  // Fallback to Hunter.io (no native color control)
+  const domain = getCompanyDomain(companyName);
+  return { url: `https://logos.hunter.io/${domain}`, isSimpleIcon: false };
 }
 
 /**
@@ -323,19 +507,25 @@ export function getFaviconUrl(domain: string, size = 128): string {
 }
 
 /**
- * Try Hunter.io first, fall back to Google favicon
+ * Try SimpleIcons first, then Hunter.io, fall back to Google favicon
  */
 export async function fetchCompanyLogo(
   companyName: string
-): Promise<{ url: string; source: "hunter" | "google_favicon" | "none" }> {
-  const domain = getCompanyDomain(companyName);
+): Promise<{ url: string; source: "simpleicon" | "hunter" | "google_favicon" | "none" }> {
+  const slug = getSimpleIconSlug(companyName);
+  if (slug) {
+    const siUrl = getSimpleIconUrl(slug);
+    try {
+      const res = await fetch(siUrl, { method: "HEAD" });
+      if (res.ok) return { url: siUrl, source: "simpleicon" };
+    } catch {}
+  }
 
+  const domain = getCompanyDomain(companyName);
   const hunterUrl = `https://logos.hunter.io/${domain}`;
   try {
     const res = await fetch(hunterUrl, { method: "HEAD" });
-    if (res.ok) {
-      return { url: hunterUrl, source: "hunter" };
-    }
+    if (res.ok) return { url: hunterUrl, source: "hunter" };
   } catch {}
 
   return { url: getFaviconUrl(domain), source: "google_favicon" };
