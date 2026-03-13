@@ -38,6 +38,7 @@ interface Props {
   heroBgType: string;
   heroBgSolidColor: string;
   heroBgVideoUrl: string;
+  heroBgImageUrl?: string;
   onUpdate: (fields: Record<string, string>) => void;
 }
 
