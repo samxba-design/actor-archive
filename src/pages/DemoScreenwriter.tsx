@@ -40,14 +40,13 @@ import {
 /* 1. CLASSIC — Interactive drag-and-drop demo */
 const ClassicLayout = () => {
   const demoSections = [
-    { id: "knownfor", title: "Known For", content: <KnownForWithToggle items={mockKnownFor} /> },
     { id: "loglines", title: "Logline Showcase", content: <LoglinesWithToggle items={mockLoglines} /> },
     { id: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
+    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
     { id: "awards", title: "Awards & Recognition", content: <AwardsWithToggle items={mockAwards} /> },
     { id: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
     { id: "press", title: "Press & Reviews", content: <PressWithToggle items={mockPress} /> },
-    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "services", title: "Services", content: <ServicesWithToggle items={mockServices} /> },
     { id: "representation", title: "Representation", content: <RepresentationWithToggle items={mockRepresentation} /> },
     { id: "education", title: "Education & Training", content: <EducationWithToggle items={mockEducation} /> },
