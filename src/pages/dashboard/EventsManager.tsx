@@ -53,7 +53,13 @@ const EventsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
+
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
   const openAdd = () => { setEditing(null); setForm({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true }); setDialogOpen(true); };
   const openEdit = (item: Event) => { setEditing(item); setForm({ title: item.title, event_type: item.event_type || "", venue: item.venue || "", city: item.city || "", country: item.country || "", date: item.date || "", end_date: item.end_date || "", ticket_url: item.ticket_url || "", description: item.description || "", is_upcoming: item.is_upcoming ?? true }); setDialogOpen(true); };
