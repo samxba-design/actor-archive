@@ -259,6 +259,7 @@ const SettingsPage = () => {
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
         hero_style: heroStyle || "full",
+        headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
       } as any)
       .eq("id", user.id);
