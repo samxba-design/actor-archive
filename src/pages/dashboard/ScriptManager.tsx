@@ -14,6 +14,7 @@ import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Lock, Eye, Mail, Shiel
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription } from "@/hooks/useSubscription";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 type Project = Tables<"projects">;
 
