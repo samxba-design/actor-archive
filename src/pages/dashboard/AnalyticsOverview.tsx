@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Eye, Globe, Monitor, Download } from "lucide-react";
+import { Loader2, Eye, Globe, Monitor, Download, MousePointerClick, MessageSquare, Play, Link2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeGate } from "@/components/UpgradeGate";
