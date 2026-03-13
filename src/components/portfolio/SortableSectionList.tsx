@@ -74,6 +74,7 @@ const SortableSectionList = ({ allSections, profileId, profileType, profileSlug,
               profileType={profileType}
               profileSlug={profileSlug}
               sectionIndex={idx}
+              bio={bio}
             />
           ))}
       </>
