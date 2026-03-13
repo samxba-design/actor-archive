@@ -68,8 +68,8 @@ export function useSubscription() {
         setLoading(false);
         return;
       }
-    } catch {
-      // If RPC fails, continue with normal check
+    } catch (err) {
+      console.warn("[useSubscription] admin role check failed:", err);
     }
 
     try {
