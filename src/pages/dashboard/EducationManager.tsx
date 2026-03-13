@@ -76,7 +76,7 @@ const EducationManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add</Button>
       </div>
-      <ManagerHelpBanner id="education" title="Training appears in your Education section" description="List degrees, workshops, and mentorships. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as a timeline with institution name, degree, and year range" demoUrl="/demo/actor" />
+      <ManagerHelpBanner id="education" title="Training appears in your Education section" description="List degrees, workshops, and mentorships. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as a timeline with institution name, degree, and year range" demoUrl="/demo/actor" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={GraduationCap} title="No education entries yet" description="Add schools, workshops, masterclasses, or private coaching to show your training background." actionLabel="Add Education" onAction={openAdd} />
       ) : (
