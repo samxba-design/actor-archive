@@ -204,9 +204,7 @@ const DashboardHome = () => {
     { label: "Settings", icon: Settings, route: "/dashboard/settings" },
   ];
 
-  const [showTour, setShowTour] = useState(false);
   const handleReplayTour = async () => {
-    // Clear tour state to allow replay
     localStorage.removeItem("cs_dashboard_tour_seen");
     if (user) {
       await supabase.from("profiles").update({ tour_completed_at: null } as any).eq("id", user.id);
