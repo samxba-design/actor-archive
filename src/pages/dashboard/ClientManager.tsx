@@ -111,6 +111,18 @@ const ClientManager = () => {
     description: "This client logo will be removed from your portfolio.",
   });
 
+  const handleAddFromLibrary = async (companyName: string, logoUrl: string) => {
+    if (!user) return;
+    await supabase.from("client_logos_profile").insert({
+      profile_id: user.id,
+      company_name: companyName,
+      logo_url: logoUrl,
+      display_order: items.length,
+    });
+    fetchItems();
+    toast({ title: "Added", description: `${companyName} added to your clients.` });
+  };
+
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
 
   return (
