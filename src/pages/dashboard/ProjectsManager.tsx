@@ -110,7 +110,24 @@ const ProjectsManager = () => {
   const [saving, setSaving] = useState(false);
   const [uploadingPoster, setUploadingPoster] = useState(false);
 
-  const labels = getTypeAwareLabels(profileType);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = projects.findIndex(p => p.id === active.id);
+    const newIndex = projects.findIndex(p => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = [...projects];
+    const [moved] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, moved);
+    setProjects(reordered);
+    // Persist new order
+    await Promise.all(reordered.map((p, i) =>
+      supabase.from("projects").update({ display_order: i }).eq("id", p.id)
+    ));
+  };
+
 
   const defaultProjectType = profileType ? (DEFAULT_PROJECT_TYPE[profileType] || "screenplay") : "screenplay";
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
