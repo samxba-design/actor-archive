@@ -201,7 +201,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "representation": {
-          const { data } = await supabase.from("representation").select("id,profile_id,rep_type,name,company,department,market,logo_url,display_order,is_primary,created_at,updated_at").eq("profile_id", profileId).order("display_order", orderOpts);
+          const { data } = await supabase.from("representation").select("id,profile_id,rep_type,name,company,department,market,logo_url,display_order,is_primary,email,phone,created_at,updated_at").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
