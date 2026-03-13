@@ -64,6 +64,19 @@ const CompanyLogoLibrary = ({ open, onOpenChange, existingCompanies, onAddCompan
           />
         </div>
         <div className="overflow-y-auto flex-1 -mx-2 px-2 space-y-6">
+          {/* Recently used / already added */}
+          {existingCompanies.length > 0 && !search.trim() && (
+            <div>
+              <h3 className="text-sm font-semibold text-foreground mb-2">Recently Added</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {existingCompanies.slice(0, 10).map((name) => {
+                  const company = UNIQUE_COMPANIES.find(c => c.name.toLowerCase() === name.toLowerCase());
+                  if (!company) return null;
+                  return <CompanyCard key={"recent-" + name} company={company} added onAdd={() => {}} />;
+                })}
+              </div>
+            </div>
+          )}
           {search.trim() ? (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
               {filtered.map((company) => (

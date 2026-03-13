@@ -189,13 +189,12 @@ const ClientManager = () => {
           <div className="space-y-4">
             <div>
               <Label>Company Name *</Label>
-              <div className="relative">
+              <div className="relative" ref={suggestionsRef}>
                 <Input
                   value={form.company_name}
                   onChange={(e) => {
                     const val = e.target.value;
                     setForm(f => ({ ...f, company_name: val }));
-                    // Auto-suggest from COMPANY_DOMAINS
                     if (val.length >= 2) {
                       const matches = Object.keys(COMPANY_DOMAINS)
                         .filter(name => name.toLowerCase().includes(val.toLowerCase()))
