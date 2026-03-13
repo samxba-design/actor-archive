@@ -16,6 +16,7 @@ import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { BioBuilderWizard } from "@/components/dashboard/BioBuilderWizard";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
+import { useFormDraft } from "@/hooks/useFormDraft";
 
 interface ProfileForm {
   display_name: string;
