@@ -22,7 +22,27 @@ type GalleryImage = Tables<"gallery_images">;
 
 const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "event_photo", "book_cover", "campaign_creative", "other"];
 
-const GalleryManager = () => {
+const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (id: string) => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: img.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
+      <div {...attributes} {...listeners} className="absolute top-1 left-1 z-10 cursor-grab active:cursor-grabbing touch-none rounded bg-black/50 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <GripVertical className="h-3.5 w-3.5 text-white" />
+      </div>
+      <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+        <Button variant="destructive" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onDelete(img.id)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {img.image_type.replace(/_/g, " ")}
+      </div>
+    </div>
+  );
+};
+
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
