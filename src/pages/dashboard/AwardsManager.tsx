@@ -71,7 +71,30 @@ const AwardsManager = () => {
     setSaving(false);
   };
 
-  const performDelete = useCallback(async (id: string) => { await supabase.from("awards").delete().eq("id", id); fetchItems(); }, [user]);
+  const performDelete = useCallback(async (id: string) => {
+    const item = items.find(i => i.id === id);
+    const { error } = await supabase.from("awards").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({
+      title: "Award deleted",
+      description: "This action can be undone.",
+      action: (
+        <button
+          className="text-xs font-semibold text-primary hover:underline px-2 py-1"
+          onClick={async () => {
+            if (item) await supabase.from("awards").insert(item as any);
+            fetchItems();
+          }}
+        >
+          Undo
+        </button>
+      ),
+    });
+    fetchItems();
+  }, [user, items]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this award?", description: "This award will be permanently removed from your portfolio." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
