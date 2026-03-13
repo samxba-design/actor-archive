@@ -71,6 +71,9 @@ const SettingsPage = () => {
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
   const [clientLogosPosition, setClientLogosPosition] = useState<string>("body_section");
+  const [professionalStatus, setProfessionalStatus] = useState<string>("");
+  const [statusBadgeColor, setStatusBadgeColor] = useState<string>("green");
+  const [statusBadgeAnimation, setStatusBadgeAnimation] = useState<string>("pulse");
   const [form, setForm] = useState({
     slug: "",
     theme: "cinematic-dark",
