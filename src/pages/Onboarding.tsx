@@ -149,6 +149,20 @@ const Onboarding = () => {
         ? "multi_hyphenate" as ProfileType
         : data.profileType;
 
+      // Build default section_order from profile type config
+      let defaultSectionOrder: string[] = [];
+      let defaultSectionsVisible: Record<string, boolean> = {};
+      if (profileType) {
+        const { getProfileTypeConfig, getMergedSections } = await import("@/config/profileSections");
+        const sectionConfigs = profileType === "multi_hyphenate"
+          ? getMergedSections(profileType, data.secondaryTypes)
+          : (getProfileTypeConfig(profileType)?.sections || []);
+        defaultSectionOrder = sectionConfigs
+          .filter(s => s.key !== "hero" && s.key !== "contact")
+          .map(s => s.key);
+        defaultSectionsVisible = Object.fromEntries(defaultSectionOrder.map(k => [k, true]));
+      }
+
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -165,7 +179,9 @@ const Onboarding = () => {
           available_for_hire: data.availableForHire,
           onboarding_completed: true,
           is_draft: false,
-        })
+          section_order: defaultSectionOrder.length > 0 ? defaultSectionOrder : null,
+          sections_visible: Object.keys(defaultSectionsVisible).length > 0 ? defaultSectionsVisible : null,
+        } as any)
         .eq("id", user.id);
 
       if (profileError) throw profileError;

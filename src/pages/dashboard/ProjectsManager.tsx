@@ -13,7 +13,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2, Star, Upload } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2, Star, Upload, GripVertical } from "lucide-react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Constants } from "@/integrations/supabase/types";
 import type { Tables } from "@/integrations/supabase/types";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -58,6 +61,43 @@ function generateSlug(title: string): string {
     .slice(0, 60);
 }
 
+const SortableProjectCard = ({ project, onEdit, onDelete }: { project: Project; onEdit: (p: Project) => void; onDelete: (id: string) => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <Card ref={setNodeRef} style={style} className="group">
+      <CardContent className="flex items-center gap-4 py-4">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none text-muted-foreground hover:text-foreground">
+          <GripVertical className="h-4 w-4" />
+        </button>
+        {project.poster_url ? (
+          <img src={project.poster_url} alt={project.title} className="w-12 h-16 object-cover rounded" />
+        ) : (
+          <div className="w-12 h-16 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs">
+            {project.project_type.slice(0, 3)}
+          </div>
+        )}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-foreground truncate">{project.title}</h3>
+            {project.is_notable && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" fill="currentColor" />}
+          </div>
+          <div className="flex gap-2 mt-1 flex-wrap">
+            <Badge variant="secondary" className="text-xs">{project.project_type.replace(/_/g, " ")}</Badge>
+            {project.client && <Badge variant="outline" className="text-xs">{project.client}</Badge>}
+            {project.network_or_studio && <Badge variant="outline" className="text-xs">{project.network_or_studio}</Badge>}
+            {project.year && <span className="text-xs text-muted-foreground">{project.year}</span>}
+          </div>
+        </div>
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button variant="ghost" size="icon" onClick={() => onEdit(project)}><Pencil className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onDelete(project.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const ProjectsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -70,6 +110,23 @@ const ProjectsManager = () => {
   const [saving, setSaving] = useState(false);
   const [uploadingPoster, setUploadingPoster] = useState(false);
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = projects.findIndex(p => p.id === active.id);
+    const newIndex = projects.findIndex(p => p.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = [...projects];
+    const [moved] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, moved);
+    setProjects(reordered);
+    // Persist new order
+    await Promise.all(reordered.map((p, i) =>
+      supabase.from("projects").update({ display_order: i }).eq("id", p.id)
+    ));
+  };
   const labels = getTypeAwareLabels(profileType);
 
   const defaultProjectType = profileType ? (DEFAULT_PROJECT_TYPE[profileType] || "screenplay") : "screenplay";
@@ -624,37 +681,15 @@ const ProjectsManager = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
-          {projects.map((p) => (
-            <Card key={p.id} className="group">
-              <CardContent className="flex items-center gap-4 py-4">
-                {p.poster_url ? (
-                  <img src={p.poster_url} alt={p.title} className="w-12 h-16 object-cover rounded" />
-                ) : (
-                  <div className="w-12 h-16 bg-muted rounded flex items-center justify-center text-muted-foreground text-xs">
-                    {p.project_type.slice(0, 3)}
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground truncate">{p.title}</h3>
-                    {p.is_notable && <Star className="h-3.5 w-3.5 text-yellow-500 shrink-0" fill="currentColor" />}
-                  </div>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    <Badge variant="secondary" className="text-xs">{p.project_type.replace(/_/g, " ")}</Badge>
-                    {p.client && <Badge variant="outline" className="text-xs">{p.client}</Badge>}
-                    {p.network_or_studio && <Badge variant="outline" className="text-xs">{p.network_or_studio}</Badge>}
-                    {p.year && <span className="text-xs text-muted-foreground">{p.year}</span>}
-                  </div>
-                </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="icon" onClick={() => openEdit(p)}><Pencil className="h-4 w-4" /></Button>
-                  <Button variant="ghost" size="icon" onClick={() => requestDelete(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={projects.map(p => p.id)} strategy={verticalListSortingStrategy}>
+            <div className="space-y-3">
+              {projects.map((p) => (
+                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
       <DeleteConfirmDialog />
     </div>

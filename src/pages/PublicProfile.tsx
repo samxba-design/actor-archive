@@ -46,6 +46,7 @@ interface ProfileData {
   booking_url: string | null;
   font_pairing: string | null;
   layout_density: string | null;
+  layout_preset: string | null;
   custom_css: string | null;
   subscription_tier?: string | null;
   hero_style?: string | null;

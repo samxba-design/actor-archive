@@ -111,7 +111,6 @@ const ProfileEditor = () => {
         profile_photo_url: form.profile_photo_url || null,
         banner_url: form.banner_url || null,
         primary_goal: form.primary_goal || null,
-        hero_style: form.hero_style || "full",
         hero_background_preset: form.hero_background_preset || null,
         hero_bg_type: form.hero_bg_type || "preset",
         hero_bg_solid_color: form.hero_bg_solid_color || null,

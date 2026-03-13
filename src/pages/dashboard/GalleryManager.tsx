@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { Loader2, Plus, Trash2, Upload, GripVertical } from "lucide-react";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
@@ -18,6 +21,27 @@ import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 type GalleryImage = Tables<"gallery_images">;
 
 const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "event_photo", "book_cover", "campaign_creative", "other"];
+
+const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (id: string) => void }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: img.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
+      <div {...attributes} {...listeners} className="absolute top-1 left-1 z-10 cursor-grab active:cursor-grabbing touch-none rounded bg-black/50 p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <GripVertical className="h-3.5 w-3.5 text-white" />
+      </div>
+      <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+        <Button variant="destructive" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onDelete(img.id)}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {img.image_type.replace(/_/g, " ")}
+      </div>
+    </div>
+  );
+};
 
 const GalleryManager = () => {
   const { user } = useAuth();
@@ -31,6 +55,22 @@ const GalleryManager = () => {
   const [imageType, setImageType] = useState("headshot");
 
   const atGalleryLimit = !isPro && images.length >= FREE_GALLERY_LIMIT;
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.findIndex(i => i.id === active.id);
+    const newIndex = images.findIndex(i => i.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = [...images];
+    const [moved] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, moved);
+    setImages(reordered);
+    await Promise.all(reordered.map((img, i) =>
+      supabase.from("gallery_images").update({ display_order: i }).eq("id", img.id)
+    ));
+  };
 
   const fetchImages = async () => {
     if (!user) return;
@@ -128,26 +168,15 @@ const GalleryManager = () => {
       {images.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">No images yet. Upload some above.</div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {images.map((img) => (
-            <div key={img.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
-              <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => requestDelete(img.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {img.image_type.replace(/_/g, " ")}
-              </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={images.map(i => i.id)} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {images.map((img) => (
+                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       )}
       <DeleteConfirmDialog />
     </div>

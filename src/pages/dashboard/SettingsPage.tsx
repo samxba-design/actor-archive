@@ -83,6 +83,7 @@ const SettingsPage = () => {
     auto_responder_message: "",
     font_pairing: "default",
     layout_density: "spacious",
+    layout_preset: "classic",
     custom_css: "",
     seo_indexable: false,
   });
@@ -99,7 +100,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode, hero_style, known_for_position")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -167,6 +168,7 @@ const SettingsPage = () => {
             auto_responder_message: (data as any).auto_responder_message || "",
             font_pairing: (data as any).font_pairing || "default",
             layout_density: (data as any).layout_density || "spacious",
+            layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "",
             seo_indexable: (data as any).seo_indexable || false,
           });
@@ -249,6 +251,7 @@ const SettingsPage = () => {
         auto_responder_message: form.auto_responder_message || null,
         font_pairing: form.font_pairing || "default",
         layout_density: form.layout_density || "spacious",
+        layout_preset: form.layout_preset || "classic",
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
         hero_style: heroStyle || "full",
@@ -412,16 +415,16 @@ const SettingsPage = () => {
             {LAYOUT_PRESETS.map((preset) => (
               <button
                 key={preset.id}
-                onClick={() => setForm(f => ({ ...f, layout_density: preset.id }))}
+                onClick={() => setForm(f => ({ ...f, layout_preset: preset.id }))}
                 className={`text-left p-3 rounded-lg border transition-all text-sm ${
-                  form.layout_density === preset.id
+                  form.layout_preset === preset.id
                     ? "border-primary bg-primary/10 ring-1 ring-primary"
                     : "border-border hover:border-primary/40 hover:bg-accent/50"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-foreground">{preset.label}</span>
-                  {form.layout_density === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                  {form.layout_preset === preset.id && <Check className="h-3.5 w-3.5 text-primary" />}
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">{preset.description}</p>
               </button>
