@@ -14,6 +14,7 @@ import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownF
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
 import type { KnownForPosition, HeroBgType } from "@/components/portfolio/PortfolioHero";
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
+import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import ShareButtons from "@/components/portfolio/ShareButtons";
@@ -300,7 +301,7 @@ const PublicProfile = () => {
         <DarkModeToggle />
         <ShareButtons url={profileUrl} title={profileName} description={profile.tagline || undefined} />
         <button
-          onClick={() => setShowPdfExport(true)}
+          onClick={() => { setShowPdfExport(true); trackInteraction(profile.id, "cv_downloaded"); }}
           className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
           style={{
             background: "hsl(var(--portfolio-card, var(--card)))",
@@ -313,7 +314,7 @@ const PublicProfile = () => {
         </button>
         {showContact && (
           <button
-            onClick={scrollToContact}
+            onClick={() => { scrollToContact(); trackInteraction(profile.id, "contact_clicked"); }}
             className="rounded-full p-3 shadow-lg transition-all hover:scale-105"
             style={{
               background: "hsl(var(--portfolio-accent, var(--primary)))",

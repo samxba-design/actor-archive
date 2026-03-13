@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Eye, Globe, Monitor, Download } from "lucide-react";
+import { Loader2, Eye, Globe, Monitor, Download, MousePointerClick, MessageSquare, Play, Link2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { useSubscription } from "@/hooks/useSubscription";
 import { UpgradeGate } from "@/components/UpgradeGate";
@@ -22,20 +22,35 @@ const AnalyticsOverview = () => {
   const [topCities, setTopCities] = useState<{ city: string; count: number }[]>([]);
   const [downloads, setDownloads] = useState<{ downloader_name: string | null; downloader_email: string | null; document_url: string | null; created_at: string | null }[]>([]);
   const [totalDownloads, setTotalDownloads] = useState(0);
+  const [engagement, setEngagement] = useState<{ contact_clicks: number; cta_clicks: number; reel_plays: number; cv_downloads: number }>({ contact_clicks: 0, cta_clicks: 0, reel_plays: 0, cv_downloads: 0 });
 
   useEffect(() => {
     if (!user) return;
     const fetchAnalytics = async () => {
       const { data: views } = await supabase
         .from("page_views")
-        .select("created_at, device_type, referrer, country, city")
+        .select("created_at, device_type, referrer, country, city, path")
         .eq("profile_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1000);
 
       if (!views) { setLoading(false); return; }
 
-      setTotalViews(views.length);
+      // Separate page views from interaction events
+      const pageViews = views.filter(v => !v.path?.startsWith("/_interaction/"));
+      const interactions = views.filter(v => v.path?.startsWith("/_interaction/"));
+
+      setTotalViews(pageViews.length);
+
+      // Engagement metrics from interaction tracking
+      setEngagement({
+        contact_clicks: interactions.filter(v => v.path?.includes("/contact_clicked")).length,
+        cta_clicks: interactions.filter(v => v.path?.includes("/cta_clicked")).length,
+        reel_plays: interactions.filter(v => v.path?.includes("/reel_played")).length,
+        cv_downloads: interactions.filter(v => v.path?.includes("/cv_downloaded")).length,
+      });
+
+      setTotalViews(pageViews.length);
 
       // Daily views (last 30 days)
       const dailyMap: Record<string, number> = {};
@@ -45,7 +60,7 @@ const AnalyticsOverview = () => {
         d.setDate(d.getDate() - i);
         dailyMap[d.toISOString().split("T")[0]] = 0;
       }
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const day = v.created_at?.split("T")[0];
         if (day && dailyMap[day] !== undefined) dailyMap[day]++;
       });
@@ -56,7 +71,7 @@ const AnalyticsOverview = () => {
 
       // Device breakdown
       const devices: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const d = v.device_type || "unknown";
         devices[d] = (devices[d] || 0) + 1;
       });
@@ -64,7 +79,7 @@ const AnalyticsOverview = () => {
 
       // Top referrers
       const refs: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const r = v.referrer || "Direct";
         try {
           const host = r === "Direct" ? r : new URL(r).hostname;
@@ -83,7 +98,7 @@ const AnalyticsOverview = () => {
       // Geographic breakdown
       const countries: Record<string, number> = {};
       const cities: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const c = v.country || "Unknown";
         countries[c] = (countries[c] || 0) + 1;
         const city = v.city || "Unknown";
@@ -161,6 +176,46 @@ const AnalyticsOverview = () => {
                 {deviceBreakdown.sort((a, b) => b.value - a.value)[0]?.name || "—"}
               </p>
               <p className="text-sm text-muted-foreground">Top Device</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Engagement Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <MessageSquare className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.contact_clicks}</p>
+              <p className="text-xs text-muted-foreground">Contact Clicks</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <MousePointerClick className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.cta_clicks}</p>
+              <p className="text-xs text-muted-foreground">CTA Clicks</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <Play className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.reel_plays}</p>
+              <p className="text-xs text-muted-foreground">Reel Plays</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <Download className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.cv_downloads}</p>
+              <p className="text-xs text-muted-foreground">PDF Exports</p>
             </div>
           </CardContent>
         </Card>
