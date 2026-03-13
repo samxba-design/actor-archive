@@ -176,7 +176,7 @@ const PosterBrowser = ({ open, onOpenChange, onSelect, initialQuery = "" }: Post
                   key={r.tmdb_id}
                   onClick={() => handleSelect(r)}
                   disabled={selecting === r.tmdb_id}
-                  className="group relative rounded-lg overflow-hidden border border-border hover:border-primary transition-colors bg-muted aspect-[2/3] focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="group relative rounded-lg overflow-hidden border border-border hover:border-primary transition-all duration-200 bg-muted aspect-[2/3] focus:outline-none focus:ring-2 focus:ring-primary hover:scale-105 hover:shadow-lg hover:z-10"
                 >
                   {r.poster_url ? (
                     <img src={r.poster_url} alt={r.title} className="w-full h-full object-cover" />

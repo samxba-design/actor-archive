@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import PageHeader from "@/components/dashboard/PageHeader";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -37,6 +37,18 @@ const ClientManager = () => {
   const [uploading, setUploading] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<{ name: string; logoUrl: string }[]>([]);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
+        setSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -189,13 +201,12 @@ const ClientManager = () => {
           <div className="space-y-4">
             <div>
               <Label>Company Name *</Label>
-              <div className="relative">
+              <div className="relative" ref={suggestionsRef}>
                 <Input
                   value={form.company_name}
                   onChange={(e) => {
                     const val = e.target.value;
                     setForm(f => ({ ...f, company_name: val }));
-                    // Auto-suggest from COMPANY_DOMAINS
                     if (val.length >= 2) {
                       const matches = Object.keys(COMPANY_DOMAINS)
                         .filter(name => name.toLowerCase().includes(val.toLowerCase()))
