@@ -598,11 +598,15 @@ const ProjectsManager = () => {
 
               <div><Label>{labels.roleLabel} <GlossaryTooltip term="role_name" /></Label><Input value={form.role_name} onChange={(e) => setForm((f) => ({ ...f, role_name: e.target.value }))} placeholder={labels.rolePlaceholder} /></div>
 
-              {/* Poster with upload */}
+              {/* Poster with upload + browse */}
               <div>
                 <Label>{isBookType ? "Cover Image" : "Poster Image"}</Label>
                 <div className="flex items-center gap-2 mt-1">
                   <Input value={form.poster_url} onChange={(e) => setForm((f) => ({ ...f, poster_url: e.target.value }))} placeholder="Paste URL or upload" className="flex-1" />
+                  <Button type="button" variant="outline" size="sm" onClick={() => setPosterBrowserOpen(true)} className="shrink-0">
+                    <Search className="h-3 w-3 mr-1" />
+                    Browse
+                  </Button>
                   <label className="cursor-pointer shrink-0">
                     <Input type="file" accept="image/*" className="hidden" onChange={handlePosterUpload} />
                     <span className="inline-flex items-center justify-center rounded-md text-xs font-medium h-9 px-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
@@ -615,6 +619,18 @@ const ProjectsManager = () => {
                   <img src={form.poster_url} alt="Poster preview" className="mt-2 w-16 h-24 object-cover rounded border border-border" />
                 )}
               </div>
+              <PosterBrowser
+                open={posterBrowserOpen}
+                onOpenChange={setPosterBrowserOpen}
+                initialQuery={form.title}
+                onSelect={(data) => {
+                  setForm((f) => ({
+                    ...f,
+                    poster_url: data.poster_url || f.poster_url,
+                    backdrop_url: data.backdrop_url || f.backdrop_url,
+                  }));
+                }}
+              />
 
               {/* Advanced Portfolio Display Options */}
               <Collapsible>
