@@ -39,7 +39,7 @@ const stats = [
   { icon: MessageSquare, value: "18K", label: "Contact Messages" },
 ];
 
-const showcaseThemes = ["noir", "editorial", "spotlight", "midnight", "minimal", "gallery"] as const;
+const showcaseThemeIds = ["cinematic-dark", "warm-luxury", "modern-minimal", "midnight-glass", "ocean-blue", "gothic"] as const;
 
 const testimonials = [
   { quote: "CreativeSlate finally gave my scripts the showcase they deserve. I booked two generals in the first week.", author: "Maya Chen", role: "Screenwriter", photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&crop=face" },
