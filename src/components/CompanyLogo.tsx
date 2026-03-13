@@ -3,8 +3,6 @@ import {
   getCompanyLogoUrlWithColor,
   getCompanyDomain,
   getFaviconUrl,
-  getSimpleIconSlug,
-  getSimpleIconUrl,
   type LogoColorMode,
 } from "@/lib/companyLogos";
 
@@ -25,33 +23,15 @@ const CompanyLogo = ({
   colorMode: colorModeProp,
   themeAccentHex,
 }: Props) => {
-  // Resolve effective color mode: explicit colorMode prop takes priority, then grayscale boolean
   const colorMode: LogoColorMode = colorModeProp ?? (grayscale ? 'grayscale' : 'original');
 
-  const slug = getSimpleIconSlug(companyName);
-  const hasSimpleIcon = !!slug;
-
-  // 4-stage fallback: simpleicon → hunter → favicon → initials
-  const [stage, setStage] = useState<"simpleicon" | "hunter" | "favicon" | "initials">(
-    hasSimpleIcon ? "simpleicon" : "hunter"
-  );
+  // 3-stage fallback: logo.dev → favicon → initials
+  const [stage, setStage] = useState<"logodev" | "favicon" | "initials">("logodev");
 
   const getSrc = (): string | null => {
     switch (stage) {
-      case "simpleicon": {
-        if (!slug) return null;
-        let color: string | undefined;
-        switch (colorMode) {
-          case 'white': color = 'white'; break;
-          case 'dark': color = '000000'; break;
-          case 'grayscale': color = '999999'; break;
-          case 'theme': color = themeAccentHex?.replace('#', '') || undefined; break;
-          default: color = undefined; break;
-        }
-        return getSimpleIconUrl(slug, color);
-      }
-      case "hunter": {
-        const { url } = getCompanyLogoUrlWithColor(companyName, 'original');
+      case "logodev": {
+        const { url } = getCompanyLogoUrlWithColor(companyName, colorMode, themeAccentHex);
         return url;
       }
       case "favicon":
@@ -74,17 +54,10 @@ const CompanyLogo = ({
     );
   }
 
-  // For non-SimpleIcon sources, apply CSS filter for color modes
-  const needsCssFilter = stage !== "simpleicon" && colorMode !== 'original';
-  const filterStyle: React.CSSProperties = needsCssFilter
-    ? {
-        filter:
-          colorMode === 'grayscale' ? 'grayscale(1)' :
-          colorMode === 'white' ? 'grayscale(1) brightness(10)' :
-          colorMode === 'dark' ? 'grayscale(1) brightness(0)' :
-          colorMode === 'theme' ? 'grayscale(1) sepia(1) brightness(0.75)' :
-          'none',
-      }
+  // For theme mode on logo.dev, apply CSS sepia tint
+  const { needsCssTint } = getCompanyLogoUrlWithColor(companyName, colorMode, themeAccentHex);
+  const filterStyle: React.CSSProperties = needsCssTint
+    ? { filter: 'sepia(1) saturate(2) brightness(0.8)' }
     : {};
 
   return (
@@ -98,8 +71,7 @@ const CompanyLogo = ({
         ...filterStyle,
       }}
       onError={() => {
-        if (stage === "simpleicon") setStage("hunter");
-        else if (stage === "hunter") setStage("favicon");
+        if (stage === "logodev") setStage("favicon");
         else setStage("initials");
       }}
     />
