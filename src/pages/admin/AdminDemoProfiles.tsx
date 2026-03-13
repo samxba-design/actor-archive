@@ -270,11 +270,12 @@ function ProfileEditor({ type, overrides, onChange }: { type: ProfileType; overr
 }
 
 function getDefaultOverrides(type: ProfileType): DemoOverrides {
-  const defaults = type === "screenwriter"
-    ? require("@/data/demoScreenwriterData")
-    : type === "actor"
-    ? require("@/data/demoActorData")
-    : require("@/data/demoCopywriterData");
+  const DEFAULTS_MAP: Record<ProfileType, any> = {
+    screenwriter: screenwriterData,
+    actor: actorData,
+    copywriter: copywriterData,
+  };
+  const defaults = DEFAULTS_MAP[type];
 
   const base: DemoOverrides = {
     mockProfile: { ...defaults.mockProfile },

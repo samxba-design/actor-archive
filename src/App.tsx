@@ -92,6 +92,7 @@ const App = () => (
                 <Route path="audit-logs" element={<AdminAuditLogs />} />
                 <Route path="analytics" element={<AdminAnalytics />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="demo-profiles" element={<AdminDemoProfiles />} />
               </Route>
               <Route path="/p/:slug" element={<PublicProfile />} />
               <Route path="/p/:slug/:projectSlug" element={<ProjectPitchPage />} />
