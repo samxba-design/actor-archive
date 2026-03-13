@@ -39,6 +39,8 @@ export interface SectionVariants {
   press: 'feed' | 'cards' | 'quotes';
   services: 'full' | 'compact' | 'pricing';
   clientLogos: 'bar' | 'grid' | 'marquee';
+  clientLogosColor: 'original' | 'grayscale' | 'white' | 'dark' | 'theme';
+  clientLogosSize: 'sm' | 'md' | 'lg' | 'xl';
   education: 'list' | 'cards' | 'timeline';
   gallery: 'grid' | 'masonry' | 'carousel';
   demoReels: 'grid' | 'featured' | 'list';
