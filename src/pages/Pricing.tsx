@@ -25,7 +25,7 @@ const freeFeatures = [
   "Custom slug (/p/your-name)",
   "Up to 8 projects",
   "Up to 5 gallery images",
-  "Minimal theme",
+  "Cinematic Dark theme",
   "Basic contact form",
   "Unlimited social links",
   "Total page view count",
