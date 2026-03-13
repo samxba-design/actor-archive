@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 type GalleryImage = Tables<"gallery_images">;
 
