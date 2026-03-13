@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ImageOff, Upload, Check, X, Minimize2, Maximize2, Palette, Video, Sparkles, Circle } from "lucide-react";
+import { ImageOff, Upload, Check, X, Minimize2, Maximize2, Palette, Video, Sparkles, Circle, ImageIcon } from "lucide-react";
+import { STOCK_HERO_IMAGES } from "@/components/demo/DemoShared";
 
 const PRESET_BACKGROUNDS = [
   { id: "cinematic-dark", label: "Cinematic Dark", gradient: "linear-gradient(135deg, #1a0a0f 0%, #2d1520 40%, #0d0d1a 100%)" },
@@ -18,10 +19,11 @@ const PRESET_BACKGROUNDS = [
   { id: "lavender-dusk", label: "Lavender Dusk", gradient: "linear-gradient(135deg, #1a0a2e 0%, #2d1548 40%, #0d0a1a 100%)" },
 ];
 
-type BgMode = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+type BgMode = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient' | 'image';
 
 const BG_MODES: { id: BgMode; label: string; icon: React.ReactNode }[] = [
   { id: 'preset', label: 'Preset', icon: <Palette className="h-3.5 w-3.5" /> },
+  { id: 'image', label: 'Image', icon: <ImageIcon className="h-3.5 w-3.5" /> },
   { id: 'solid', label: 'Solid', icon: <Circle className="h-3.5 w-3.5" /> },
   { id: 'bokeh', label: 'Bokeh', icon: <Sparkles className="h-3.5 w-3.5" /> },
   { id: 'video', label: 'Video', icon: <Video className="h-3.5 w-3.5" /> },
