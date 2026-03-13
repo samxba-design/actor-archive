@@ -46,6 +46,8 @@ export default function AdminUsers() {
   const [suspendDialog, setSuspendDialog] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
   const [suspendReason, setSuspendReason] = useState("");
   const [detailSheet, setDetailSheet] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
+  const [tierDialog, setTierDialog] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
+  const [selectedTier, setSelectedTier] = useState<string>("free");
 
   // Debounce search
   useEffect(() => {
