@@ -103,7 +103,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
