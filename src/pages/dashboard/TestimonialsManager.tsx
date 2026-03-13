@@ -16,6 +16,7 @@ import { Loader2, Plus, Pencil, Trash2, Quote } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Testimonial {
   id: string;
