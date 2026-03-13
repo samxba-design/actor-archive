@@ -81,8 +81,8 @@ const SkillsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Skills"
-          description="List your technical and creative skills. Group them by category (e.g. Software, Languages, Instruments) for a clean portfolio layout."
+          title={labels.skillsTitle}
+          description={labels.skillsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Skill</Button>
       </div>
