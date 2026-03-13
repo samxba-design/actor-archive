@@ -289,26 +289,31 @@ export const ServicesWithToggle = ({ items }: { items: any[] }) => (
 
 export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => {
   const { variants, setVariant } = useSectionVariants();
+  const showBars = variants.showCustomization;
   return (
     <>
-      <SectionOptionsBar
-        sectionName="Logo Layout"
-        options={VARIANT_OPTIONS.clientLogos}
-        value={variants.clientLogos}
-        onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
-      />
-      <SectionOptionsBar
-        sectionName="Logo Color"
-        options={VARIANT_OPTIONS.clientLogosColor}
-        value={variants.clientLogosColor}
-        onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
-      />
-      <SectionOptionsBar
-        sectionName="Logo Size"
-        options={VARIANT_OPTIONS.clientLogosSize}
-        value={variants.clientLogosSize}
-        onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
-      />
+      {showBars && (
+        <>
+          <SectionOptionsBar
+            sectionName="Logo Layout"
+            options={VARIANT_OPTIONS.clientLogos}
+            value={variants.clientLogos}
+            onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
+          />
+          <SectionOptionsBar
+            sectionName="Logo Color"
+            options={VARIANT_OPTIONS.clientLogosColor}
+            value={variants.clientLogosColor}
+            onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
+          />
+          <SectionOptionsBar
+            sectionName="Logo Size"
+            options={VARIANT_OPTIONS.clientLogosSize}
+            value={variants.clientLogosSize}
+            onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
+          />
+        </>
+      )}
       <SectionClientLogos
         companies={companies}
         variant={variants.clientLogos as any}
