@@ -98,7 +98,7 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
     return (
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-6">
         {clients.map((c, i) => (
-          <LogoItem key={`${c.company_name}-${i}`} client={c} size={32} />
+          <LogoItem key={`${c.company_name}-${i}`} client={c} />
         ))}
       </div>
     );
