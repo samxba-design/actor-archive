@@ -23,6 +23,7 @@ const PLATFORMS = [
 const SocialLinksManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const [links, setLinks] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
