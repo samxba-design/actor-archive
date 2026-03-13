@@ -441,8 +441,13 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "client_logos":
       case "publication_logos":
         return <SectionClientLogos items={data} variant="bar" colorMode="original" logoSize="md" />;
-      case "published_work":
+      case "published_work": {
+        const collections = (singleData as any[]) || [];
+        if (collections.length > 0) {
+          return <SectionCollections collections={collections} works={data} />;
+        }
         return <SectionPublishedWork items={data} />;
+      }
       case "custom_sections":
       case "staffing_info":
       case "diversity_programs":
