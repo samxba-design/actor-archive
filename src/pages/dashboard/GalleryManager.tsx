@@ -43,6 +43,7 @@ const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (
   );
 };
 
+const GalleryManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
