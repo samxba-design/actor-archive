@@ -332,6 +332,30 @@ const DashboardHome = () => {
         </div>
       </div>
 
+      {/* Smart Import Tools */}
+      <div className="rounded-xl border border-border p-6 bg-card/60">
+        <h2 className="text-lg font-semibold mb-2 text-foreground flex items-center gap-2">
+          <FileText className="h-5 w-5 text-primary" />
+          Smart Import
+        </h2>
+        <p className="text-sm text-muted-foreground mb-4">Auto-fill your profile from existing sources</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Button variant="outline" className="justify-start" onClick={() => setResumeOpen(true)}>
+            <FileText className="mr-2 h-4 w-4" />Import from Resume
+          </Button>
+          <Button variant="outline" className="justify-start" onClick={() => setUrlOpen(true)}>
+            <Share2 className="mr-2 h-4 w-4" />Import from URL
+          </Button>
+          <Button variant="outline" className="justify-start" onClick={() => setBulkOpen(true)}>
+            <Briefcase className="mr-2 h-4 w-4" />Bulk Import (CSV/JSON)
+          </Button>
+        </div>
+      </div>
+
+      <ResumeImporter open={resumeOpen} onOpenChange={setResumeOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
+      <URLImporter open={urlOpen} onOpenChange={setUrlOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
+      <BulkImporter open={bulkOpen} onOpenChange={setBulkOpen} onComplete={() => window.location.reload()} />
+
       {/* Publish/Unpublish confirmation */}
       <AlertDialog open={showPublishConfirm} onOpenChange={setShowPublishConfirm}>
         <AlertDialogContent>

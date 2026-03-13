@@ -210,6 +210,12 @@ const ProfileEditor = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Edit Profile</h1>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setResumeOpen(true)}>
+            <FileUp className="mr-2 h-4 w-4" />Resume
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setUrlOpen(true)}>
+            <Globe className="mr-2 h-4 w-4" />URL
+          </Button>
           {form.slug && (
             <Button variant="outline" size="sm" onClick={() => window.open(`/p/${form.slug}`, "_blank")}>
               <ExternalLink className="mr-2 h-4 w-4" />
@@ -222,6 +228,9 @@ const ProfileEditor = () => {
           </Button>
         </div>
       </div>
+
+      <ResumeImporter open={resumeOpen} onOpenChange={setResumeOpen} profileType={form.profile_type} onComplete={() => window.location.reload()} />
+      <URLImporter open={urlOpen} onOpenChange={setUrlOpen} profileType={form.profile_type} onComplete={() => window.location.reload()} />
 
       <ProfileReadiness />
 
