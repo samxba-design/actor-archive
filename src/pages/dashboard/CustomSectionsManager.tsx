@@ -53,7 +53,7 @@ const CustomSectionsManager = () => {
   const [showTemplates, setShowTemplates] = useState(false);
 
   const handleDelete = async (id: string) => {
-    await supabase.from("custom_sections" as any).delete().eq("id", id);
+    await supabase.from("custom_sections").delete().eq("id", id);
     setSections(prev => prev.filter(s => s.id !== id));
     toast({ title: "Section deleted" });
   };
