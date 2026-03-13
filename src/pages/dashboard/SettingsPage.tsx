@@ -109,6 +109,7 @@ const SettingsPage = () => {
           setProfileType(pt);
           setSecondaryTypes(st);
           setHeroStyle((data as any).hero_style || "full");
+          setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
