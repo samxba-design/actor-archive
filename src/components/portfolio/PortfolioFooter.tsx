@@ -54,8 +54,33 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
   const [form, setForm] = useState({ sender_name: "", sender_email: "", subject_type: "general", message: "", website: "" });
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const [rateLimited, setRateLimited] = useState(false);
+
+  // Enhanced rate limiting: max 3 submissions per 5 minutes via sessionStorage
+  const RATE_LIMIT_KEY = "cs_contact_timestamps";
+  const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes
+  const RATE_LIMIT_MAX = 3;
+
+  const isRateLimited = (): boolean => {
+    try {
+      const raw = sessionStorage.getItem(RATE_LIMIT_KEY);
+      const timestamps: number[] = raw ? JSON.parse(raw) : [];
+      const now = Date.now();
+      const recent = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
+      return recent.length >= RATE_LIMIT_MAX;
+    } catch { return false; }
+  };
+
+  const recordSubmission = () => {
+    try {
+      const raw = sessionStorage.getItem(RATE_LIMIT_KEY);
+      const timestamps: number[] = raw ? JSON.parse(raw) : [];
+      const now = Date.now();
+      const recent = timestamps.filter(t => now - t < RATE_LIMIT_WINDOW);
+      recent.push(now);
+      sessionStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(recent));
+    } catch {}
+  };
 
   const socialLinks = socialLinksProp || fetchedLinks;
   const contactMode = profile.contact_mode || "form";
