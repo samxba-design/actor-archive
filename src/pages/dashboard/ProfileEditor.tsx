@@ -67,6 +67,8 @@ const ProfileEditor = () => {
     slug: "",
   });
 
+  const { clearDraft } = useFormDraft("profile-editor", form, setForm);
+
   useEffect(() => {
     if (!user) return;
     supabase
