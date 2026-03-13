@@ -83,6 +83,7 @@ const SettingsPage = () => {
     auto_responder_message: "",
     font_pairing: "default",
     layout_density: "spacious",
+    layout_preset: "classic",
     custom_css: "",
     seo_indexable: false,
   });
