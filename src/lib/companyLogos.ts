@@ -298,47 +298,45 @@ export const COMPANY_DOMAINS: Record<string, string> = {
 };
 
 /**
- * Get logo URL for a company using Clearbit, with Google Favicon fallback
+ * Get the domain for a company name (exported for fallback logic)
  */
-export function getCompanyLogoUrl(companyName: string, size = 200): string {
+export function getCompanyDomain(companyName: string): string {
   const domain = COMPANY_DOMAINS[companyName];
-  if (domain) {
-    return `https://logo.clearbit.com/${domain}?size=${size}`;
-  }
+  if (domain) return domain;
   // Try to guess domain from company name
-  const guessedDomain = companyName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "")
-    + ".com";
-  return `https://logo.clearbit.com/${guessedDomain}?size=${size}`;
+  return companyName.toLowerCase().replace(/[^a-z0-9]+/g, "") + ".com";
 }
 
 /**
- * Get fallback favicon URL via Google
+ * Get logo URL for a company using Hunter.io Logo API
+ */
+export function getCompanyLogoUrl(companyName: string, _size = 200): string {
+  const domain = getCompanyDomain(companyName);
+  return `https://logos.hunter.io/${domain}`;
+}
+
+/**
+ * Get fallback favicon URL via Google (high-res)
  */
 export function getFaviconUrl(domain: string, size = 128): string {
   return `https://www.google.com/s2/favicons?domain=${domain}&sz=${size}`;
 }
 
 /**
- * Try Clearbit first, fall back to Google favicon
+ * Try Hunter.io first, fall back to Google favicon
  */
 export async function fetchCompanyLogo(
   companyName: string
-): Promise<{ url: string; source: "clearbit" | "google_favicon" | "none" }> {
-  const domain = COMPANY_DOMAINS[companyName];
-  
-  if (domain) {
-    const clearbitUrl = `https://logo.clearbit.com/${domain}?size=200`;
-    try {
-      const res = await fetch(clearbitUrl, { method: "HEAD" });
-      if (res.ok) {
-        return { url: clearbitUrl, source: "clearbit" };
-      }
-    } catch {}
-    
-    return { url: getFaviconUrl(domain), source: "google_favicon" };
-  }
+): Promise<{ url: string; source: "hunter" | "google_favicon" | "none" }> {
+  const domain = getCompanyDomain(companyName);
 
-  return { url: "", source: "none" };
+  const hunterUrl = `https://logos.hunter.io/${domain}`;
+  try {
+    const res = await fetch(hunterUrl, { method: "HEAD" });
+    if (res.ok) {
+      return { url: hunterUrl, source: "hunter" };
+    }
+  } catch {}
+
+  return { url: getFaviconUrl(domain), source: "google_favicon" };
 }
