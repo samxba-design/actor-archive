@@ -192,6 +192,7 @@ const ScriptManager = () => {
           <h1 className="text-2xl font-bold text-foreground">Scripts & Documents</h1>
           <p className="text-sm text-muted-foreground mt-1">Upload PDFs and control who can access them</p>
         </div>
+        <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" /> Add Script</Button>

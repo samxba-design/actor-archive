@@ -80,6 +80,7 @@ const EventsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Event</Button>
       </div>
+      <ManagerHelpBanner id="events" title="Events display in your Events section" description="Add screenings, premieres, or speaking engagements. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <EmptyState icon={CalendarDays} title="No events yet" description="Add screenings, premieres, or speaking engagements to keep your portfolio current." actionLabel="Add Event" onAction={openAdd} />
       ) : (

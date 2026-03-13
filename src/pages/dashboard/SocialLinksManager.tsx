@@ -90,6 +90,8 @@ const SocialLinksManager = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Social Links</h1>
         <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
+      </div>
+      <ManagerHelpBanner id="social-links" title="Links appear as icons on your portfolio" description="Add your IMDb, Instagram, website, and other profiles. They show on your public page." learnMoreRoute="/dashboard/settings" />
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" />Add Link</Button>
           </DialogTrigger>
