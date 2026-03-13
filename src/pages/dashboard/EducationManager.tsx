@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, GraduationCap } from "lucide-react";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Education {
   id: string;
