@@ -38,7 +38,7 @@ export function useUndoDelete(
           onClick={async () => {
             if (!undoRef.current || undoRef.current.undone) return;
             undoRef.current.undone = true;
-            await (supabase.from(tableName) as any).insert(undoRef.current.data);
+            await (supabase as any).from(tableName).insert(undoRef.current.data);
             onComplete?.();
           }}
         >
