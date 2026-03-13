@@ -16,6 +16,7 @@ import type { KnownForPosition, HeroBgType } from "@/components/portfolio/Portfo
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
+import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import ShareButtons from "@/components/portfolio/ShareButtons";
