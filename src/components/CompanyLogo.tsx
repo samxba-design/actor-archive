@@ -8,7 +8,7 @@ interface Props {
   grayscale?: boolean;
 }
 
-const CompanyLogo = ({ companyName, className = "", size = 40, grayscale = true }: Props) => {
+const CompanyLogo = ({ companyName, className = "", size = 40, grayscale = false }: Props) => {
   const [stage, setStage] = useState<"primary" | "favicon" | "initials">("primary");
 
   const src =
