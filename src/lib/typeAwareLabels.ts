@@ -146,6 +146,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     studioLabel: "Publication",
     studioPlaceholder: "e.g. NYT, Atlantic, Guardian",
     knownForTitle: "Featured Articles",
+    skillsTitle: "Beats & Expertise",
     skillsDescription: "Define your areas of coverage and domain expertise.",
     servicesTitle: "Commissioning Info",
     servicesDescription: "Share your rates and availability for freelance commissions.",
