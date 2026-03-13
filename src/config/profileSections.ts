@@ -151,11 +151,12 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Journalist / Editorial",
     description: "Articles, features, investigations, and columns. Filterable article feed with publication logos and beats.",
     icon: "Newspaper",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "article_feed", label: "Article Feed", description: "Your published articles" },
+      { key: "published_work", label: "Published Work", description: "Featured articles & investigations" },
       { key: "publication_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "skills", label: "Beats & Expertise", description: "Your areas of focus" },
       { key: "press", label: "Media Appearances", description: "Podcasts, TV, radio" },
