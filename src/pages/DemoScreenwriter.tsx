@@ -101,7 +101,7 @@ const StandardLayout = () => (
         <PressWithToggle items={mockPress} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10"> gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Gallery" index={7}>
         <GalleryWithToggle items={mockGallery} />
       </PortfolioSectionWrapper>
