@@ -2,7 +2,7 @@ import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
   FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield,
-  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown
+  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";

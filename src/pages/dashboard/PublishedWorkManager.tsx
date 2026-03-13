@@ -309,6 +309,23 @@ const PublishedWorkManager = () => {
               <Input value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} placeholder="Or paste image URL" className="mt-1.5" />
             </div>
 
+            {/* Collection */}
+            {collections.length > 0 && (
+              <div>
+                <Label>Collection</Label>
+                <select
+                  value={form.collection_id}
+                  onChange={(e) => setForm({ ...form, collection_id: e.target.value })}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">— No collection —</option>
+                  {collections.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Toggles */}
             <div className="flex items-center justify-between">
               <Label className="cursor-pointer">Featured</Label>

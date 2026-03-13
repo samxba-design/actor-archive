@@ -27,6 +27,7 @@ import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
 import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import SectionClientLogos from "./sections/SectionClientLogos";
 import SectionPublishedWork from "./sections/SectionPublishedWork";
+import SectionCollections from "./sections/SectionCollections";
 import SectionCustom from "./sections/SectionCustom";
 import SectionBio from "./sections/SectionBio";
 import SectionSocialLinks from "./sections/SectionSocialLinks";

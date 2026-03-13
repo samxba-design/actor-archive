@@ -65,6 +65,7 @@ const Dashboard = () => {
         <Route path="clients" element={<ClientManager />} />
         <Route path="pitch-email" element={<PitchEmailGenerator />} />
         <Route path="published-work" element={<PublishedWorkManager />} />
+        <Route path="collections" element={<CollectionsManager />} />
         <Route path="custom-sections" element={<CustomSectionsManager />} />
       </Route>
     </Routes>
