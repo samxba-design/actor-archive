@@ -65,7 +65,31 @@ const TestimonialsManager = () => {
     setSaving(false);
   };
 
-  const performDelete = useCallback(async (id: string) => { await supabase.from("testimonials").delete().eq("id", id); fetchItems(); }, [user]);
+  const performDelete = useCallback(async (id: string) => {
+    const item = items.find(i => i.id === id);
+    const { error } = await supabase.from("testimonials").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+    // Show undo toast
+    toast({
+      title: "Testimonial deleted",
+      description: "This action can be undone.",
+      action: (
+        <button
+          className="text-xs font-semibold text-primary hover:underline px-2 py-1"
+          onClick={async () => {
+            if (item) await supabase.from("testimonials").insert(item as any);
+            fetchItems();
+          }}
+        >
+          Undo
+        </button>
+      ),
+    });
+    fetchItems();
+  }, [user, items]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this testimonial?", description: "This testimonial will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
