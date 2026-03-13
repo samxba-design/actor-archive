@@ -14,9 +14,6 @@ import { ChevronDown } from "lucide-react";
 import * as screenwriterData from "@/data/demoScreenwriterData";
 import * as actorData from "@/data/demoActorData";
 import * as copywriterData from "@/data/demoCopywriterData";
-import { supabase } from "@/integrations/supabase/client";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
 
 type ProfileType = "screenwriter" | "actor" | "copywriter";
 
