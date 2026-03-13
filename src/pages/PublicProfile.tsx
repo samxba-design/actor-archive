@@ -77,8 +77,13 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
-  const [knownFor, setKnownFor] = useState<Record<string, unknown>[]>([]);
-  const [exportData, setExportData] = useState<{ projects: Record<string, unknown>[]; awards: Record<string, unknown>[]; skills: Record<string, unknown>[]; education: Record<string, unknown>[] }>({ projects: [], awards: [], skills: [], education: [] });
+  const [knownFor, setKnownFor] = useState<KnownForItem[]>([]);
+  const [exportData, setExportData] = useState<{
+    projects: { title: string; project_type: string; role_name?: string | null; year?: number | null }[];
+    awards: { name: string; organization?: string | null; result?: string | null; year?: number | null }[];
+    skills: { name: string; category?: string | null }[];
+    education: { institution: string; degree_or_certificate?: string | null; year_start?: number | null; year_end?: number | null }[];
+  }>({ projects: [], awards: [], skills: [], education: [] });
 
   useEffect(() => {
     if (!slug) return;
