@@ -36,6 +36,7 @@ const ClientManager = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<{ name: string; logoUrl: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
