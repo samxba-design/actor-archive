@@ -79,8 +79,8 @@ const StandardLayout = () => (
       <SectionResultsWall items={mockCaseStudies} />
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Published Work" index={-1}>
-        <PublishedWorkWithToggle items={mockPublishedWork} />
+      <PortfolioSectionWrapper title="Work Collections" index={-1}>
+        <SectionCollections collections={mockCollections} works={mockPublishedWork} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">

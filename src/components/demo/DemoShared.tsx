@@ -196,6 +196,9 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   publishedWork: [
     { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'list', label: 'List' },
   ],
+  collections: [
+    { key: 'grid', label: 'Grid' }, { key: 'accordion', label: 'Accordion' }, { key: 'tabs', label: 'Tabs' },
+  ],
   campaigns: [
     { key: 'timeline', label: 'Timeline' },
   ],
