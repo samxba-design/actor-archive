@@ -247,7 +247,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Corporate / Video Professional",
     description: "Client work, brand videos, and corporate content. Service-focused with client logos and case studies.",
     icon: "Video",
-    defaultTheme: "corporate",
+    defaultTheme: "frost",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your expertise" },
