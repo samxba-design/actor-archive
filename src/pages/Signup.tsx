@@ -66,10 +66,12 @@ const Signup = () => {
   };
 
   const handleGoogleSignup = async () => {
+    setGoogleLoading(true);
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin + "/onboarding",
     });
     if (result.error) {
+      setGoogleLoading(false);
       toast({ title: "Signup failed", description: String(result.error), variant: "destructive" });
     }
   };
