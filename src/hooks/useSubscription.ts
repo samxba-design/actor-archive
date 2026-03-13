@@ -48,11 +48,28 @@ export function useSubscription() {
   const [tier, setTier] = useState<SubscriptionTier>("free");
   const [loading, setLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const checkSubscription = useCallback(async () => {
     if (!user) {
       setLoading(false);
       return;
+    }
+
+    try {
+      // Check admin role first — admins get full Pro access
+      const { data: adminCheck } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      if (adminCheck === true) {
+        setIsAdmin(true);
+        setTier("pro");
+        setLoading(false);
+        return;
+      }
+    } catch {
+      // If RPC fails, continue with normal check
     }
 
     try {
@@ -93,5 +110,5 @@ export function useSubscription() {
     return !PRO_FEATURES.includes(feature);
   };
 
-  return { tier, isPro, canAccess, loading, subscriptionEnd, refreshSubscription: checkSubscription };
+  return { tier, isPro, isAdmin, canAccess, loading, subscriptionEnd, refreshSubscription: checkSubscription };
 }
