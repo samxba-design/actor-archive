@@ -40,14 +40,13 @@ import {
 /* 1. CLASSIC — Interactive drag-and-drop demo */
 const ClassicLayout = () => {
   const demoSections = [
-    { id: "knownfor", title: "Known For", content: <KnownForWithToggle items={mockKnownFor} /> },
     { id: "loglines", title: "Logline Showcase", content: <LoglinesWithToggle items={mockLoglines} /> },
     { id: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
+    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
     { id: "awards", title: "Awards & Recognition", content: <AwardsWithToggle items={mockAwards} /> },
     { id: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
     { id: "press", title: "Press & Reviews", content: <PressWithToggle items={mockPress} /> },
-    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "services", title: "Services", content: <ServicesWithToggle items={mockServices} /> },
     { id: "representation", title: "Representation", content: <RepresentationWithToggle items={mockRepresentation} /> },
     { id: "education", title: "Education & Training", content: <EducationWithToggle items={mockEducation} /> },
@@ -67,9 +66,7 @@ const ClassicLayout = () => {
 const StandardLayout = () => (
   <>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} display="image" />
-      </PortfolioSectionWrapper>
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="mb-10">
       <ClientLogosWithToggle companies={mockClients} />
@@ -139,9 +136,7 @@ const StandardLayout = () => (
 const CinematicLayout = () => (
   <>
     <div className="mb-12">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
-      </PortfolioSectionWrapper>
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
@@ -152,9 +147,6 @@ const CinematicLayout = () => (
       <PortfolioSectionWrapper title="Produced Credits" index={1}>
         <CreditsWithToggle items={mockCredits} />
       </PortfolioSectionWrapper>
-    </div>
-    <div className="mb-12">
-      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
@@ -222,9 +214,6 @@ const CompactLayout = () => (
 const MagazineLayout = () => (
   <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
     <div className="space-y-10">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
-      </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
@@ -263,7 +252,7 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
-    { key: "knownfor", title: "Known For", content: <KnownForWithToggle items={mockKnownFor} display="image" /> },
+    { key: "loglines", title: "Original Work", content: <LoglinesWithToggle items={mockLoglines} /> },
     { key: "loglines", title: "Original Work", content: <LoglinesWithToggle items={mockLoglines} /> },
     { key: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
     { key: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
@@ -349,8 +338,8 @@ const TimelineLayout = () => {
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
     <div className="sm:col-span-2">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
     </div>
     <div>
@@ -400,8 +389,8 @@ const BentoLayout = () => (
 const MinimalLayout = () => (
   <div className="max-w-2xl mx-auto space-y-16">
     <div>
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
+      <PortfolioSectionWrapper title="Written For" index={-1}>
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
     </div>
     <div>
@@ -452,8 +441,8 @@ const DashboardLayout = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
-          <KnownForWithToggle items={mockKnownFor} display="image" />
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
+          <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
