@@ -60,6 +60,7 @@ const contentNav: NavItem[] = [
   { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote, countTable: "testimonials" },
   { title: "Skills", url: "/dashboard/skills", icon: Zap, countTable: "skills" },
   { title: "Published Work", url: "/dashboard/published-work", icon: FileText, visibleTo: ["copywriter", "journalist", "multi_hyphenate"] },
+  { title: "Collections", url: "/dashboard/collections", icon: FolderOpen, visibleTo: ["copywriter", "journalist", "multi_hyphenate"] },
   { title: "Representation", url: "/dashboard/representation", icon: Users, visibleTo: ["actor", "screenwriter", "tv_writer", "playwright", "director_producer", "multi_hyphenate"], countTable: "representation" },
   { title: "Custom Sections", url: "/dashboard/custom-sections", icon: Sparkles },
 ];
