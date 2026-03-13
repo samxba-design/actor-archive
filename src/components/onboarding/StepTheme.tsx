@@ -16,7 +16,7 @@ const THEME_KEYS = ["minimal", "noir", "editorial", "brutalist", "spotlight", "i
 
 const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const typeConfig = data.profileType ? getProfileTypeConfig(data.profileType) : null;
-  const suggestedTheme = typeConfig?.defaultTheme || "minimal";
+  const suggestedTheme = typeConfig?.defaultTheme || "cinematic-dark";
 
   return (
     <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-500">

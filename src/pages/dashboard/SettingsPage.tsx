@@ -154,7 +154,7 @@ const SettingsPage = () => {
 
           setForm({
             slug: data.slug || "",
-            theme: data.theme || "minimal",
+            theme: data.theme || "cinematic-dark",
             accent_color: data.accent_color || "#C41E3A",
             is_published: data.is_published || false,
             show_contact_form: data.show_contact_form !== false,

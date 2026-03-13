@@ -389,6 +389,29 @@ export default function AdminUsers() {
         </CardContent>
       </Card>
 
+      {/* Change Tier Dialog */}
+      <Dialog open={tierDialog.open} onOpenChange={(open) => setTierDialog({ open, profile: open ? tierDialog.profile : null })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Subscription Tier</DialogTitle>
+            <DialogDescription>
+              Update tier for {tierDialog.profile?.display_name || "this user"}. Currently: {tierDialog.profile?.subscription_tier || "free"}.
+            </DialogDescription>
+          </DialogHeader>
+          <Select value={selectedTier} onValueChange={setSelectedTier}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="pro">Pro</SelectItem>
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTierDialog({ open: false, profile: null })}>Cancel</Button>
+            <Button onClick={handleChangeTier}>Update Tier</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Suspend Dialog */}
       <Dialog open={suspendDialog.open} onOpenChange={(open) => setSuspendDialog({ open, profile: open ? suspendDialog.profile : null })}>
         <DialogContent>
