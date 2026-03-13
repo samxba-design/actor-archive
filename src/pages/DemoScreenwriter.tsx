@@ -660,6 +660,9 @@ const DemoScreenwriter = () => {
 
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
+
+      {/* Demo Explainer */}
+      <DemoExplainer />
     </PortfolioThemeProvider>
     </SectionVariantsCtx.Provider>
   );

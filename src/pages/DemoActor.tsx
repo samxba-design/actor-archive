@@ -573,6 +573,9 @@ const DemoActor = () => {
       <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
 
       <MidScrollCTA />
+
+      {/* Demo Explainer */}
+      <DemoExplainer />
     </PortfolioThemeProvider>
     </SectionVariantsCtx.Provider>
   );

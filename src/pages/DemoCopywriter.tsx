@@ -550,6 +550,9 @@ const DemoCopywriter = () => {
       <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
 
       <MidScrollCTA />
+
+      {/* Demo Explainer */}
+      <DemoExplainer />
     </PortfolioThemeProvider>
     </SectionVariantsCtx.Provider>
   );

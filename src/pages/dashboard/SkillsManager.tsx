@@ -80,6 +80,12 @@ const SkillsManager = () => {
 
   return (
     <div className="max-w-3xl space-y-6">
+      <ManagerHelpBanner
+        id="skills"
+        title="These skills appear as tags in your Skills section"
+        description="Group by category for a polished look. You can hide this entire section in Settings → Section Order or via Edit Mode on your portfolio."
+        learnMoreRoute="/dashboard/settings"
+      />
       <div className="flex items-center justify-between">
         <PageHeader
           title={labels.skillsTitle}

@@ -74,7 +74,7 @@ function DashboardLayoutInner() {
           </header>
           <main className="flex-1 overflow-y-auto p-6">
             <Outlet />
-            <DashboardTour />
+            <GettingStartedGuide />
           </main>
         </div>
       </div>

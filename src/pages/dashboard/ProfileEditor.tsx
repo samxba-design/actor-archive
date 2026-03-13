@@ -129,6 +129,7 @@ const ProfileEditor = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Saved", description: "Profile updated successfully." });
+      clearDraft();
     }
     setSaving(false);
   };
