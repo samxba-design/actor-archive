@@ -260,6 +260,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Portfolio Gallery", description: "Production stills & screenshots" },
       { key: "testimonials", label: "Testimonials", description: "Client feedback" },
       { key: "awards", label: "Awards", description: "Industry recognition" },
+      { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
       { key: "press", label: "Press", description: "Features & coverage" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
