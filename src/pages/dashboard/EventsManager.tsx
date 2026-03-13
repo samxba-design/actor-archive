@@ -67,7 +67,7 @@ const EventsManager = () => {
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, title: form.title.trim(), event_type: form.event_type || null, venue: form.venue || null, city: form.city || null, country: form.country || null, date: form.date || null, end_date: form.end_date || null, ticket_url: form.ticket_url || null, description: form.description || null, is_upcoming: form.is_upcoming };
+    const payload = { profile_id: user.id, title: form.title.trim(), event_type: form.event_type || null, venue: form.venue || null, city: form.city || null, country: form.country || null, date: form.date || null, end_date: form.end_date || null, ticket_url: form.ticket_url || null, description: form.description || null, is_upcoming: form.is_upcoming, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("events").update(payload).eq("id", editing.id) : await supabase.from("events").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
