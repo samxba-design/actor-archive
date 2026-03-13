@@ -42,7 +42,7 @@ const Signup = () => {
   }
 
   if (user) {
-    return <Navigate to="/onboarding" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const handleSignup = async (e: React.FormEvent) => {

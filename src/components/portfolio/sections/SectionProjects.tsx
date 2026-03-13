@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import { Film, Tv, BookOpen, FileText, ExternalLink, Play, X } from "lucide-react";
 import { extractYouTubeId, extractVimeoId } from "@/lib/videoEmbed";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
@@ -272,7 +272,7 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
   ) : card;
 };
 
-const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout, imageAnimation }: Props) => {
+const SectionProjects = forwardRef<HTMLDivElement, Props>(({ items, profileType, profileSlug, isCredits, layout, imageAnimation }, ref) => {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const theme = usePortfolioTheme();
   const featured = items.filter(p => p.is_featured);
@@ -284,17 +284,19 @@ const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout, i
 
   if (effectiveLayout === 'table') {
     return (
-      <GlassCard className="divide-y" style={{ borderColor: theme.borderDefault }}>
-        {sorted.map(project => (
-          <CreditRow key={project.id} project={project} />
-        ))}
-      </GlassCard>
+      <div ref={ref}>
+        <GlassCard className="divide-y" style={{ borderColor: theme.borderDefault }}>
+          {sorted.map(project => (
+            <CreditRow key={project.id} project={project} />
+          ))}
+        </GlassCard>
+      </div>
     );
   }
 
   if (effectiveLayout === 'poster') {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div ref={ref} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {sorted.map(project => (
           <PosterCard key={project.id} project={project} imageAnimation={imageAnimation} />
         ))}
@@ -303,12 +305,14 @@ const SectionProjects = ({ items, profileType, profileSlug, isCredits, layout, i
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {sorted.map(project => (
         <ProjectCard key={project.id} project={project} profileSlug={profileSlug} playingVideo={playingVideo} onPlay={setPlayingVideo} onStop={() => setPlayingVideo(null)} />
       ))}
     </div>
   );
-};
+});
+
+SectionProjects.displayName = 'SectionProjects';
 
 export default SectionProjects;

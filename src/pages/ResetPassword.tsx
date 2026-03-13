@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import AuthLayout from "@/components/AuthLayout";
+
+const quotes = [
+  { text: "Security matters — take a moment to set a strong password.", author: "CreativeSlate", role: "Platform" },
+  { text: "Your portfolio deserves the best protection.", author: "CreativeSlate", role: "Platform" },
+];
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -35,30 +41,46 @@ const ResetPassword = () => {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <p className="text-muted-foreground">Invalid or expired reset link.</p>
-      </div>
+      <AuthLayout quotes={quotes}>
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Invalid link</h1>
+          <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>This reset link is invalid or has expired.</p>
+        </div>
+      </AuthLayout>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Set new password</h1>
-          <p className="text-sm text-muted-foreground">Enter your new password below.</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="password">New password</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Updating..." : "Update password"}
-          </Button>
-        </form>
+    <AuthLayout quotes={quotes}>
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Set new password</h1>
+        <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>Enter your new password below.</p>
       </div>
-    </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="password" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>New password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            minLength={6}
+            className="border"
+            style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 20% 14%)", color: "hsl(var(--landing-fg))" }}
+          />
+        </div>
+        <Button
+          type="submit"
+          className="w-full font-semibold border-0 text-white"
+          disabled={loading}
+          style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}
+        >
+          {loading ? "Updating..." : "Update password"}
+        </Button>
+      </form>
+    </AuthLayout>
   );
 };
 

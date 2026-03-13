@@ -201,7 +201,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "representation": {
-          const { data } = await supabase.from("representation").select("id,profile_id,rep_type,name,company,department,market,logo_url,display_order,is_primary,created_at,updated_at").eq("profile_id", profileId).order("display_order", orderOpts);
+          const { data } = await supabase.from("representation").select("id,profile_id,rep_type,name,company,department,market,logo_url,display_order,is_primary,email,phone,created_at,updated_at").eq("profile_id", profileId).order("display_order", orderOpts);
           rows = data || [];
           break;
         }
@@ -293,7 +293,15 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
     fetchData();
   }, [sectionKey, profileId]);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <section ref={sectionRef} className="animate-pulse space-y-4">
+        <div className="h-6 rounded w-32" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.08)" }} />
+        <div className="h-2 rounded w-24" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.05)" }} />
+        <div className="h-20 rounded" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.04)" }} />
+      </section>
+    );
+  }
 
   // Bio section — special handling
   if (sectionKey === "bio") {
@@ -427,7 +435,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionCampaignTimeline items={data} />;
       case "client_logos":
       case "publication_logos":
-        return <SectionClientLogos items={data} />;
+        return <SectionClientLogos items={data} variant="bar" colorMode="original" logoSize="md" />;
       case "published_work":
         return <SectionPublishedWork items={data} />;
       case "custom_sections":
