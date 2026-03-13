@@ -605,6 +605,9 @@ const DemoScreenwriter = () => {
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
           {() => null}
         </WithToggle>
+        <WithToggle sectionKey="knownForPosition" sectionName="Known For Position">
+          {() => null}
+        </WithToggle>
         <WithToggle sectionKey="heroBgType" sectionName="Background">
           {() => null}
         </WithToggle>
