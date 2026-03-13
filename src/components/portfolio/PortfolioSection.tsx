@@ -385,6 +385,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "gallery":
         return <SectionGallery items={data} />;
       case "awards":
+      case "achievements":
         return <SectionAwards items={data} />;
       case "press":
         return <SectionPress items={data} />;
