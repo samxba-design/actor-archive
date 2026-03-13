@@ -129,6 +129,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     eventsDescription: "Book signings, readings, and speaking engagements.",
     pressTitle: "Reviews & Press",
     pressDescription: "Add book reviews, interviews, and media coverage.",
+    knownForTitle: "Featured Books",
   },
   journalist: {
     logline: "Lede / Summary",
