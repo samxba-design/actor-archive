@@ -43,9 +43,9 @@ import {
 /* 1. CLASSIC — Interactive drag-and-drop demo */
 const ClassicLayout = () => {
   const demoSections = [
+    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "loglines", title: "Logline Showcase", content: <LoglinesWithToggle items={mockLoglines} /> },
     { id: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
-    { id: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
     { id: "awards", title: "Awards & Recognition", content: <AwardsWithToggle items={mockAwards} /> },
     { id: "testimonials", title: "Testimonials", content: <TestimonialsWithToggle items={mockTestimonials} /> },
