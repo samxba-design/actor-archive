@@ -19,6 +19,9 @@ import ShareButtons from "@/components/portfolio/ShareButtons";
 import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
 
+import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
+import type { HeroBgType, KnownForPosition } from "@/components/portfolio/PortfolioHero";
+
 interface ProfileData {
   id: string;
   display_name: string | null;
@@ -57,6 +60,8 @@ interface ProfileData {
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
   known_for_position?: string | null;
+  auto_responder_enabled?: boolean | null;
+  auto_responder_message?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
