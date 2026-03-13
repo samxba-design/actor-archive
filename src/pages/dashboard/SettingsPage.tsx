@@ -65,6 +65,7 @@ const SettingsPage = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [heroStyle, setHeroStyle] = useState<string>("full");
+  const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [form, setForm] = useState({
     slug: "",
     theme: "minimal",
