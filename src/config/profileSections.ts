@@ -126,6 +126,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
       { key: "events", label: "Readings & Events", description: "Upcoming readings & performances" },
       { key: "representation", label: "Representation", description: "Agent info" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Rights enquiries & commissions" },
     ],
     projectTypes: ["play", "other"],
