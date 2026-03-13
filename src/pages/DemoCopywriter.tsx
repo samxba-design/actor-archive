@@ -41,11 +41,13 @@ const copywriterDefaultVariants: SectionVariants = {
   heroLayout: 'classic',
   heroRightContent: 'services',
   ctaPreset: 'book',
+  ctaStyle: 'shine-sweep',
   heroKnownFor: 'strip',
   clientLogos: 'marquee',
   testimonials: 'carousel',
   heroBgType: 'bokeh',
   knownForPosition: 'hero_above_name',
+  clientLogosPosition: 'below_hero',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
