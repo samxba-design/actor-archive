@@ -372,6 +372,35 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Known For Position Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> Known For Position</CardTitle>
+          <CardDescription>Choose where your "Known For" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {KNOWN_FOR_POSITIONS.map((pos) => (
+              <button
+                key={pos.id}
+                onClick={() => setKnownForPosition(pos.id)}
+                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                  knownForPosition === pos.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground">{pos.label}</span>
+                  {knownForPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Layout Preset Picker */}
       <Card>
         <CardHeader>
