@@ -148,7 +148,7 @@ const painPoints = [
 ];
 
 const steps = [
-  { icon: Palette, title: "Pick Your Profile & Theme", desc: "Choose from 10 profile types and 10+ stunning themes designed for the entertainment industry. We auto-configure the right sections for your craft." },
+  { icon: Palette, title: "Pick Your Profile & Theme", desc: "Choose from 10 profile types and 17 stunning themes designed for the entertainment industry. We auto-configure the right sections for your craft." },
   { icon: Film, title: "Add Your Work", desc: "Import credits from TMDB, upload scripts with access controls, add reels, headshots, awards, testimonials, and more. Everything auto-formats beautifully." },
   { icon: Globe, title: "Publish & Share", desc: "Go live instantly with your custom URL. Share it with agents, producers, and collaborators. Embed it on your existing site if you want." },
 ];

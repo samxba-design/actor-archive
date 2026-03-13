@@ -504,7 +504,7 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 };
 
 const DemoScreenwriter = () => {
-  const [themeId, setThemeId] = useState("cinematic-dark");
+  const [themeId, setThemeId] = useState("creative-rose");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
   const [variants, setVariants] = useState<SectionVariants>(defaultVariants);
   const [showPDFModal, setShowPDFModal] = useState(false);

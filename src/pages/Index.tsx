@@ -17,7 +17,7 @@ import SocialProofToast from "@/components/SocialProofToast";
 
 /* ── data ── */
 const features = [
-  { icon: Palette, title: "10+ Stunning Themes", desc: "From minimal to brutalist — pick a look that matches your creative voice." },
+  { icon: Palette, title: "17 Stunning Themes", desc: "From minimal to gothic to frontier — pick a look that matches your creative voice." },
   { icon: Film, title: "TMDB Integration", desc: "Auto-fill film & TV credits with posters, cast, and metadata from TMDB.", featured: true },
   { icon: BarChart3, title: "Built-in Analytics", desc: "Track page views, referrers, and device breakdowns in your dashboard." },
   { icon: Shield, title: "Access Control", desc: "Password-protect scripts, gate content behind email capture, or keep it public.", featured: true },

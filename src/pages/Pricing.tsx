@@ -36,7 +36,7 @@ const freeFeatures = [
 const proFeatures = [
   { text: "Everything in Free", icon: Check },
   { text: "Unlimited projects & gallery", icon: Sparkles },
-  { text: "10+ stunning themes", icon: Palette },
+  { text: "17 stunning themes", icon: Palette },
   { text: "Font pairing selector", icon: Palette },
   { text: "Layout density control", icon: Palette },
   { text: "Custom CSS editor", icon: Code2 },
