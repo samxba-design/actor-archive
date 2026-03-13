@@ -588,6 +588,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-[280px] shrink-0 space-y-4" style={stagger(1)}>
             <PhotoEl size="120px" />
+            {showKnownForAt('hero_beside_photo') && <KnownForStrip />}
             <NameEl fontSize="clamp(22px, 3vw, 28px)" />
             <RepLine />
             <TaglineEl />
@@ -595,9 +596,10 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             {showCta && <div className="[&_button]:text-[12px] [&_button]:px-4 [&_button]:truncate [&_button]:max-w-full"><CtaEl /></div>}
           </div>
           <div className="flex-1 space-y-4" style={stagger(2)}>
+            {showKnownForAt('hero_above_name') && <KnownForStrip />}
             <BioEl maxW="max-w-full" />
             <RightContent />
-            {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && <KnownForStrip />}
+            {showKnownForAt('hero_below_cta') && <KnownForStrip />}
             <StatsBar />
           </div>
         </div>
@@ -608,6 +610,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderEditorial = () => (
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8">
+        {showKnownForAt('hero_above_name') && (
+          <div className="mb-4" style={stagger(-1)}><KnownForStrip /></div>
+        )}
         <div style={stagger(0)}>
           <NameEl fontSize="clamp(40px, 7vw, 72px)" />
         </div>
@@ -626,12 +631,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           <div className="space-y-3">
             <BioEl maxW="max-w-full" style={stagger(3)} />
             {showCta && <div style={stagger(4)}><CtaEl /></div>}
+            {showKnownForAt('hero_below_cta') && (
+              <div className="mt-3" style={stagger(4.5)}><KnownForStrip /></div>
+            )}
           </div>
           <RightContent />
         </div>
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
-          <div className="mt-6" style={stagger(5)}><KnownForStrip /></div>
-        )}
       </div>
     </div>
   );
@@ -646,10 +651,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <RepLine />
           </div>
         </div>
+        {showKnownForAt('hero_beside_photo') && <div className="mb-3"><KnownForStrip /></div>}
         <TaglineEl />
         <CredentialRow style={{ marginTop: '8px' }} />
         <BioEl maxW="max-w-full" style={{ marginTop: '12px' }} />
         {showCta && <div className="mt-4"><CtaEl /></div>}
+        {showKnownForAt('hero_below_cta') && <div className="mt-3"><KnownForStrip /></div>}
         <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${theme.borderDefault}` }}><StatsBar /></div>
       </div>
     </div>
@@ -658,7 +665,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderStacked = () => (
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 space-y-6">
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
+        {showKnownForAt('hero_above_name') && (
           <div style={stagger(0)}><KnownForStrip /></div>
         )}
         <div style={stagger(1)}><NameEl fontSize="clamp(36px, 6vw, 56px)" /></div>
@@ -670,6 +677,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
         <RepLine />
         <BioEl maxW="max-w-2xl" style={stagger(4)} />
         {showCta && <div style={stagger(5)}><CtaEl /></div>}
+        {showKnownForAt('hero_below_cta') && (
+          <div style={stagger(5.5)}><KnownForStrip /></div>
+        )}
         <div className="flex flex-col lg:flex-row gap-6 items-start" style={stagger(6)}>
           <RightContent />
           <StatsBar />
@@ -688,6 +698,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
         </h1>
       </div>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10 relative z-10">
+        {showKnownForAt('hero_above_name') && (
+          <div className="mb-6" style={stagger(0)}><KnownForStrip /></div>
+        )}
         <div className="flex flex-col lg:flex-row gap-8 items-end">
           <div className="flex-1 space-y-4">
             <div className="flex items-end gap-4" style={stagger(1)}>
@@ -701,12 +714,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <CredentialRow style={stagger(3)} />
             <BioEl style={stagger(4)} />
             {showCta && <div style={stagger(5)}><CtaEl /></div>}
+            {showKnownForAt('hero_below_cta') && (
+              <div className="mt-2" style={stagger(5.5)}><KnownForStrip /></div>
+            )}
           </div>
           <RightContent />
         </div>
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
-          <div className="mt-8" style={stagger(6)}><KnownForStrip /></div>
-        )}
         <div className="mt-6 pt-5" style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, ...stagger(7) }}>
           <StatsBar />
         </div>
