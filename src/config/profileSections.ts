@@ -128,7 +128,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Author / Novelist",
     description: "Books, novels, short stories, and non-fiction. Beautiful bookshelf display with purchase links and tour dates.",
     icon: "BookOpen",
-    defaultTheme: "editorial",
+    defaultTheme: "warm-luxury",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
