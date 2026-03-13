@@ -233,14 +233,7 @@ const DashboardHome = () => {
           <h1 className="text-2xl font-bold text-foreground">
             Welcome back{profile?.display_name ? `, ${profile.display_name}` : ""}
           </h1>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-sm text-muted-foreground">Here's how your portfolio is performing</p>
-            {profileTypeLabel && (
-              <Badge variant="secondary" className="text-[10px] cursor-pointer hover:bg-accent" onClick={() => navigate("/dashboard/settings")}>
-                {profileTypeLabel}
-              </Badge>
-            )}
-          </div>
+          <p className="text-sm text-muted-foreground mt-1">Here's how your portfolio is performing</p>
         </div>
         <div className="flex items-center gap-2">
           {profile?.slug && profile?.is_published && (
