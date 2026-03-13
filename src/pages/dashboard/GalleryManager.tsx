@@ -24,7 +24,7 @@ type GalleryImage = Tables<"gallery_images">;
 
 const IMAGE_TYPES = ["headshot", "production_still", "behind_the_scenes", "poster", "artwork", "event_photo", "book_cover", "campaign_creative", "other"];
 
-const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (id: string) => void }) => {
+const SortableGalleryItem = ({ img, onDelete, onSetAsProfile }: { img: GalleryImage; onDelete: (id: string) => void; onSetAsProfile?: (url: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: img.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
