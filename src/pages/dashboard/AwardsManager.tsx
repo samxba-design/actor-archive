@@ -64,7 +64,7 @@ const AwardsManager = () => {
   const handleSave = async () => {
     if (!user || !form.name.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, name: form.name.trim(), organization: form.organization || null, category: form.category || null, year: form.year ? parseInt(form.year) : null, result: form.result || null };
+    const payload = { profile_id: user.id, name: form.name.trim(), organization: form.organization || null, category: form.category || null, year: form.year ? parseInt(form.year) : null, result: form.result || null, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("awards").update(payload).eq("id", editing.id) : await supabase.from("awards").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
