@@ -44,12 +44,8 @@ const SkillsManager = () => {
 
   const fetchItems = async () => {
     if (!user) return;
-    const [{ data }, { data: profileData }] = await Promise.all([
-      supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order"),
-      supabase.from("profiles").select("profile_type").eq("id", user.id).single(),
-    ]);
+    const { data } = await supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order");
     setItems(data || []);
-    setProfileType(profileData?.profile_type || null);
     setLoading(false);
   };
 
