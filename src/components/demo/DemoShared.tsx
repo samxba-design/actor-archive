@@ -91,6 +91,8 @@ export const defaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   heroBgType: 'preset',
   knownForPosition: 'hero_above_name',
+  clientLogosPosition: 'body_section',
+  showCustomization: true,
 };
 
 export const SectionVariantsCtx = createContext<{
