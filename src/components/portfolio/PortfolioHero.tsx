@@ -68,6 +68,7 @@ interface Props {
   heroBgType?: HeroBgType;
   heroBgSolidColor?: string;
   heroBgVideoUrl?: string;
+  knownForPosition?: KnownForPosition;
 }
 
 const platformIcons: Record<string, string> = {
