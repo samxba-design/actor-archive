@@ -34,7 +34,7 @@ const COPYWRITER_CATEGORIES = [
 const SkillsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
