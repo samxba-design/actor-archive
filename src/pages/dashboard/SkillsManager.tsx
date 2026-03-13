@@ -15,6 +15,7 @@ import { Loader2, Plus, Pencil, Trash2, Zap } from "lucide-react";
 import { useAuth as useAuthHook } from "@/hooks/useAuth";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Skill {
   id: string;
