@@ -310,6 +310,8 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
             </div>
           </>
         )}
+
+        {heroStyle === "compact" && (
           <p className="text-xs text-muted-foreground">Compact mode uses a shorter hero section — ideal for text-focused portfolios.</p>
         )}
       </CardContent>
