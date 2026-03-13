@@ -55,6 +55,7 @@ interface ProfileData {
   hero_bg_video_url?: string | null;
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
+  known_for_position?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
