@@ -120,7 +120,10 @@ const ClientManager = () => {
           title="Clients"
           description="Add the brands and companies you've worked with. Logos are auto-fetched, or you can upload your own."
         />
-        <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setLibraryOpen(true)}>Browse Library</Button>
+          <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
+        </div>
       </div>
       <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as a scrolling logo bar on your portfolio" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
 
