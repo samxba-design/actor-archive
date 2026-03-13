@@ -34,6 +34,22 @@ const GalleryManager = () => {
   const [imageType, setImageType] = useState("headshot");
 
   const atGalleryLimit = !isPro && images.length >= FREE_GALLERY_LIMIT;
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.findIndex(i => i.id === active.id);
+    const newIndex = images.findIndex(i => i.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+    const reordered = [...images];
+    const [moved] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, moved);
+    setImages(reordered);
+    await Promise.all(reordered.map((img, i) =>
+      supabase.from("gallery_images").update({ display_order: i }).eq("id", img.id)
+    ));
+  };
 
   const fetchImages = async () => {
     if (!user) return;
