@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 
 const quotes = [
@@ -19,6 +20,7 @@ const quotes = [
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -26,8 +28,14 @@ const Login = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--landing-bg))" }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="relative">
+            <div className="h-10 w-10 rounded-full border-2" style={{ borderColor: "hsl(var(--landing-border))" }} />
+            <div className="absolute inset-0 h-10 w-10 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "hsl(var(--landing-accent))", borderTopColor: "transparent" }} />
+          </div>
+          <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>Loading...</p>
+        </div>
       </div>
     );
   }
@@ -84,7 +92,12 @@ const Login = () => {
             <Label htmlFor="password" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>Password</Label>
             <Link to="/forgot-password" className="text-xs hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Forgot password?</Link>
           </div>
-          <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required className="border" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 20% 14%)", color: "hsl(var(--landing-fg))" }} />
+          <div className="relative">
+            <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required className="border pr-10" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(345 20% 14%)", color: "hsl(var(--landing-fg))" }} />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors" style={{ color: "hsl(var(--landing-muted))" }}>
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </div>
         <Button type="submit" className="w-full font-semibold border-0 text-white" disabled={loading}
           style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>

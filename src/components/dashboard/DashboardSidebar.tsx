@@ -207,12 +207,66 @@ export function DashboardSidebar() {
   const currentTypeConfig = PROFILE_TYPES.find(pt => pt.key === profileType);
   const TypeIcon = currentTypeConfig ? (SIDEBAR_ICON_MAP[currentTypeConfig.icon] || PenTool) : null;
 
+  const [profileData, setProfileData] = useState<{ display_name: string | null; profile_photo_url: string | null } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("display_name, profile_photo_url")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => { if (data) setProfileData(data); });
+  }, [user]);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
+        {/* User Identity */}
+        {profileData && (
+          <div className={`px-2 pt-3 pb-1 ${collapsed ? "flex justify-center" : ""}`}>
+            <div className={`flex items-center gap-2.5 ${collapsed ? "" : "px-2"}`}>
+              {profileData.profile_photo_url ? (
+                <img
+                  src={profileData.profile_photo_url}
+                  alt=""
+                  className="h-8 w-8 rounded-full object-cover shrink-0 ring-2 ring-primary/20"
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 ring-2 ring-primary/20">
+                  <User className="h-4 w-4 text-primary" />
+                </div>
+              )}
+              {!collapsed && (
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {profileData.display_name || user?.email?.split("@")[0] || "Your Profile"}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* View Portfolio — promoted */}
+        {slug && (
+          <div className="px-2 pt-1 pb-1">
+            <Button
+              size="sm"
+              className={`w-full font-semibold border-0 text-white ${collapsed ? "px-2" : ""}`}
+              style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))" }}
+              onClick={() => window.open(`/p/${slug}`, "_blank")}
+            >
+              <Eye className="h-4 w-4 shrink-0" />
+              {!collapsed && <span className="ml-2">View Portfolio</span>}
+            </Button>
+          </div>
+        )}
+
         {/* Profile Type Badge */}
         {currentTypeConfig && (
-          <div className="px-2 pt-3 pb-1">
+          <div className="px-2 pt-1 pb-1">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
@@ -279,17 +333,6 @@ export function DashboardSidebar() {
               <Crown className="h-2.5 w-2.5" /> PRO
             </span>
           </div>
-        )}
-        {slug && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start"
-            onClick={() => window.open(`/p/${slug}`, "_blank")}
-          >
-            <Eye className="mr-2 h-4 w-4 shrink-0" />
-            {!collapsed && <span>View Portfolio</span>}
-          </Button>
         )}
         <Button
           variant="ghost"

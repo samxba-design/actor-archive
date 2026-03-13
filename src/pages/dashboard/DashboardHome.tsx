@@ -336,12 +336,12 @@ const DashboardHome = () => {
         </div>
       )}
 
-      {/* Quick Start for Empty Profiles */}
+      {/* Quick Start for Empty Profiles — consolidated single import section */}
       {isEmptyProfile && (
         <div className="rounded-xl border-2 border-primary/30 p-6 bg-primary/5">
           <h2 className="text-lg font-semibold text-foreground mb-1">🚀 Get Started Fast</h2>
           <p className="text-sm text-muted-foreground mb-4">Auto-fill your profile from existing sources — we support LinkedIn, IMDb, personal websites, Spotlight, Mandy, and more.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <Button variant="outline" className="justify-start h-auto py-3" onClick={() => setResumeOpen(true)}>
               <FileText className="mr-2 h-4 w-4 text-primary" />
               <div className="text-left">
@@ -354,6 +354,13 @@ const DashboardHome = () => {
               <div className="text-left">
                 <p className="text-sm font-medium">Import from URL</p>
                 <p className="text-xs text-muted-foreground">LinkedIn, IMDb, website</p>
+              </div>
+            </Button>
+            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => setBulkOpen(true)}>
+              <Briefcase className="mr-2 h-4 w-4 text-primary" />
+              <div className="text-left">
+                <p className="text-sm font-medium">Bulk Import</p>
+                <p className="text-xs text-muted-foreground">CSV or JSON</p>
               </div>
             </Button>
             <Button variant="outline" className="justify-start h-auto py-3" onClick={() => navigate("/dashboard/profile")}>
@@ -402,37 +409,19 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Quick actions */}
-      <div className="rounded-xl border border-border p-6 bg-card/60">
-        <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {quickActions.map((qa, i) => (
-            <Button key={i} variant="outline" className="justify-start" onClick={() => navigate(qa.route)}>
-              <qa.icon className="mr-2 h-4 w-4" />{qa.label}
-            </Button>
-          ))}
+      {/* Quick actions — only for established profiles */}
+      {!isEmptyProfile && (
+        <div className="rounded-xl border border-border p-6 bg-card/60">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {quickActions.map((qa, i) => (
+              <Button key={i} variant="outline" className="justify-start" onClick={() => navigate(qa.route)}>
+                <qa.icon className="mr-2 h-4 w-4" />{qa.label}
+              </Button>
+            ))}
+          </div>
         </div>
-      </div>
-
-      {/* Smart Import Tools */}
-      <div className="rounded-xl border border-border p-6 bg-card/60">
-        <h2 className="text-lg font-semibold mb-2 text-foreground flex items-center gap-2">
-          <FileText className="h-5 w-5 text-primary" />
-          Smart Import
-        </h2>
-        <p className="text-sm text-muted-foreground mb-4">Auto-fill your profile from existing sources</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Button variant="outline" className="justify-start" onClick={() => setResumeOpen(true)}>
-            <FileText className="mr-2 h-4 w-4" />Import from Resume
-          </Button>
-          <Button variant="outline" className="justify-start" onClick={() => setUrlOpen(true)}>
-            <Share2 className="mr-2 h-4 w-4" />Import from URL
-          </Button>
-          <Button variant="outline" className="justify-start" onClick={() => setBulkOpen(true)}>
-            <Briefcase className="mr-2 h-4 w-4" />Bulk Import (CSV/JSON)
-          </Button>
-        </div>
-      </div>
+      )}
 
       <ResumeImporter open={resumeOpen} onOpenChange={setResumeOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
       <URLImporter open={urlOpen} onOpenChange={setUrlOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
