@@ -272,26 +272,26 @@ export const ServicesWithToggle = ({ items }: { items: any[] }) => (
 );
 
 export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => {
-  const { variants } = useSectionVariants();
+  const { variants, setVariant } = useSectionVariants();
   return (
     <>
       <SectionOptionsBar
         sectionName="Logo Layout"
         options={VARIANT_OPTIONS.clientLogos}
         value={variants.clientLogos}
-        onChange={(v) => {}}
+        onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
       />
       <SectionOptionsBar
         sectionName="Logo Color"
         options={VARIANT_OPTIONS.clientLogosColor}
         value={variants.clientLogosColor}
-        onChange={(v) => {}}
+        onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
       />
       <SectionOptionsBar
         sectionName="Logo Size"
         options={VARIANT_OPTIONS.clientLogosSize}
         value={variants.clientLogosSize}
-        onChange={(v) => {}}
+        onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
       />
       <SectionClientLogos
         companies={companies}
