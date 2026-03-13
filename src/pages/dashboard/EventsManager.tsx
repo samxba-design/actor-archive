@@ -34,6 +34,8 @@ interface Event {
 const EventsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);

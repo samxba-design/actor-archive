@@ -43,6 +43,8 @@ const EMPTY: Omit<Service, "id"> = {
 const ServicesManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
