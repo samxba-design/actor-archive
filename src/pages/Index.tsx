@@ -482,7 +482,7 @@ const Index = () => {
                   />
                   <div className="p-3 space-y-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-800" />
+                      <div className="w-8 h-8 rounded-full" style={{ background: "hsl(var(--landing-accent))" }} />
                       <div>
                         <div className="h-2 w-20 rounded-full" style={{ background: "hsl(30 15% 25%)" }} />
                         <div className="h-1.5 w-14 rounded-full mt-1" style={{ background: "hsl(30 10% 70%)" }} />
