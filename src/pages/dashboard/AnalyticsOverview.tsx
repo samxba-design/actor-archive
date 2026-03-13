@@ -22,6 +22,7 @@ const AnalyticsOverview = () => {
   const [topCities, setTopCities] = useState<{ city: string; count: number }[]>([]);
   const [downloads, setDownloads] = useState<{ downloader_name: string | null; downloader_email: string | null; document_url: string | null; created_at: string | null }[]>([]);
   const [totalDownloads, setTotalDownloads] = useState(0);
+  const [engagement, setEngagement] = useState<{ contact_clicks: number; cta_clicks: number; reel_plays: number; cv_downloads: number }>({ contact_clicks: 0, cta_clicks: 0, reel_plays: 0, cv_downloads: 0 });
 
   useEffect(() => {
     if (!user) return;
