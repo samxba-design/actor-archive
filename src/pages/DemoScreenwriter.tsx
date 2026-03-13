@@ -338,12 +338,7 @@ const TimelineLayout = () => {
 /* 8. BENTO — Asymmetric masonry-like grid */
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
-    <div className="sm:col-span-2">
-      <PortfolioSectionWrapper title="Written For" index={7}>
-        <ClientLogosWithToggle companies={mockClients} />
-      </PortfolioSectionWrapper>
-    </div>
-    <div>
+    <div className="sm:col-span-2 lg:col-span-3">
       <PortfolioSectionWrapper title="Written For" index={7}>
         <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
@@ -355,7 +350,7 @@ const BentoLayout = () => (
     </div>
     <div>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="sm:col-span-2 lg:col-span-3">
