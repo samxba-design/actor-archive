@@ -91,7 +91,7 @@ const PublishedWorkManager = () => {
   }, [user]);
 
   const resetForm = () => {
-    setForm({ title: "", summary: "", category: "", publication: "", date: "", read_time: "", cover_image_url: "", pdf_thumbnail_url: "", pdf_url: "", article_url: "", is_featured: false, show_text_overlay: true });
+    setForm({ title: "", summary: "", category: "", publication: "", date: "", read_time: "", cover_image_url: "", pdf_thumbnail_url: "", pdf_url: "", article_url: "", is_featured: false, show_text_overlay: true, collection_id: "" });
     setEditing(null);
   };
 
