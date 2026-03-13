@@ -198,8 +198,11 @@ const DashboardHome = () => {
       ? [{ label: "Manage Gallery", icon: Image, route: "/dashboard/gallery" }]
       : [{ label: "Manage Projects", icon: FolderOpen, route: "/dashboard/projects" }]
     ),
+    { label: "Theme & Appearance", icon: Palette, route: "/dashboard/settings" },
     { label: "Settings", icon: Settings, route: "/dashboard/settings" },
   ];
+
+  const isEmptyProfile = projectCount === 0 && !profile?.bio;
 
   const handlePublishToggle = () => {
     setPublishAction(profile?.is_published ? "unpublish" : "publish");
