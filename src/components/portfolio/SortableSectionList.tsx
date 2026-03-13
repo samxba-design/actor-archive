@@ -31,7 +31,7 @@ interface Props {
   bio?: string | null;
 }
 
-const SortableSectionList = ({ allSections, profileId, profileType, profileSlug }: Props) => {
+const SortableSectionList = ({ allSections, profileId, profileType, profileSlug, bio }: Props) => {
   const { editMode, sectionOrder, setSectionOrder, sectionsVisible } = useEditMode();
 
   const sensors = useSensors(
@@ -74,6 +74,7 @@ const SortableSectionList = ({ allSections, profileId, profileType, profileSlug 
               profileType={profileType}
               profileSlug={profileSlug}
               sectionIndex={idx}
+              bio={bio}
             />
           ))}
       </>
@@ -101,6 +102,7 @@ const SortableSectionList = ({ allSections, profileId, profileType, profileSlug 
               profileType={profileType}
               profileSlug={profileSlug}
               sectionIndex={idx}
+              bio={bio}
             />
           </DraggableSectionWrapper>
         ))}

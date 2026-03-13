@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
 import { ServiceDescriptionAI } from "@/components/dashboard/ServiceDescriptionAI";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Service {
   id: string;
@@ -41,6 +43,8 @@ const EMPTY: Omit<Service, "id"> = {
 const ServicesManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -127,8 +131,8 @@ const ServicesManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Services"
-          description="List what you offer professionally — script coverage, coaching, production, etc. Include pricing and turnaround to attract clients."
+          title={labels.servicesTitle}
+          description={labels.servicesDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Service</Button>
       </div>

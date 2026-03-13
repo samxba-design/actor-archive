@@ -13,6 +13,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, CalendarDays } from "lucide-react";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Event {
   id: string;
@@ -32,6 +34,8 @@ interface Event {
 const EventsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -70,8 +74,8 @@ const EventsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Events"
-          description="List upcoming screenings, performances, festivals, or appearances. Upcoming events show a badge on your portfolio."
+          title={labels.eventsTitle}
+          description={labels.eventsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Event</Button>
       </div>

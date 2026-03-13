@@ -12,6 +12,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Trophy } from "lucide-react";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Award {
   id: string;
@@ -26,6 +28,8 @@ interface Award {
 const AwardsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Award[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -64,8 +68,8 @@ const AwardsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Awards & Festivals"
-          description="Showcase festival laurels, competition wins, and fellowships. These appear as badges on your public portfolio and boost credibility."
+          title={labels.awardsTitle}
+          description={labels.awardsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>

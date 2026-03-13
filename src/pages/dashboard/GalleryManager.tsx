@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 type GalleryImage = Tables<"gallery_images">;
 
@@ -21,6 +23,8 @@ const GalleryManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { isPro } = useSubscription();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -88,8 +92,8 @@ const GalleryManager = () => {
   return (
     <div className="max-w-4xl space-y-6">
       <PageHeader
-        title="Gallery"
-        description="Upload headshots, production stills, and behind-the-scenes photos. These display in a gallery grid on your portfolio."
+        title={labels.galleryTitle}
+        description={labels.galleryDescription}
       />
 
       <Card>

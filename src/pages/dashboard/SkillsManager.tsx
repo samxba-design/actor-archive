@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Zap } from "lucide-react";
 import { useAuth as useAuthHook } from "@/hooks/useAuth";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Skill {
   id: string;
@@ -31,22 +33,19 @@ const COPYWRITER_CATEGORIES = [
 const SkillsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { profileType } = useProfileTypeContext();
+  const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Skill | null>(null);
   const [form, setForm] = useState({ name: "", category: "", proficiency: "proficient" });
   const [saving, setSaving] = useState(false);
-  const [profileType, setProfileType] = useState<string | null>(null);
 
   const fetchItems = async () => {
     if (!user) return;
-    const [{ data }, { data: profileData }] = await Promise.all([
-      supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order"),
-      supabase.from("profiles").select("profile_type").eq("id", user.id).single(),
-    ]);
+    const { data } = await supabase.from("skills").select("*").eq("profile_id", user.id).order("display_order");
     setItems(data || []);
-    setProfileType(profileData?.profile_type || null);
     setLoading(false);
   };
 
@@ -82,8 +81,8 @@ const SkillsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Skills"
-          description="List your technical and creative skills. Group them by category (e.g. Software, Languages, Instruments) for a clean portfolio layout."
+          title={labels.skillsTitle}
+          description={labels.skillsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Skill</Button>
       </div>
