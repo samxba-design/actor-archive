@@ -149,7 +149,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   // CRITICAL: Banner images always get a dark scrim, so force light text regardless of theme
   const isLightPreset = profile.hero_background_preset === 'arctic-light';
   const solidIsLight = heroBgType === 'solid' && heroBgSolidColor ? isLightColor(heroBgSolidColor) : false;
-  const hasDarkBg = heroBgType === 'bokeh' || heroBgType === 'video' || heroBgType === 'gradient'
+  const hasDarkBg = heroBgType === 'bokeh' || heroBgType === 'video' || heroBgType === 'gradient' || heroBgType === 'image'
     || (heroBgType === 'preset' && hasBannerImage)
     || (heroBgType === 'preset' && !!presetGradient && !isLightPreset)
     || (heroBgType === 'solid' && !solidIsLight);
