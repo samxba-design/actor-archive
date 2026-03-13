@@ -404,8 +404,21 @@ const ProjectsManager = () => {
     );
   }
 
+  const nearProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT - 2 && projects.length < FREE_PROJECT_LIMIT;
+
   return (
     <div className="max-w-3xl space-y-6">
+      {/* Free tier limit warning */}
+      {!isPro && (nearProjectLimit || atProjectLimit) && (
+        <div className={`rounded-lg border px-4 py-3 text-sm flex items-center gap-3 ${atProjectLimit ? 'bg-destructive/10 border-destructive/30 text-destructive' : 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400'}`}>
+          <span>{atProjectLimit
+            ? `You've reached the free limit of ${FREE_PROJECT_LIMIT} projects. Upgrade to Pro for unlimited projects.`
+            : `You're using ${projects.length} of ${FREE_PROJECT_LIMIT} free projects.`}
+          </span>
+          <a href="/pricing" className="ml-auto text-xs font-semibold underline whitespace-nowrap">Upgrade</a>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <PageHeader
           title={labels.projects}

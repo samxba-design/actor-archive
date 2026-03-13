@@ -150,8 +150,21 @@ const GalleryManager = () => {
     return <div className="max-w-4xl"><ManagerErrorState message={`Could not load gallery: ${error}`} onRetry={fetchImages} /></div>;
   }
 
+  const nearGalleryLimit = !isPro && images.length >= FREE_GALLERY_LIMIT - 1 && images.length < FREE_GALLERY_LIMIT;
+
   return (
     <div className="max-w-4xl space-y-6">
+      {/* Free tier limit warning */}
+      {!isPro && (nearGalleryLimit || atGalleryLimit) && (
+        <div className={`rounded-lg border px-4 py-3 text-sm flex items-center gap-3 ${atGalleryLimit ? 'bg-destructive/10 border-destructive/30 text-destructive' : 'bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400'}`}>
+          <span>{atGalleryLimit
+            ? `You've reached the free limit of ${FREE_GALLERY_LIMIT} gallery images. Upgrade to Pro for unlimited uploads.`
+            : `You're using ${images.length} of ${FREE_GALLERY_LIMIT} free gallery images.`}
+          </span>
+          <a href="/pricing" className="ml-auto text-xs font-semibold underline whitespace-nowrap">Upgrade</a>
+        </div>
+      )}
+
       <PageHeader
         title={labels.galleryTitle}
         description={labels.galleryDescription}
