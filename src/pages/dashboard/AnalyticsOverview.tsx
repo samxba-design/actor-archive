@@ -79,7 +79,7 @@ const AnalyticsOverview = () => {
 
       // Top referrers
       const refs: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const r = v.referrer || "Direct";
         try {
           const host = r === "Direct" ? r : new URL(r).hostname;
