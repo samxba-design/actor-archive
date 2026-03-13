@@ -82,7 +82,7 @@ const StandardLayout = () => (
         <PublishedWorkWithToggle items={mockPublishedWork} />
       </PortfolioSectionWrapper>
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">
       <PortfolioSectionWrapper title="Case Studies" index={0}>
         <CaseStudiesWithToggle items={mockCaseStudies} />
       </PortfolioSectionWrapper>
@@ -390,7 +390,7 @@ const DashboardLayoutComponent = () => {
           <TestimonialsWithToggle items={mockTestimonials} />
         </GlassCard>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Awards</h3>
           <AwardsWithToggle items={mockAwards} />
@@ -402,6 +402,16 @@ const DashboardLayoutComponent = () => {
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Skills</h3>
           <SkillsWithToggle items={mockSkills} />
+        </GlassCard>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Published Work</h3>
+          <PublishedWorkWithToggle items={mockPublishedWork} />
+        </GlassCard>
+        <GlassCard className="p-5">
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Education</h3>
+          <EducationWithToggle items={mockEducation} />
         </GlassCard>
       </div>
     </>

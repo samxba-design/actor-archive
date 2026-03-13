@@ -475,8 +475,8 @@ const DashboardLayout = () => {
           <PressWithToggle items={mockPress} />
         </GlassCard>
         <GlassCard className="p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
-          <SectionServices items={mockServices} variant="compact" />
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Education</h3>
+          <EducationWithToggle items={mockEducation} />
         </GlassCard>
       </div>
     </>
