@@ -306,10 +306,21 @@ const Onboarding = () => {
                   if (skipping) return;
                   setSkipping(true);
                   try {
-                    // Single update that marks onboarding complete without resetting other data
+                    // Save partial data before skipping
+                    const pt = data.profileType === "multi_hyphenate" ? "multi_hyphenate" as ProfileType : data.profileType;
                     await supabase
                       .from("profiles")
-                      .update({ onboarding_completed: true, is_draft: false })
+                      .update({
+                        onboarding_completed: true, is_draft: false,
+                        ...(pt && { profile_type: pt }),
+                        ...(data.displayName && { display_name: data.displayName }),
+                        ...(data.firstName && { first_name: data.firstName }),
+                        ...(data.lastName && { last_name: data.lastName }),
+                        ...(data.slug && { slug: data.slug }),
+                        ...(data.tagline && { tagline: data.tagline }),
+                        ...(data.location && { location: data.location }),
+                        ...(data.theme && { theme: data.theme }),
+                      })
                       .eq("id", user!.id);
                     localStorage.removeItem(STORAGE_KEY);
                     navigate("/dashboard", { replace: true });
