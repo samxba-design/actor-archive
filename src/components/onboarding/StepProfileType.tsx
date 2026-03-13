@@ -37,12 +37,12 @@ const StepProfileType = ({ data, updateData, onNext, stepMeta }: Props) => {
 
     if (selected.length === 1) {
       updateData({
-        profileType: selected[0] as any,
+        profileType: selected[0] as ProfileType,
         secondaryTypes: [],
       });
     } else {
       updateData({
-        profileType: "multi_hyphenate" as any,
+        profileType: "multi_hyphenate" as ProfileType,
         secondaryTypes: selected,
       });
     }

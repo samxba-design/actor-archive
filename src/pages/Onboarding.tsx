@@ -216,7 +216,7 @@ const Onboarding = () => {
       }
 
       // Save specializations as skills for copywriters
-      const specializations = (data as any).specializations as string[] | undefined;
+      const specializations = data.specializations;
       if (specializations && specializations.length > 0) {
         const skillRows = specializations.map((name, i) => ({
           profile_id: user.id,

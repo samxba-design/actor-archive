@@ -280,7 +280,7 @@ const PublicProfile = () => {
 
         <div id="portfolio-contact">
           <PortfolioFooter
-            profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier, contact_mode: (profile as any).contact_mode }}
+            profile={{ ...profile, auto_responder_enabled: profile.auto_responder_enabled, auto_responder_message: profile.auto_responder_message, subscription_tier: profile.subscription_tier, contact_mode: profile.contact_mode }}
             showContact={showContact}
           />
         </div>

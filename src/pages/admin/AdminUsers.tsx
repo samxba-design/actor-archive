@@ -68,11 +68,11 @@ export default function AdminUsers() {
     }
 
     if (tierFilter !== "all") {
-      query = query.eq("subscription_tier", tierFilter as any);
+      query = query.eq("subscription_tier", tierFilter);
     }
 
     if (typeFilter !== "all") {
-      query = query.eq("profile_type", typeFilter as any);
+      query = query.eq("profile_type", typeFilter);
     }
 
     if (statusFilter === "published") {

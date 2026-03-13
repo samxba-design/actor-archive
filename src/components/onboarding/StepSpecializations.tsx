@@ -38,7 +38,7 @@ const StepSpecializations = ({ data, updateData, onNext, onBack, stepMeta }: Pro
         ? prev.filter(s => s !== name)
         : [...prev, name];
       // Store on data for persistence
-      updateData({ ...(data as any), specializations: next } as any);
+      updateData({ specializations: next });
       return next;
     });
   };

@@ -96,7 +96,7 @@ const CustomSectionsManager = () => {
 
   const updateSection = async (id: string, updates: Partial<CustomSection>) => {
     setSaving(id);
-    await supabase.from("custom_sections" as any).update(updates as any).eq("id", id);
+    await supabase.from("custom_sections").update(updates).eq("id", id);
     setSections(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
     setSaving(null);
   };

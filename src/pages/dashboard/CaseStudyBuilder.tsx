@@ -142,10 +142,10 @@ const CaseStudyBuilder = () => {
       <Card>
         <CardHeader><CardTitle className="text-lg">Key Metrics</CardTitle><CardDescription>Add up to 3 standout numbers.</CardDescription></CardHeader>
         <CardContent className="space-y-3">
-          {[1, 2, 3].map((n) => (
+          {([1, 2, 3] as const).map((n) => (
             <div key={n} className="grid grid-cols-2 gap-3">
-              <div><Label>Metric {n} Label</Label><Input value={(form as any)[`metric${n}Label`]} onChange={update(`metric${n}Label`)} placeholder="e.g. Revenue increase" /></div>
-              <div><Label>Value</Label><Input value={(form as any)[`metric${n}Value`]} onChange={update(`metric${n}Value`)} placeholder="e.g. +47%" /></div>
+              <div><Label>Metric {n} Label</Label><Input value={form[`metric${n}Label` as keyof typeof form]} onChange={update(`metric${n}Label`)} placeholder="e.g. Revenue increase" /></div>
+              <div><Label>Value</Label><Input value={form[`metric${n}Value` as keyof typeof form]} onChange={update(`metric${n}Value`)} placeholder="e.g. +47%" /></div>
             </div>
           ))}
         </CardContent>
