@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Users } from "lucide-react";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Rep {
   id: string;
