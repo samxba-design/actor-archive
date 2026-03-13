@@ -58,8 +58,8 @@ const PressManager = () => {
 
   useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
-  const openAdd = () => { setEditing(null); setForm({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false }); setDialogOpen(true); };
-  const openEdit = (item: Press) => { setEditing(item); setForm({ title: item.title, publication: item.publication || "", date: item.date || "", article_url: item.article_url || "", pull_quote: item.pull_quote || "", excerpt: item.excerpt || "", star_rating: item.star_rating?.toString() || "", is_featured: item.is_featured || false }); setDialogOpen(true); };
+  const openAdd = () => { setEditing(null); setForm({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false, project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Press) => { setEditing(item); setForm({ title: item.title, publication: item.publication || "", date: item.date || "", article_url: item.article_url || "", pull_quote: item.pull_quote || "", excerpt: item.excerpt || "", star_rating: item.star_rating?.toString() || "", is_featured: item.is_featured || false, project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
