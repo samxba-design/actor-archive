@@ -8,14 +8,17 @@ interface ClientItem {
   website_url?: string | null;
 }
 
+type ColorMode = 'original' | 'grayscale' | 'theme';
+
 interface Props {
   items?: ClientItem[];
   /** Legacy prop — plain company names for Clearbit lookup */
   companies?: string[];
   variant?: 'bar' | 'grid' | 'marquee';
+  colorMode?: ColorMode;
 }
 
-const SectionClientLogos = ({ items, companies, variant = 'bar' }: Props) => {
+const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original' }: Props) => {
   const theme = usePortfolioTheme();
 
   // Normalize: DB items take priority, fall back to legacy string array
