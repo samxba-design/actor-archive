@@ -15,6 +15,7 @@ import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Sea
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
