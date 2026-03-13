@@ -313,7 +313,7 @@ const Index = () => {
       {/* Spotlight that follows mouse */}
       <div className="spotlight-follow" />
 
-      <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />
+      <MarketingNav />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
