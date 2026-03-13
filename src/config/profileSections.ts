@@ -74,6 +74,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "press", label: "Press & Reviews", description: "Coverage and features" },
       { key: "testimonials", label: "Testimonials", description: "What collaborators say" },
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
+      { key: "education", label: "Education & Training", description: "Degrees, workshops, mentorships" },
       { key: "representation", label: "Representation", description: "Agent & manager info" },
       { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
       { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
