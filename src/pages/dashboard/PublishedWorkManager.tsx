@@ -43,6 +43,7 @@ const CATEGORIES = [
 const PublishedWorkManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const [items, setItems] = useState<PublishedWork[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
