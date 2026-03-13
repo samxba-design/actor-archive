@@ -273,6 +273,9 @@ const SettingsPage = () => {
         known_for_position: knownForPosition || "hero_above_name",
         cta_style: ctaStyle || null,
         client_logos_position: clientLogosPosition || "body_section",
+        professional_status: professionalStatus || null,
+        status_badge_color: statusBadgeColor || "green",
+        status_badge_animation: statusBadgeAnimation || "pulse",
       } as any)
       .eq("id", user.id);
 
