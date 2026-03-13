@@ -466,6 +466,8 @@ const DemoActor = () => {
   const dynamicProfile = {
     ...mockProfile,
     cta_label: CTA_LABELS[variants.ctaPreset] || mockProfile.cta_label,
+    status_badge_color: variants.statusBadgeColor,
+    status_badge_animation: variants.statusBadgeAnimation,
   };
 
   const LayoutComponent = LAYOUT_MAP[layoutPreset];

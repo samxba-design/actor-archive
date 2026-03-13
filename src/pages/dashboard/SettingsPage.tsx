@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles } from "lucide-react";
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
@@ -71,6 +71,9 @@ const SettingsPage = () => {
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
   const [clientLogosPosition, setClientLogosPosition] = useState<string>("body_section");
+  const [professionalStatus, setProfessionalStatus] = useState<string>("");
+  const [statusBadgeColor, setStatusBadgeColor] = useState<string>("green");
+  const [statusBadgeAnimation, setStatusBadgeAnimation] = useState<string>("pulse");
   const [form, setForm] = useState({
     slug: "",
     theme: "cinematic-dark",
@@ -105,7 +108,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -119,6 +122,9 @@ const SettingsPage = () => {
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
           setClientLogosPosition((data as any).client_logos_position || "body_section");
+          setProfessionalStatus((data as any).professional_status || "");
+          setStatusBadgeColor((data as any).status_badge_color || "green");
+          setStatusBadgeAnimation((data as any).status_badge_animation || "pulse");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
@@ -267,6 +273,9 @@ const SettingsPage = () => {
         known_for_position: knownForPosition || "hero_above_name",
         cta_style: ctaStyle || null,
         client_logos_position: clientLogosPosition || "body_section",
+        professional_status: professionalStatus || null,
+        status_badge_color: statusBadgeColor || "green",
+        status_badge_animation: statusBadgeAnimation || "pulse",
       } as any)
       .eq("id", user.id);
 
@@ -779,13 +788,144 @@ const SettingsPage = () => {
             <Label>Show Contact Form</Label>
             <Switch checked={form.show_contact_form} onCheckedChange={(v) => setForm((f) => ({ ...f, show_contact_form: v }))} />
           </div>
-          <div className="flex items-center justify-between">
-            <Label>Available for Hire</Label>
-            <Switch checked={form.available_for_hire} onCheckedChange={(v) => setForm((f) => ({ ...f, available_for_hire: v }))} />
+        </CardContent>
+      </Card>
+
+      {/* Status Badge */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Sparkles className="h-4 w-4" /> Status Badge</CardTitle>
+          <CardDescription>The status indicator shown on your portfolio hero (e.g. "Available for Hire")</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Quick presets */}
+          <div>
+            <Label className="mb-2 block">Quick Select</Label>
+            <div className="flex flex-wrap gap-1.5">
+              {(() => {
+                const sharedPresets = ["Available for Hire", "Open to Opportunities", "Not Currently Available"];
+                const typePresets: Record<string, string[]> = {
+                  actor: ["Available for Auditions", "Seeking Representation", "On Set", "Between Projects"],
+                  screenwriter: ["Open to Assignments", "Seeking Representation", "In Writers' Room", "Staffing Season"],
+                  tv_writer: ["Open to Assignments", "Seeking Representation", "In Writers' Room", "Staffing Season"],
+                  director: ["Accepting Projects", "In Production", "In Post", "In Development"],
+                  producer: ["Accepting Projects", "In Production", "In Post", "In Development"],
+                  copywriter: ["Available for Projects", "Accepting Clients", "Booked Through Q2"],
+                  author: ["On Book Tour", "Accepting Submissions", "Writing Next Book"],
+                  journalist: ["Open to Commissions", "On Assignment"],
+                };
+                const presets = [...(typePresets[profileType || ""] || []), ...sharedPresets];
+                return presets.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setProfessionalStatus(p)}
+                    className={`text-xs px-2.5 py-1 rounded-full border transition-all ${
+                      professionalStatus === p
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ));
+              })()}
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <Label>Seeking Representation</Label>
-            <Switch checked={form.seeking_representation} onCheckedChange={(v) => setForm((f) => ({ ...f, seeking_representation: v }))} />
+          {/* Custom text */}
+          <div>
+            <Label>Custom Status Text</Label>
+            <Input
+              value={professionalStatus}
+              onChange={(e) => setProfessionalStatus(e.target.value)}
+              placeholder="Type a custom status..."
+              className="mt-1"
+            />
+          </div>
+          {/* Color */}
+          <div>
+            <Label className="mb-2 block">Badge Color</Label>
+            <div className="flex gap-2">
+              {[
+                { id: "green", color: "#22c55e" }, { id: "blue", color: "#3b82f6" },
+                { id: "gold", color: "#f59e0b" }, { id: "red", color: "#ef4444" },
+                { id: "purple", color: "#a855f7" }, { id: "white", color: "#ffffff" },
+                { id: "accent", color: form.accent_color },
+              ].map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setStatusBadgeColor(c.id)}
+                  className={`w-7 h-7 rounded-full border-2 transition-all ${
+                    statusBadgeColor === c.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "border-border"
+                  }`}
+                  style={{ backgroundColor: c.color }}
+                  title={c.id.charAt(0).toUpperCase() + c.id.slice(1)}
+                />
+              ))}
+            </div>
+          </div>
+          {/* Animation */}
+          <div>
+            <Label className="mb-2 block">Effect</Label>
+            <div className="flex gap-1.5">
+              {[
+                { id: "pulse", label: "Pulse", desc: "Animated ping dot" },
+                { id: "glow", label: "Glow", desc: "Soft shadow pulse" },
+                { id: "breathe", label: "Breathe", desc: "Opacity fade" },
+                { id: "static", label: "Static", desc: "No animation" },
+                { id: "none", label: "None", desc: "Text only" },
+              ].map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => setStatusBadgeAnimation(a.id)}
+                  className={`text-xs px-2.5 py-1.5 rounded-lg border transition-all ${
+                    statusBadgeAnimation === a.id
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-primary/40"
+                  }`}
+                  title={a.desc}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Preview */}
+          {professionalStatus && (
+            <div className="pt-3 border-t border-border">
+              <Label className="mb-2 block text-xs text-muted-foreground">Preview</Label>
+              <div className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest"
+                style={{
+                  color: statusBadgeColor === 'accent' ? form.accent_color
+                    : { green: '#22c55e', blue: '#3b82f6', gold: '#f59e0b', red: '#ef4444', purple: '#a855f7', white: '#ffffff' }[statusBadgeColor] || '#22c55e',
+                }}
+              >
+                {statusBadgeAnimation !== 'none' && (
+                  <span className="relative flex h-1.5 w-1.5">
+                    {statusBadgeAnimation === 'pulse' && (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30"
+                        style={{ backgroundColor: 'currentColor' }} />
+                    )}
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5"
+                      style={{ backgroundColor: 'currentColor' }} />
+                  </span>
+                )}
+                {professionalStatus}
+              </div>
+            </div>
+          )}
+          {/* Hide badge */}
+          <div className="flex items-center justify-between pt-2">
+            <div>
+              <Label>Hide Badge</Label>
+              <p className="text-xs text-muted-foreground">Remove the status indicator entirely</p>
+            </div>
+            <Switch
+              checked={!professionalStatus}
+              onCheckedChange={(hidden) => {
+                if (hidden) setProfessionalStatus("");
+                else setProfessionalStatus("Available for Hire");
+              }}
+            />
           </div>
         </CardContent>
       </Card>

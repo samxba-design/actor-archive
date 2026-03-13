@@ -59,6 +59,8 @@ export interface SectionVariants {
   heroBgType: HeroBgType;
   knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
   clientLogosPosition: 'below_hero' | 'above_sections' | 'body_section' | 'hidden';
+  statusBadgeColor: 'green' | 'blue' | 'gold' | 'red' | 'purple' | 'white' | 'accent';
+  statusBadgeAnimation: 'pulse' | 'glow' | 'breathe' | 'static' | 'none';
   showCustomization: boolean;
 }
 
@@ -92,6 +94,8 @@ export const defaultVariants: SectionVariants = {
   heroBgType: 'preset',
   knownForPosition: 'hero_above_name',
   clientLogosPosition: 'body_section',
+  statusBadgeColor: 'green',
+  statusBadgeAnimation: 'pulse',
   showCustomization: true,
 };
 
@@ -211,6 +215,17 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'above_sections', label: 'Above Sections' },
     { key: 'body_section', label: 'Body Section' },
     { key: 'hidden', label: 'Hidden' },
+  ],
+  statusBadgeColor: [
+    { key: 'green', label: 'Green' }, { key: 'blue', label: 'Blue' },
+    { key: 'gold', label: 'Gold' }, { key: 'red', label: 'Red' },
+    { key: 'purple', label: 'Purple' }, { key: 'white', label: 'White' },
+    { key: 'accent', label: 'Theme' },
+  ],
+  statusBadgeAnimation: [
+    { key: 'pulse', label: 'Pulse' }, { key: 'glow', label: 'Glow' },
+    { key: 'breathe', label: 'Breathe' }, { key: 'static', label: 'Static' },
+    { key: 'none', label: 'None' },
   ],
   showCustomization: [],
 };
