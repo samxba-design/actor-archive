@@ -464,7 +464,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   /* ══════════════════ LAYOUT RENDERERS ══════════════════ */
 
   const renderClassic = () => (
-    <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
+    <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: typeof window !== 'undefined' && window.innerWidth < 640 ? 'auto' : heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
         {showKnownForAt('hero_above_name') && (
           <div id="tour-known-for" className="mb-6" style={stagger(0)}><KnownForStrip /></div>
@@ -484,12 +484,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <CredentialRow style={stagger(2)} />
             <BioEl style={stagger(3)} />
             {showCta && <div style={stagger(4)}><CtaEl /></div>}
-            {showKnownForAt('hero_below_cta') && (
-              <div className="mt-3" style={stagger(5)}><KnownForStrip /></div>
-            )}
           </div>
           <RightContent />
         </div>
+        {showKnownForAt('hero_below_cta') && (
+          <div className="mt-4 w-full" style={stagger(5)}><KnownForStrip /></div>
+        )}
         {showKnownForAt('hero_beside_photo') && (
           <div className="lg:hidden mt-4" style={stagger(5)}><KnownForStrip /></div>
         )}

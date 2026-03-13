@@ -33,7 +33,12 @@ const SortableGalleryItem = ({ img, onDelete }: { img: GalleryImage; onDelete: (
         <GripVertical className="h-3.5 w-3.5 text-white" />
       </div>
       <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2">
+        {onSetAsProfile && (
+          <Button variant="secondary" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onSetAsProfile(img.image_url)} title="Set as profile photo">
+            <User className="h-4 w-4" />
+          </Button>
+        )}
         <Button variant="destructive" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => onDelete(img.id)}>
           <Trash2 className="h-4 w-4" />
         </Button>
