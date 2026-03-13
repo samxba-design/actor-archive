@@ -122,6 +122,9 @@ const SettingsPage = () => {
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
           setClientLogosPosition((data as any).client_logos_position || "body_section");
+          setProfessionalStatus((data as any).professional_status || "");
+          setStatusBadgeColor((data as any).status_badge_color || "green");
+          setStatusBadgeAnimation((data as any).status_badge_animation || "pulse");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
