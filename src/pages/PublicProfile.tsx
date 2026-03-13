@@ -57,12 +57,18 @@ interface ProfileData {
   hero_bg_type?: string | null;
   hero_bg_solid_color?: string | null;
   hero_bg_video_url?: string | null;
+  hero_bg_image_url?: string | null;
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
   known_for_position?: string | null;
   auto_responder_enabled?: boolean | null;
   auto_responder_message?: string | null;
   cta_style?: string | null;
+  professional_status?: string | null;
+  status_badge_color?: string | null;
+  status_badge_animation?: string | null;
+  client_logos_position?: string | null;
+  headshot_style?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
