@@ -70,6 +70,7 @@ interface ProfileData {
   status_badge_animation?: string | null;
   client_logos_position?: string | null;
   headshot_style?: string | null;
+  ga_measurement_id?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
