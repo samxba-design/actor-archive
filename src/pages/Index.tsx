@@ -302,7 +302,7 @@ const Index = () => {
 
       <SEOHead
         title="CreativeSlate — Professional Portfolios for Film & TV"
-        description="Build a stunning portfolio in minutes. Showcase scripts, reels, credits, and headshots with 10+ premium themes. Free forever."
+        description="Build a stunning portfolio in minutes. Showcase scripts, reels, credits, and headshots with 17 premium themes. Free forever."
         path="/"
         jsonLd={jsonLd}
       />
