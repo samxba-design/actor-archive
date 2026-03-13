@@ -194,6 +194,7 @@ const SettingsPage = () => {
             layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "",
             seo_indexable: (data as any).seo_indexable || false,
+            ga_measurement_id: (data as any).ga_measurement_id || "",
           });
         }
         setLoading(false);
