@@ -461,22 +461,33 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderClassic = () => (
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
+        {showKnownForAt('hero_above_name') && (
           <div id="tour-known-for" className="mb-6" style={stagger(0)}><KnownForStrip /></div>
         )}
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-end">
           <div id="tour-identity" className="flex-1 min-w-0 space-y-3">
             <div className="flex items-end gap-4" style={stagger(1)}>
-              <PhotoEl />
+              <div className="flex flex-col items-center gap-2">
+                <PhotoEl />
+                {showKnownForAt('hero_beside_photo') && (
+                  <div className="hidden lg:block mt-2" style={stagger(0)}><KnownForStrip /></div>
+                )}
+              </div>
               <div className="min-w-0 pb-1"><NameEl /><RepLine /></div>
             </div>
             <TaglineEl style={stagger(1)} />
             <CredentialRow style={stagger(2)} />
             <BioEl style={stagger(3)} />
             {showCta && <div style={stagger(4)}><CtaEl /></div>}
+            {showKnownForAt('hero_below_cta') && (
+              <div className="mt-3" style={stagger(5)}><KnownForStrip /></div>
+            )}
           </div>
           <RightContent />
         </div>
+        {showKnownForAt('hero_beside_photo') && (
+          <div className="lg:hidden mt-4" style={stagger(5)}><KnownForStrip /></div>
+        )}
         {heroRightContent !== 'stats' && (
           <div className="mt-6 pt-5" style={{ borderTop: `1px solid ${profile.banner_url ? 'rgba(255,255,255,0.06)' : theme.borderDefault}`, ...stagger(6) }}>
             <StatsBar />
