@@ -61,8 +61,8 @@ const EventsManager = () => {
 
   useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
-  const openAdd = () => { setEditing(null); setForm({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true }); setDialogOpen(true); };
-  const openEdit = (item: Event) => { setEditing(item); setForm({ title: item.title, event_type: item.event_type || "", venue: item.venue || "", city: item.city || "", country: item.country || "", date: item.date || "", end_date: item.end_date || "", ticket_url: item.ticket_url || "", description: item.description || "", is_upcoming: item.is_upcoming ?? true }); setDialogOpen(true); };
+  const openAdd = () => { setEditing(null); setForm({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true, project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Event) => { setEditing(item); setForm({ title: item.title, event_type: item.event_type || "", venue: item.venue || "", city: item.city || "", country: item.country || "", date: item.date || "", end_date: item.end_date || "", ticket_url: item.ticket_url || "", description: item.description || "", is_upcoming: item.is_upcoming ?? true, project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
