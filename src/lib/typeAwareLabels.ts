@@ -69,6 +69,7 @@ const defaults: TypeAwareLabels = {
   testimonialsDescription: "Collect quotes from collaborators and clients.",
   skillsTitle: "Skills",
   skillsDescription: "Highlight your areas of expertise and proficiency.",
+  knownForTitle: "Known For",
   showClientField: false,
   showVideoUrl: true,
 };
