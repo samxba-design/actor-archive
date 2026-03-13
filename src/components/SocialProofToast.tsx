@@ -65,12 +65,15 @@ const SocialProofToast = ({
       toast({
         description: (
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
-              <Icon className="h-4 w-4 text-primary" />
+            <div
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+              style={{ background: "hsl(var(--landing-accent) / 0.12)" }}
+            >
+              <Icon className="h-4 w-4" style={{ color: "hsl(var(--landing-accent))" }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">{messages[event.type]}</p>
-              <p className="text-xs text-muted-foreground">{event.time || "Just now"}</p>
+              <p className="text-sm font-medium" style={{ color: "hsl(var(--landing-fg))" }}>{messages[event.type]}</p>
+              <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{event.time || "Just now"}</p>
             </div>
           </div>
         ),
