@@ -180,6 +180,7 @@ const typeOverrides: Record<string, Partial<TypeAwareLabels>> = {
     testimonialsDescription: "Client quotes and endorsements — your most powerful sales tool.",
     skillsTitle: "Specializations",
     skillsDescription: "Content strategy, UX writing, paid social, brand voice — list your niches.",
+    knownForTitle: "Highlights",
   },
   actor: {
     logline: "Role Description",
