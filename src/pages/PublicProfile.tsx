@@ -14,6 +14,7 @@ import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownF
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
 import type { KnownForPosition, HeroBgType } from "@/components/portfolio/PortfolioHero";
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
+import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import ShareButtons from "@/components/portfolio/ShareButtons";
