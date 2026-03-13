@@ -28,11 +28,17 @@ interface Props {
   themeId: string;
   children: React.ReactNode;
   className?: string;
+  ctaStyleOverride?: string;
 }
 
-export function PortfolioThemeProvider({ themeId, children, className }: Props) {
-  const theme = useMemo(() => getPortfolioTheme(themeId), [themeId]);
-  const cssVars = useMemo(() => themeToCssVars(theme), [theme]);
+export function PortfolioThemeProvider({ themeId, children, className, ctaStyleOverride }: Props) {
+  const baseTheme = useMemo(() => getPortfolioTheme(themeId), [themeId]);
+  const theme = useMemo(() => {
+    if (ctaStyleOverride && ctaStyleOverride !== baseTheme.ctaStyle) {
+      return { ...baseTheme, ctaStyle: ctaStyleOverride as typeof baseTheme.ctaStyle };
+    }
+    return baseTheme;
+  }, [baseTheme, ctaStyleOverride]);
 
   // Load fonts for this theme
   useEffect(() => {
