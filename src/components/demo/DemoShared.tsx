@@ -254,7 +254,7 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'none', label: 'None' },
   ],
   showCustomization: [],
-};
+} as Record<keyof SectionVariants, { key: string; label: string }[]>;
 
 /* ── Toggle wrapper components ── */
 export const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {
