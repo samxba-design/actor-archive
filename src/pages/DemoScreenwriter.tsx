@@ -14,6 +14,8 @@ import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
 import DemoExplainer from "@/components/demo/DemoExplainer";
+import DemoCustomizationPanel from "@/components/demo/DemoCustomizationPanel";
+import PDFExportModal from "@/components/portfolio/PDFExportModal";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
