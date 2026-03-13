@@ -106,6 +106,7 @@ const ProjectsManager = () => {
   const { profileType } = useProfileTypeContext();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
