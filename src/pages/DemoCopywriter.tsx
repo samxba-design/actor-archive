@@ -56,7 +56,7 @@ const copywriterDefaultVariants: SectionVariants = {
 const ClassicLayout = () => {
   const demoSections = [
     { id: "results", title: "Results", content: <SectionResultsWall items={mockCaseStudies} /> },
-    { id: "published", title: "Published Work", content: <PublishedWorkWithToggle items={mockPublishedWork} /> },
+    { id: "published", title: "Published Work", content: <SectionCollections collections={mockCollections} works={mockPublishedWork} /> },
     { id: "casestudies", title: "Case Studies", content: <CaseStudiesWithToggle items={mockCaseStudies} /> },
     { id: "clients", title: "Clients", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "services", title: "Services & Pricing", content: <ServicesWithToggle items={mockServices} /> },
