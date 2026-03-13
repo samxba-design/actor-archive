@@ -176,12 +176,12 @@ const CinematicLayout = () => (
 /* 4. COMPACT — Maximum density, fixed spacing */
 const CompactLayout = () => (
   <>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 mb-8">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
