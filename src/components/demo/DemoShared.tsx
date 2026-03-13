@@ -94,6 +94,8 @@ export const defaultVariants: SectionVariants = {
   heroBgType: 'preset',
   knownForPosition: 'hero_above_name',
   clientLogosPosition: 'body_section',
+  statusBadgeColor: 'green',
+  statusBadgeAnimation: 'pulse',
   showCustomization: true,
 };
 
