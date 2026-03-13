@@ -151,6 +151,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "gallery", label: "Author Photos", description: "Author photos & book covers" },
       { key: "events", label: "Readings & Tours", description: "Book signings & speaking" },
       { key: "representation", label: "Representation", description: "Literary agent" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["novel", "book", "short_story", "article", "other"],
