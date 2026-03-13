@@ -100,6 +100,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "client_logos", label: "Networks & Studios", description: "Companies you've worked with" },
       { key: "gallery", label: "Production Photos", description: "Behind the scenes & stills" },
       { key: "representation", label: "Representation", description: "Agent & manager info" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Get in touch" },
     ],
     projectTypes: ["pilot", "spec_script", "series_bible", "comedy_packet", "tv_show", "other"],
