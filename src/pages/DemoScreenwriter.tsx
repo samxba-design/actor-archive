@@ -149,9 +149,6 @@ const CinematicLayout = () => (
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-12">
-      <ClientLogosWithToggle companies={mockClients} />
-    </div>
-    <div className="mb-12">
       <PortfolioSectionWrapper title="Script Library" index={2}>
         <ScriptsWithToggle items={mockScripts} />
       </PortfolioSectionWrapper>
