@@ -70,6 +70,7 @@ const SettingsPage = () => {
   const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
+  const [clientLogosPosition, setClientLogosPosition] = useState<string>("body_section");
   const [form, setForm] = useState({
     slug: "",
     theme: "cinematic-dark",
