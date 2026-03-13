@@ -60,7 +60,7 @@ const AnalyticsOverview = () => {
         d.setDate(d.getDate() - i);
         dailyMap[d.toISOString().split("T")[0]] = 0;
       }
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const day = v.created_at?.split("T")[0];
         if (day && dailyMap[day] !== undefined) dailyMap[day]++;
       });
