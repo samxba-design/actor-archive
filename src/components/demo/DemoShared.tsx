@@ -70,8 +70,10 @@ export interface SectionVariants {
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
+  ctaStyle: 'text-link' | 'outlined' | 'filled-subtle' | 'underlined' | 'glow-pulse' | 'shine-sweep' | 'neon-border' | 'filled-bold';
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
+  heroBgImage: string;
   knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
   clientLogosPosition: 'below_hero' | 'above_sections' | 'body_section' | 'hidden';
   statusBadgeColor: 'green' | 'blue' | 'gold' | 'red' | 'purple' | 'white' | 'accent';
