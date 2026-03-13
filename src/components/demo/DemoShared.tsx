@@ -212,6 +212,12 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'contact', label: 'Get in Touch' }, { key: 'reel', label: 'Watch Reel' },
     { key: 'book', label: 'Book Consult' }, { key: 'custom', label: 'View Work' },
   ],
+  ctaStyle: [
+    { key: 'shine-sweep', label: 'Shine' }, { key: 'filled-subtle', label: 'Glass Fill' },
+    { key: 'glow-pulse', label: 'Glow Pulse' }, { key: 'outlined', label: 'Outlined' },
+    { key: 'filled-bold', label: 'Bold Fill' }, { key: 'neon-border', label: 'Neon' },
+    { key: 'text-link', label: 'Text Link' }, { key: 'underlined', label: 'Underline' },
+  ],
   heroKnownFor: [
     { key: 'strip', label: 'Strip' }, { key: 'large', label: 'Large' },
     { key: 'text', label: 'Text' }, { key: 'hidden', label: 'Hidden' },
@@ -219,8 +225,9 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   heroBgType: [
     { key: 'preset', label: 'Preset' }, { key: 'solid', label: 'Solid Color' },
     { key: 'bokeh', label: 'Bokeh' }, { key: 'video', label: 'Video Loop' },
-    { key: 'gradient', label: 'Gradient' },
+    { key: 'gradient', label: 'Gradient' }, { key: 'image', label: 'Image' },
   ],
+  heroBgImage: STOCK_HERO_IMAGES.map(img => ({ key: img.key, label: img.label })),
   knownForPosition: [
     { key: 'hero_above_name', label: 'Above Name' },
     { key: 'hero_below_cta', label: 'Below CTA' },
