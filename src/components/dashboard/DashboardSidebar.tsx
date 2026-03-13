@@ -1,11 +1,14 @@
 import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
-  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield
+  FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield,
+  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { PROFILE_TYPES } from "@/config/profileSections";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import {
