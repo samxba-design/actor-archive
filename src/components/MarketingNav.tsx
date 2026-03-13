@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Diamond, Menu } from "lucide-react";
+import { Diamond, Menu, Pen, Mic2, PenTool, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface MarketingNavProps {
   glassMode?: boolean;
@@ -26,6 +32,24 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
           <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
             <Link to="/pricing">Pricing</Link>
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="hover:bg-white/10 gap-1" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+                Demos <ChevronDown className="h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="min-w-[180px]" style={{ background: "hsl(var(--landing-bg))", borderColor: "hsl(var(--landing-border))" }}>
+              <DropdownMenuItem asChild className="cursor-pointer gap-2" style={{ color: "hsl(var(--landing-fg))" }}>
+                <Link to="/demo/screenwriter"><Pen className="h-3.5 w-3.5" /> Screenwriter</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer gap-2" style={{ color: "hsl(var(--landing-fg))" }}>
+                <Link to="/demo/actor"><Mic2 className="h-3.5 w-3.5" /> Actor</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild className="cursor-pointer gap-2" style={{ color: "hsl(var(--landing-fg))" }}>
+                <Link to="/demo/copywriter"><PenTool className="h-3.5 w-3.5" /> Copywriter</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {showGlassToggle && onToggleGlass && (
             <button onClick={onToggleGlass}
               className="glass-toggle h-8 w-8 rounded-lg flex items-center justify-center transition-colors"

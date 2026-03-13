@@ -8,6 +8,13 @@ const BOKEH_COLORS = [
   "hsl(30 30% 65% / 0.05)",
 ];
 
+function shouldReduceEffects() {
+  if (typeof window === "undefined") return false;
+  const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  const lowEnd = typeof navigator !== "undefined" && (navigator.hardwareConcurrency ?? 8) <= 2;
+  return prefersReduced || lowEnd;
+}
+
 function generateBokehParticles(count: number) {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -50,22 +57,31 @@ const BokehField = ({ count = 14 }: { count?: number }) => {
   );
 };
 
-const CinematicBackground = ({ bokehCount = 14 }: { bokehCount?: number }) => (
-  <>
-    <div className="gradient-mesh">
-      <div className="gradient-mesh-orb gradient-mesh-orb--1" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--2" />
-      <div className="gradient-mesh-orb gradient-mesh-orb--3" />
-    </div>
-    <div className="light-rays">
-      <div className="light-ray light-ray--1" />
-      <div className="light-ray light-ray--2" />
-      <div className="light-ray light-ray--3" />
-    </div>
-    <BokehField count={bokehCount} />
-    <div className="cinema-vignette" />
-  </>
-);
+const CinematicBackground = ({ bokehCount = 14 }: { bokehCount?: number }) => {
+  const reduced = useMemo(() => shouldReduceEffects(), []);
+
+  if (reduced) {
+    // Minimal fallback: just the vignette for atmosphere
+    return <div className="cinema-vignette" />;
+  }
+
+  return (
+    <>
+      <div className="gradient-mesh">
+        <div className="gradient-mesh-orb gradient-mesh-orb--1" />
+        <div className="gradient-mesh-orb gradient-mesh-orb--2" />
+        <div className="gradient-mesh-orb gradient-mesh-orb--3" />
+      </div>
+      <div className="light-rays">
+        <div className="light-ray light-ray--1" />
+        <div className="light-ray light-ray--2" />
+        <div className="light-ray light-ray--3" />
+      </div>
+      <BokehField count={bokehCount} />
+      <div className="cinema-vignette" />
+    </>
+  );
+};
 
 export { BokehField, CinematicBackground };
 export default CinematicBackground;
