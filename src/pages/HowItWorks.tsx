@@ -5,14 +5,16 @@ import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles, X as XIcon,
   BarChart3, Palette, Shield, Zap, Globe, Users, Search,
   FileText, Bot, Mail, Layers, Lock, CheckCircle2, Diamond,
-  AlertTriangle, Clock, Frown, Briefcase
+  AlertTriangle, Clock, Frown, Briefcase, Eye, GripVertical
 } from "lucide-react";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MarketingNav from "@/components/MarketingNav";
 import MarketingFooter from "@/components/MarketingFooter";
 import { CinematicBackground } from "@/components/CinematicBackground";
 import SEOHead from "@/components/SEOHead";
-
+import howitDashboard from "@/assets/howit-dashboard.jpg";
+import howitPortfolio from "@/assets/howit-portfolio.jpg";
+import howitThemes from "@/assets/howit-themes.jpg";
 
 /* ── Animated Section Wrapper ── */
 const AnimatedSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
@@ -45,56 +47,76 @@ const PainCard = ({ icon: Icon, title, desc, index }: { icon: any; title: string
   );
 };
 
-/* ── Step Card ── */
-const StepCard = ({ number, title, desc, icon: Icon, index }: { number: number; title: string; desc: string; icon: any; index: number }) => {
+/* ── Visual Step Card with Screenshot ── */
+const VisualStepCard = ({ number, title, desc, image, imageAlt, index }: {
+  number: number; title: string; desc: string; image: string; imageAlt: string; index: number;
+}) => {
   const { ref, inView } = useInView();
   return (
-    <div ref={ref} className="relative text-center"
-      style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)", transition: `all 0.6s ease ${index * 150}ms` }}>
-      <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+    <div ref={ref} className="relative"
+      style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(32px)", transition: `all 0.7s ease ${index * 150}ms` }}>
+      {/* Number badge */}
+      <div className="w-12 h-12 rounded-2xl mx-auto mb-5 flex items-center justify-center relative z-10"
         style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
         <span className="text-lg font-bold text-white">{number}</span>
       </div>
-      <Icon className="h-5 w-5 mx-auto mb-2" style={{ color: "hsl(var(--landing-champagne))" }} />
-      <h3 className="font-semibold mb-1" style={{ color: "hsl(var(--landing-fg))" }}>{title}</h3>
-      <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: "hsl(var(--landing-muted))" }}>{desc}</p>
+      {/* Screenshot */}
+      <div className="rounded-xl overflow-hidden border mb-5 shadow-2xl group"
+        style={{ borderColor: "hsl(var(--landing-border))" }}>
+        <img
+          src={image}
+          alt={imageAlt}
+          className="w-full h-auto transition-transform duration-700 group-hover:scale-[1.02]"
+          loading="lazy"
+        />
+      </div>
+      {/* Text */}
+      <h3 className="text-lg font-bold mb-2 text-center" style={{ color: "hsl(var(--landing-fg))" }}>{title}</h3>
+      <p className="text-sm leading-relaxed text-center max-w-md mx-auto" style={{ color: "hsl(var(--landing-muted))" }}>{desc}</p>
     </div>
   );
 };
 
-/* ── Feature Deep Dive ── */
-const FeatureDeepDive = ({ icon: Icon, title, desc, bullets, index, reverse }: {
-  icon: any; title: string; desc: string; bullets: string[]; index: number; reverse?: boolean;
+/* ── Feature Deep Dive with Screenshot ── */
+const FeatureDeepDive = ({ icon: Icon, title, desc, bullets, image, imageAlt, index, reverse }: {
+  icon: any; title: string; desc: string; bullets: string[]; image?: string; imageAlt?: string; index: number; reverse?: boolean;
 }) => {
   const { ref, inView } = useInView();
   return (
     <div ref={ref} className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-8 items-center`}
       style={{ opacity: inView ? 1 : 0, transform: inView ? "translateX(0)" : `translateX(${reverse ? "40px" : "-40px"})`, transition: `all 0.7s ease ${index * 80}ms` }}>
-      {/* Mock UI */}
+      {/* Image or Mock UI */}
       <div className="flex-1 w-full">
-        <div className="rounded-xl border p-6 glass-card" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-card) / 0.5)" }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-10 w-10 rounded-lg flex items-center justify-center"
-              style={{ background: "hsl(var(--landing-accent) / 0.12)" }}>
-              <Icon className="h-5 w-5" style={{ color: "hsl(var(--landing-champagne))" }} />
-            </div>
-            <div>
-              <div className="h-3 w-32 rounded-full" style={{ background: "hsl(var(--landing-fg) / 0.15)" }} />
-              <div className="h-2 w-20 rounded-full mt-1.5" style={{ background: "hsl(var(--landing-fg) / 0.08)" }} />
-            </div>
+        {image ? (
+          <div className="rounded-xl overflow-hidden border shadow-2xl"
+            style={{ borderColor: "hsl(var(--landing-border))" }}>
+            <img src={image} alt={imageAlt || title} className="w-full h-auto" loading="lazy" />
           </div>
-          <div className="space-y-2">
-            {[1, 2, 3].map(n => (
-              <div key={n} className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded" style={{ background: "hsl(var(--landing-accent) / 0.08)" }} />
-                <div className="flex-1 space-y-1">
-                  <div className="h-2 rounded-full" style={{ background: "hsl(var(--landing-fg) / 0.1)", width: `${70 + n * 10}%` }} />
-                  <div className="h-1.5 rounded-full w-1/2" style={{ background: "hsl(var(--landing-fg) / 0.05)" }} />
-                </div>
+        ) : (
+          <div className="rounded-xl border p-6 glass-card" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-card) / 0.5)" }}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-lg flex items-center justify-center"
+                style={{ background: "hsl(var(--landing-accent) / 0.12)" }}>
+                <Icon className="h-5 w-5" style={{ color: "hsl(var(--landing-champagne))" }} />
               </div>
-            ))}
+              <div>
+                <div className="h-3 w-32 rounded-full" style={{ background: "hsl(var(--landing-fg) / 0.15)" }} />
+                <div className="h-2 w-20 rounded-full mt-1.5" style={{ background: "hsl(var(--landing-fg) / 0.08)" }} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              {[1, 2, 3].map(n => (
+                <div key={n} className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded" style={{ background: "hsl(var(--landing-accent) / 0.08)" }} />
+                  <div className="flex-1 space-y-1">
+                    <div className="h-2 rounded-full" style={{ background: "hsl(var(--landing-fg) / 0.1)", width: `${70 + n * 10}%` }} />
+                    <div className="h-1.5 rounded-full w-1/2" style={{ background: "hsl(var(--landing-fg) / 0.05)" }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       {/* Text */}
       <div className="flex-1 space-y-3">
@@ -147,10 +169,25 @@ const painPoints = [
   { icon: Clock, title: "Hours Lost to Formatting", desc: "Every time you land a new credit, you're reformatting Word docs, updating three websites, and re-uploading PDFs. Time you should be creating." },
 ];
 
-const steps = [
-  { icon: Palette, title: "Pick Your Profile & Theme", desc: "Choose from 10 profile types and 17 stunning themes designed for the entertainment industry. We auto-configure the right sections for your craft." },
-  { icon: Film, title: "Add Your Work", desc: "Import credits from TMDB, upload scripts with access controls, add reels, headshots, awards, testimonials, and more. Everything auto-formats beautifully." },
-  { icon: Globe, title: "Publish & Share", desc: "Go live instantly with your custom URL. Share it with agents, producers, and collaborators. Embed it on your existing site if you want." },
+const visualSteps = [
+  {
+    title: "Pick your profile type & theme",
+    desc: "Choose from 10 profile types and 17 stunning themes designed for entertainment. We auto-configure the right sections for your craft — no blank canvas anxiety.",
+    image: howitThemes,
+    imageAlt: "CreativeSlate theme picker showing 17 portfolio themes",
+  },
+  {
+    title: "Add your work & customize",
+    desc: "Import credits from TMDB, upload scripts with access controls, add reels, headshots, awards, and testimonials. Drag sections into any order. Everything auto-formats beautifully.",
+    image: howitDashboard,
+    imageAlt: "CreativeSlate dashboard showing project management and analytics",
+  },
+  {
+    title: "Publish & share your portfolio",
+    desc: "Go live instantly with your custom URL. Your portfolio looks stunning on every device. Share it with agents, producers, and collaborators — or embed it on your existing site.",
+    image: howitPortfolio,
+    imageAlt: "A published CreativeSlate actor portfolio with cinematic hero and film posters",
+  },
 ];
 
 const featureDeepDives = [
@@ -158,7 +195,7 @@ const featureDeepDives = [
   { icon: FileText, title: "Script Library with Access Control", desc: "Upload PDFs and control exactly who sees them. Password-protect, gate behind email capture, or require an NDA acknowledgment.", bullets: ["5 access levels: public, gated, password, private, NDA", "Track who downloads what", "Email capture integration built in"] },
   { icon: BarChart3, title: "Built-in Analytics Dashboard", desc: "See who's visiting your portfolio, where they come from, and what they're looking at — without installing any third-party scripts.", bullets: ["Page views, referrers, device breakdown", "Contact form submission tracking", "Script download audit log"] },
   { icon: Bot, title: "AI Writing Assistant & Coverage Simulator", desc: "Get help crafting your bio, loglines, and synopses. Run your screenplay through an AI coverage simulator to get studio-style feedback.", bullets: ["Bio & logline generation", "Script coverage simulation", "Comp title matching"] },
-  { icon: Palette, title: "10+ Industry-Designed Themes", desc: "Every theme is purpose-built for entertainment professionals — not repurposed blog templates. Dark modes, editorial layouts, spotlight effects.", bullets: ["Custom accent colors & font pairings", "Layout density controls", "Custom CSS for power users"] },
+  { icon: Palette, title: "17 Industry-Designed Themes", desc: "Every theme is purpose-built for entertainment professionals — not repurposed blog templates. Dark modes, editorial layouts, spotlight effects.", bullets: ["Custom accent colors & font pairings", "Layout density controls", "Custom CSS for power users"], image: howitThemes, imageAlt: "Theme gallery showing diverse portfolio designs" },
   { icon: Mail, title: "Contact Form & Pipeline Tracker", desc: "Built-in contact form routes inquiries to your dashboard. Track submissions, meetings, and representation leads in a private pipeline.", bullets: ["Categorized submission types", "Star, archive, and reply tracking", "Auto-responder support"] },
 ];
 
@@ -175,14 +212,59 @@ const comparisonRows = [
   { feature: "Industry-specific sections", us: true, generic: false, none: false },
   { feature: "TMDB credit import", us: true, generic: false, none: false },
   { feature: "Script access control (5 levels)", us: true, generic: false, none: false },
-  { feature: "Built-in analytics", us: true, generic: "paid", none: false },
+  { feature: "Built-in analytics", us: true, generic: "paid" as string | boolean, none: false },
   { feature: "AI bio & logline writing", us: true, generic: false, none: false },
   { feature: "Coverage simulator", us: true, generic: false, none: false },
-  { feature: "Contact form + pipeline tracker", us: true, generic: "plugin", none: false },
+  { feature: "Contact form + pipeline tracker", us: true, generic: "plugin" as string | boolean, none: false },
   { feature: "Custom themes & fonts", us: true, generic: true, none: false },
-  { feature: "Custom domain support", us: true, generic: "paid", none: false },
-  { feature: "Free tier", us: true, generic: "limited", none: true },
+  { feature: "Custom domain support", us: true, generic: "paid" as string | boolean, none: false },
+  { feature: "Free tier", us: true, generic: "limited" as string | boolean, none: true },
 ];
+
+/* ── Interactive Demo Section ── */
+const DemoSection = () => {
+  const { ref, inView } = useInView();
+  return (
+    <section ref={ref} className="py-24 px-6 relative z-10" style={{ borderTop: "1px solid hsl(var(--landing-border))" }}>
+      <div className="max-w-4xl mx-auto text-center"
+        style={{ opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(32px)", transition: "all 0.7s ease" }}>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-4"
+          style={{ background: "hsl(var(--landing-accent) / 0.08)", color: "hsl(var(--landing-champagne))", border: "1px solid hsl(var(--landing-accent) / 0.2)" }}>
+          <Eye className="h-3 w-3" /> Try It Yourself
+        </div>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>
+          See it in action
+        </h2>
+        <p className="mb-10 max-w-xl mx-auto" style={{ color: "hsl(var(--landing-muted))" }}>
+          Explore real demo portfolios for different creative roles. No signup required.
+        </p>
+        <div className="grid sm:grid-cols-3 gap-4">
+          {[
+            { to: "/demo/screenwriter", icon: Pen, label: "Screenwriter", desc: "Scripts, loglines, coverage" },
+            { to: "/demo/actor", icon: Mic2, label: "Actor", desc: "Headshots, reels, stats" },
+            { to: "/demo/copywriter", icon: Camera, label: "Copywriter", desc: "Case studies, samples" },
+          ].map((demo, i) => (
+            <Link key={demo.to} to={demo.to}
+              className="p-6 rounded-xl border glass-card text-left group transition-all hover:scale-[1.02]"
+              style={{
+                background: "hsl(var(--landing-card) / 0.6)", borderColor: "hsl(var(--landing-border))",
+                opacity: inView ? 1 : 0, transform: inView ? "translateY(0)" : "translateY(24px)",
+                transition: `all 0.6s ease ${i * 100 + 200}ms`,
+              }}>
+              <demo.icon className="h-8 w-8 mb-3" style={{ color: "hsl(var(--landing-champagne))" }} />
+              <h3 className="font-semibold mb-1" style={{ color: "hsl(var(--landing-fg))" }}>{demo.label}</h3>
+              <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>{demo.desc}</p>
+              <span className="inline-flex items-center gap-1 text-xs mt-3 transition-colors"
+                style={{ color: "hsl(var(--landing-accent))" }}>
+                View Demo <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 /* ── Page ── */
 const HowItWorks = () => {
@@ -279,7 +361,7 @@ const HowItWorks = () => {
         </div>
       </section>
 
-      {/* ═══ HOW IT WORKS (3 Steps) ═══ */}
+      {/* ═══ HOW IT WORKS (3 Visual Steps with Screenshots) ═══ */}
       <section className="py-24 px-6 relative z-10" style={{ borderTop: "1px solid hsl(var(--landing-border))", borderBottom: "1px solid hsl(var(--landing-border))" }}>
         <AnimatedSection className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>
@@ -287,10 +369,10 @@ const HowItWorks = () => {
           </h2>
           <p style={{ color: "hsl(var(--landing-muted))" }}>No coding, no design skills, no frustration.</p>
         </AnimatedSection>
-        <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10 relative">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-10 relative">
           {/* Connector lines */}
-          <div className="hidden md:block absolute top-7 left-[20%] right-[20%] h-px" style={{ background: "linear-gradient(90deg, hsl(var(--landing-accent) / 0.3), hsl(var(--landing-accent-warm) / 0.3))" }} />
-          {steps.map((s, i) => <StepCard key={s.title} number={i + 1} {...s} index={i} />)}
+          <div className="hidden md:block absolute top-6 left-[20%] right-[20%] h-px" style={{ background: "linear-gradient(90deg, hsl(var(--landing-accent) / 0.3), hsl(var(--landing-accent-warm) / 0.3))" }} />
+          {visualSteps.map((s, i) => <VisualStepCard key={s.title} number={i + 1} {...s} index={i} />)}
         </div>
       </section>
 
@@ -314,6 +396,9 @@ const HowItWorks = () => {
           ))}
         </div>
       </section>
+
+      {/* ═══ TRY IT YOURSELF ═══ */}
+      <DemoSection />
 
       {/* ═══ WHO IT'S FOR ═══ */}
       <section className="py-24 px-6 relative z-10" style={{ borderTop: "1px solid hsl(var(--landing-border))" }}>
