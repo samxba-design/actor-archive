@@ -16,6 +16,7 @@ import type { KnownForPosition, HeroBgType } from "@/components/portfolio/Portfo
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
+import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import ShareButtons from "@/components/portfolio/ShareButtons";
@@ -57,18 +58,38 @@ interface ProfileData {
   hero_bg_type?: string | null;
   hero_bg_solid_color?: string | null;
   hero_bg_video_url?: string | null;
+  hero_bg_image_url?: string | null;
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
   known_for_position?: string | null;
   auto_responder_enabled?: boolean | null;
   auto_responder_message?: string | null;
   cta_style?: string | null;
+  professional_status?: string | null;
+  status_badge_color?: string | null;
+  status_badge_animation?: string | null;
+  client_logos_position?: string | null;
+  headshot_style?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
   "projects", "credits", "gallery", "awards", "press",
   "education", "skills", "services", "testimonials", "events", "contact",
 ];
+
+// Client logos below hero helper
+const ClientLogosBelow = ({ profileId }: { profileId: string }) => {
+  const [logos, setLogos] = useState<{ company_name: string; logo_url?: string | null; website_url?: string | null }[]>([]);
+  useEffect(() => {
+    supabase.from("client_logos_profile").select("company_name, logo_url, website_url").eq("profile_id", profileId).order("display_order").then(({ data }) => setLogos(data || []));
+  }, [profileId]);
+  if (!logos.length) return null;
+  return (
+    <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <SectionClientLogos items={logos} variant="bar" />
+    </div>
+  );
+};
 
 const PublicProfile = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -270,8 +291,12 @@ const PublicProfile = () => {
           heroBgType={(profile.hero_bg_type as HeroBgType) || 'preset'}
           heroBgSolidColor={profile.hero_bg_solid_color || undefined}
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
+          heroBgImageUrl={profile.hero_bg_image_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
         />
+
+        {/* Client logos below hero */}
+        {profile.client_logos_position === 'below_hero' && <ClientLogosBelow profileId={profile.id} />}
 
         <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
           {/* Known For below hero or as body section */}

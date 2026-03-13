@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles, Mail, AlertTriangle, Trash2 } from "lucide-react";
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
@@ -103,6 +103,14 @@ const SettingsPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+
+  // Email change
+  const [newEmail, setNewEmail] = useState("");
+  const [changingEmail, setChangingEmail] = useState(false);
+
+  // Account deletion
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -1009,6 +1017,74 @@ const SettingsPage = () => {
           <Button onClick={handleChangePassword} disabled={changingPassword || !newPassword}>
             {changingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Update Password
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Change Email */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Mail className="h-4 w-4" />Change Email</CardTitle>
+          <CardDescription>Update the email address associated with your account. A confirmation link will be sent to the new address.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Current email</Label>
+            <p className="text-sm text-muted-foreground">{user?.email || "—"}</p>
+          </div>
+          <div>
+            <Label>New Email Address</Label>
+            <Input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="new@email.com" />
+          </div>
+          <Button onClick={async () => {
+            if (!newEmail.trim() || !newEmail.includes("@")) {
+              toast({ title: "Invalid email", variant: "destructive" });
+              return;
+            }
+            setChangingEmail(true);
+            const { error } = await supabase.auth.updateUser({ email: newEmail });
+            if (error) {
+              toast({ title: "Error", description: error.message, variant: "destructive" });
+            } else {
+              toast({ title: "Confirmation sent", description: "Check your new email to confirm the change." });
+              setNewEmail("");
+            }
+            setChangingEmail(false);
+          }} disabled={changingEmail || !newEmail}>
+            {changingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Update Email
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
+      <Card className="border-destructive/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive"><AlertTriangle className="h-4 w-4" />Danger Zone</CardTitle>
+          <CardDescription>Permanently delete your account and all associated data. This action cannot be undone.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label>Type <span className="font-mono font-bold">DELETE</span> to confirm</Label>
+            <Input value={deleteConfirmText} onChange={(e) => setDeleteConfirmText(e.target.value)} placeholder="DELETE" className="max-w-xs" />
+          </div>
+          <Button variant="destructive" disabled={deleteConfirmText !== "DELETE" || deletingAccount}
+            onClick={async () => {
+              if (!user) return;
+              setDeletingAccount(true);
+              // Delete profile data (cascades handle related tables)
+              const { error } = await supabase.from("profiles").delete().eq("id", user.id);
+              if (error) {
+                toast({ title: "Error", description: "Could not delete account. Please contact support.", variant: "destructive" });
+                setDeletingAccount(false);
+                return;
+              }
+              await supabase.auth.signOut();
+              toast({ title: "Account deleted", description: "Your account and data have been removed." });
+              window.location.href = "/";
+            }}>
+            {deletingAccount ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+            Delete Account Permanently
           </Button>
         </CardContent>
       </Card>
