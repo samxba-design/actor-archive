@@ -21,6 +21,7 @@ import { PROFILE_TYPES } from "@/config/profileSections";
 import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { BulkImporter } from "@/components/dashboard/BulkImporter";
+import GettingStartedGuide from "@/components/dashboard/GettingStartedGuide";
 
 interface SmartAction {
   label: string;
