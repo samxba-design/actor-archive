@@ -3,6 +3,15 @@ import CompanyLogo from "@/components/CompanyLogo";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import type { LogoColorMode } from "@/lib/companyLogos";
 
+export type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
+
+const LOGO_SIZE_MAP: Record<LogoSize, number> = {
+  sm: 20,
+  md: 28,
+  lg: 36,
+  xl: 48,
+};
+
 interface ClientItem {
   company_name: string;
   logo_url?: string | null;
@@ -15,9 +24,10 @@ interface Props {
   companies?: string[];
   variant?: 'bar' | 'grid' | 'marquee';
   colorMode?: LogoColorMode;
+  logoSize?: LogoSize;
 }
 
-const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original' }: Props) => {
+const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original', logoSize = 'md' }: Props) => {
   const theme = usePortfolioTheme();
 
   // Normalize: DB items take priority, fall back to legacy string array
@@ -27,11 +37,12 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
 
   if (!clients.length) return null;
 
-  const LogoItem = ({ client, size = 28 }: { client: ClientItem; size?: number }) => {
+  const basePx = LOGO_SIZE_MAP[logoSize];
+
+  const LogoItem = ({ client, size = basePx }: { client: ClientItem; size?: number }) => {
     const hasCustomLogo = !!client.logo_url;
     const [imgError, setImgError] = useState(false);
 
-    // CSS filter for custom uploaded logos when colorMode is not original
     const filterClass =
       colorMode === 'grayscale' ? 'grayscale hover:grayscale-0 transition-all duration-200' :
       colorMode === 'theme' ? 'grayscale sepia brightness-75 transition-all duration-200' :
@@ -88,7 +99,7 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
     return (
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-6">
         {clients.map((c, i) => (
-          <LogoItem key={`${c.company_name}-${i}`} client={c} size={32} />
+          <LogoItem key={`${c.company_name}-${i}`} client={c} />
         ))}
       </div>
     );
@@ -108,7 +119,7 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
         />
         <div className="flex gap-10 animate-[client-marquee_25s_linear_infinite]">
           {doubled.map((c, i) => (
-            <LogoItem key={`${c.company_name}-${i}`} client={c} size={24} />
+            <LogoItem key={`${c.company_name}-${i}`} client={c} />
           ))}
         </div>
       </div>

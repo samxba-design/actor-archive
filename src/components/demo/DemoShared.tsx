@@ -39,6 +39,8 @@ export interface SectionVariants {
   press: 'feed' | 'cards' | 'quotes';
   services: 'full' | 'compact' | 'pricing';
   clientLogos: 'bar' | 'grid' | 'marquee';
+  clientLogosColor: 'original' | 'grayscale' | 'white' | 'dark' | 'theme';
+  clientLogosSize: 'sm' | 'md' | 'lg' | 'xl';
   education: 'list' | 'cards' | 'timeline';
   gallery: 'grid' | 'masonry' | 'carousel';
   demoReels: 'grid' | 'featured' | 'list';
@@ -68,6 +70,8 @@ export const defaultVariants: SectionVariants = {
   press: 'feed',
   services: 'full',
   clientLogos: 'bar',
+  clientLogosColor: 'original',
+  clientLogosSize: 'md',
   education: 'list',
   gallery: 'grid',
   demoReels: 'grid',
@@ -123,6 +127,13 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   ],
   clientLogos: [
     { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
+  ],
+  clientLogosColor: [
+    { key: 'original', label: 'Original' }, { key: 'grayscale', label: 'Grayscale' },
+    { key: 'white', label: 'White' }, { key: 'dark', label: 'Dark' },
+  ],
+  clientLogosSize: [
+    { key: 'sm', label: 'Small' }, { key: 'md', label: 'Medium' }, { key: 'lg', label: 'Large' }, { key: 'xl', label: 'X-Large' },
   ],
   education: [
     { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
@@ -260,11 +271,37 @@ export const ServicesWithToggle = ({ items }: { items: any[] }) => (
   </WithToggle>
 );
 
-export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
-  <WithToggle sectionKey="clientLogos" sectionName="Client Logos">
-    {(variant) => <SectionClientLogos companies={companies} variant={variant} />}
-  </WithToggle>
-);
+export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => {
+  const { variants, setVariant } = useSectionVariants();
+  return (
+    <>
+      <SectionOptionsBar
+        sectionName="Logo Layout"
+        options={VARIANT_OPTIONS.clientLogos}
+        value={variants.clientLogos}
+        onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
+      />
+      <SectionOptionsBar
+        sectionName="Logo Color"
+        options={VARIANT_OPTIONS.clientLogosColor}
+        value={variants.clientLogosColor}
+        onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
+      />
+      <SectionOptionsBar
+        sectionName="Logo Size"
+        options={VARIANT_OPTIONS.clientLogosSize}
+        value={variants.clientLogosSize}
+        onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
+      />
+      <SectionClientLogos
+        companies={companies}
+        variant={variants.clientLogos as any}
+        colorMode={variants.clientLogosColor as any}
+        logoSize={variants.clientLogosSize as any}
+      />
+    </>
+  );
+};
 
 export const EducationWithToggle = ({ items }: { items: any[] }) => (
   <WithToggle sectionKey="education" sectionName="Education">
