@@ -114,6 +114,7 @@ const ProjectsManager = () => {
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploadingPoster, setUploadingPoster] = useState(false);
+  const [posterBrowserOpen, setPosterBrowserOpen] = useState(false);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
