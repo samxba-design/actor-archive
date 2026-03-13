@@ -50,7 +50,7 @@ const AnalyticsOverview = () => {
         cv_downloads: interactions.filter(v => v.path?.includes("/cv_downloaded")).length,
       });
 
-      setTotalViews(views.length);
+      setTotalViews(pageViews.length);
 
       // Daily views (last 30 days)
       const dailyMap: Record<string, number> = {};
