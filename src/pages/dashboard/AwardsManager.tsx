@@ -67,6 +67,7 @@ const AwardsManager = () => {
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this award?", description: "This award will be permanently removed from your portfolio." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (error) return <div className="max-w-3xl"><ManagerErrorState message={`Could not load awards: ${error}`} onRetry={fetchItems} /></div>;
 
   return (
     <div className="max-w-3xl space-y-6">

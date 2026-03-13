@@ -52,6 +52,7 @@ const GalleryManager = () => {
   const labels = getTypeAwareLabels(profileType);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [imageType, setImageType] = useState("headshot");
 
@@ -75,12 +76,14 @@ const GalleryManager = () => {
 
   const fetchImages = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from("gallery_images")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order", { ascending: true });
-    setImages(data || []);
+    if (fetchError) setError(fetchError.message);
+    else setImages(data || []);
     setLoading(false);
   };
 

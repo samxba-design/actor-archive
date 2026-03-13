@@ -68,6 +68,7 @@ const TestimonialsManager = () => {
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this testimonial?", description: "This testimonial will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (error) return <div className="max-w-3xl"><ManagerErrorState message={`Could not load testimonials: ${error}`} onRetry={fetchItems} /></div>;
 
   return (
     <div className="max-w-3xl space-y-6">
