@@ -30,6 +30,7 @@ import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { compressImage } from "@/lib/imageCompression";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import PosterBrowser from "@/components/dashboard/PosterBrowser";
 
 type Project = Tables<"projects">;
 
