@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useInView } from "@/hooks/useInView";
-import { themes } from "@/lib/themes";
+import { portfolioThemes } from "@/themes/themes";
 import {
   Film, Pen, Mic2, Camera, ArrowRight, Sparkles,
   BarChart3, Palette, Shield, Zap, Globe, Users,
