@@ -500,7 +500,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderCentered = () => (
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-10 text-center">
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
+        {showKnownForAt('hero_above_name') && (
           <div className="flex justify-center mb-6" style={stagger(0)}><KnownForStrip /></div>
         )}
         <div className="flex flex-col items-center space-y-4">
@@ -510,6 +510,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           <CredentialRow style={{ ...stagger(3), justifyContent: 'center' }} />
           <BioEl maxW="max-w-xl" style={{ ...stagger(4), textAlign: 'center' }} />
           {showCta && <div style={stagger(5)}><CtaEl /></div>}
+          {showKnownForAt('hero_below_cta') && (
+            <div className="flex justify-center mt-3" style={stagger(5.5)}><KnownForStrip /></div>
+          )}
           <div style={stagger(6)}><StatsBar /></div>
         </div>
       </div>
@@ -519,6 +522,9 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const renderSplit = () => (
     <div className="relative z-10 flex flex-col justify-end h-full" style={{ minHeight: heroHeight }}>
       <div className="max-w-[1080px] mx-auto w-full px-4 sm:px-6 lg:px-8 pb-8">
+        {showKnownForAt('hero_above_name') && (
+          <div className="mb-6" style={stagger(0)}><KnownForStrip /></div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
           <div className="space-y-3" style={stagger(1)}>
             <PhotoEl size="80px" />
@@ -530,12 +536,12 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
             <TaglineEl />
             <BioEl maxW="max-w-full" />
             {showCta && <CtaEl />}
+            {showKnownForAt('hero_below_cta') && (
+              <div className="mt-2"><KnownForStrip /></div>
+            )}
             <StatsBar />
           </div>
         </div>
-        {knownFor && knownFor.length > 0 && heroKnownFor !== 'hidden' && (
-          <div className="mt-8" style={stagger(4)}><KnownForStrip /></div>
-        )}
       </div>
     </div>
   );
