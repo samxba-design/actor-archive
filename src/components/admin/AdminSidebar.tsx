@@ -1,4 +1,4 @@
-import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield, History, UserCog } from "lucide-react";
+import { Users, Flag, BarChart3, Settings, Home, LogOut, Shield, History, UserCog, Palette } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/useAuth";
 import {
