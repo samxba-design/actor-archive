@@ -116,7 +116,7 @@ const CinematicLayout = () => (
       <SectionResultsWall items={mockCaseStudies} />
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
+      <PortfolioSectionWrapper title="Highlights" index={-1}>
         <KnownForWithToggle items={mockKnownFor} display="image" />
       </PortfolioSectionWrapper>
     </div>
@@ -492,13 +492,13 @@ const DemoCopywriter = () => {
         <WithToggle sectionKey="ctaPreset" sectionName="CTA Button">
           {() => null}
         </WithToggle>
-        <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
+        <WithToggle sectionKey="heroKnownFor" sectionName="Highlights Style">
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
           {() => null}
         </WithToggle>
-        <WithToggle sectionKey="knownForPosition" sectionName="Known For Position">
+        <WithToggle sectionKey="knownForPosition" sectionName="Highlights Position">
           {() => null}
         </WithToggle>
         <WithToggle sectionKey="heroBgType" sectionName="Background">
@@ -511,7 +511,7 @@ const DemoCopywriter = () => {
         <AmbientGlow />
         {(variants.knownForPosition === 'below_hero' || variants.knownForPosition === 'body_section') && mockKnownFor.length > 0 && (
           <div className="mb-10">
-            <PortfolioSectionWrapper title="Known For" index={-1}>
+            <PortfolioSectionWrapper title="Highlights" index={-1}>
               <KnownForWithToggle items={mockKnownFor} />
             </PortfolioSectionWrapper>
           </div>

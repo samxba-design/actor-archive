@@ -15,6 +15,7 @@ import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Sea
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
@@ -26,7 +27,7 @@ const KNOWN_FOR_POSITIONS: { id: KnownForPosition; label: string; description: s
   { id: "hero_beside_photo", label: "Beside Photo", description: "Posters displayed next to your headshot" },
   { id: "below_hero", label: "Below Hero", description: "Full-width strip right below the hero section" },
   { id: "body_section", label: "Body Section", description: "As a regular section in the main content area" },
-  { id: "hidden", label: "Hidden", description: "Don't show Known For on your portfolio" },
+  { id: "hidden", label: "Hidden", description: "Don't show this section on your portfolio" },
 ];
 
 const HERO_LAYOUTS: { id: HeroLayout; label: string; description: string }[] = [
@@ -382,11 +383,11 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Known For Position Picker */}
+      {/* Known For / Highlights Position Picker */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> Known For Position</CardTitle>
-          <CardDescription>Choose where your "Known For" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
+          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> {getTypeAwareLabels(profileType).knownForTitle} Position</CardTitle>
+          <CardDescription>Choose where your "{getTypeAwareLabels(profileType).knownForTitle}" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
