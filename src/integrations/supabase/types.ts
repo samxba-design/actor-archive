@@ -1044,6 +1044,7 @@ export type Database = {
           location: string | null
           onboarding_completed: boolean | null
           primary_goal: string | null
+          professional_status: string | null
           profile_photo_url: string | null
           profile_type: Database["public"]["Enums"]["profile_type"] | null
           secondary_types: string[] | null
@@ -1053,6 +1054,8 @@ export type Database = {
           seo_indexable: boolean | null
           show_contact_form: boolean | null
           slug: string | null
+          status_badge_animation: string | null
+          status_badge_color: string | null
           subscription_tier:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
@@ -1101,6 +1104,7 @@ export type Database = {
           location?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
+          professional_status?: string | null
           profile_photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"] | null
           secondary_types?: string[] | null
@@ -1110,6 +1114,8 @@ export type Database = {
           seo_indexable?: boolean | null
           show_contact_form?: boolean | null
           slug?: string | null
+          status_badge_animation?: string | null
+          status_badge_color?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
@@ -1158,6 +1164,7 @@ export type Database = {
           location?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
+          professional_status?: string | null
           profile_photo_url?: string | null
           profile_type?: Database["public"]["Enums"]["profile_type"] | null
           secondary_types?: string[] | null
@@ -1167,6 +1174,8 @@ export type Database = {
           seo_indexable?: boolean | null
           show_contact_form?: boolean | null
           slug?: string | null
+          status_badge_animation?: string | null
+          status_badge_color?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
