@@ -173,12 +173,17 @@ const ProjectsManager = () => {
 
   const fetchProjects = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from("projects")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order", { ascending: true });
-    setProjects(data || []);
+    if (fetchError) {
+      setError(fetchError.message);
+    } else {
+      setProjects(data || []);
+    }
     setLoading(false);
   };
 
