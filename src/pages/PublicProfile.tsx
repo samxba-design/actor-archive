@@ -10,17 +10,15 @@ import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import SortableSectionList from "@/components/portfolio/SortableSectionList";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
-import type { KnownForPosition } from "@/components/portfolio/PortfolioHero";
+import type { KnownForPosition, HeroBgType } from "@/components/portfolio/PortfolioHero";
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import ShareButtons from "@/components/portfolio/ShareButtons";
 import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
-
-import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
-import type { HeroBgType, KnownForPosition } from "@/components/portfolio/PortfolioHero";
 
 interface ProfileData {
   id: string;
