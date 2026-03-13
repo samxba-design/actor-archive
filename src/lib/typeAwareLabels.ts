@@ -33,6 +33,7 @@ export interface TypeAwareLabels {
   testimonialsDescription: string;
   skillsTitle: string;
   skillsDescription: string;
+  knownForTitle: string;
   showClientField: boolean;
   showVideoUrl: boolean;
 }
