@@ -196,6 +196,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "client_logos", label: "Clients", description: "Brands you've worked with" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "published_work", label: "Published Work", description: "Featured articles & writing pieces with PDF previews" },
       { key: "results_wall", label: "Impact Numbers", description: "Aggregated metrics across campaigns" },
       { key: "case_studies", label: "Case Studies", description: "Client work with results" },
