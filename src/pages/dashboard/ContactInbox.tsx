@@ -6,8 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, Mail, MailOpen, Star, StarOff, Archive, Trash2 } from "lucide-react";
+import { Loader2, Mail, MailOpen, Star, StarOff, Archive, Trash2, Send, Reply } from "lucide-react";
 import { format } from "date-fns";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -20,6 +21,9 @@ const ContactInbox = () => {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Submission | null>(null);
   const [filter, setFilter] = useState<"inbox" | "starred" | "archived">("inbox");
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyText, setReplyText] = useState("");
+  const [sending, setSending] = useState(false);
 
   const fetchMessages = async () => {
     if (!user) return;
@@ -45,6 +49,7 @@ const ContactInbox = () => {
   const toggleField = async (id: string, field: "is_read" | "is_starred" | "is_archived", value: boolean) => {
     await supabase.from("contact_submissions").update({ [field]: value }).eq("id", id);
     setMessages((prev) => prev.map((m) => m.id === id ? { ...m, [field]: value } : m));
+    if (selected?.id === id) setSelected(prev => prev ? { ...prev, [field]: value } : null);
   };
 
   const performDelete = useCallback(async (id: string) => {
@@ -57,6 +62,25 @@ const ContactInbox = () => {
   const openMessage = (m: Submission) => {
     setSelected(m);
     if (!m.is_read) toggleField(m.id, "is_read", true);
+  };
+
+  const handleReply = async () => {
+    if (!selected || !replyText.trim()) return;
+    setSending(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("contact-reply", {
+        body: { submission_id: selected.id, reply_message: replyText.trim() },
+      });
+      if (error) throw error;
+      setMessages(prev => prev.map(m => m.id === selected.id ? { ...m, reply_sent: true } : m));
+      setSelected(prev => prev ? { ...prev, reply_sent: true } : null);
+      toast({ title: "Reply sent", description: `Your reply was sent to ${selected.sender_email}` });
+      setReplyText("");
+      setReplyOpen(false);
+    } catch (err) {
+      toast({ title: "Error", description: err instanceof Error ? err.message : "Failed to send reply", variant: "destructive" });
+    }
+    setSending(false);
   };
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
@@ -96,6 +120,7 @@ const ContactInbox = () => {
                     {m.subject_type && m.subject_type !== "general" && (
                       <Badge variant="outline" className="text-[10px]">{m.subject_type.replace(/_/g, " ")}</Badge>
                     )}
+                    {m.reply_sent && <Badge variant="secondary" className="text-[10px]">Replied</Badge>}
                   </div>
                   <p className="text-sm text-foreground truncate">{m.subject || "(No subject)"}</p>
                   <p className="text-xs text-muted-foreground truncate">{m.message}</p>
@@ -117,7 +142,7 @@ const ContactInbox = () => {
         </div>
       )}
 
-      <Dialog open={!!selected} onOpenChange={(o) => { if (!o) setSelected(null); }}>
+      <Dialog open={!!selected} onOpenChange={(o) => { if (!o) { setSelected(null); setReplyOpen(false); setReplyText(""); } }}>
         <DialogContent className="max-w-lg">
           {selected && (
             <>
@@ -140,21 +165,52 @@ const ContactInbox = () => {
                 <div className="text-sm text-foreground whitespace-pre-wrap bg-muted/50 p-4 rounded-lg">
                   {selected.message}
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={`mailto:${selected.sender_email}?subject=Re: ${selected.subject || ""}`}>Reply via Email</a>
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => toggleField(selected.id, "is_starred", !selected.is_starred)}>
-                    {selected.is_starred ? <Star className="mr-1 h-4 w-4 text-yellow-500 fill-yellow-500" /> : <StarOff className="mr-1 h-4 w-4" />}
-                    {selected.is_starred ? "Unstar" : "Star"}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => { toggleField(selected.id, "is_archived", true); setSelected(null); }}>
-                    <Archive className="mr-1 h-4 w-4" /> Archive
-                  </Button>
-                  <Button variant="ghost" size="sm" className="text-destructive" onClick={() => requestDelete(selected.id)}>
-                    <Trash2 className="mr-1 h-4 w-4" /> Delete
-                  </Button>
-                </div>
+
+                {/* Reply Section */}
+                {replyOpen ? (
+                  <div className="space-y-3 border-t pt-3">
+                    <p className="text-xs text-muted-foreground">Replying to {selected.sender_name} &lt;{selected.sender_email}&gt;</p>
+                    <Textarea
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="Write your reply..."
+                      rows={4}
+                      className="resize-none"
+                    />
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="ghost" size="sm" onClick={() => { setReplyOpen(false); setReplyText(""); }}>Cancel</Button>
+                      <Button size="sm" onClick={handleReply} disabled={sending || !replyText.trim()}>
+                        {sending ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Send className="mr-1 h-3.5 w-3.5" />}
+                        Send Reply
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button variant="default" size="sm" onClick={() => setReplyOpen(true)}>
+                      <Reply className="mr-1 h-4 w-4" /> Reply
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={`mailto:${selected.sender_email}?subject=Re: ${selected.subject || ""}`}>Reply via Email Client</a>
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => toggleField(selected.id, "is_starred", !selected.is_starred)}>
+                      {selected.is_starred ? <Star className="mr-1 h-4 w-4 text-yellow-500 fill-yellow-500" /> : <StarOff className="mr-1 h-4 w-4" />}
+                      {selected.is_starred ? "Unstar" : "Star"}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => { toggleField(selected.id, "is_archived", true); setSelected(null); }}>
+                      <Archive className="mr-1 h-4 w-4" /> Archive
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-destructive" onClick={() => requestDelete(selected.id)}>
+                      <Trash2 className="mr-1 h-4 w-4" /> Delete
+                    </Button>
+                  </div>
+                )}
+
+                {selected.reply_sent && !replyOpen && (
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Send className="h-3 w-3" /> You replied to this message
+                  </p>
+                )}
               </div>
             </>
           )}

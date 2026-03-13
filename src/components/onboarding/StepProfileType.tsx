@@ -1,5 +1,7 @@
 import { PROFILE_TYPES } from "@/config/profileSections";
 import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
+import type { Database } from "@/integrations/supabase/types";
+type ProfileType = Database["public"]["Enums"]["profile_type"];
 import {
   PenTool, Tv, Theater, BookOpen, Newspaper, Type,
   Clapperboard, Film, Video, Layers, Check
@@ -37,12 +39,12 @@ const StepProfileType = ({ data, updateData, onNext, stepMeta }: Props) => {
 
     if (selected.length === 1) {
       updateData({
-        profileType: selected[0] as any,
+        profileType: selected[0] as ProfileType,
         secondaryTypes: [],
       });
     } else {
       updateData({
-        profileType: "multi_hyphenate" as any,
+        profileType: "multi_hyphenate" as ProfileType,
         secondaryTypes: selected,
       });
     }

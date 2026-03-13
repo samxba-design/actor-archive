@@ -83,7 +83,7 @@ const PipelineTracker = () => {
       submission_type: form.submission_type,
       project_id: form.project_id || null,
       notes: form.notes || null,
-    } as any);
+    });
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {

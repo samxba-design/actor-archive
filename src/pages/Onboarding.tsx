@@ -38,6 +38,7 @@ export interface OnboardingData {
   basedInPrimary: string;
   selectedServices: { name: string; description: string }[];
   availableForHire: boolean;
+  specializations?: string[];
 }
 
 const INITIAL_DATA: OnboardingData = {
@@ -180,8 +181,8 @@ const Onboarding = () => {
           onboarding_completed: true,
           is_draft: false,
           section_order: defaultSectionOrder.length > 0 ? defaultSectionOrder : null,
-          sections_visible: Object.keys(defaultSectionsVisible).length > 0 ? defaultSectionsVisible : null,
-        } as any)
+          sections_visible: Object.keys(defaultSectionsVisible).length > 0 ? (defaultSectionsVisible as Record<string, boolean>) : null,
+        })
         .eq("id", user.id);
 
       if (profileError) throw profileError;
@@ -215,7 +216,7 @@ const Onboarding = () => {
       }
 
       // Save specializations as skills for copywriters
-      const specializations = (data as any).specializations as string[] | undefined;
+      const specializations = data.specializations;
       if (specializations && specializations.length > 0) {
         const skillRows = specializations.map((name, i) => ({
           profile_id: user.id,

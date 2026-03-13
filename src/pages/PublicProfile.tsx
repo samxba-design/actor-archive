@@ -10,8 +10,9 @@ import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import SortableSectionList from "@/components/portfolio/SortableSectionList";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
-import type { KnownForPosition } from "@/components/portfolio/PortfolioHero";
+import type { KnownForPosition, HeroBgType } from "@/components/portfolio/PortfolioHero";
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
@@ -57,6 +58,8 @@ interface ProfileData {
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
   known_for_position?: string | null;
+  auto_responder_enabled?: boolean | null;
+  auto_responder_message?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -72,8 +75,13 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
-  const [knownFor, setKnownFor] = useState<any[]>([]);
-  const [exportData, setExportData] = useState<{ projects: any[]; awards: any[]; skills: any[]; education: any[] }>({ projects: [], awards: [], skills: [], education: [] });
+  const [knownFor, setKnownFor] = useState<KnownForItem[]>([]);
+  const [exportData, setExportData] = useState<{
+    projects: { title: string; project_type: string; role_name?: string | null; year?: number | null }[];
+    awards: { name: string; organization?: string | null; result?: string | null; year?: number | null }[];
+    skills: { name: string; category?: string | null }[];
+    education: { institution: string; degree_or_certificate?: string | null; year_start?: number | null; year_end?: number | null }[];
+  }>({ projects: [], awards: [], skills: [], education: [] });
 
   useEffect(() => {
     if (!slug) return;
@@ -256,7 +264,7 @@ const PublicProfile = () => {
         <PortfolioHero
           profile={profile}
           knownFor={knownFor}
-          heroBgType={(profile.hero_bg_type as any) || 'preset'}
+          heroBgType={(profile.hero_bg_type as HeroBgType) || 'preset'}
           heroBgSolidColor={profile.hero_bg_solid_color || undefined}
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
@@ -280,7 +288,7 @@ const PublicProfile = () => {
 
         <div id="portfolio-contact">
           <PortfolioFooter
-            profile={{ ...profile, auto_responder_enabled: (profile as any).auto_responder_enabled, auto_responder_message: (profile as any).auto_responder_message, subscription_tier: (profile as any).subscription_tier, contact_mode: (profile as any).contact_mode }}
+            profile={{ ...profile, auto_responder_enabled: profile.auto_responder_enabled, auto_responder_message: profile.auto_responder_message, subscription_tier: profile.subscription_tier, contact_mode: profile.contact_mode }}
             showContact={showContact}
           />
         </div>

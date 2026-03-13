@@ -29,7 +29,7 @@ const SPECIALIZATIONS = [
 const StepSpecializations = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   // Track selected specializations locally — will be saved to skills table on complete
   const [selected, setSelected] = useState<string[]>(
-    (data as any).specializations || []
+    data.specializations || []
   );
 
   const toggle = (name: string) => {
@@ -38,7 +38,7 @@ const StepSpecializations = ({ data, updateData, onNext, onBack, stepMeta }: Pro
         ? prev.filter(s => s !== name)
         : [...prev, name];
       // Store on data for persistence
-      updateData({ ...(data as any), specializations: next } as any);
+      updateData({ specializations: next });
       return next;
     });
   };

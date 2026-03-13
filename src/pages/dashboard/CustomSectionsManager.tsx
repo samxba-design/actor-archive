@@ -53,7 +53,7 @@ const CustomSectionsManager = () => {
   const [showTemplates, setShowTemplates] = useState(false);
 
   const handleDelete = async (id: string) => {
-    await supabase.from("custom_sections" as any).delete().eq("id", id);
+    await supabase.from("custom_sections").delete().eq("id", id);
     setSections(prev => prev.filter(s => s.id !== id));
     toast({ title: "Section deleted" });
   };
@@ -66,11 +66,11 @@ const CustomSectionsManager = () => {
   const fetchSections = async () => {
     if (!user) return;
     const { data } = await supabase
-      .from("custom_sections" as any)
+      .from("custom_sections")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order");
-    setSections((data as any) || []);
+    setSections((data || []) as unknown as CustomSection[]);
     setLoading(false);
   };
 
@@ -78,13 +78,13 @@ const CustomSectionsManager = () => {
 
   const addSection = async (template?: { title: string; icon: string; content: string }) => {
     if (!user) return;
-    const { error } = await supabase.from("custom_sections" as any).insert({
+    const { error } = await supabase.from("custom_sections").insert({
       profile_id: user.id,
       title: template?.title || "New Section",
       content: template?.content || "",
       icon: template?.icon || "Sparkles",
       display_order: sections.length,
-    } as any);
+    });
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
@@ -96,7 +96,7 @@ const CustomSectionsManager = () => {
 
   const updateSection = async (id: string, updates: Partial<CustomSection>) => {
     setSaving(id);
-    await supabase.from("custom_sections" as any).update(updates as any).eq("id", id);
+    await supabase.from("custom_sections").update(updates).eq("id", id);
     setSections(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
     setSaving(null);
   };
