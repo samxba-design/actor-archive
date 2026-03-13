@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star } from "lucide-react";
-import { themes } from "@/lib/themes";
+import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -516,20 +516,42 @@ const SettingsPage = () => {
         <CardHeader><CardTitle>Theme & Typography</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-2">
               <Label>Visual Theme</Label>
               {!isPro && <ProBadge />}
             </div>
-            <Select value={form.theme} onValueChange={(v) => setForm((f) => ({ ...f, theme: v }))} disabled={!isPro && form.theme === "minimal"}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {Object.values(themes).map((t) => (
-                  <SelectItem key={t.key} value={t.key} disabled={!isPro && t.key !== "minimal"}>
-                    {t.label} — {t.description} {!isPro && t.key !== "minimal" ? "🔒" : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {portfolioThemeList.map((t) => {
+                const isFree = ["cinematic-dark", "modern-minimal"].includes(t.id);
+                const isLocked = !isPro && !isFree;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => !isLocked && setForm((f) => ({ ...f, theme: t.id }))}
+                    disabled={isLocked}
+                    className={`text-left p-3 rounded-lg border transition-all text-sm ${
+                      form.theme === t.id
+                        ? "border-primary bg-primary/10 ring-1 ring-primary"
+                        : isLocked
+                          ? "border-border opacity-50 cursor-not-allowed"
+                          : "border-border hover:border-primary/40 hover:bg-accent/50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-foreground text-xs">{t.name}</span>
+                      {form.theme === t.id && <Check className="h-3 w-3 text-primary" />}
+                      {isLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
+                    </div>
+                    <div className="flex gap-1 mt-1.5">
+                      {t.previewColors.slice(0, 5).map((c, i) => (
+                        <div key={i} className="w-4 h-4 rounded-full border border-border/50" style={{ backgroundColor: c }} />
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">{t.description}</p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div>
             <Label>Accent Color</Label>
