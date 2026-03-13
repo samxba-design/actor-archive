@@ -289,6 +289,69 @@ const DashboardHome = () => {
         ))}
       </div>
 
+      {/* How It Works Guide */}
+      {!howItWorksDismissed && (
+        <div className="rounded-xl border border-border p-6 bg-card/60">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              How CreativeSlate Works
+            </h2>
+            <Button variant="ghost" size="sm" onClick={() => { localStorage.setItem("hiw_dismissed", "true"); setHowItWorksDismissed(true); }}>
+              Dismiss
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { icon: Layers, title: "Build", desc: "Add your work, skills, experience, and credits to create a comprehensive portfolio." },
+              { icon: Palette, title: "Customize", desc: "Choose from premium themes, hero layouts, font pairings, and section ordering." },
+              { icon: Share2, title: "Share", desc: "Publish your portfolio and share one link with agents, clients, and collaborators." },
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-3 p-4 rounded-lg border border-border bg-accent/20">
+                <div className="rounded-full bg-primary/10 p-2.5 shrink-0">
+                  <step.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{step.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Quick Start for Empty Profiles */}
+      {isEmptyProfile && (
+        <div className="rounded-xl border-2 border-primary/30 p-6 bg-primary/5">
+          <h2 className="text-lg font-semibold text-foreground mb-1">🚀 Get Started Fast</h2>
+          <p className="text-sm text-muted-foreground mb-4">Auto-fill your profile from existing sources — we support LinkedIn, IMDb, personal websites, Spotlight, Mandy, and more.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => setResumeOpen(true)}>
+              <FileText className="mr-2 h-4 w-4 text-primary" />
+              <div className="text-left">
+                <p className="text-sm font-medium">Upload Resume</p>
+                <p className="text-xs text-muted-foreground">PDF → AI extraction</p>
+              </div>
+            </Button>
+            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => setUrlOpen(true)}>
+              <Globe className="mr-2 h-4 w-4 text-primary" />
+              <div className="text-left">
+                <p className="text-sm font-medium">Import from URL</p>
+                <p className="text-xs text-muted-foreground">LinkedIn, IMDb, website</p>
+              </div>
+            </Button>
+            <Button variant="outline" className="justify-start h-auto py-3" onClick={() => navigate("/dashboard/profile")}>
+              <PenTool className="mr-2 h-4 w-4 text-primary" />
+              <div className="text-left">
+                <p className="text-sm font-medium">Start from Scratch</p>
+                <p className="text-xs text-muted-foreground">Build manually</p>
+              </div>
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Profile Readiness */}
       <ProfileReadiness />
 
