@@ -73,7 +73,7 @@ const PortfolioTour = ({ profileType }: PortfolioTourProps) => {
         const validSteps = ALL_TOUR_STEPS.filter((s) => {
           if (s.profileTypes && profileType && !s.profileTypes.includes(profileType)) return false;
           return document.getElementById(s.targetId) !== null;
-        });
+        }).map((s) => s.title === "__KNOWN_FOR__" ? { ...s, title: getKnownForTitle(profileType) } : s);
         if (validSteps.length === 0) return;
         setAvailableSteps(validSteps);
         setActive(true);
