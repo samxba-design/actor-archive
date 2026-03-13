@@ -29,12 +29,26 @@ const AnalyticsOverview = () => {
     const fetchAnalytics = async () => {
       const { data: views } = await supabase
         .from("page_views")
-        .select("created_at, device_type, referrer, country, city")
+        .select("created_at, device_type, referrer, country, city, path")
         .eq("profile_id", user.id)
         .order("created_at", { ascending: false })
         .limit(1000);
 
       if (!views) { setLoading(false); return; }
+
+      // Separate page views from interaction events
+      const pageViews = views.filter(v => !v.path?.startsWith("/_interaction/"));
+      const interactions = views.filter(v => v.path?.startsWith("/_interaction/"));
+
+      setTotalViews(pageViews.length);
+
+      // Engagement metrics from interaction tracking
+      setEngagement({
+        contact_clicks: interactions.filter(v => v.path?.includes("/contact_clicked")).length,
+        cta_clicks: interactions.filter(v => v.path?.includes("/cta_clicked")).length,
+        reel_plays: interactions.filter(v => v.path?.includes("/reel_played")).length,
+        cv_downloads: interactions.filter(v => v.path?.includes("/cv_downloaded")).length,
+      });
 
       setTotalViews(views.length);
 
