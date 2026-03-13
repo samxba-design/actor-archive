@@ -61,9 +61,17 @@ const StepProfileType = ({ data, updateData, onNext, stepMeta }: Props) => {
           You are a...
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Select your creative discipline. Pick more than one to build a multi-hyphenate profile
-          — you can always customise and add sections later.
+          Each type comes with <span className="font-medium text-foreground">purpose-built sections, terminology, and tools</span> designed specifically for your craft. Pick more than one to build a multi-hyphenate profile.
         </p>
+        <details className="text-left max-w-md mx-auto mt-2 group">
+          <summary className="text-xs text-primary cursor-pointer hover:underline">What does this mean?</summary>
+          <ul className="mt-2 text-xs text-muted-foreground space-y-1 pl-4 list-disc">
+            <li><span className="font-medium text-foreground">Screenwriters</span> get logline fields, script libraries, and coverage tools</li>
+            <li><span className="font-medium text-foreground">Actors</span> get demo reel sections, headshot galleries, and stats bars</li>
+            <li><span className="font-medium text-foreground">Copywriters</span> get case study builders, results walls, and campaign timelines</li>
+            <li><span className="font-medium text-foreground">Authors</span> get bookshelf displays and published work sections</li>
+          </ul>
+        </details>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
