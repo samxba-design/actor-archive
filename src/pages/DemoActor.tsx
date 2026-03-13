@@ -23,7 +23,7 @@ import {
   ClientLogosWithToggle, EducationWithToggle, GalleryWithToggle,
   DemoReelsWithToggle, RepresentationWithToggle, SkillsWithToggle,
   EventsWithToggle, ProductionsWithToggle,
-  AmbientGlow, MidScrollCTA, CTA_LABELS,
+  AmbientGlow, MidScrollCTA, CTA_LABELS, STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockRepresentation, mockActorStats,

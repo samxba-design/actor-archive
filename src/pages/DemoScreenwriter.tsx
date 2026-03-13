@@ -26,6 +26,7 @@ import {
   EducationWithToggle, GalleryWithToggle, DemoReelsWithToggle,
   RepresentationWithToggle, SkillsWithToggle, EventsWithToggle,
   ProductionsWithToggle, AmbientGlow, MidScrollCTA, CreditHeroCard, CTA_LABELS,
+  STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockRepresentation, mockLoglines,

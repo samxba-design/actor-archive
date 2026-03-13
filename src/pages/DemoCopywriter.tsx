@@ -23,7 +23,7 @@ import {
   ClientLogosWithToggle, EducationWithToggle, SkillsWithToggle,
   CaseStudiesWithToggle,
   AmbientGlow, MidScrollCTA, CTA_LABELS,
-  PublishedWorkWithToggle,
+  PublishedWorkWithToggle, STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
