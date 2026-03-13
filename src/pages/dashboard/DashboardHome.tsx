@@ -92,6 +92,7 @@ const DashboardHome = () => {
   const [urlOpen, setUrlOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
   const [howItWorksDismissed, setHowItWorksDismissed] = useState(() => localStorage.getItem("hiw_dismissed") === "true");
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
     if (!user) return;
