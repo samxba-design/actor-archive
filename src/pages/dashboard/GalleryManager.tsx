@@ -17,6 +17,7 @@ import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 type GalleryImage = Tables<"gallery_images">;
 
@@ -51,6 +52,7 @@ const GalleryManager = () => {
   const labels = getTypeAwareLabels(profileType);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [imageType, setImageType] = useState("headshot");
 
@@ -74,12 +76,14 @@ const GalleryManager = () => {
 
   const fetchImages = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from("gallery_images")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order", { ascending: true });
-    setImages(data || []);
+    if (fetchError) setError(fetchError.message);
+    else setImages(data || []);
     setLoading(false);
   };
 
@@ -127,6 +131,10 @@ const GalleryManager = () => {
 
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  }
+
+  if (error) {
+    return <div className="max-w-4xl"><ManagerErrorState message={`Could not load gallery: ${error}`} onRetry={fetchImages} /></div>;
   }
 
   return (

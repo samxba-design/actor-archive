@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Plus, Pencil, Trash2, Trophy } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 interface Award {
   id: string;
@@ -32,6 +33,7 @@ const AwardsManager = () => {
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Award[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Award | null>(null);
   const [form, setForm] = useState({ name: "", organization: "", category: "", year: "", result: "nominated" });
@@ -39,8 +41,10 @@ const AwardsManager = () => {
 
   const fetchItems = async () => {
     if (!user) return;
-    const { data } = await supabase.from("awards").select("*").eq("profile_id", user.id).order("display_order");
-    setItems(data || []);
+    setError(null);
+    const { data, error: fetchError } = await supabase.from("awards").select("*").eq("profile_id", user.id).order("display_order");
+    if (fetchError) setError(fetchError.message);
+    else setItems(data || []);
     setLoading(false);
   };
 
@@ -63,6 +67,7 @@ const AwardsManager = () => {
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this award?", description: "This award will be permanently removed from your portfolio." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (error) return <div className="max-w-3xl"><ManagerErrorState message={`Could not load awards: ${error}`} onRetry={fetchItems} /></div>;
 
   return (
     <div className="max-w-3xl space-y-6">

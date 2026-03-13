@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, Trash2, Quote } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 interface Testimonial {
   id: string;
@@ -33,6 +34,7 @@ const TestimonialsManager = () => {
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Testimonial | null>(null);
   const [form, setForm] = useState({ author_name: "", author_role: "", author_company: "", quote: "", is_featured: false });
@@ -40,8 +42,10 @@ const TestimonialsManager = () => {
 
   const fetchItems = async () => {
     if (!user) return;
-    const { data } = await supabase.from("testimonials").select("*").eq("profile_id", user.id).order("display_order");
-    setItems(data || []);
+    setError(null);
+    const { data, error: fetchError } = await supabase.from("testimonials").select("*").eq("profile_id", user.id).order("display_order");
+    if (fetchError) setError(fetchError.message);
+    else setItems(data || []);
     setLoading(false);
   };
 
@@ -64,6 +68,7 @@ const TestimonialsManager = () => {
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this testimonial?", description: "This testimonial will be permanently removed." });
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  if (error) return <div className="max-w-3xl"><ManagerErrorState message={`Could not load testimonials: ${error}`} onRetry={fetchItems} /></div>;
 
   return (
     <div className="max-w-3xl space-y-6">

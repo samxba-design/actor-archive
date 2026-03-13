@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2, Star, Upload, GripVertical } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Search, X, ChevronDown, Settings2, Star, Upload, GripVertical, Copy } from "lucide-react";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -28,6 +28,7 @@ import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { compressImage } from "@/lib/imageCompression";
+import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 type Project = Tables<"projects">;
 
@@ -61,7 +62,7 @@ function generateSlug(title: string): string {
     .slice(0, 60);
 }
 
-const SortableProjectCard = ({ project, onEdit, onDelete }: { project: Project; onEdit: (p: Project) => void; onDelete: (id: string) => void }) => {
+const SortableProjectCard = ({ project, onEdit, onDelete, onDuplicate }: { project: Project; onEdit: (p: Project) => void; onDelete: (id: string) => void; onDuplicate: (p: Project) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: project.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
@@ -90,8 +91,9 @@ const SortableProjectCard = ({ project, onEdit, onDelete }: { project: Project; 
           </div>
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(project)}><Pencil className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" onClick={() => onDelete(project.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(project)} title="Edit"><Pencil className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onDuplicate(project)} title="Duplicate"><Copy className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onDelete(project.id)} title="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
         </div>
       </CardContent>
     </Card>
@@ -105,6 +107,7 @@ const ProjectsManager = () => {
   const { profileType } = useProfileTypeContext();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
   const [saving, setSaving] = useState(false);
@@ -171,12 +174,17 @@ const ProjectsManager = () => {
 
   const fetchProjects = async () => {
     if (!user) return;
-    const { data } = await supabase
+    setError(null);
+    const { data, error: fetchError } = await supabase
       .from("projects")
       .select("*")
       .eq("profile_id", user.id)
       .order("display_order", { ascending: true });
-    setProjects(data || []);
+    if (fetchError) {
+      setError(fetchError.message);
+    } else {
+      setProjects(data || []);
+    }
     setLoading(false);
   };
 
@@ -363,8 +371,34 @@ const ProjectsManager = () => {
   }, [user]);
   const { requestDelete, DeleteConfirmDialog } = useDeleteConfirmation(performDelete, { title: "Delete this project?", description: "This project and all its data will be permanently deleted." });
 
+  const handleDuplicate = async (project: Project) => {
+    if (!user) return;
+    const { id, created_at, updated_at, ...rest } = project;
+    const payload = {
+      ...rest,
+      title: `${project.title} (copy)`,
+      project_slug: project.project_slug ? `${project.project_slug}-copy` : null,
+      display_order: projects.length,
+    };
+    const { error } = await supabase.from("projects").insert(payload as any);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Duplicated", description: `"${project.title}" has been duplicated.` });
+      fetchProjects();
+    }
+  };
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl">
+        <ManagerErrorState message={`Could not load projects: ${error}`} onRetry={fetchProjects} />
+      </div>
+    );
   }
 
   return (
@@ -685,7 +719,7 @@ const ProjectsManager = () => {
           <SortableContext items={projects.map(p => p.id)} strategy={verticalListSortingStrategy}>
             <div className="space-y-3">
               {projects.map((p) => (
-                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} />
+                <SortableProjectCard key={p.id} project={p} onEdit={openEdit} onDelete={requestDelete} onDuplicate={handleDuplicate} />
               ))}
             </div>
           </SortableContext>
