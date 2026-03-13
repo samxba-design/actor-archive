@@ -29,6 +29,7 @@ const ACCESS_LEVELS = [
 const ScriptManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const { isPro } = useSubscription();
   const [scripts, setScripts] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
