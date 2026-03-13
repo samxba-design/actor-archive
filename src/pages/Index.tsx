@@ -172,27 +172,26 @@ const ThemeShowcase = forwardRef<HTMLDivElement>((_, _ref) => {
 
   useEffect(() => {
     if (!inView) return;
-    const interval = setInterval(() => setActive(i => (i + 1) % showcaseThemes.length), 3500);
+    const interval = setInterval(() => setActive(i => (i + 1) % showcaseThemeIds.length), 3500);
     return () => clearInterval(interval);
   }, [inView]);
+
+  const showcaseThemes = showcaseThemeIds.map(id => portfolioThemes[id]);
 
   return (
     <div ref={ref} className="space-y-8">
       {/* Theme pills */}
-      <div className="flex justify-center gap-2">
-        {showcaseThemes.map((key, i) => {
-          const t = themes[key];
-          return (
-            <button key={key} onClick={() => setActive(i)}
-              className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300"
-              style={{
-                background: active === i ? "hsl(var(--landing-accent))" : "hsl(var(--landing-card))",
-                color: active === i ? "hsl(var(--landing-bg))" : "hsl(var(--landing-muted))",
-              }}>
-              {t.label}
-            </button>
-          );
-        })}
+      <div className="flex justify-center gap-2 flex-wrap">
+        {showcaseThemes.map((t, i) => (
+          <button key={t.id} onClick={() => setActive(i)}
+            className="px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-300"
+            style={{
+              background: active === i ? "hsl(var(--landing-accent))" : "hsl(var(--landing-card))",
+              color: active === i ? "hsl(var(--landing-bg))" : "hsl(var(--landing-muted))",
+            }}>
+            {t.name}
+          </button>
+        ))}
       </div>
 
       {/* Mock browser frame */}
@@ -214,44 +213,40 @@ const ThemeShowcase = forwardRef<HTMLDivElement>((_, _ref) => {
 
         {/* Theme preview cards */}
         <div className="relative h-72 sm:h-80 overflow-hidden">
-          {showcaseThemes.map((key, i) => {
-            const t = themes[key];
-            const v = t.variables;
-            return (
-              <div key={key}
-                className="absolute inset-0 p-6 sm:p-8 transition-all duration-700 ease-in-out"
-                style={{
-                  opacity: active === i ? 1 : 0,
-                  transform: active === i ? "scale(1)" : "scale(0.97)",
-                  backgroundColor: `hsl(${v["--portfolio-bg"]})`,
-                  color: `hsl(${v["--portfolio-fg"]})`,
-                  fontFamily: v["--portfolio-body-font"],
-                }}>
-                {/* Mock hero */}
-                <div className="flex items-start gap-4 mb-5">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold"
-                    style={{ backgroundColor: `hsl(${v["--portfolio-accent"]})`, color: `hsl(${v["--portfolio-accent-fg"]})` }}>
-                    A
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold" style={{ fontFamily: v["--portfolio-heading-font"] }}>Alex Rivera</h3>
-                    <p className="text-sm" style={{ color: `hsl(${v["--portfolio-muted-fg"]})` }}>Screenwriter & Director — Los Angeles</p>
-                  </div>
+          {showcaseThemes.map((t, i) => (
+            <div key={t.id}
+              className="absolute inset-0 p-6 sm:p-8 transition-all duration-700 ease-in-out"
+              style={{
+                opacity: active === i ? 1 : 0,
+                transform: active === i ? "scale(1)" : "scale(0.97)",
+                backgroundColor: t.bgPrimary,
+                color: t.textPrimary,
+                fontFamily: t.fontBody,
+              }}>
+              {/* Mock hero */}
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold"
+                  style={{ backgroundColor: t.accentPrimary, color: t.textOnAccent }}>
+                  A
                 </div>
-                {/* Mock cards */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[1, 2, 3].map(n => (
-                    <div key={n} className="space-y-2 p-3 rounded-lg"
-                      style={{ backgroundColor: `hsl(${v["--portfolio-card"]})`, border: `1px solid hsl(${v["--portfolio-border"]})` }}>
-                      <div className="h-16 rounded" style={{ backgroundColor: `hsl(${v["--portfolio-muted"]})` }} />
-                      <div className="h-2 rounded-full w-3/4" style={{ backgroundColor: `hsl(${v["--portfolio-muted"]})` }} />
-                      <div className="h-2 rounded-full w-1/2" style={{ backgroundColor: `hsl(${v["--portfolio-muted"]})` }} />
-                    </div>
-                  ))}
+                <div className="space-y-1">
+                  <h3 className="text-xl font-bold" style={{ fontFamily: t.fontDisplay }}>Alex Rivera</h3>
+                  <p className="text-sm" style={{ color: t.textSecondary }}>Screenwriter & Director — Los Angeles</p>
                 </div>
               </div>
-            );
-          })}
+              {/* Mock cards */}
+              <div className="grid grid-cols-3 gap-3">
+                {[1, 2, 3].map(n => (
+                  <div key={n} className="space-y-2 p-3 rounded-lg"
+                    style={{ backgroundColor: t.bgElevated, border: `1px solid ${t.borderDefault}` }}>
+                    <div className="h-16 rounded" style={{ backgroundColor: t.bgSecondary }} />
+                    <div className="h-2 rounded-full w-3/4" style={{ backgroundColor: t.bgSecondary }} />
+                    <div className="h-2 rounded-full w-1/2" style={{ backgroundColor: t.bgSecondary }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
