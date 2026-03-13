@@ -33,10 +33,9 @@ interface Props {
   collections: Collection[];
   works: PublishedWorkItem[];
   variant?: "grid" | "accordion" | "tabs";
-  profileSlug?: string;
 }
 
-const SectionCollections = ({ collections, works, variant = "grid", profileSlug }: Props) => {
+const SectionCollections = ({ collections, works, variant = "grid" }: Props) => {
   const theme = usePortfolioTheme();
   const [expandedId, setExpandedId] = useState<string | null>(
     collections.find(c => c.is_expanded_default)?.id || null
@@ -73,7 +72,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
           ))}
         </div>
         {activeWorks.length > 0 ? (
-          <SectionPublishedWork items={activeWorks} profileSlug={profileSlug} />
+          <SectionPublishedWork items={activeWorks} />
         ) : (
           <p className="text-sm text-center py-8" style={{ color: theme.textTertiary }}>No pieces in this collection yet.</p>
         )}
@@ -115,7 +114,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
               <div className="overflow-hidden transition-all duration-500" style={{ maxHeight: isOpen ? "2000px" : "0", opacity: isOpen ? 1 : 0 }}>
                 <div className="px-5 pb-5">
                   {collectionWorks.length > 0 ? (
-                    <SectionPublishedWork items={collectionWorks} profileSlug={profileSlug} />
+                    <SectionPublishedWork items={collectionWorks} />
                   ) : (
                     <p className="text-sm py-4" style={{ color: theme.textTertiary }}>No pieces in this collection yet.</p>
                   )}
@@ -127,7 +126,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
         {uncollectedWorks.length > 0 && (
           <div className="mt-6">
             <h3 className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: theme.textSecondary }}>Other Work</h3>
-            <SectionPublishedWork items={uncollectedWorks} profileSlug={profileSlug} />
+            <SectionPublishedWork items={uncollectedWorks} />
           </div>
         )}
       </div>
@@ -162,7 +161,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
                   </div>
                 </div>
               ) : (
-                <div className="p-5 flex items-center gap-3" style={{ backgroundColor: theme.cardBg }}>
+                <div className="p-5 flex items-center gap-3" style={{ backgroundColor: theme.bgElevated }}>
                   <div className="h-12 w-12 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${theme.accentPrimary}15` }}>
                     <FolderOpen className="h-6 w-6" style={{ color: theme.accentPrimary }} />
                   </div>
@@ -189,7 +188,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
             <button onClick={() => setExpandedId(null)} className="text-xs underline" style={{ color: theme.textTertiary }}>Close</button>
           </div>
           {getWorksForCollection(expandedId).length > 0 ? (
-            <SectionPublishedWork items={getWorksForCollection(expandedId)} profileSlug={profileSlug} />
+            <SectionPublishedWork items={getWorksForCollection(expandedId)} />
           ) : (
             <p className="text-sm py-4" style={{ color: theme.textTertiary }}>No pieces in this collection yet.</p>
           )}
@@ -202,7 +201,7 @@ const SectionCollections = ({ collections, works, variant = "grid", profileSlug 
           {collections.length > 0 && (
             <h3 className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: theme.textSecondary }}>Other Work</h3>
           )}
-          <SectionPublishedWork items={uncollectedWorks} profileSlug={profileSlug} />
+          <SectionPublishedWork items={uncollectedWorks} />
         </div>
       )}
     </div>
