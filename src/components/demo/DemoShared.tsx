@@ -22,6 +22,7 @@ import SectionActorStats from "@/components/portfolio/sections/SectionActorStats
 import SectionCaseStudies from "@/components/portfolio/sections/SectionCaseStudies";
 import SectionCampaignTimeline from "@/components/portfolio/sections/SectionCampaignTimeline";
 import SectionPublishedWork from "@/components/portfolio/sections/SectionPublishedWork";
+import SectionCollections from "@/components/portfolio/sections/SectionCollections";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
