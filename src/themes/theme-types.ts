@@ -49,7 +49,7 @@ export interface PortfolioTheme {
   cardBorderWidth: string;
 
   // CTA
-  ctaStyle: 'text-link' | 'outlined' | 'filled-subtle' | 'underlined';
+  ctaStyle: 'text-link' | 'outlined' | 'filled-subtle' | 'underlined' | 'glow-pulse' | 'shine-sweep' | 'neon-border' | 'filled-bold';
   ctaRadius: string;
 
   // Hero

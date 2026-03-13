@@ -704,6 +704,82 @@ html:not(.portfolio-light-override) .portfolio-light-override {
   border-color: hsl(var(--landing-accent) / 1) !important;
 }
 
+/* ═══ Portfolio CTA animated styles ═══ */
+
+/* Glow Pulse CTA */
+@keyframes cta-glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px var(--cta-accent, hsl(0 0% 50%) / 0.3);
+    border-color: var(--cta-accent, hsl(0 0% 50%));
+  }
+  50% {
+    box-shadow: 0 0 24px var(--cta-accent, hsl(0 0% 50%) / 0.5), 0 0 48px var(--cta-accent-glow, hsl(0 0% 50% / 0.08));
+    border-color: var(--cta-accent, hsl(0 0% 50%));
+  }
+}
+
+.portfolio-cta-glow-pulse {
+  animation: cta-glow-pulse 2.5s ease-in-out infinite;
+}
+.portfolio-cta-glow-pulse:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 32px var(--cta-accent, hsl(0 0% 50%) / 0.6) !important;
+}
+
+/* Shine Sweep CTA */
+@keyframes cta-shine-sweep {
+  0% { left: -60%; }
+  100% { left: 120%; }
+}
+
+.portfolio-cta-shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.portfolio-cta-shine-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.2), transparent);
+  animation: cta-shine-sweep 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.portfolio-cta-shine-sweep:hover {
+  transform: scale(1.03);
+}
+
+/* Neon Border CTA */
+@keyframes cta-neon-flicker {
+  0%, 100% {
+    box-shadow: 0 0 6px var(--cta-accent, hsl(0 0% 50%) / 0.4), inset 0 0 6px var(--cta-accent, hsl(0 0% 50%) / 0.1);
+  }
+  50% {
+    box-shadow: 0 0 18px var(--cta-accent, hsl(0 0% 50%) / 0.7), 0 0 36px var(--cta-accent, hsl(0 0% 50%) / 0.3), inset 0 0 12px var(--cta-accent, hsl(0 0% 50%) / 0.15);
+  }
+}
+
+.portfolio-cta-neon-border {
+  animation: cta-neon-flicker 2s ease-in-out infinite;
+  text-shadow: 0 0 8px var(--cta-accent-glow, transparent);
+}
+.portfolio-cta-neon-border:hover {
+  transform: scale(1.05);
+  text-shadow: 0 0 12px var(--cta-accent, hsl(0 0% 50%) / 0.5);
+}
+
+/* Filled Bold CTA */
+.portfolio-cta-filled-bold {
+  box-shadow: 0 4px 14px var(--cta-accent, hsl(0 0% 50%) / 0.3);
+  transition: all 0.25s ease;
+}
+.portfolio-cta-filled-bold:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 24px var(--cta-accent, hsl(0 0% 50%) / 0.45);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

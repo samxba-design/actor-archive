@@ -660,6 +660,37 @@ const SettingsPage = () => {
             </Select>
           </div>
           <div>
+            <Label>Button Style</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-1.5">
+              {[
+                { id: "text-link", label: "Text Link", desc: "Minimal, underline on hover" },
+                { id: "outlined", label: "Outlined", desc: "Clean border style" },
+                { id: "underlined", label: "Underlined", desc: "Subtle underline" },
+                { id: "filled-subtle", label: "Filled Subtle", desc: "Soft background fill" },
+                { id: "glow-pulse", label: "Glow Pulse", desc: "Pulsing glow effect" },
+                { id: "shine-sweep", label: "Shine Sweep", desc: "Shimmer light sweep" },
+                { id: "neon-border", label: "Neon Border", desc: "Neon outline glow" },
+                { id: "filled-bold", label: "Filled Bold", desc: "Solid, impactful" },
+              ].map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setCtaStyle(s.id)}
+                  className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                    ctaStyle === s.id
+                      ? "border-primary bg-primary/10 ring-1 ring-primary"
+                      : "border-border hover:border-primary/40 hover:bg-accent/50"
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-medium text-foreground">{s.label}</span>
+                    {ctaStyle === s.id && <Check className="h-3 w-3 text-primary" />}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{s.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
             <Label>Button Label</Label>
             <Input value={form.cta_label} onChange={(e) => setForm((f) => ({ ...f, cta_label: e.target.value }))} placeholder="e.g. Hire Me, Book a Call, Get in Touch" />
           </div>
