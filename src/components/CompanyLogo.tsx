@@ -1,8 +1,6 @@
 import { useState } from "react";
 import {
   getCompanyLogoUrlWithColor,
-  getCompanyDomain,
-  getFaviconUrl,
   type LogoColorMode,
 } from "@/lib/companyLogos";
 
@@ -24,45 +22,19 @@ const CompanyLogo = ({
   themeAccentHex,
 }: Props) => {
   const colorMode: LogoColorMode = colorModeProp ?? (grayscale ? 'grayscale' : 'original');
+  const [hidden, setHidden] = useState(false);
 
-  // 3-stage fallback: logo.dev → favicon → initials
-  const [stage, setStage] = useState<"logodev" | "favicon" | "initials">("logodev");
+  const { url, needsCssTint } = getCompanyLogoUrlWithColor(companyName, colorMode, themeAccentHex);
 
-  const getSrc = (): string | null => {
-    switch (stage) {
-      case "logodev": {
-        const { url } = getCompanyLogoUrlWithColor(companyName, colorMode, themeAccentHex);
-        return url;
-      }
-      case "favicon":
-        return getFaviconUrl(getCompanyDomain(companyName), 128);
-      default:
-        return null;
-    }
-  };
+  if (hidden) return null;
 
-  const src = getSrc();
-
-  if (stage === "initials" || !src) {
-    return (
-      <div
-        className={`flex items-center justify-center rounded bg-muted text-muted-foreground font-bold text-xs uppercase ${className}`}
-        style={{ width: size, height: size }}
-      >
-        {companyName.slice(0, 2)}
-      </div>
-    );
-  }
-
-  // For theme mode on logo.dev, apply CSS sepia tint
-  const { needsCssTint } = getCompanyLogoUrlWithColor(companyName, colorMode, themeAccentHex);
   const filterStyle: React.CSSProperties = needsCssTint
     ? { filter: 'sepia(1) saturate(2) brightness(0.8)' }
     : {};
 
   return (
     <img
-      src={src}
+      src={url}
       alt={`${companyName} logo`}
       className={`object-contain transition-all duration-200 ${className}`}
       style={{
@@ -70,10 +42,7 @@ const CompanyLogo = ({
         maxWidth: `${size * 2.5}px`,
         ...filterStyle,
       }}
-      onError={() => {
-        if (stage === "logodev") setStage("favicon");
-        else setStage("initials");
-      }}
+      onError={() => setHidden(true)}
     />
   );
 };
