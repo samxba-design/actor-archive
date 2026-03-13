@@ -69,7 +69,7 @@ const SettingsPage = () => {
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [form, setForm] = useState({
     slug: "",
-    theme: "minimal",
+    theme: "cinematic-dark",
     accent_color: "#C41E3A",
     is_published: false,
     show_contact_form: true,
