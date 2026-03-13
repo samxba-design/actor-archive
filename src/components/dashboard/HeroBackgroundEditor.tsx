@@ -92,6 +92,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   const hasPreset = !!heroBackgroundPreset;
 
   const previewStyle = (): React.CSSProperties => {
+    if (currentMode === 'image' && heroBgImageUrl) return { backgroundImage: `url(${heroBgImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' };
     if (currentMode === 'solid' && heroBgSolidColor) return { backgroundColor: heroBgSolidColor };
     if (currentMode === 'bokeh') return { background: 'linear-gradient(135deg, #0a0a0a, #1a0a2e, #0a0a0a)' };
     if (currentMode === 'video') return { background: 'linear-gradient(135deg, #111, #222)' };
