@@ -127,7 +127,7 @@ const ProjectsManager = () => {
       supabase.from("projects").update({ display_order: i }).eq("id", p.id)
     ));
   };
-
+  const labels = getTypeAwareLabels(profileType);
 
   const defaultProjectType = profileType ? (DEFAULT_PROJECT_TYPE[profileType] || "screenplay") : "screenplay";
   const atProjectLimit = !isPro && projects.length >= FREE_PROJECT_LIMIT;
