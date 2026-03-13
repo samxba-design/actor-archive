@@ -110,6 +110,7 @@ const PublishedWorkManager = () => {
       article_url: item.article_url || "",
       is_featured: item.is_featured || false,
       show_text_overlay: item.show_text_overlay !== false,
+      collection_id: (item as any).collection_id || "",
     });
     setDialogOpen(true);
   };
