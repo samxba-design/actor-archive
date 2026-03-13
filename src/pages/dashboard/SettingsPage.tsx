@@ -266,6 +266,7 @@ const SettingsPage = () => {
       // Update context slug
       setContextSlug(form.slug || null);
       toast({ title: "Saved", description: "Settings updated." });
+      clearDraft();
     }
     setSaving(false);
   };
