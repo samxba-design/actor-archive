@@ -36,14 +36,15 @@ interface Event {
 const EventsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Event | null>(null);
-  const [form, setForm] = useState({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true });
+  const [form, setForm] = useState({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true, project_id: "" });
   const [saving, setSaving] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
