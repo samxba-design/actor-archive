@@ -50,7 +50,13 @@ const AwardsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
+
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
   const openAdd = () => { setEditing(null); setForm({ name: "", organization: "", category: "", year: "", result: "nominated" }); setDialogOpen(true); };
   const openEdit = (item: Award) => { setEditing(item); setForm({ name: item.name, organization: item.organization || "", category: item.category || "", year: item.year?.toString() || "", result: item.result || "nominated" }); setDialogOpen(true); };
