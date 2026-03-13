@@ -136,9 +136,7 @@ const StandardLayout = () => (
 const CinematicLayout = () => (
   <>
     <div className="mb-12">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
-      </PortfolioSectionWrapper>
+      <ClientLogosWithToggle companies={mockClients} />
     </div>
     <div className="mb-12">
       <PortfolioSectionWrapper title="Original Work" index={0}>
