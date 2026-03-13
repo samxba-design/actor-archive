@@ -223,7 +223,9 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
               </button>
               {rateLimited && (
                 <p className="text-xs text-center" style={{ color: theme.accentPrimary }}>
-                  Please wait a moment before sending again.
+                  Too many submissions. Please wait a few minutes before trying again.
+                </p>
+              )}
                 </p>
               )}
             </form>
