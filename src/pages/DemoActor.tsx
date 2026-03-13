@@ -505,6 +505,7 @@ const DemoActor = () => {
         demoReels={mockDemoReels}
         imageAnimation={variants.imageAnimation}
         heroBgType={variants.heroBgType}
+        heroBgImageUrl={variants.heroBgType === 'image' ? (STOCK_HERO_IMAGES.find(i => i.key === variants.heroBgImage)?.url || '') : undefined}
         knownForPosition={variants.knownForPosition}
       />
 
