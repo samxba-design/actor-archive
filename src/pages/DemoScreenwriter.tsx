@@ -71,12 +71,12 @@ const StandardLayout = () => (
     <div className="mb-10">
       <ClientLogosWithToggle companies={mockClients} />
     </div>
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 mb-10">
       <PortfolioSectionWrapper title="Original Work" index={0}>
         <LoglinesWithToggle items={mockLoglines} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={1}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
     </div>
     <div className="mb-10">
