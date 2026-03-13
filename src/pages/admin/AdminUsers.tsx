@@ -12,7 +12,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Search, Ban, CheckCircle, Eye, MoreHorizontal, ChevronLeft, ChevronRight, Filter, X } from "lucide-react";
+import { Search, Ban, CheckCircle, Eye, MoreHorizontal, ChevronLeft, ChevronRight, Filter, X, Crown } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 
