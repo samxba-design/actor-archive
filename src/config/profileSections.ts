@@ -171,6 +171,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "bio", label: "Bio", description: "Your story" },
       { key: "client_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "article_feed", label: "Article Feed", description: "Your published articles" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "published_work", label: "Published Work", description: "Featured articles & investigations" },
       { key: "publication_logos", label: "Publications", description: "Outlets you've written for" },
       { key: "skills", label: "Beats & Expertise", description: "Your areas of focus" },
