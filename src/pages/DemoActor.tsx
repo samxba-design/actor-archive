@@ -516,6 +516,9 @@ const DemoActor = () => {
         <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
           {() => null}
         </WithToggle>
+        <WithToggle sectionKey="knownForPosition" sectionName="Known For Position">
+          {() => null}
+        </WithToggle>
         <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
           {() => null}
         </WithToggle>
