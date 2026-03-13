@@ -431,6 +431,16 @@ export const PublishedWorkWithToggle = ({ items }: { items: any[] }) => (
   </WithToggle>
 );
 
+export const CollectionsWithToggle = ({ collections, works }: { collections: any[]; works: any[] }) => (
+  <WithToggle sectionKey="collections" sectionName="Collections" variantOptions={[
+    { value: 'grid', label: 'Grid' },
+    { value: 'accordion', label: 'Accordion' },
+    { value: 'tabs', label: 'Tabs' },
+  ]}>
+    {(variant) => <SectionCollections collections={collections} works={works} variant={variant as any} />}
+  </WithToggle>
+);
+
 /* ── Ambient Glow ── */
 export const AmbientGlow = () => {
   const theme = usePortfolioTheme();
