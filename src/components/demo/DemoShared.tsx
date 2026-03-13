@@ -218,14 +218,19 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
 /* ── Toggle wrapper components ── */
 export const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {
   const { variants, setVariant } = useSectionVariants();
+  const options = VARIANT_OPTIONS[sectionKey];
+  // Skip rendering the options bar if showCustomization is off, or if there are no options
+  const showBar = variants.showCustomization && options && options.length > 0;
   return (
     <>
-      <SectionOptionsBar
-        sectionName={sectionName}
-        options={VARIANT_OPTIONS[sectionKey]}
-        value={variants[sectionKey]}
-        onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
-      />
+      {showBar && (
+        <SectionOptionsBar
+          sectionName={sectionName}
+          options={options}
+          value={String(variants[sectionKey])}
+          onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
+        />
+      )}
       {children(variants[sectionKey])}
     </>
   );
