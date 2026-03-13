@@ -3,6 +3,15 @@ import CompanyLogo from "@/components/CompanyLogo";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import type { LogoColorMode } from "@/lib/companyLogos";
 
+export type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
+
+const LOGO_SIZE_MAP: Record<LogoSize, number> = {
+  sm: 20,
+  md: 28,
+  lg: 36,
+  xl: 48,
+};
+
 interface ClientItem {
   company_name: string;
   logo_url?: string | null;
@@ -15,9 +24,10 @@ interface Props {
   companies?: string[];
   variant?: 'bar' | 'grid' | 'marquee';
   colorMode?: LogoColorMode;
+  logoSize?: LogoSize;
 }
 
-const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original' }: Props) => {
+const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'original', logoSize = 'md' }: Props) => {
   const theme = usePortfolioTheme();
 
   // Normalize: DB items take priority, fall back to legacy string array
