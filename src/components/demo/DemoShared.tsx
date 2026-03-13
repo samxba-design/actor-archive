@@ -206,6 +206,13 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'body_section', label: 'Body Section' },
     { key: 'hidden', label: 'Hidden' },
   ],
+  clientLogosPosition: [
+    { key: 'below_hero', label: 'Below Hero' },
+    { key: 'above_sections', label: 'Above Sections' },
+    { key: 'body_section', label: 'Body Section' },
+    { key: 'hidden', label: 'Hidden' },
+  ],
+  showCustomization: [],
 };
 
 /* ── Toggle wrapper components ── */
