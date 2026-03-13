@@ -69,6 +69,7 @@ const SettingsPage = () => {
   const [heroStyle, setHeroStyle] = useState<string>("full");
   const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
+  const [ctaStyle, setCtaStyle] = useState<string>("outlined");
   const [form, setForm] = useState({
     slug: "",
     theme: "cinematic-dark",
