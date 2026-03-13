@@ -118,7 +118,7 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
         />
         <div className="flex gap-10 animate-[client-marquee_25s_linear_infinite]">
           {doubled.map((c, i) => (
-            <LogoItem key={`${c.company_name}-${i}`} client={c} size={24} />
+            <LogoItem key={`${c.company_name}-${i}`} client={c} />
           ))}
         </div>
       </div>
