@@ -27,7 +27,22 @@ import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
 
 /* ── Unified section variants context ── */
-export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient';
+export type HeroBgType = 'preset' | 'solid' | 'bokeh' | 'video' | 'gradient' | 'image';
+
+export const STOCK_HERO_IMAGES: { key: string; label: string; url: string }[] = [
+  { key: 'theater', label: 'Theater', url: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920&q=80&auto=format' },
+  { key: 'projector', label: 'Projector', url: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=1920&q=80&auto=format' },
+  { key: 'filmset', label: 'Film Set', url: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=1920&q=80&auto=format' },
+  { key: 'city-night', label: 'City Night', url: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1920&q=80&auto=format' },
+  { key: 'neon-alley', label: 'Neon Alley', url: 'https://images.unsplash.com/photo-1545893835-abaa50cbe628?w=1920&q=80&auto=format' },
+  { key: 'marble', label: 'Dark Marble', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80&auto=format' },
+  { key: 'ink-water', label: 'Ink & Water', url: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1920&q=80&auto=format' },
+  { key: 'typewriter', label: 'Typewriter', url: 'https://images.unsplash.com/photo-1505682634904-d7c8d95cdc50?w=1920&q=80&auto=format' },
+  { key: 'studio-light', label: 'Studio Light', url: 'https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=1920&q=80&auto=format' },
+  { key: 'misty-forest', label: 'Misty Forest', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80&auto=format' },
+  { key: 'ocean-dusk', label: 'Ocean Dusk', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80&auto=format' },
+  { key: 'golden-ridge', label: 'Golden Ridge', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80&auto=format' },
+];
 
 export interface SectionVariants {
   knownFor: KnownForVariant;
