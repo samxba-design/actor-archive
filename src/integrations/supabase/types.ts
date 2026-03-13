@@ -1014,6 +1014,7 @@ export type Database = {
           banner_url: string | null
           bio: string | null
           booking_url: string | null
+          client_logos_position: string | null
           contact_mode: string | null
           created_at: string | null
           cta_label: string | null
@@ -1070,6 +1071,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           booking_url?: string | null
+          client_logos_position?: string | null
           contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null
@@ -1126,6 +1128,7 @@ export type Database = {
           banner_url?: string | null
           bio?: string | null
           booking_url?: string | null
+          client_logos_position?: string | null
           contact_mode?: string | null
           created_at?: string | null
           cta_label?: string | null

@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN client_logos_position text DEFAULT 'body_section';
