@@ -70,6 +70,7 @@ const SettingsPage = () => {
   const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
+  const [clientLogosPosition, setClientLogosPosition] = useState<string>("body_section");
   const [form, setForm] = useState({
     slug: "",
     theme: "cinematic-dark",
@@ -104,7 +105,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -117,6 +118,7 @@ const SettingsPage = () => {
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
+          setClientLogosPosition((data as any).client_logos_position || "body_section");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
@@ -264,6 +266,7 @@ const SettingsPage = () => {
         headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
         cta_style: ctaStyle || null,
+        client_logos_position: clientLogosPosition || "body_section",
       } as any)
       .eq("id", user.id);
 
@@ -446,6 +449,40 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-1.5">
                   <span className="font-medium text-foreground">{pos.label}</span>
                   {knownForPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Client Logos Position Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><RectangleHorizontal className="h-4 w-4" /> Client Logos Position</CardTitle>
+          <CardDescription>Choose where your client/company logos appear on the portfolio page</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { id: "below_hero", label: "Below Hero", description: "Right after the hero section" },
+              { id: "above_sections", label: "Above Sections", description: "Before main content sections" },
+              { id: "body_section", label: "Body Section", description: "As a regular content section" },
+              { id: "hidden", label: "Hidden", description: "Don't show client logos" },
+            ].map((pos) => (
+              <button
+                key={pos.id}
+                onClick={() => setClientLogosPosition(pos.id)}
+                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                  clientLogosPosition === pos.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground">{pos.label}</span>
+                  {clientLogosPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
               </button>

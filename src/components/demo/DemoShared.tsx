@@ -58,6 +58,8 @@ export interface SectionVariants {
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
   knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
+  clientLogosPosition: 'below_hero' | 'above_sections' | 'body_section' | 'hidden';
+  showCustomization: boolean;
 }
 
 export const defaultVariants: SectionVariants = {
@@ -89,6 +91,8 @@ export const defaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   heroBgType: 'preset',
   knownForPosition: 'hero_above_name',
+  clientLogosPosition: 'body_section',
+  showCustomization: true,
 };
 
 export const SectionVariantsCtx = createContext<{
@@ -202,19 +206,31 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'body_section', label: 'Body Section' },
     { key: 'hidden', label: 'Hidden' },
   ],
+  clientLogosPosition: [
+    { key: 'below_hero', label: 'Below Hero' },
+    { key: 'above_sections', label: 'Above Sections' },
+    { key: 'body_section', label: 'Body Section' },
+    { key: 'hidden', label: 'Hidden' },
+  ],
+  showCustomization: [],
 };
 
 /* ── Toggle wrapper components ── */
 export const WithToggle = <K extends keyof SectionVariants>({ sectionKey, sectionName, children }: { sectionKey: K; sectionName: string; children: (variant: SectionVariants[K]) => React.ReactNode }) => {
   const { variants, setVariant } = useSectionVariants();
+  const options = VARIANT_OPTIONS[sectionKey];
+  // Skip rendering the options bar if showCustomization is off, or if there are no options
+  const showBar = variants.showCustomization && options && options.length > 0;
   return (
     <>
-      <SectionOptionsBar
-        sectionName={sectionName}
-        options={VARIANT_OPTIONS[sectionKey]}
-        value={variants[sectionKey]}
-        onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
-      />
+      {showBar && (
+        <SectionOptionsBar
+          sectionName={sectionName}
+          options={options}
+          value={String(variants[sectionKey])}
+          onChange={(v) => setVariant(sectionKey, v as SectionVariants[K])}
+        />
+      )}
       {children(variants[sectionKey])}
     </>
   );
@@ -273,26 +289,31 @@ export const ServicesWithToggle = ({ items }: { items: any[] }) => (
 
 export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => {
   const { variants, setVariant } = useSectionVariants();
+  const showBars = variants.showCustomization;
   return (
     <>
-      <SectionOptionsBar
-        sectionName="Logo Layout"
-        options={VARIANT_OPTIONS.clientLogos}
-        value={variants.clientLogos}
-        onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
-      />
-      <SectionOptionsBar
-        sectionName="Logo Color"
-        options={VARIANT_OPTIONS.clientLogosColor}
-        value={variants.clientLogosColor}
-        onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
-      />
-      <SectionOptionsBar
-        sectionName="Logo Size"
-        options={VARIANT_OPTIONS.clientLogosSize}
-        value={variants.clientLogosSize}
-        onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
-      />
+      {showBars && (
+        <>
+          <SectionOptionsBar
+            sectionName="Logo Layout"
+            options={VARIANT_OPTIONS.clientLogos}
+            value={variants.clientLogos}
+            onChange={(v) => setVariant('clientLogos', v as SectionVariants['clientLogos'])}
+          />
+          <SectionOptionsBar
+            sectionName="Logo Color"
+            options={VARIANT_OPTIONS.clientLogosColor}
+            value={variants.clientLogosColor}
+            onChange={(v) => setVariant('clientLogosColor', v as SectionVariants['clientLogosColor'])}
+          />
+          <SectionOptionsBar
+            sectionName="Logo Size"
+            options={VARIANT_OPTIONS.clientLogosSize}
+            value={variants.clientLogosSize}
+            onChange={(v) => setVariant('clientLogosSize', v as SectionVariants['clientLogosSize'])}
+          />
+        </>
+      )}
       <SectionClientLogos
         companies={companies}
         variant={variants.clientLogos as any}
