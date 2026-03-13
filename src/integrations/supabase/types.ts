@@ -1037,6 +1037,7 @@ export type Database = {
           known_for_position: string | null
           last_name: string | null
           layout_density: string | null
+          layout_preset: string | null
           location: string | null
           onboarding_completed: boolean | null
           primary_goal: string | null
@@ -1090,6 +1091,7 @@ export type Database = {
           known_for_position?: string | null
           last_name?: string | null
           layout_density?: string | null
+          layout_preset?: string | null
           location?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
@@ -1143,6 +1145,7 @@ export type Database = {
           known_for_position?: string | null
           last_name?: string | null
           layout_density?: string | null
+          layout_preset?: string | null
           location?: string | null
           onboarding_completed?: boolean | null
           primary_goal?: string | null
