@@ -13,6 +13,7 @@ import SectionAwards from "@/components/portfolio/sections/SectionAwards";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
+import DemoExplainer from "@/components/demo/DemoExplainer";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,

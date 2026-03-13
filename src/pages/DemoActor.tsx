@@ -11,6 +11,7 @@ import SectionActorStats from "@/components/portfolio/sections/SectionActorStats
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
+import DemoExplainer from "@/components/demo/DemoExplainer";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
