@@ -383,11 +383,11 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Known For Position Picker */}
+      {/* Known For / Highlights Position Picker */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> Known For Position</CardTitle>
-          <CardDescription>Choose where your "Known For" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
+          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> {getTypeAwareLabels(profileType).knownForTitle} Position</CardTitle>
+          <CardDescription>Choose where your "{getTypeAwareLabels(profileType).knownForTitle}" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
