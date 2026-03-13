@@ -133,6 +133,17 @@ const EventsManager = () => {
             <div><Label>Ticket URL</Label><Input value={form.ticket_url} onChange={(e) => setForm(f => ({ ...f, ticket_url: e.target.value }))} placeholder="https://..." /></div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} /></div>
             <div className="flex items-center justify-between"><Label>Upcoming Event</Label><Switch checked={form.is_upcoming} onCheckedChange={(v) => setForm(f => ({ ...f, is_upcoming: v }))} /></div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>

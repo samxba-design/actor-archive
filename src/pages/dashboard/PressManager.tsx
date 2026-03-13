@@ -125,6 +125,17 @@ const PressManager = () => {
               <div><Label>Star Rating (1-5)</Label><Input value={form.star_rating} onChange={(e) => setForm(f => ({ ...f, star_rating: e.target.value }))} type="number" min="1" max="5" /></div>
               <div className="flex items-center justify-between pt-6"><Label>Featured</Label><Switch checked={form.is_featured} onCheckedChange={(v) => setForm(f => ({ ...f, is_featured: v }))} /></div>
             </div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
