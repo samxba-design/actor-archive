@@ -1410,6 +1410,7 @@ export type Database = {
         Row: {
           article_url: string | null
           category: string | null
+          collection_id: string | null
           cover_image_url: string | null
           created_at: string | null
           date: string | null
@@ -1429,6 +1430,7 @@ export type Database = {
         Insert: {
           article_url?: string | null
           category?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           date?: string | null
@@ -1448,6 +1450,7 @@ export type Database = {
         Update: {
           article_url?: string | null
           category?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           date?: string | null
@@ -1465,6 +1468,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "published_works_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "work_collections"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "published_works_profile_id_fkey"
             columns: ["profile_id"]
@@ -1787,6 +1797,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      work_collections: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_expanded_default: boolean | null
+          name: string
+          profile_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_expanded_default?: boolean | null
+          name: string
+          profile_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_expanded_default?: boolean | null
+          name?: string
+          profile_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_collections_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

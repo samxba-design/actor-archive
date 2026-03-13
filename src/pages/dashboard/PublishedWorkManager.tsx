@@ -54,6 +54,8 @@ const PublishedWorkManager = () => {
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
+  const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
+
   const [form, setForm] = useState({
     title: "",
     summary: "",
@@ -67,6 +69,7 @@ const PublishedWorkManager = () => {
     article_url: "",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "",
   });
 
   const fetchItems = async () => {
@@ -82,8 +85,13 @@ const PublishedWorkManager = () => {
 
   useEffect(() => { fetchItems(); }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("work_collections").select("id, name").eq("profile_id", user.id).order("display_order").then(({ data }) => setCollections((data as any) || []));
+  }, [user]);
+
   const resetForm = () => {
-    setForm({ title: "", summary: "", category: "", publication: "", date: "", read_time: "", cover_image_url: "", pdf_thumbnail_url: "", pdf_url: "", article_url: "", is_featured: false, show_text_overlay: true });
+    setForm({ title: "", summary: "", category: "", publication: "", date: "", read_time: "", cover_image_url: "", pdf_thumbnail_url: "", pdf_url: "", article_url: "", is_featured: false, show_text_overlay: true, collection_id: "" });
     setEditing(null);
   };
 
@@ -102,6 +110,7 @@ const PublishedWorkManager = () => {
       article_url: item.article_url || "",
       is_featured: item.is_featured || false,
       show_text_overlay: item.show_text_overlay !== false,
+      collection_id: (item as any).collection_id || "",
     });
     setDialogOpen(true);
   };
@@ -180,6 +189,7 @@ const PublishedWorkManager = () => {
       article_url: form.article_url || null,
       is_featured: form.is_featured,
       show_text_overlay: form.show_text_overlay,
+      collection_id: form.collection_id || null,
     };
 
     if (editing) {
@@ -298,6 +308,23 @@ const PublishedWorkManager = () => {
               </div>
               <Input value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} placeholder="Or paste image URL" className="mt-1.5" />
             </div>
+
+            {/* Collection */}
+            {collections.length > 0 && (
+              <div>
+                <Label>Collection</Label>
+                <select
+                  value={form.collection_id}
+                  onChange={(e) => setForm({ ...form, collection_id: e.target.value })}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">— No collection —</option>
+                  {collections.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Toggles */}
             <div className="flex items-center justify-between">

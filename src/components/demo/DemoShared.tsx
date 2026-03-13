@@ -22,6 +22,7 @@ import SectionActorStats from "@/components/portfolio/sections/SectionActorStats
 import SectionCaseStudies from "@/components/portfolio/sections/SectionCaseStudies";
 import SectionCampaignTimeline from "@/components/portfolio/sections/SectionCampaignTimeline";
 import SectionPublishedWork from "@/components/portfolio/sections/SectionPublishedWork";
+import SectionCollections from "@/components/portfolio/sections/SectionCollections";
 import GlassCard from "@/components/portfolio/GlassCard";
 import { ExternalLink } from "lucide-react";
 import type { HeroLayout, HeroRightContent, HeroKnownForStyle } from "@/components/portfolio/PortfolioHero";
@@ -66,6 +67,7 @@ export interface SectionVariants {
   imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
   caseStudies: 'stack' | 'magazine' | 'grid' | 'metrics';
   publishedWork: 'magazine' | 'grid' | 'list';
+  collections: 'grid' | 'accordion' | 'tabs';
   campaigns: 'timeline';
   heroLayout: HeroLayout;
   heroRightContent: HeroRightContent;
@@ -103,6 +105,7 @@ export const defaultVariants: SectionVariants = {
   imageAnimation: 'none',
   caseStudies: 'stack',
   publishedWork: 'magazine',
+  collections: 'grid',
   campaigns: 'timeline',
   heroLayout: 'classic',
   heroRightContent: 'featured',
@@ -192,6 +195,9 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   ],
   publishedWork: [
     { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'list', label: 'List' },
+  ],
+  collections: [
+    { key: 'grid', label: 'Grid' }, { key: 'accordion', label: 'Accordion' }, { key: 'tabs', label: 'Tabs' },
   ],
   campaigns: [
     { key: 'timeline', label: 'Timeline' },
@@ -427,6 +433,12 @@ export const CampaignTimelineWithToggle = ({ items }: { items: any[] }) => (
 export const PublishedWorkWithToggle = ({ items }: { items: any[] }) => (
   <WithToggle sectionKey="publishedWork" sectionName="Published Work">
     {(variant) => <SectionPublishedWork items={items} variant={variant} />}
+  </WithToggle>
+);
+
+export const CollectionsWithToggle = ({ collections, works }: { collections: any[]; works: any[] }) => (
+  <WithToggle sectionKey="collections" sectionName="Collections">
+    {(variant) => <SectionCollections collections={collections} works={works} variant={variant as any} />}
   </WithToggle>
 );
 

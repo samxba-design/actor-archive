@@ -125,6 +125,30 @@ export const featuredProject = {
   backdrop_url: mockCaseStudies[0].poster_url,
 };
 
+export const mockCollections = [
+  {
+    id: "col-1",
+    name: "SaaS & B2B",
+    description: "Landing pages, brand messaging, and conversion copy for software companies",
+    cover_image_url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
+    is_expanded_default: true,
+  },
+  {
+    id: "col-2",
+    name: "Email & CRM",
+    description: "Welcome flows, nurture sequences, and lifecycle campaigns",
+    cover_image_url: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=800&h=400&fit=crop",
+    is_expanded_default: false,
+  },
+  {
+    id: "col-3",
+    name: "Brand Voice & Strategy",
+    description: "Voice guides, teardowns, and positioning frameworks",
+    cover_image_url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=400&fit=crop",
+    is_expanded_default: false,
+  },
+];
+
 export const mockPublishedWork = [
   {
     id: "pw1",
@@ -139,6 +163,7 @@ export const mockPublishedWork = [
     read_time: "8 min read",
     is_featured: true,
     show_text_overlay: true,
+    collection_id: "col-1",
   },
   {
     id: "pw2",
@@ -153,6 +178,7 @@ export const mockPublishedWork = [
     read_time: "12 min read",
     is_featured: true,
     show_text_overlay: true,
+    collection_id: "col-1",
   },
   {
     id: "pw3",
@@ -167,6 +193,7 @@ export const mockPublishedWork = [
     read_time: "6 min read",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "col-2",
   },
   {
     id: "pw4",
@@ -181,6 +208,7 @@ export const mockPublishedWork = [
     read_time: "10 min read",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "col-3",
   },
   {
     id: "pw5",
@@ -196,6 +224,7 @@ export const mockPublishedWork = [
     read_time: "7 min read",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "col-3",
   },
   {
     id: "pw6",
@@ -210,5 +239,6 @@ export const mockPublishedWork = [
     read_time: "9 min read",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "col-1",
   },
 ];

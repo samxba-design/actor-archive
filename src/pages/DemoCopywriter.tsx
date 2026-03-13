@@ -25,10 +25,11 @@ import {
   AmbientGlow, MidScrollCTA, CTA_LABELS,
   PublishedWorkWithToggle, STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
+import SectionCollections from "@/components/portfolio/sections/SectionCollections";
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
   mockTestimonials, mockClients, mockSkills, mockAwards, mockPress,
-  mockEducation, mockKnownFor, featuredProject, mockPublishedWork,
+  mockEducation, mockKnownFor, featuredProject, mockPublishedWork, mockCollections,
 } from "@/data/demoCopywriterData";
 
 /* ══════════════════════ COPYWRITER-SPECIFIC DEFAULTS ══════════════════════ */
@@ -55,7 +56,7 @@ const copywriterDefaultVariants: SectionVariants = {
 const ClassicLayout = () => {
   const demoSections = [
     { id: "results", title: "Results", content: <SectionResultsWall items={mockCaseStudies} /> },
-    { id: "published", title: "Published Work", content: <PublishedWorkWithToggle items={mockPublishedWork} /> },
+    { id: "published", title: "Published Work", content: <SectionCollections collections={mockCollections} works={mockPublishedWork} /> },
     { id: "casestudies", title: "Case Studies", content: <CaseStudiesWithToggle items={mockCaseStudies} /> },
     { id: "clients", title: "Clients", content: <ClientLogosWithToggle companies={mockClients} /> },
     { id: "services", title: "Services & Pricing", content: <ServicesWithToggle items={mockServices} /> },
@@ -78,8 +79,8 @@ const StandardLayout = () => (
       <SectionResultsWall items={mockCaseStudies} />
     </div>
     <div className="mb-10">
-      <PortfolioSectionWrapper title="Published Work" index={-1}>
-        <PublishedWorkWithToggle items={mockPublishedWork} />
+      <PortfolioSectionWrapper title="Work Collections" index={-1}>
+        <SectionCollections collections={mockCollections} works={mockPublishedWork} />
       </PortfolioSectionWrapper>
     </div>
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 mb-10">

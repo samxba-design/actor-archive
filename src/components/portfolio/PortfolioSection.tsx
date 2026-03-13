@@ -27,6 +27,7 @@ import SectionVideoPortfolio from "./sections/SectionVideoPortfolio";
 import SectionCampaignTimeline from "./sections/SectionCampaignTimeline";
 import SectionClientLogos from "./sections/SectionClientLogos";
 import SectionPublishedWork from "./sections/SectionPublishedWork";
+import SectionCollections from "./sections/SectionCollections";
 import SectionCustom from "./sections/SectionCustom";
 import SectionBio from "./sections/SectionBio";
 import SectionSocialLinks from "./sections/SectionSocialLinks";
@@ -273,8 +274,13 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "published_work": {
-          const { data } = await supabase.from("published_works").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
-          rows = data || [];
+          const [{ data: pwData }, { data: colData }] = await Promise.all([
+            supabase.from("published_works").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+            supabase.from("work_collections").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+          ]);
+          rows = pwData || [];
+          // Store collections in singleData for the renderer
+          setSingleData(colData || []);
           break;
         }
         case "custom_sections": {
@@ -436,8 +442,13 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "client_logos":
       case "publication_logos":
         return <SectionClientLogos items={data} variant="bar" colorMode="original" logoSize="md" />;
-      case "published_work":
+      case "published_work": {
+        const collections = (singleData as any[]) || [];
+        if (collections.length > 0) {
+          return <SectionCollections collections={collections} works={data} />;
+        }
         return <SectionPublishedWork items={data} />;
+      }
       case "custom_sections":
       case "staffing_info":
       case "diversity_programs":

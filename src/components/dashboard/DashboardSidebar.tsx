@@ -2,7 +2,7 @@ import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
   FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield,
-  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown
+  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
@@ -60,6 +60,7 @@ const contentNav: NavItem[] = [
   { title: "Testimonials", url: "/dashboard/testimonials", icon: Quote, countTable: "testimonials" },
   { title: "Skills", url: "/dashboard/skills", icon: Zap, countTable: "skills" },
   { title: "Published Work", url: "/dashboard/published-work", icon: FileText, visibleTo: ["copywriter", "journalist", "multi_hyphenate"] },
+  { title: "Collections", url: "/dashboard/collections", icon: FolderOpen, visibleTo: ["copywriter", "journalist", "multi_hyphenate"] },
   { title: "Representation", url: "/dashboard/representation", icon: Users, visibleTo: ["actor", "screenwriter", "tv_writer", "playwright", "director_producer", "multi_hyphenate"], countTable: "representation" },
   { title: "Custom Sections", url: "/dashboard/custom-sections", icon: Sparkles },
 ];
