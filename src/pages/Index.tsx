@@ -336,10 +336,17 @@ const Index = () => {
             all in one professional page designed for the entertainment industry.
           </p>
 
-          {/* Trust signal */}
-          <p className="text-xs tracking-wide animate-fade-in" style={{ color: "hsl(var(--landing-muted) / 0.7)", animationDelay: "600ms", animationFillMode: "backwards" }}>
-            Trusted by 2,400+ screenwriters, actors & directors
-          </p>
+          {/* Inline social proof */}
+          <div className="flex items-center justify-center gap-2 mb-6 animate-fade-in" style={{ animationDelay: "600ms", animationFillMode: "backwards" }}>
+            <div className="flex -space-x-2">
+              {testimonials.map((t, i) => (
+                <img key={i} src={t.photo} alt="" className="w-7 h-7 rounded-full border-2 object-cover" style={{ borderColor: "hsl(var(--landing-bg))" }} />
+              ))}
+            </div>
+            <p className="text-xs" style={{ color: "hsl(var(--landing-muted))" }}>
+              Trusted by <span className="font-semibold" style={{ color: "hsl(var(--landing-fg) / 0.9)" }}>2,400+</span> creatives
+            </p>
+          </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 animate-fade-in"
             style={{ animationDelay: "700ms", animationFillMode: "backwards" }}>
@@ -352,7 +359,9 @@ const Index = () => {
             </Button>
             <Button variant="outline" size="lg" asChild className="text-base px-8 glass-card"
               style={{ borderColor: "hsl(var(--landing-fg) / 0.15)", color: "hsl(var(--landing-fg) / 0.8)" }}>
-              <Link to="/demo/actor">See Examples</Link>
+              <Link to="/demo/actor">
+                <Eye className="mr-2 h-4 w-4" /> Explore Live Demos
+              </Link>
             </Button>
           </div>
         </div>
