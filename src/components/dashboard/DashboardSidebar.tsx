@@ -2,7 +2,7 @@ import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
   FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield,
-  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight
+  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
@@ -26,16 +26,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface NavItem {
   title: string;
   url: string;
   icon: any;
-  /** Profile types that should see this item. Undefined = all types see it. */
   visibleTo?: string[];
-  /** Table name to count items for badge. */
   countTable?: string;
-  /** If true, count only unread items (is_read = false) */
   countUnread?: boolean;
 }
 
@@ -102,11 +104,19 @@ export function DashboardSidebar() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [profileData, setProfileData] = useState<{ display_name: string | null; profile_photo_url: string | null } | null>(null);
+
+  // Collapsible group state — auto-open groups that have populated items
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    Portfolio: true,
+    Content: true,
+    "Smart Tools": false,
+    Tracking: false,
+    System: true,
+  });
 
   useEffect(() => {
     if (!user) return;
-
-    // Fetch counts for all countable tables in parallel
     const fetchCounts = async () => {
       const results = await Promise.all(
         COUNTABLE_TABLES.map(table =>
@@ -117,11 +127,19 @@ export function DashboardSidebar() {
             .then(res => [table, res.count || 0] as [string, number])
         )
       );
-      setCounts(Object.fromEntries(results));
+      const countsObj = Object.fromEntries(results);
+      setCounts(countsObj);
+
+      // Auto-expand groups that have content
+      const contentHasItems = contentNav.some(i => i.countTable && (countsObj[i.countTable] || 0) > 0);
+      const toolsHasItems = toolsNav.length > 0; // always visible but collapsed by default
+      setOpenGroups(prev => ({
+        ...prev,
+        Content: contentHasItems || prev.Content,
+      }));
     };
     fetchCounts();
 
-    // Fetch unread inbox count
     supabase
       .from("contact_submissions")
       .select("id", { count: "exact", head: true })
@@ -129,9 +147,15 @@ export function DashboardSidebar() {
       .eq("is_read", false)
       .then(({ count }) => setUnreadCount(count || 0));
 
-    // Check if user is admin
     supabase.rpc("has_role", { _user_id: user.id, _role: "admin" })
       .then(({ data }) => setIsAdmin(data === true));
+
+    supabase
+      .from("profiles")
+      .select("display_name, profile_photo_url")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => { if (data) setProfileData(data); });
   }, [user]);
 
   const filterItems = (items: NavItem[]) =>
@@ -140,60 +164,100 @@ export function DashboardSidebar() {
       return item.visibleTo.includes(profileType);
     });
 
-  const renderGroup = (label: string, items: NavItem[]) => {
+  const renderNavItems = (items: NavItem[]) =>
+    items.map((item) => (
+      <SidebarMenuItem key={item.title}>
+        <SidebarMenuButton asChild>
+          <NavLink
+            to={item.url}
+            end={item.url === "/dashboard"}
+            className="hover:bg-accent/50"
+            activeClassName="bg-accent text-accent-foreground font-medium"
+          >
+            <item.icon className="mr-2 h-4 w-4 shrink-0" />
+            {!collapsed && (
+              <>
+                <span className="flex-1">{item.title}</span>
+                {item.countUnread && unreadCount > 0 ? (
+                  <span
+                    className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{
+                      background: "hsl(var(--primary))",
+                      color: "hsl(var(--primary-foreground))",
+                    }}
+                    aria-label={`${unreadCount} unread`}
+                  >
+                    {unreadCount}
+                  </span>
+                ) : item.countTable && counts[item.countTable] !== undefined ? (
+                  <span
+                    className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+                    style={{
+                      background: counts[item.countTable] === 0
+                        ? "hsl(var(--destructive) / 0.15)"
+                        : "hsl(var(--muted))",
+                      color: counts[item.countTable] === 0
+                        ? "hsl(var(--destructive))"
+                        : "hsl(var(--muted-foreground))",
+                    }}
+                  >
+                    {counts[item.countTable]}
+                  </span>
+                ) : null}
+              </>
+            )}
+          </NavLink>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    ));
+
+  const renderCollapsibleGroup = (label: string, items: NavItem[]) => {
+    const filtered = filterItems(items);
+    if (filtered.length === 0) return null;
+    const isOpen = openGroups[label] ?? true;
+
+    if (collapsed) {
+      return (
+        <SidebarGroup key={label}>
+          <SidebarGroupContent>
+            <SidebarMenu>{renderNavItems(filtered)}</SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      );
+    }
+
+    return (
+      <Collapsible
+        key={label}
+        open={isOpen}
+        onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, [label]: open }))}
+      >
+        <SidebarGroup>
+          <CollapsibleTrigger asChild>
+            <SidebarGroupLabel className="cursor-pointer select-none flex items-center justify-between group/label hover:text-foreground transition-colors">
+              <span>{label}</span>
+              <ChevronDown className={`h-3 w-3 text-muted-foreground transition-transform duration-200 ${isOpen ? "" : "-rotate-90"}`} />
+            </SidebarGroupLabel>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarGroupContent>
+              <SidebarMenu>{renderNavItems(filtered)}</SidebarMenu>
+            </SidebarGroupContent>
+          </CollapsibleContent>
+        </SidebarGroup>
+      </Collapsible>
+    );
+  };
+
+  // Portfolio group is always expanded (main nav)
+  const renderMainGroup = (label: string, items: NavItem[]) => {
     const filtered = filterItems(items);
     if (filtered.length === 0) return null;
     return (
       <SidebarGroup key={label}>
         <SidebarGroupLabel>{!collapsed && label}</SidebarGroupLabel>
         <SidebarGroupContent>
-          <SidebarMenu>
-            {filtered.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <NavLink
-                    to={item.url}
-                    end={item.url === "/dashboard"}
-                    className="hover:bg-accent/50"
-                    activeClassName="bg-accent text-accent-foreground font-medium"
-                  >
-                    <item.icon className="mr-2 h-4 w-4 shrink-0" />
-                    {!collapsed && (
-                      <>
-                        <span className="flex-1">{item.title}</span>
-                        {item.countUnread && unreadCount > 0 ? (
-                          <span
-                            className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                            style={{
-                              background: "hsl(var(--primary))",
-                              color: "hsl(var(--primary-foreground))",
-                            }}
-                            aria-label={`${unreadCount} unread`}
-                          >
-                            {unreadCount}
-                          </span>
-                        ) : item.countTable && counts[item.countTable] !== undefined ? (
-                          <span
-                            className="ml-auto text-[10px] font-medium px-1.5 py-0.5 rounded-full"
-                            style={{
-                              background: counts[item.countTable] === 0
-                                ? "hsl(var(--destructive) / 0.15)"
-                                : "hsl(var(--muted))",
-                              color: counts[item.countTable] === 0
-                                ? "hsl(var(--destructive))"
-                                : "hsl(var(--muted-foreground))",
-                            }}
-                          >
-                            {counts[item.countTable]}
-                          </span>
-                        ) : null}
-                      </>
-                    )}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
+          <SidebarMenu>{renderNavItems(filtered)}</SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
     );
@@ -206,18 +270,6 @@ export function DashboardSidebar() {
 
   const currentTypeConfig = PROFILE_TYPES.find(pt => pt.key === profileType);
   const TypeIcon = currentTypeConfig ? (SIDEBAR_ICON_MAP[currentTypeConfig.icon] || PenTool) : null;
-
-  const [profileData, setProfileData] = useState<{ display_name: string | null; profile_photo_url: string | null } | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    supabase
-      .from("profiles")
-      .select("display_name, profile_photo_url")
-      .eq("id", user.id)
-      .single()
-      .then(({ data }) => { if (data) setProfileData(data); });
-  }, [user]);
 
   return (
     <Sidebar collapsible="icon">
@@ -254,7 +306,7 @@ export function DashboardSidebar() {
           <div className="px-2 pt-1 pb-1">
             <Button
               size="sm"
-              className={`w-full font-semibold border-0 text-white ${collapsed ? "px-2" : ""}`}
+              className={`w-full font-semibold border-0 text-white hover:shadow-lg hover:scale-[1.01] ${collapsed ? "px-2" : ""}`}
               style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.8))" }}
               onClick={() => window.open(`/p/${slug}`, "_blank")}
             >
@@ -271,7 +323,7 @@ export function DashboardSidebar() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => navigate("/dashboard/settings")}
-                  className={`w-full flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 transition-all hover:bg-primary/10 hover:border-primary/40 group ${collapsed ? "justify-center px-2" : ""}`}
+                  className={`w-full flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 transition-all hover:bg-primary/10 hover:border-primary/40 group ${collapsed ? "justify-center px-2" : ""}`}
                 >
                   {TypeIcon && <TypeIcon className="h-4 w-4 shrink-0 text-primary" />}
                   {!collapsed && (
@@ -293,11 +345,11 @@ export function DashboardSidebar() {
           </div>
         )}
 
-        {renderGroup("Portfolio", mainNav)}
-        {renderGroup("Content", contentNav)}
-        {renderGroup("Smart Tools", toolsNav)}
-        {renderGroup("Tracking", trackingNav)}
-        {renderGroup("System", systemNav)}
+        {renderMainGroup("Portfolio", mainNav)}
+        {renderCollapsibleGroup("Content", contentNav)}
+        {renderCollapsibleGroup("Smart Tools", toolsNav)}
+        {renderCollapsibleGroup("Tracking", trackingNav)}
+        {renderMainGroup("System", systemNav)}
       </SidebarContent>
 
       <SidebarFooter className="p-2 space-y-1">

@@ -629,6 +629,37 @@ html:not(.portfolio-light-override) .portfolio-light-override {
   outline-offset: 2px;
 }
 
+/* Slug availability animations */
+@keyframes slug-available {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-slug-available {
+  animation: slug-available 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes slug-taken {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.animate-slug-taken {
+  animation: slug-taken 0.4s ease-out;
+}
+
+/* Contact form success */
+@keyframes contact-success {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.animate-contact-success {
+  animation: contact-success 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
