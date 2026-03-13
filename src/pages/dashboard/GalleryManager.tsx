@@ -194,7 +194,7 @@ const GalleryManager = () => {
           <SortableContext items={images.map(i => i.id)} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {images.map((img) => (
-                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} />
+                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} onSetAsProfile={handleSetAsProfile} />
               ))}
             </div>
           </SortableContext>
