@@ -252,7 +252,7 @@ const SpotlightLayout = () => {
   const [openSection, setOpenSection] = useState<string>("loglines");
 
   const sections = [
-    { key: "loglines", title: "Original Work", content: <LoglinesWithToggle items={mockLoglines} /> },
+    { key: "clients", title: "Written For", content: <ClientLogosWithToggle companies={mockClients} /> },
     { key: "loglines", title: "Original Work", content: <LoglinesWithToggle items={mockLoglines} /> },
     { key: "scripts", title: "Script Library", content: <ScriptsWithToggle items={mockScripts} /> },
     { key: "credits", title: "Produced Credits", content: <CreditsWithToggle items={mockCredits} /> },
