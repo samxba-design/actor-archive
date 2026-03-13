@@ -44,6 +44,8 @@ const ProfileEditor = () => {
   const [saving, setSaving] = useState(false);
   const [bioExpanded, setBioExpanded] = useState(false);
   const [generatingBio, setGeneratingBio] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [urlOpen, setUrlOpen] = useState(false);
   const [form, setForm] = useState<ProfileForm>({
     display_name: "",
     first_name: "",
