@@ -189,6 +189,7 @@ const PublishedWorkManager = () => {
       article_url: form.article_url || null,
       is_featured: form.is_featured,
       show_text_overlay: form.show_text_overlay,
+      collection_id: form.collection_id || null,
     };
 
     if (editing) {
