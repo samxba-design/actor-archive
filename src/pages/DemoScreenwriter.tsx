@@ -585,6 +585,7 @@ const DemoScreenwriter = () => {
         testimonials={mockTestimonials}
         imageAnimation={variants.imageAnimation}
         heroBgType={variants.heroBgType}
+        knownForPosition={variants.knownForPosition}
       />
 
       {/* Hero & image customize bars — below hero, above sections */}
