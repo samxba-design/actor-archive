@@ -116,6 +116,7 @@ const SettingsPage = () => {
           setHeroStyle((data as any).hero_style || "full");
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
+          setCtaStyle((data as any).cta_style || "outlined");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
