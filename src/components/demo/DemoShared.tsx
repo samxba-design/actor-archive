@@ -58,6 +58,8 @@ export interface SectionVariants {
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
   knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
+  clientLogosPosition: 'below_hero' | 'above_sections' | 'body_section' | 'hidden';
+  showCustomization: boolean;
 }
 
 export const defaultVariants: SectionVariants = {
