@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { Send, Loader2, CheckCircle, Phone, Mail, Building2 } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
