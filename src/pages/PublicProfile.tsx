@@ -256,7 +256,7 @@ const PublicProfile = () => {
         <PortfolioHero
           profile={profile}
           knownFor={knownFor}
-          heroBgType={(profile.hero_bg_type as any) || 'preset'}
+          heroBgType={(profile.hero_bg_type) || 'preset'}
           heroBgSolidColor={profile.hero_bg_solid_color || undefined}
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
