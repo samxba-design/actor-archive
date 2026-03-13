@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Image, Star, GripVertical } from "lucide-react";
 import EmptyState from "@/components/dashboard/EmptyState";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { generatePdfThumbnail, dataUrlToFile } from "@/lib/pdfThumbnail";
 
 interface PublishedWork {
