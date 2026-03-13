@@ -33,7 +33,10 @@ export type SectionKey =
   | "results_wall"
   | "video_portfolio"
   | "campaign_timeline"
-  | "published_work";
+  | "published_work"
+  | "social_links"
+  | "custom_sections"
+  | "education";
 
 export interface SectionConfig {
   key: SectionKey;
