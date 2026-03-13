@@ -12,7 +12,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Search, Ban, CheckCircle, Eye, MoreHorizontal, ChevronLeft, ChevronRight, Filter, X } from "lucide-react";
+import { Search, Ban, CheckCircle, Eye, MoreHorizontal, ChevronLeft, ChevronRight, Filter, X, Crown } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 
@@ -46,6 +46,8 @@ export default function AdminUsers() {
   const [suspendDialog, setSuspendDialog] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
   const [suspendReason, setSuspendReason] = useState("");
   const [detailSheet, setDetailSheet] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
+  const [tierDialog, setTierDialog] = useState<{ open: boolean; profile: Profile | null }>({ open: false, profile: null });
+  const [selectedTier, setSelectedTier] = useState<string>("free");
 
   // Debounce search
   useEffect(() => {
@@ -154,6 +156,28 @@ export default function AdminUsers() {
       });
 
       toast.success("User unsuspended");
+      fetchProfiles();
+    }
+  };
+
+  const handleChangeTier = async () => {
+    if (!tierDialog.profile || !adminUser) return;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ subscription_tier: selectedTier as "free" | "pro" })
+      .eq("id", tierDialog.profile.id);
+    if (error) {
+      toast.error("Failed to update tier");
+    } else {
+      await supabase.from("admin_audit_logs").insert({
+        admin_id: adminUser.id,
+        action_type: "change_tier",
+        target_type: "profile",
+        target_id: tierDialog.profile.id,
+        details: { new_tier: selectedTier, old_tier: tierDialog.profile.subscription_tier },
+      });
+      toast.success(`Tier changed to ${selectedTier}`);
+      setTierDialog({ open: false, profile: null });
       fetchProfiles();
     }
   };
@@ -317,6 +341,10 @@ export default function AdminUsers() {
                                 Suspend
                               </DropdownMenuItem>
                             )}
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedTier(profile.subscription_tier || "free"); setTierDialog({ open: true, profile }); }}>
+                              <Crown className="mr-2 h-4 w-4" />
+                              Change Tier
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -360,6 +388,29 @@ export default function AdminUsers() {
           )}
         </CardContent>
       </Card>
+
+      {/* Change Tier Dialog */}
+      <Dialog open={tierDialog.open} onOpenChange={(open) => setTierDialog({ open, profile: open ? tierDialog.profile : null })}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Subscription Tier</DialogTitle>
+            <DialogDescription>
+              Update tier for {tierDialog.profile?.display_name || "this user"}. Currently: {tierDialog.profile?.subscription_tier || "free"}.
+            </DialogDescription>
+          </DialogHeader>
+          <Select value={selectedTier} onValueChange={setSelectedTier}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="free">Free</SelectItem>
+              <SelectItem value="pro">Pro</SelectItem>
+            </SelectContent>
+          </Select>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTierDialog({ open: false, profile: null })}>Cancel</Button>
+            <Button onClick={handleChangeTier}>Update Tier</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Suspend Dialog */}
       <Dialog open={suspendDialog.open} onOpenChange={(open) => setSuspendDialog({ open, profile: open ? suspendDialog.profile : null })}>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Info, X } from "lucide-react";
+import { Info, X, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface ManagerHelpBannerProps {
@@ -7,9 +7,15 @@ interface ManagerHelpBannerProps {
   title: string;
   description: string;
   learnMoreRoute?: string;
+  /** How this content appears on the public portfolio */
+  previewText?: string;
+  /** URL to a demo profile showing this section */
+  demoUrl?: string;
+  /** User's slug for "View on portfolio" link */
+  portfolioSlug?: string;
 }
 
-const ManagerHelpBanner = ({ id, title, description, learnMoreRoute }: ManagerHelpBannerProps) => {
+const ManagerHelpBanner = ({ id, title, description, learnMoreRoute, previewText, demoUrl, portfolioSlug }: ManagerHelpBannerProps) => {
   const storageKey = `help_dismissed:${id}`;
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(storageKey) === "true");
   const navigate = useNavigate();
@@ -22,14 +28,39 @@ const ManagerHelpBanner = ({ id, title, description, learnMoreRoute }: ManagerHe
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground">{title}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
-        {learnMoreRoute && (
-          <button
-            onClick={() => navigate(learnMoreRoute)}
-            className="text-xs text-primary hover:underline mt-1 inline-block"
-          >
-            Go to Settings →
-          </button>
+        {previewText && (
+          <p className="text-xs text-primary/80 mt-1 italic">📐 {previewText}</p>
         )}
+        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          {learnMoreRoute && (
+            <button
+              onClick={() => navigate(learnMoreRoute)}
+              className="text-xs text-primary hover:underline inline-block"
+            >
+              Go to Settings →
+            </button>
+          )}
+          {demoUrl && (
+            <a
+              href={demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+            >
+              See example <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+          {portfolioSlug && (
+            <a
+              href={`/p/${portfolioSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline inline-flex items-center gap-1"
+            >
+              View on portfolio <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+        </div>
       </div>
       <button
         onClick={() => {

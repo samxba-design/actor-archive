@@ -85,6 +85,8 @@ const SkillsManager = () => {
         title="These skills appear as tags in your Skills section"
         description="Group by category for a polished look. You can hide this entire section in Settings → Section Order or via Edit Mode on your portfolio."
         learnMoreRoute="/dashboard/settings"
+        previewText="Displayed as colored tag badges grouped by category"
+        demoUrl="/demo/actor"
       />
       <div className="flex items-center justify-between">
         <PageHeader
