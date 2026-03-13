@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.contact-reply]
 verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.sitemap]
+verify_jwt = false
