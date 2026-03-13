@@ -14,6 +14,7 @@ const HERO_CATEGORY: CategoryConfig = {
     { key: "heroLayout", label: "Layout" },
     { key: "heroRightContent", label: "Right Content" },
     { key: "heroBgType", label: "Background" },
+    { key: "heroBgImage", label: "Image" },
     { key: "imageAnimation", label: "Image Effects" },
   ],
 };
