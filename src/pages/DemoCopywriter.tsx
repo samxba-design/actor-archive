@@ -42,6 +42,7 @@ const copywriterDefaultVariants: SectionVariants = {
   clientLogos: 'marquee',
   testimonials: 'carousel',
   heroBgType: 'bokeh',
+  knownForPosition: 'hero_above_name',
 };
 
 /* ══════════════════════ LAYOUT COMPONENTS ══════════════════════ */
