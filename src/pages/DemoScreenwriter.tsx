@@ -238,7 +238,7 @@ const MagazineLayout = () => (
         <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Services" index={3}>
-        <ServicesWithToggle items={mockServices} />
+        <SectionServices items={mockServices} variant="compact" />
       </PortfolioSectionWrapper>
       <PortfolioSectionWrapper title="Testimonials" index={6}>
         <TestimonialsWithToggle items={mockTestimonials} />
