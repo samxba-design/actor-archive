@@ -51,7 +51,7 @@ const INITIAL_DATA: OnboardingData = {
   tagline: "",
   location: "",
   slug: "",
-  theme: "minimal",
+  theme: "cinematic-dark",
   heightDisplay: "",
   ageRangeMin: "",
   ageRangeMax: "",

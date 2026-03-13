@@ -2,7 +2,8 @@ import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Check } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
-import { themes } from "@/lib/themes";
+import { portfolioThemes, portfolioThemeList, resolveThemeId } from "@/themes/themes";
+import type { PortfolioTheme } from "@/themes/theme-types";
 
 interface Props {
   data: OnboardingData;
@@ -12,11 +13,11 @@ interface Props {
   stepMeta: StepMeta;
 }
 
-const THEME_KEYS = ["minimal", "noir", "editorial", "brutalist", "spotlight", "ink", "modernist", "warm", "midnight", "gallery"] as const;
-
 const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const typeConfig = data.profileType ? getProfileTypeConfig(data.profileType) : null;
-  const suggestedTheme = typeConfig?.defaultTheme || "cinematic-dark";
+  const suggestedThemeRaw = typeConfig?.defaultTheme || "cinematic-dark";
+  const suggestedTheme = resolveThemeId(suggestedThemeRaw);
+  const suggestedLabel = portfolioThemes[suggestedTheme]?.name || suggestedTheme;
 
   return (
     <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-500">
@@ -29,56 +30,52 @@ const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
           You can customise colours, fonts, and layout later.
           {suggestedTheme && (
             <span className="block mt-1">
-              We recommend <button onClick={() => updateData({ theme: suggestedTheme })} className="font-medium text-foreground underline underline-offset-2">{themes[suggestedTheme]?.label}</button> for your profile type.
+              We recommend <button onClick={() => updateData({ theme: suggestedTheme })} className="font-medium text-foreground underline underline-offset-2">{suggestedLabel}</button> for your profile type.
             </span>
           )}
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {THEME_KEYS.map((key, idx) => {
-          const t = themes[key];
-          if (!t) return null;
-          const v = t.variables;
-          const isSelected = data.theme === key;
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {portfolioThemeList.map((theme, idx) => {
+          const isSelected = data.theme === theme.id;
+          const colors = theme.previewColors || [theme.bgPrimary, theme.textPrimary, theme.accentPrimary, theme.bgSecondary, theme.textSecondary];
 
           return (
             <button
-              key={key}
-              onClick={() => updateData({ theme: key })}
+              key={theme.id}
+              onClick={() => updateData({ theme: theme.id })}
               className={`relative group text-left rounded-lg border-2 overflow-hidden transition-all duration-300 ${
                 isSelected ? "border-primary shadow-md scale-[1.02]" : "border-border hover:border-primary/40"
               }`}
-              style={{ animationDelay: `${idx * 50}ms` }}
+              style={{
+                animationName: "fade-in",
+                animationDuration: "0.4s",
+                animationTimingFunction: "ease-out",
+                animationFillMode: "backwards",
+                animationDelay: `${idx * 50}ms`,
+              }}
             >
               {isSelected && (
                 <div className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               )}
-              <div className="p-3 h-[100px]" style={{ backgroundColor: `hsl(${v["--portfolio-bg"]})` }}>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-5 h-5 rounded-full" style={{ backgroundColor: `hsl(${v["--portfolio-accent"]})` }} />
-                  <div>
-                    <div className="h-1.5 w-12 rounded-full" style={{ backgroundColor: `hsl(${v["--portfolio-fg"]})`, fontFamily: v["--portfolio-heading-font"] }} />
-                    <div className="h-1 w-8 rounded-full mt-1" style={{ backgroundColor: `hsl(${v["--portfolio-muted-fg"]})` }} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-1">
-                  {[1, 2, 3].map(n => (
-                    <div key={n} className="rounded" style={{
-                      backgroundColor: `hsl(${v["--portfolio-card"]})`,
-                      border: `1px solid hsl(${v["--portfolio-border"]})`,
-                      height: 28,
-                    }}>
-                      <div className="h-3 m-1 rounded" style={{ backgroundColor: `hsl(${v["--portfolio-muted"]})` }} />
-                    </div>
+              {/* Color preview */}
+              <div className="p-4 h-[80px] flex flex-col justify-between" style={{ backgroundColor: colors[0] || '#0D0D0D' }}>
+                <div className="flex items-center gap-1.5">
+                  {colors.map((c, i) => (
+                    <div key={i} className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: c }} />
                   ))}
                 </div>
+                <div>
+                  <div className="h-1.5 w-16 rounded-full" style={{ backgroundColor: colors[1] || '#fff', opacity: 0.8 }} />
+                  <div className="h-1 w-10 rounded-full mt-1" style={{ backgroundColor: colors[4] || colors[1] || '#aaa', opacity: 0.4 }} />
+                </div>
               </div>
-              <div className="p-2 bg-card">
-                <h3 className="font-semibold text-foreground text-xs">{t.label}</h3>
-                <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{t.description}</p>
+              <div className="p-3 bg-card">
+                <h3 className="font-semibold text-foreground text-xs">{theme.name}</h3>
+                <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{theme.description}</p>
               </div>
             </button>
           );

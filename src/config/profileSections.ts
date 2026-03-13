@@ -269,7 +269,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Multi-Hyphenate / Custom",
     description: "You do it all. Select multiple creative disciplines and build a custom portfolio with exactly the sections you need.",
     icon: "Layers",
-    defaultTheme: "minimal",
+    defaultTheme: "modern-minimal",
     sections: [], // populated dynamically from selected types
     projectTypes: [], // all types available
     ctas: [],
