@@ -54,6 +54,8 @@ const PublishedWorkManager = () => {
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
+  const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
+
   const [form, setForm] = useState({
     title: "",
     summary: "",
@@ -67,6 +69,7 @@ const PublishedWorkManager = () => {
     article_url: "",
     is_featured: false,
     show_text_overlay: true,
+    collection_id: "",
   });
 
   const fetchItems = async () => {
