@@ -67,13 +67,22 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
               <Diamond className="h-3.5 w-3.5" />
             </button>
           )}
-          <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
-            <Link to="/login">Log in</Link>
-          </Button>
-          <Button size="sm" asChild className="font-semibold border-0 text-white"
-            style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
-            <Link to="/signup">Get Started</Link>
-          </Button>
+          {user ? (
+            <Button size="sm" asChild className="font-semibold border-0 text-white"
+              style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+              <Link to="/dashboard">Dashboard</Link>
+            </Button>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button size="sm" asChild className="font-semibold border-0 text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
+                <Link to="/signup">Get Started</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile */}
