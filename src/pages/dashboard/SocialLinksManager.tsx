@@ -93,7 +93,6 @@ const SocialLinksManager = () => {
           <DialogTrigger asChild>
             <Button><Plus className="mr-2 h-4 w-4" />Add Link</Button>
           </DialogTrigger>
-          </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit Link" : "New Link"}</DialogTitle>
@@ -118,6 +117,7 @@ const SocialLinksManager = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <ManagerHelpBanner id="social-links" title="Links appear as icons on your portfolio" description="Add your IMDb, Instagram, website, and other profiles. They show on your public page." learnMoreRoute="/dashboard/settings" />
 
       {links.length === 0 ? (
         <Card>
