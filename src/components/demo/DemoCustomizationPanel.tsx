@@ -194,7 +194,7 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
   return (
     <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 relative z-20">
       <div
-        className="rounded-xl p-4 space-y-1"
+        className="rounded-xl p-4 space-y-1 max-h-[60vh] sm:max-h-none overflow-y-auto sm:overflow-visible"
         style={{
           backgroundColor: `${theme.bgElevated}`,
           border: `1px solid ${theme.borderDefault}`,
