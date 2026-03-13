@@ -29,6 +29,7 @@ import ScriptManager from "@/pages/dashboard/ScriptManager";
 import ClientManager from "@/pages/dashboard/ClientManager";
 import PitchEmailGenerator from "@/pages/dashboard/PitchEmailGenerator";
 import PublishedWorkManager from "@/pages/dashboard/PublishedWorkManager";
+import CollectionsManager from "@/pages/dashboard/CollectionsManager";
 import CustomSectionsManager from "@/pages/dashboard/CustomSectionsManager";
 
 const Dashboard = () => {
