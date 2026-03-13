@@ -103,6 +103,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   };
 
   const previewLabel = (): string => {
+    if (currentMode === 'image') return heroBgImageUrl ? 'Stock Image' : 'Select an image below';
     if (currentMode === 'solid') return heroBgSolidColor ? `Solid: ${heroBgSolidColor}` : 'Solid Color — pick below';
     if (currentMode === 'bokeh') return 'Bokeh + Spotlight';
     if (currentMode === 'video') return heroBgVideoUrl ? 'Video Loop' : 'Video Loop — paste URL below';
