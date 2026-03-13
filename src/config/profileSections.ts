@@ -191,6 +191,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "services", label: "Services & Rates", description: "What you offer" },
       { key: "press", label: "Press & Features", description: "Coverage and features" },
       { key: "awards", label: "Awards & Recognition", description: "Industry recognition" },
+      { key: "achievements", label: "Notable Achievements", description: "Key milestones and accomplishments" },
       { key: "gallery", label: "Campaign Gallery", description: "Campaign visuals & behind the scenes" },
       { key: "contact", label: "Contact", description: "Start a project" },
     ],
