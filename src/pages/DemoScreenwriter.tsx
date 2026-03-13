@@ -507,6 +507,7 @@ const DemoScreenwriter = () => {
   const [themeId, setThemeId] = useState("cinematic-dark");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
   const [variants, setVariants] = useState<SectionVariants>(defaultVariants);
+  const [showPDFModal, setShowPDFModal] = useState(false);
 
   const setVariant = <K extends keyof SectionVariants>(key: K, value: SectionVariants[K]) => {
     setVariants(prev => ({ ...prev, [key]: value }));
@@ -529,7 +530,7 @@ const DemoScreenwriter = () => {
     awards: mockAwards.length,
   };
 
-  const CTA_LABELS: Record<string, string> = {
+  const CTA_LABELS_LOCAL: Record<string, string> = {
     script: 'Read My Latest Script',
     hire: 'Hire Me',
     contact: 'Get in Touch',
@@ -540,7 +541,7 @@ const DemoScreenwriter = () => {
 
   const dynamicProfile = {
     ...mockProfile,
-    cta_label: CTA_LABELS[variants.ctaPreset] || mockProfile.cta_label,
+    cta_label: CTA_LABELS_LOCAL[variants.ctaPreset] || mockProfile.cta_label,
   };
 
   const LayoutComponent = LAYOUT_MAP[layoutPreset];
@@ -580,34 +581,32 @@ const DemoScreenwriter = () => {
         knownForPosition={variants.knownForPosition}
       />
 
-      {/* Hero & image customize bars — below hero, above sections */}
-      <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 relative z-20 space-y-1">
-        <WithToggle sectionKey="heroLayout" sectionName="Hero Layout">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="heroRightContent" sectionName="Hero Right">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="ctaPreset" sectionName="CTA Button">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="heroKnownFor" sectionName="Known For Style">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="imageAnimation" sectionName="Image Effects">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="knownForPosition" sectionName="Known For Position">
-          {() => null}
-        </WithToggle>
-        <WithToggle sectionKey="heroBgType" sectionName="Background">
-          {() => null}
-        </WithToggle>
-      </div>
+      {/* Consolidated customization panel */}
+      <DemoCustomizationPanel
+        showCustomization={variants.showCustomization}
+        onToggleCustomization={() => setVariant('showCustomization', !variants.showCustomization)}
+        onExportPDF={() => setShowPDFModal(true)}
+        knownForLabel="Known For"
+      />
+
+      {/* Client logos at below_hero position */}
+      {variants.clientLogosPosition === 'below_hero' && (
+        <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
+          <ClientLogosWithToggle companies={mockClients} />
+        </div>
+      )}
 
       {/* Body */}
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <AmbientGlow />
+
+        {/* Client logos at above_sections position */}
+        {variants.clientLogosPosition === 'above_sections' && (
+          <div className="mb-10">
+            <ClientLogosWithToggle companies={mockClients} />
+          </div>
+        )}
+
         {(variants.knownForPosition === 'below_hero' || variants.knownForPosition === 'body_section') && mockKnownFor.length > 0 && (
           <div className="mb-10">
             <PortfolioSectionWrapper title="Known For" index={-1}>
@@ -655,6 +654,19 @@ const DemoScreenwriter = () => {
 
       {/* Demo Explainer */}
       <DemoExplainer />
+
+      {/* PDF Export Modal */}
+      {showPDFModal && (
+        <PDFExportModal
+          profile={dynamicProfile}
+          projects={mockCredits}
+          awards={mockAwards}
+          skills={mockSkills}
+          education={mockEducation}
+          isPro={true}
+          onClose={() => setShowPDFModal(false)}
+        />
+      )}
     </PortfolioThemeProvider>
     </SectionVariantsCtx.Provider>
   );
