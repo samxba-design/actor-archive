@@ -72,8 +72,8 @@ const PressManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Press & Reviews"
-          description="Add articles, reviews, and media coverage. Featured press appears prominently on your portfolio to build authority."
+          title={labels.pressTitle}
+          description={labels.pressDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Press</Button>
       </div>

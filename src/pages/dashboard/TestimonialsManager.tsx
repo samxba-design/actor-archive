@@ -69,8 +69,8 @@ const TestimonialsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Testimonials"
-          description="Collect and display quotes from collaborators, clients, or industry professionals. Social proof is one of the strongest portfolio signals."
+          title={labels.testimonialsTitle}
+          description={labels.testimonialsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Testimonial</Button>
       </div>

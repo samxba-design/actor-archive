@@ -129,8 +129,8 @@ const ServicesManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Services"
-          description="List what you offer professionally — script coverage, coaching, production, etc. Include pricing and turnaround to attract clients."
+          title={labels.servicesTitle}
+          description={labels.servicesDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Service</Button>
       </div>

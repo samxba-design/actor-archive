@@ -68,8 +68,8 @@ const AwardsManager = () => {
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <PageHeader
-          title="Awards & Festivals"
-          description="Showcase festival laurels, competition wins, and fellowships. These appear as badges on your public portfolio and boost credibility."
+          title={labels.awardsTitle}
+          description={labels.awardsDescription}
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>

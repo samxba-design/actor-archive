@@ -92,8 +92,8 @@ const GalleryManager = () => {
   return (
     <div className="max-w-4xl space-y-6">
       <PageHeader
-        title="Gallery"
-        description="Upload headshots, production stills, and behind-the-scenes photos. These display in a gallery grid on your portfolio."
+        title={labels.galleryTitle}
+        description={labels.galleryDescription}
       />
 
       <Card>

@@ -13,6 +13,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Zap } from "lucide-react";
 import { useAuth as useAuthHook } from "@/hooks/useAuth";
+import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Skill {
   id: string;
