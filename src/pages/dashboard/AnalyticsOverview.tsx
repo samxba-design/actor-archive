@@ -71,7 +71,7 @@ const AnalyticsOverview = () => {
 
       // Device breakdown
       const devices: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const d = v.device_type || "unknown";
         devices[d] = (devices[d] || 0) + 1;
       });
