@@ -9,6 +9,7 @@ import { Keyboard, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { ProfileTypeProvider, useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import NotificationBell from "./NotificationBell";
 
 function DashboardLayoutInner() {
   const [showShortcuts, setShowShortcuts] = useState(false);
