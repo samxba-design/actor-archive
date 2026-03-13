@@ -476,7 +476,7 @@ const DashboardLayout = () => {
         </GlassCard>
         <GlassCard className="p-4">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Services</h3>
-          <ServicesWithToggle items={mockServices} />
+          <SectionServices items={mockServices} variant="compact" />
         </GlassCard>
       </div>
     </>
