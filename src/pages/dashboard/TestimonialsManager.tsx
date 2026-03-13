@@ -106,7 +106,7 @@ const TestimonialsManager = () => {
       </div>
       <ManagerHelpBanner id="testimonials" title="Quotes show in your Testimonials section" description="Add endorsements from collaborators or clients. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as styled quote cards with author photo, name, and role" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
-        <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} />
+        <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} profileType={profileType} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (

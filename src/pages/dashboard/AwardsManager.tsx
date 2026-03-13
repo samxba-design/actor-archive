@@ -111,7 +111,7 @@ const AwardsManager = () => {
       </div>
       <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can link each award to a project." learnMoreRoute="/dashboard/settings" previewText="Displayed as laurel badges with year, category, and result" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
-        <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} />
+        <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} profileType={profileType} />
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
