@@ -65,18 +65,18 @@ const jsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 
-const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc: string; index: number }>(({ icon: Icon, title, desc, index }, _ref) => {
+const FeatureCard = forwardRef<HTMLDivElement, { icon: any; title: string; desc: string; index: number; featured?: boolean }>(({ icon: Icon, title, desc, index, featured }, _ref) => {
   const { ref, inView } = useInView();
   return (
     <div
       ref={ref}
-      className="group relative p-6 rounded-xl border transition-all duration-500 glass-card"
+      className={`group relative p-6 rounded-xl border transition-all duration-500 glass-card ${featured ? "sm:col-span-2" : ""}`}
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : "translateY(24px)",
         transitionDelay: `${index * 80}ms`,
-        background: "hsl(var(--landing-card) / 0.6)",
-        borderColor: "hsl(var(--landing-border))",
+        background: featured ? "hsl(var(--landing-card) / 0.75)" : "hsl(var(--landing-card) / 0.6)",
+        borderColor: featured ? "hsl(var(--landing-accent) / 0.35)" : "hsl(var(--landing-border))",
       }}
     >
       {/* hover glow */}
