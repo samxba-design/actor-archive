@@ -128,6 +128,13 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   clientLogos: [
     { key: 'bar', label: 'Bar' }, { key: 'grid', label: 'Grid' }, { key: 'marquee', label: 'Marquee' },
   ],
+  clientLogosColor: [
+    { key: 'original', label: 'Original' }, { key: 'grayscale', label: 'Grayscale' },
+    { key: 'white', label: 'White' }, { key: 'dark', label: 'Dark' },
+  ],
+  clientLogosSize: [
+    { key: 'sm', label: 'Small' }, { key: 'md', label: 'Medium' }, { key: 'lg', label: 'Large' }, { key: 'xl', label: 'X-Large' },
+  ],
   education: [
     { key: 'list', label: 'List' }, { key: 'cards', label: 'Cards' }, { key: 'timeline', label: 'Timeline' },
   ],
