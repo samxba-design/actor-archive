@@ -181,6 +181,46 @@ const AnalyticsOverview = () => {
         </Card>
       </div>
 
+      {/* Engagement Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <MessageSquare className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.contact_clicks}</p>
+              <p className="text-xs text-muted-foreground">Contact Clicks</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <MousePointerClick className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.cta_clicks}</p>
+              <p className="text-xs text-muted-foreground">CTA Clicks</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <Play className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.reel_plays}</p>
+              <p className="text-xs text-muted-foreground">Reel Plays</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5 flex items-center gap-3">
+            <Download className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-xl font-bold text-foreground">{engagement.cv_downloads}</p>
+              <p className="text-xs text-muted-foreground">PDF Exports</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       <UpgradeGate feature="full_analytics" label="Full Analytics">
       <Card>
         <CardHeader><CardTitle>Views (Last 30 Days)</CardTitle></CardHeader>
