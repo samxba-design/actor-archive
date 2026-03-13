@@ -32,6 +32,9 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
           <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
             <Link to="/pricing">Pricing</Link>
           </Button>
+          <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+            <Link to="/faq">FAQ</Link>
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="hover:bg-white/10 gap-1" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>

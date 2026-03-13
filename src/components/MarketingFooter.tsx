@@ -44,6 +44,7 @@ export default function MarketingFooter() {
             <div className="flex flex-col gap-2">
               <Link to="/privacy" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Privacy Policy</Link>
               <Link to="/terms" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>Terms of Service</Link>
+              <Link to="/faq" className="text-sm transition-colors hover:underline" style={{ color: "hsl(var(--landing-muted))" }}>FAQ</Link>
             </div>
           </div>
         </div>
