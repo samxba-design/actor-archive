@@ -233,6 +233,12 @@ const ClientManager = () => {
         </DialogContent>
       </Dialog>
       <DeleteConfirmDialog />
+      <CompanyLogoLibrary
+        open={libraryOpen}
+        onOpenChange={setLibraryOpen}
+        existingCompanies={items.map(i => i.company_name)}
+        onAddCompany={handleAddFromLibrary}
+      />
     </div>
   );
 };
