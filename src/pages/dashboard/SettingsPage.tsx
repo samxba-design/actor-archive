@@ -251,6 +251,7 @@ const SettingsPage = () => {
         auto_responder_message: form.auto_responder_message || null,
         font_pairing: form.font_pairing || "default",
         layout_density: form.layout_density || "spacious",
+        layout_preset: form.layout_preset || "classic",
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
         hero_style: heroStyle || "full",
