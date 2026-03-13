@@ -271,11 +271,37 @@ export const ServicesWithToggle = ({ items }: { items: any[] }) => (
   </WithToggle>
 );
 
-export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => (
-  <WithToggle sectionKey="clientLogos" sectionName="Client Logos">
-    {(variant) => <SectionClientLogos companies={companies} variant={variant} />}
-  </WithToggle>
-);
+export const ClientLogosWithToggle = ({ companies }: { companies: string[] }) => {
+  const { variants } = useSectionVariants();
+  return (
+    <>
+      <SectionOptionsBar
+        sectionName="Logo Layout"
+        options={VARIANT_OPTIONS.clientLogos}
+        value={variants.clientLogos}
+        onChange={(v) => {}}
+      />
+      <SectionOptionsBar
+        sectionName="Logo Color"
+        options={VARIANT_OPTIONS.clientLogosColor}
+        value={variants.clientLogosColor}
+        onChange={(v) => {}}
+      />
+      <SectionOptionsBar
+        sectionName="Logo Size"
+        options={VARIANT_OPTIONS.clientLogosSize}
+        value={variants.clientLogosSize}
+        onChange={(v) => {}}
+      />
+      <SectionClientLogos
+        companies={companies}
+        variant={variants.clientLogos as any}
+        colorMode={variants.clientLogosColor as any}
+        logoSize={variants.clientLogosSize as any}
+      />
+    </>
+  );
+};
 
 export const EducationWithToggle = ({ items }: { items: any[] }) => (
   <WithToggle sectionKey="education" sectionName="Education">
