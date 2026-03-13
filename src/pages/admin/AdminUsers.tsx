@@ -160,6 +160,28 @@ export default function AdminUsers() {
     }
   };
 
+  const handleChangeTier = async () => {
+    if (!tierDialog.profile || !adminUser) return;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ subscription_tier: selectedTier as "free" | "pro" })
+      .eq("id", tierDialog.profile.id);
+    if (error) {
+      toast.error("Failed to update tier");
+    } else {
+      await supabase.from("admin_audit_logs").insert({
+        admin_id: adminUser.id,
+        action_type: "change_tier",
+        target_type: "profile",
+        target_id: tierDialog.profile.id,
+        details: { new_tier: selectedTier, old_tier: tierDialog.profile.subscription_tier },
+      });
+      toast.success(`Tier changed to ${selectedTier}`);
+      setTierDialog({ open: false, profile: null });
+      fetchProfiles();
+    }
+  };
+
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
   const hasFilters = tierFilter !== "all" || typeFilter !== "all" || statusFilter !== "all";
 
