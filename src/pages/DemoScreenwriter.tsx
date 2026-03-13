@@ -447,8 +447,8 @@ const DashboardLayout = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassCard className="p-5">
-          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Known For</h3>
-          <KnownForWithToggle items={mockKnownFor} display="image" />
+          <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
+          <ClientLogosWithToggle companies={mockClients} />
         </GlassCard>
         <GlassCard className="p-5">
           <h3 className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: theme.textSecondary }}>Written For</h3>
