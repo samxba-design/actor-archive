@@ -326,6 +326,13 @@ const Onboarding = () => {
         </div>
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-24">
+        {stepKeys[step] === "type" && (
+          <div className="w-full max-w-4xl mb-4">
+            <Link to="/" className="text-xs hover:underline" style={{ color: "hsl(var(--muted-foreground))" }}>
+              ← Back to home
+            </Link>
+          </div>
+        )}
         {renderStep()}
       </div>
     </div>
