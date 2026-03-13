@@ -55,6 +55,8 @@ export function PortfolioThemeProvider({ themeId, children, className, ctaStyleO
     return () => { const el = document.getElementById(id); if (el) el.remove(); };
   }, [theme]);
 
+  const cssVars = useMemo(() => themeToCssVars(theme), [theme]);
+
   return (
     <ThemeContext.Provider value={theme}>
       <div
