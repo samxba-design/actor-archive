@@ -266,6 +266,7 @@ const SettingsPage = () => {
         headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
         cta_style: ctaStyle || null,
+        client_logos_position: clientLogosPosition || "body_section",
       } as any)
       .eq("id", user.id);
 
