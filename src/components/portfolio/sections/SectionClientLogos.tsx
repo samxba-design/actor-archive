@@ -37,7 +37,7 @@ const SectionClientLogos = ({ items, companies, variant = 'bar', colorMode = 'or
 
   if (!clients.length) return null;
 
-  const LogoItem = ({ client, size = 28 }: { client: ClientItem; size?: number }) => {
+  const basePx = LOGO_SIZE_MAP[logoSize];
     const hasCustomLogo = !!client.logo_url;
     const [imgError, setImgError] = useState(false);
 
