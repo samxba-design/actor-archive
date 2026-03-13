@@ -341,6 +341,10 @@ export default function AdminUsers() {
                                 Suspend
                               </DropdownMenuItem>
                             )}
+                            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedTier(profile.subscription_tier || "free"); setTierDialog({ open: true, profile }); }}>
+                              <Crown className="mr-2 h-4 w-4" />
+                              Change Tier
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
