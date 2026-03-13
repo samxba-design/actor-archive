@@ -1057,6 +1057,26 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Sign Out All Devices */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Lock className="h-4 w-4" />Session Management</CardTitle>
+          <CardDescription>Sign out of all other browser sessions for security</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button variant="outline" onClick={async () => {
+            const { error } = await supabase.auth.signOut({ scope: 'others' });
+            if (error) {
+              toast({ title: "Error", description: error.message, variant: "destructive" });
+            } else {
+              toast({ title: "Done", description: "All other sessions have been signed out." });
+            }
+          }}>
+            Sign Out Other Devices
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Danger Zone */}
       <Card className="border-destructive/50">
         <CardHeader>

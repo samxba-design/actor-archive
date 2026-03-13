@@ -263,7 +263,7 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Stats row */}
+      {/* Stats row — analytics card always visible, even on free tier */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {[
           { icon: Eye, value: recentViews, label: "Views (30d)", route: "/dashboard/analytics" },
