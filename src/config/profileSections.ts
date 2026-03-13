@@ -144,6 +144,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
+      { key: "collections", label: "Work Collections", description: "Organized folders of your work" },
       { key: "bookshelf", label: "Bookshelf", description: "Your published works" },
       { key: "credits", label: "Publications", description: "Short stories & essays" },
       { key: "awards", label: "Awards & Prizes", description: "Literary awards" },
