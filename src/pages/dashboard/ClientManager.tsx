@@ -85,7 +85,7 @@ const ClientManager = () => {
   const handleSave = async () => {
     if (!user || !form.company_name.trim()) return;
     setSaving(true);
-    // Auto-fill logo from Clearbit if no custom logo
+    // Auto-fill logo from logo.dev if no custom logo
     const logoUrl = form.logo_url || getCompanyLogoUrl(form.company_name.trim());
     const payload = {
       profile_id: user.id,
