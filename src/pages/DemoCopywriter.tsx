@@ -11,6 +11,7 @@ import SectionResultsWall from "@/components/portfolio/sections/SectionResultsWa
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
+import DemoExplainer from "@/components/demo/DemoExplainer";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award, BookOpen } from "lucide-react";
 import {
   SectionVariantsCtx, defaultVariants,
@@ -550,6 +551,9 @@ const DemoCopywriter = () => {
       <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
 
       <MidScrollCTA />
+
+      {/* Demo Explainer */}
+      <DemoExplainer />
     </PortfolioThemeProvider>
     </SectionVariantsCtx.Provider>
   );

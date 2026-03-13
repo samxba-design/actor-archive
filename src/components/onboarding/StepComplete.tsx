@@ -109,6 +109,13 @@ const StepComplete = ({ data, onComplete, onBack, saving }: Props) => {
         )}
       </div>
 
+      {/* Customization reminder */}
+      <div className="rounded-lg border border-primary/15 bg-primary/5 px-4 py-3 text-center">
+        <p className="text-xs text-muted-foreground">
+          💡 <span className="font-medium text-foreground">Everything is customizable.</span> Every section can be hidden, reordered, or styled from your portfolio's Edit Mode.
+        </p>
+      </div>
+
       <div className="flex items-center justify-between">
         <Button variant="ghost" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" /> Back

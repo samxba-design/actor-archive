@@ -16,6 +16,7 @@ import { WritingAssistant } from "@/components/dashboard/WritingAssistant";
 import { BioBuilderWizard } from "@/components/dashboard/BioBuilderWizard";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
+import { useFormDraft } from "@/hooks/useFormDraft";
 
 interface ProfileForm {
   display_name: string;
@@ -65,6 +66,8 @@ const ProfileEditor = () => {
     hero_bg_video_url: "",
     slug: "",
   });
+
+  const { clearDraft } = useFormDraft("profile-editor", form, setForm);
 
   useEffect(() => {
     if (!user) return;
@@ -126,6 +129,7 @@ const ProfileEditor = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Saved", description: "Profile updated successfully." });
+      clearDraft();
     }
     setSaving(false);
   };

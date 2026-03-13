@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFormDraft } from "@/hooks/useFormDraft";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -265,6 +266,7 @@ const SettingsPage = () => {
       // Update context slug
       setContextSlug(form.slug || null);
       toast({ title: "Saved", description: "Settings updated." });
+      clearDraft();
     }
     setSaving(false);
   };
@@ -306,10 +308,15 @@ const SettingsPage = () => {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
 
+  const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
+
   return (
     <div className="max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Themes, layouts, sections, and visibility — everything here is fully customizable</p>
+        </div>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
           Save
