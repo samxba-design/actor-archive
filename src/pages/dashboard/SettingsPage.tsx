@@ -263,7 +263,7 @@ const SettingsPage = () => {
     if (!user) return;
     setExporting(true);
     try {
-      const [projects, testimonials, contacts, awards, skills, education, services] = await Promise.all([
+      const [projects, testimonials, contacts, awards, skills, education, services, press, events, gallery, socialLinks, representation, publishedWorks] = await Promise.all([
         supabase.from("projects").select("*").eq("profile_id", user.id),
         supabase.from("testimonials").select("*").eq("profile_id", user.id),
         supabase.from("contact_submissions").select("*").eq("profile_id", user.id),
@@ -271,6 +271,12 @@ const SettingsPage = () => {
         supabase.from("skills").select("*").eq("profile_id", user.id),
         supabase.from("education").select("*").eq("profile_id", user.id),
         supabase.from("services").select("*").eq("profile_id", user.id),
+        supabase.from("press").select("*").eq("profile_id", user.id),
+        supabase.from("events").select("*").eq("profile_id", user.id),
+        supabase.from("gallery_images").select("*").eq("profile_id", user.id),
+        supabase.from("social_links").select("*").eq("profile_id", user.id),
+        supabase.from("representation").select("*").eq("profile_id", user.id),
+        supabase.from("published_works").select("*").eq("profile_id", user.id),
       ]);
       const exportPayload = {
         exported_at: new Date().toISOString(),
@@ -281,6 +287,12 @@ const SettingsPage = () => {
         skills: skills.data || [],
         education: education.data || [],
         services: services.data || [],
+        press: press.data || [],
+        events: events.data || [],
+        gallery_images: gallery.data || [],
+        social_links: socialLinks.data || [],
+        representation: representation.data || [],
+        published_works: publishedWorks.data || [],
       };
       const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);

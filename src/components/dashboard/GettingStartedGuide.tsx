@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, ArrowRight, ArrowLeft, Sparkles, FolderOpen, Eye, Palette, GripVertical, Layout, EyeOff } from "lucide-react";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GuideStep {
   title: string;
@@ -59,26 +61,51 @@ const getSteps = (profileType: string | null): GuideStep[] => {
   ];
 };
 
-const TOUR_KEY = "cs_dashboard_tour_seen";
+interface Props {
+  /** Allow parent to trigger tour replay */
+  forceShow?: boolean;
+}
 
-export default function GettingStartedGuide() {
+export default function GettingStartedGuide({ forceShow }: Props) {
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
   const { profileType } = useProfileTypeContext();
+  const { user } = useAuth();
 
   const steps = getSteps(profileType);
 
   useEffect(() => {
-    const seen = localStorage.getItem(TOUR_KEY);
-    if (!seen) {
-      const t = setTimeout(() => setVisible(true), 800);
-      return () => clearTimeout(t);
+    if (forceShow) {
+      setStep(0);
+      setVisible(true);
+      return;
     }
-  }, []);
+    if (!user) return;
+    // Check DB first, fall back to localStorage
+    supabase
+      .from("profiles")
+      .select("tour_completed_at")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.tour_completed_at) return; // Already completed
+        const seen = localStorage.getItem("cs_dashboard_tour_seen");
+        if (seen) {
+          // Migrate localStorage to DB
+          supabase.from("profiles").update({ tour_completed_at: new Date().toISOString() } as any).eq("id", user.id).then(() => {});
+          return;
+        }
+        const t = setTimeout(() => setVisible(true), 800);
+        return () => clearTimeout(t);
+      });
+  }, [user, forceShow]);
 
   const dismiss = () => {
     setVisible(false);
-    localStorage.setItem(TOUR_KEY, "true");
+    localStorage.setItem("cs_dashboard_tour_seen", "true");
+    if (user) {
+      supabase.from("profiles").update({ tour_completed_at: new Date().toISOString() } as any).eq("id", user.id).then(() => {});
+    }
   };
 
   const next = () => {
@@ -96,45 +123,27 @@ export default function GettingStartedGuide() {
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm" onClick={dismiss} />
-
-      {/* Card */}
       <div className="fixed z-[100] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
         <div className="rounded-2xl border border-border bg-background p-6 shadow-2xl relative overflow-hidden">
-          {/* Progress bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-muted">
-            <div
-              className="h-full bg-primary transition-all duration-500 ease-out rounded-r-full"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="h-full bg-primary transition-all duration-500 ease-out rounded-r-full" style={{ width: `${progress}%` }} />
           </div>
-
-          {/* Close */}
           <button onClick={dismiss} className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-muted transition-colors">
             <X className="h-4 w-4 text-muted-foreground" />
           </button>
-
-          {/* Icon */}
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 mt-2">
             <Icon className="h-6 w-6 text-primary" />
           </div>
-
-          {/* Content */}
           <h3 className="text-lg font-bold text-foreground mb-2">{current.title}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{current.description}</p>
-
           {current.highlight && (
             <div className="mt-3 px-3 py-2 rounded-md bg-primary/5 border border-primary/10">
               <p className="text-xs text-primary font-medium">💡 {current.highlight}</p>
             </div>
           )}
-
-          {/* Navigation */}
           <div className="flex items-center justify-between mt-6">
-            <Button variant="ghost" size="sm" onClick={dismiss} className="text-muted-foreground">
-              Skip
-            </Button>
+            <Button variant="ghost" size="sm" onClick={dismiss} className="text-muted-foreground">Skip</Button>
             <div className="flex items-center gap-2">
               {step > 0 && (
                 <Button variant="outline" size="sm" onClick={prev}>
@@ -147,11 +156,7 @@ export default function GettingStartedGuide() {
               </Button>
             </div>
           </div>
-
-          {/* Step counter */}
-          <p className="text-[10px] text-muted-foreground text-center mt-4">
-            {step + 1} of {steps.length}
-          </p>
+          <p className="text-[10px] text-muted-foreground text-center mt-4">{step + 1} of {steps.length}</p>
         </div>
       </div>
     </>
