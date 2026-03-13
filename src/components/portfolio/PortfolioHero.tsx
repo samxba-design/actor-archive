@@ -242,15 +242,41 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
           <MapPin className="w-3 h-3" />{profile.location}
         </span>
       )}
-      {profile.professional_status && (
-        <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest" style={{ color: theme.statusAvailable }}>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30" style={{ backgroundColor: theme.statusAvailable }} />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: theme.statusAvailable }} />
+      {(() => {
+        // Derive status text with backward compat
+        const statusText = profile.professional_status
+          || (profile.seeking_representation ? 'Seeking Representation' : null)
+          || (profile.available_for_hire ? 'Available for Hire' : null);
+        if (!statusText) return null;
+
+        const BADGE_COLORS: Record<string, string> = {
+          green: '#22c55e', blue: '#3b82f6', gold: '#f59e0b',
+          red: '#ef4444', purple: '#a855f7', white: '#ffffff',
+        };
+        const badgeColorKey = (profile as any).status_badge_color || 'green';
+        const badgeColor = BADGE_COLORS[badgeColorKey] || (badgeColorKey === 'accent' ? theme.accentPrimary : theme.statusAvailable);
+        const badgeAnim = (profile as any).status_badge_animation || 'pulse';
+
+        // Dot animation class
+        const dotPing = badgeAnim === 'pulse';
+        const showDot = badgeAnim !== 'none';
+        const badgeAnimClass = badgeAnim === 'glow' ? 'badge-anim-glow' : badgeAnim === 'breathe' ? 'badge-anim-breathe' : '';
+
+        return (
+          <span
+            className={`inline-flex items-center gap-1.5 text-[11px] uppercase tracking-widest ${badgeAnimClass}`}
+            style={{ color: badgeColor, '--badge-color': badgeColor } as React.CSSProperties}
+          >
+            {showDot && (
+              <span className="relative flex h-1.5 w-1.5">
+                {dotPing && <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-30" style={{ backgroundColor: badgeColor }} />}
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ backgroundColor: badgeColor }} />
+              </span>
+            )}
+            {statusText}
           </span>
-          {profile.professional_status}
-        </span>
-      )}
+        );
+      })()}
       {socialLinks.length > 0 && (
         <>
           <span className="w-px h-3" style={{ backgroundColor: heroTextFaint }} />

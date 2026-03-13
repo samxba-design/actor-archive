@@ -780,6 +780,30 @@ html:not(.portfolio-light-override) .portfolio-light-override {
   box-shadow: 0 6px 24px var(--cta-accent, hsl(0 0% 50%) / 0.45);
 }
 
+/* ═══ Status badge animations ═══ */
+
+/* Badge glow — soft box-shadow pulse on the entire badge */
+@keyframes badge-glow {
+  0%, 100% {
+    box-shadow: 0 0 4px var(--badge-color, hsl(142 71% 45%)) / 0.2;
+  }
+  50% {
+    box-shadow: 0 0 14px var(--badge-color, hsl(142 71% 45%)) / 0.45, 0 0 28px var(--badge-color, hsl(142 71% 45%)) / 0.15;
+  }
+}
+.badge-anim-glow {
+  animation: badge-glow 2.5s ease-in-out infinite;
+}
+
+/* Badge breathe — opacity fade in/out cycle */
+@keyframes badge-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.badge-anim-breathe {
+  animation: badge-breathe 3s ease-in-out infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -216,6 +216,17 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'body_section', label: 'Body Section' },
     { key: 'hidden', label: 'Hidden' },
   ],
+  statusBadgeColor: [
+    { key: 'green', label: 'Green' }, { key: 'blue', label: 'Blue' },
+    { key: 'gold', label: 'Gold' }, { key: 'red', label: 'Red' },
+    { key: 'purple', label: 'Purple' }, { key: 'white', label: 'White' },
+    { key: 'accent', label: 'Theme' },
+  ],
+  statusBadgeAnimation: [
+    { key: 'pulse', label: 'Pulse' }, { key: 'glow', label: 'Glow' },
+    { key: 'breathe', label: 'Breathe' }, { key: 'static', label: 'Static' },
+    { key: 'none', label: 'None' },
+  ],
   showCustomization: [],
 };
 
