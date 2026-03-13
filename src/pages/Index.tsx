@@ -404,9 +404,27 @@ const Index = () => {
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3" style={{ color: "hsl(var(--landing-fg))" }}>Everything you need</h2>
           <p style={{ color: "hsl(var(--landing-muted))" }}>Professional tools without the complexity.</p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr">
           {features.map((f, i) => (
             <FeatureCard key={f.title} {...f} index={i} />
+          ))}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="max-w-5xl mx-auto px-6 pb-20 relative z-10">
+        <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-card) / 0.5)" }}>
+          <div className="grid grid-cols-3 text-xs uppercase tracking-wider border-b" style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-muted))" }}>
+            <div className="p-4">Feature</div>
+            <div className="p-4 text-center">CreativeSlate</div>
+            <div className="p-4 text-center">Generic Builders</div>
+          </div>
+          {comparisonRows.map((row) => (
+            <div key={row.feature} className="grid grid-cols-3 text-sm border-b last:border-b-0" style={{ borderColor: "hsl(var(--landing-border))" }}>
+              <div className="p-4" style={{ color: "hsl(var(--landing-fg))" }}>{row.feature}</div>
+              <div className="p-4 text-center font-semibold" style={{ color: "hsl(var(--landing-champagne))" }}>{row.creativeSlate}</div>
+              <div className="p-4 text-center" style={{ color: "hsl(var(--landing-muted))" }}>{row.generic}</div>
+            </div>
           ))}
         </div>
       </section>

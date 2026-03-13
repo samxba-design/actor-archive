@@ -123,15 +123,16 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen landing-page" style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
+    <div ref={spotlightRef} className={`min-h-screen landing-page ${glassMode ? "glass-active" : ""}`} style={{ background: "hsl(var(--landing-bg))", color: "hsl(var(--landing-fg))" }}>
       <SEOHead
         title="Pricing — Simple, Transparent Plans"
         description="Start free forever. Upgrade to Pro for unlimited projects, 10+ themes, AI tools, analytics, and custom domains."
         path="/pricing"
       />
       <CinematicBackground bokehCount={10} />
+      <div className="spotlight-follow" />
 
-      <MarketingNav />
+      <MarketingNav showGlassToggle glassMode={glassMode} onToggleGlass={toggleGlass} />
 
       <div className="max-w-5xl mx-auto px-6 pt-20 pb-24">
         {/* Header */}
