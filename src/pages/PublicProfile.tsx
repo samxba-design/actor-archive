@@ -62,6 +62,7 @@ interface ProfileData {
   known_for_position?: string | null;
   auto_responder_enabled?: boolean | null;
   auto_responder_message?: string | null;
+  cta_style?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
