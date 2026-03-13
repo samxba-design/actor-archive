@@ -427,7 +427,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         return <SectionCampaignTimeline items={data} />;
       case "client_logos":
       case "publication_logos":
-        return <SectionClientLogos items={data} />;
+        return <SectionClientLogos items={data} variant="bar" colorMode="original" logoSize="md" />;
       case "published_work":
         return <SectionPublishedWork items={data} />;
       case "custom_sections":
