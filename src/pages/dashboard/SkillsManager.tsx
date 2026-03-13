@@ -34,7 +34,7 @@ const COPYWRITER_CATEGORIES = [
 const SkillsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,6 +87,7 @@ const SkillsManager = () => {
         learnMoreRoute="/dashboard/settings"
         previewText="Displayed as colored tag badges grouped by category"
         demoUrl="/demo/actor"
+        portfolioSlug={slug || undefined}
       />
       <div className="flex items-center justify-between">
         <PageHeader

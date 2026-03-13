@@ -44,7 +44,7 @@ const EMPTY: Omit<Service, "id"> = {
 const ServicesManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,7 +137,7 @@ const ServicesManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Service</Button>
       </div>
-      <ManagerHelpBanner id="services" title="Services appear in your Services section" description="List what you offer so visitors can hire you directly. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with pricing, deliverables, and turnaround time" demoUrl="/demo/copywriter" />
+      <ManagerHelpBanner id="services" title="Services appear in your Services section" description="List what you offer so visitors can hire you directly. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with pricing, deliverables, and turnaround time" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
 
       {items.length === 0 ? (
         <EmptyState icon={Star} title="No services yet" description="Add your first service to let visitors know what you offer and how to hire you." actionLabel="Add Service" onAction={openAdd} />

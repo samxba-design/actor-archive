@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Users } from "lucide-react";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface Rep {
   id: string;
@@ -29,6 +30,7 @@ interface Rep {
 const RepresentationManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const [items, setItems] = useState<Rep[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -69,7 +71,7 @@ const RepresentationManager = () => {
         <h1 className="text-2xl font-bold text-foreground">Representation</h1>
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Rep</Button>
       </div>
-      <ManagerHelpBanner id="representation" title="Agent info shows in your Representation section" description="Add your agents or managers. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Contact cards with name, company, email, and phone" demoUrl="/demo/actor" />
+      <ManagerHelpBanner id="representation" title="Agent info shows in your Representation section" description="Add your agents or managers. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Contact cards with name, company, email, and phone" demoUrl="/demo/actor" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">No representation listed yet.</CardContent></Card>
       ) : (

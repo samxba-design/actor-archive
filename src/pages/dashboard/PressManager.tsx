@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import PageHeader from "@/components/dashboard/PageHeader";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -33,14 +34,15 @@ interface Press {
 const PressManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Press[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Press | null>(null);
-  const [form, setForm] = useState({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false });
+  const [form, setForm] = useState({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false, project_id: "" });
   const [saving, setSaving] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -49,15 +51,21 @@ const PressManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
 
-  const openAdd = () => { setEditing(null); setForm({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false }); setDialogOpen(true); };
-  const openEdit = (item: Press) => { setEditing(item); setForm({ title: item.title, publication: item.publication || "", date: item.date || "", article_url: item.article_url || "", pull_quote: item.pull_quote || "", excerpt: item.excerpt || "", star_rating: item.star_rating?.toString() || "", is_featured: item.is_featured || false }); setDialogOpen(true); };
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
+
+  const openAdd = () => { setEditing(null); setForm({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false, project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Press) => { setEditing(item); setForm({ title: item.title, publication: item.publication || "", date: item.date || "", article_url: item.article_url || "", pull_quote: item.pull_quote || "", excerpt: item.excerpt || "", star_rating: item.star_rating?.toString() || "", is_featured: item.is_featured || false, project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, title: form.title.trim(), publication: form.publication || null, date: form.date || null, article_url: form.article_url || null, pull_quote: form.pull_quote || null, excerpt: form.excerpt || null, star_rating: form.star_rating ? parseInt(form.star_rating) : null, is_featured: form.is_featured };
+    const payload = { profile_id: user.id, title: form.title.trim(), publication: form.publication || null, date: form.date || null, article_url: form.article_url || null, pull_quote: form.pull_quote || null, excerpt: form.excerpt || null, star_rating: form.star_rating ? parseInt(form.star_rating) : null, is_featured: form.is_featured, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("press").update(payload).eq("id", editing.id) : await supabase.from("press").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
@@ -78,7 +86,7 @@ const PressManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Press</Button>
       </div>
-      <ManagerHelpBanner id="press" title="Press items show in your Press section" description="Add reviews, interviews, and media mentions. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with publication logos, star ratings, and pull quotes" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="press" title="Press items show in your Press section" description="Add reviews, interviews, and media mentions. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with publication logos, star ratings, and pull quotes" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={Newspaper} title="No press entries yet" description="Add reviews, interviews, or media coverage to show visitors your public profile and credibility." actionLabel="Add Press" onAction={openAdd} />
       ) : (
@@ -116,6 +124,17 @@ const PressManager = () => {
             <div className="grid grid-cols-2 gap-4">
               <div><Label>Star Rating (1-5)</Label><Input value={form.star_rating} onChange={(e) => setForm(f => ({ ...f, star_rating: e.target.value }))} type="number" min="1" max="5" /></div>
               <div className="flex items-center justify-between pt-6"><Label>Featured</Label><Switch checked={form.is_featured} onCheckedChange={(v) => setForm(f => ({ ...f, is_featured: v }))} /></div>
+            </div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
             </div>
           </div>
           <DialogFooter>

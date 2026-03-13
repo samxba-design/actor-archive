@@ -30,15 +30,16 @@ interface Award {
 const AwardsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Award[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Award | null>(null);
-  const [form, setForm] = useState({ name: "", organization: "", category: "", year: "", result: "nominated" });
+  const [form, setForm] = useState({ name: "", organization: "", category: "", year: "", result: "nominated", project_id: "" });
   const [saving, setSaving] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -49,15 +50,21 @@ const AwardsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
 
-  const openAdd = () => { setEditing(null); setForm({ name: "", organization: "", category: "", year: "", result: "nominated" }); setDialogOpen(true); };
-  const openEdit = (item: Award) => { setEditing(item); setForm({ name: item.name, organization: item.organization || "", category: item.category || "", year: item.year?.toString() || "", result: item.result || "nominated" }); setDialogOpen(true); };
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
+
+  const openAdd = () => { setEditing(null); setForm({ name: "", organization: "", category: "", year: "", result: "nominated", project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Award) => { setEditing(item); setForm({ name: item.name, organization: item.organization || "", category: item.category || "", year: item.year?.toString() || "", result: item.result || "nominated", project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.name.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, name: form.name.trim(), organization: form.organization || null, category: form.category || null, year: form.year ? parseInt(form.year) : null, result: form.result || null };
+    const payload = { profile_id: user.id, name: form.name.trim(), organization: form.organization || null, category: form.category || null, year: form.year ? parseInt(form.year) : null, result: form.result || null, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("awards").update(payload).eq("id", editing.id) : await supabase.from("awards").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
@@ -79,7 +86,7 @@ const AwardsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>
-      <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can link each award to a project." learnMoreRoute="/dashboard/settings" previewText="Displayed as laurel badges with year, category, and result" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can link each award to a project." learnMoreRoute="/dashboard/settings" previewText="Displayed as laurel badges with year, category, and result" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} />
       ) : (
@@ -122,6 +129,17 @@ const AwardsManager = () => {
                   <SelectItem value="official_selection">Official Selection</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
             </div>
           </div>
           <DialogFooter>

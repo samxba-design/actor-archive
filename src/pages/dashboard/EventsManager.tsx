@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import PageHeader from "@/components/dashboard/PageHeader";
 import EmptyState from "@/components/dashboard/EmptyState";
@@ -35,14 +36,15 @@ interface Event {
 const EventsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Event | null>(null);
-  const [form, setForm] = useState({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true });
+  const [form, setForm] = useState({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true, project_id: "" });
   const [saving, setSaving] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; title: string }[]>([]);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -51,15 +53,21 @@ const EventsManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
 
-  const openAdd = () => { setEditing(null); setForm({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true }); setDialogOpen(true); };
-  const openEdit = (item: Event) => { setEditing(item); setForm({ title: item.title, event_type: item.event_type || "", venue: item.venue || "", city: item.city || "", country: item.country || "", date: item.date || "", end_date: item.end_date || "", ticket_url: item.ticket_url || "", description: item.description || "", is_upcoming: item.is_upcoming ?? true }); setDialogOpen(true); };
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
+
+  const openAdd = () => { setEditing(null); setForm({ title: "", event_type: "", venue: "", city: "", country: "", date: "", end_date: "", ticket_url: "", description: "", is_upcoming: true, project_id: "" }); setDialogOpen(true); };
+  const openEdit = (item: Event) => { setEditing(item); setForm({ title: item.title, event_type: item.event_type || "", venue: item.venue || "", city: item.city || "", country: item.country || "", date: item.date || "", end_date: item.end_date || "", ticket_url: item.ticket_url || "", description: item.description || "", is_upcoming: item.is_upcoming ?? true, project_id: (item as any).project_id || "" }); setDialogOpen(true); };
 
   const handleSave = async () => {
     if (!user || !form.title.trim()) return;
     setSaving(true);
-    const payload = { profile_id: user.id, title: form.title.trim(), event_type: form.event_type || null, venue: form.venue || null, city: form.city || null, country: form.country || null, date: form.date || null, end_date: form.end_date || null, ticket_url: form.ticket_url || null, description: form.description || null, is_upcoming: form.is_upcoming };
+    const payload = { profile_id: user.id, title: form.title.trim(), event_type: form.event_type || null, venue: form.venue || null, city: form.city || null, country: form.country || null, date: form.date || null, end_date: form.end_date || null, ticket_url: form.ticket_url || null, description: form.description || null, is_upcoming: form.is_upcoming, project_id: form.project_id || null };
     const { error } = editing ? await supabase.from("events").update(payload).eq("id", editing.id) : await supabase.from("events").insert(payload);
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else { toast({ title: editing ? "Updated" : "Added" }); setDialogOpen(false); fetchItems(); }
@@ -80,7 +88,7 @@ const EventsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Event</Button>
       </div>
-      <ManagerHelpBanner id="events" title="Events display in your Events section" description="Add screenings, premieres, or speaking engagements. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as a timeline of upcoming and past events with venues and dates" />
+      <ManagerHelpBanner id="events" title="Events display in your Events section" description="Add screenings, premieres, or speaking engagements. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as a timeline of upcoming and past events with venues and dates" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={CalendarDays} title="No events yet" description="Add screenings, premieres, or speaking engagements to keep your portfolio current." actionLabel="Add Event" onAction={openAdd} />
       ) : (
@@ -125,6 +133,17 @@ const EventsManager = () => {
             <div><Label>Ticket URL</Label><Input value={form.ticket_url} onChange={(e) => setForm(f => ({ ...f, ticket_url: e.target.value }))} placeholder="https://..." /></div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} /></div>
             <div className="flex items-center justify-between"><Label>Upcoming Event</Label><Switch checked={form.is_upcoming} onCheckedChange={(v) => setForm(f => ({ ...f, is_upcoming: v }))} /></div>
+            <div>
+              <Label>Link to Project</Label>
+              <Select value={form.project_id} onValueChange={(v) => setForm(f => ({ ...f, project_id: v === "none" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="None (optional)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {projects.map((p) => <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">Link to a project to show them together on your portfolio</p>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>

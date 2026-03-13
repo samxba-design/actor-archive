@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Image, Star, GripVertical } from "lucide-react";
 import EmptyState from "@/components/dashboard/EmptyState";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { generatePdfThumbnail, dataUrlToFile } from "@/lib/pdfThumbnail";
 
 interface PublishedWork {
@@ -42,6 +43,7 @@ const CATEGORIES = [
 const PublishedWorkManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const [items, setItems] = useState<PublishedWork[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -216,7 +218,7 @@ const PublishedWorkManager = () => {
         title="Published Work"
         description="Manage your published articles, PDFs, and writing pieces that appear on your portfolio."
       />
-      <ManagerHelpBanner id="published-work" title="Published work appears in its own section" description="Manage articles, PDFs, and writing pieces on your portfolio. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as article cards with cover images, publication names, and read times" />
+      <ManagerHelpBanner id="published-work" title="Published work appears in its own section" description="Manage articles, PDFs, and writing pieces on your portfolio. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as article cards with cover images, publication names, and read times" portfolioSlug={slug || undefined} />
 
       <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
         <DialogTrigger asChild>

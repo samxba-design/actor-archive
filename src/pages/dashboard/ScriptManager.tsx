@@ -14,6 +14,7 @@ import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Lock, Eye, Mail, Shiel
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription } from "@/hooks/useSubscription";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 type Project = Tables<"projects">;
 
@@ -28,6 +29,7 @@ const ACCESS_LEVELS = [
 const ScriptManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const { isPro } = useSubscription();
   const [scripts, setScripts] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -345,7 +347,7 @@ const ScriptManager = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as downloadable cards with access control badges" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as downloadable cards with access control badges" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
 
       {scripts.length === 0 ? (
         <Card>

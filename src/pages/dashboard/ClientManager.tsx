@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "lucide-react";
 import { getCompanyLogoUrl } from "@/lib/companyLogos";
 import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
+import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 
 interface ClientLogo {
   id: string;
@@ -25,6 +26,7 @@ interface ClientLogo {
 const ClientManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { slug } = useProfileTypeContext();
   const [items, setItems] = useState<ClientLogo[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -118,7 +120,7 @@ const ClientManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
       </div>
-      <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as a scrolling logo bar on your portfolio" demoUrl="/demo/copywriter" />
+      <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as a scrolling logo bar on your portfolio" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
 
       {items.length === 0 ? (
         <EmptyState
