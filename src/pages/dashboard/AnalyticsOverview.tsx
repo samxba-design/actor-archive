@@ -98,7 +98,7 @@ const AnalyticsOverview = () => {
       // Geographic breakdown
       const countries: Record<string, number> = {};
       const cities: Record<string, number> = {};
-      views.forEach((v) => {
+      pageViews.forEach((v) => {
         const c = v.country || "Unknown";
         countries[c] = (countries[c] || 0) + 1;
         const city = v.city || "Unknown";
