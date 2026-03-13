@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
-import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants } from "./DemoShared";
+import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants, STOCK_HERO_IMAGES } from "./DemoShared";
 import { ChevronDown, ChevronUp, Settings2, Eye, EyeOff, FileDown } from "lucide-react";
 
 interface CategoryConfig {
