@@ -429,9 +429,14 @@ const DashboardHome = () => {
                 <qa.icon className="mr-2 h-4 w-4" />{qa.label}
               </Button>
             ))}
+            <Button variant="ghost" className="justify-start text-muted-foreground" onClick={handleReplayTour}>
+              <Sparkles className="mr-2 h-4 w-4" />Replay Tour
+            </Button>
           </div>
         </div>
       )}
+
+      {showTour && <GettingStartedGuide forceShow />}
 
       <ResumeImporter open={resumeOpen} onOpenChange={setResumeOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
       <URLImporter open={urlOpen} onOpenChange={setUrlOpen} profileType={profileType || undefined} onComplete={() => window.location.reload()} />
