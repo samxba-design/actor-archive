@@ -25,6 +25,7 @@ import {
   AmbientGlow, MidScrollCTA, CTA_LABELS,
   PublishedWorkWithToggle, STOCK_HERO_IMAGES,
 } from "@/components/demo/DemoShared";
+import SectionCollections from "@/components/portfolio/sections/SectionCollections";
 import {
   mockProfile, mockSocialLinks, mockCaseStudies, mockServices,
   mockTestimonials, mockClients, mockSkills, mockAwards, mockPress,
