@@ -226,8 +226,6 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
                   Too many submissions. Please wait a few minutes before trying again.
                 </p>
               )}
-                </p>
-              )}
             </form>
           </div>
         )}
