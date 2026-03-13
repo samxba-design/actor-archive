@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { compressImage } from "@/lib/imageCompression";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe } from "lucide-react";
+import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe, Check, AlertCircle, CheckCircle2 } from "lucide-react";
 import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -38,15 +38,30 @@ interface ProfileForm {
   slug: string;
 }
 
+const EDITOR_SECTIONS = [
+  { id: "photo", label: "Photo" },
+  { id: "hero-bg", label: "Hero" },
+  { id: "basic-info", label: "Info" },
+  { id: "headline-bio", label: "Bio" },
+];
+
+type SaveStatus = "idle" | "saving" | "saved" | "error";
+
 const ProfileEditor = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [bioExpanded, setBioExpanded] = useState(false);
   const [generatingBio, setGeneratingBio] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [slugChecking, setSlugChecking] = useState(false);
+  const slugTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const autoSaveTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const initialLoad = useRef(true);
+  const [loadedForm, setLoadedForm] = useState<ProfileForm | null>(null);
   const [form, setForm] = useState<ProfileForm>({
     display_name: "",
     first_name: "",
@@ -69,6 +84,9 @@ const ProfileEditor = () => {
 
   const { clearDraft } = useFormDraft("profile-editor", form, setForm);
 
+  // Check if form has changed from loaded state
+  const isDirty = loadedForm ? JSON.stringify(form) !== JSON.stringify(loadedForm) : false;
+
   useEffect(() => {
     if (!user) return;
     supabase
@@ -78,7 +96,7 @@ const ProfileEditor = () => {
       .single()
       .then(({ data }) => {
         if (data) {
-          setForm({
+          const loaded: ProfileForm = {
             display_name: data.display_name || "",
             first_name: data.first_name || "",
             last_name: data.last_name || "",
@@ -96,15 +114,51 @@ const ProfileEditor = () => {
             hero_bg_solid_color: (data as any).hero_bg_solid_color || "",
             hero_bg_video_url: (data as any).hero_bg_video_url || "",
             slug: data.slug || "",
-          });
+          };
+          setForm(loaded);
+          setLoadedForm(loaded);
         }
         setLoading(false);
+        initialLoad.current = false;
       });
   }, [user]);
 
-  const handleSave = async () => {
+  // Auto-save with 2s debounce
+  useEffect(() => {
+    if (initialLoad.current || !isDirty || loading) return;
+    if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
+    autoSaveTimeout.current = setTimeout(() => {
+      handleSave(true);
+    }, 2000);
+    return () => { if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current); };
+  }, [form]);
+
+  // Slug live availability check
+  const checkSlugAvailability = useCallback((slug: string) => {
+    if (slugTimeout.current) clearTimeout(slugTimeout.current);
+    if (!slug || slug.length < 2) { setSlugAvailable(null); return; }
+    setSlugChecking(true);
+    slugTimeout.current = setTimeout(async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("slug", slug)
+        .neq("id", user?.id || "")
+        .maybeSingle();
+      setSlugAvailable(!data);
+      setSlugChecking(false);
+    }, 500);
+  }, [user?.id]);
+
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setForm(prev => ({ ...prev, slug: val }));
+    checkSlugAvailability(val);
+  };
+
+  const handleSave = async (isAutoSave = false) => {
     if (!user) return;
-    setSaving(true);
+    setSaveStatus("saving");
     const { error } = await supabase
       .from("profiles")
       .update({
@@ -122,16 +176,19 @@ const ProfileEditor = () => {
         hero_bg_type: form.hero_bg_type || "preset",
         hero_bg_solid_color: form.hero_bg_solid_color || null,
         hero_bg_video_url: form.hero_bg_video_url || null,
+        slug: form.slug || null,
       } as any)
       .eq("id", user.id);
 
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      setSaveStatus("error");
+      if (!isAutoSave) toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Saved", description: "Profile updated successfully." });
+      setSaveStatus("saved");
+      setLoadedForm({ ...form });
       clearDraft();
+      setTimeout(() => setSaveStatus("idle"), 3000);
     }
-    setSaving(false);
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, bucket: string, field: keyof ProfileForm) => {
@@ -150,7 +207,6 @@ const ProfileEditor = () => {
     }
     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
     setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
-    toast({ title: "Photo uploaded", description: "Don't forget to save your changes." });
   };
 
   const handleRemovePhoto = () => {
@@ -209,25 +265,53 @@ const ProfileEditor = () => {
   const bioPreviewLength = 200;
   const bioIsTruncatable = form.bio.length > bioPreviewLength;
 
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const saveStatusLabel = saveStatus === "saving" ? "Saving…" :
+    saveStatus === "saved" ? "Saved" :
+    saveStatus === "error" ? "Error" : null;
+
+  const SaveStatusIcon = saveStatus === "saving" ? Loader2 :
+    saveStatus === "saved" ? Check :
+    saveStatus === "error" ? AlertCircle : null;
+
   return (
     <div className="max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Edit Profile</h1>
-        <div className="flex items-center gap-2">
+      {/* Sticky editor nav */}
+      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-sm border-b border-border -mx-4 px-4 py-2 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 overflow-x-auto">
+          {EDITOR_SECTIONS.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => scrollToSection(s.id)}
+              className="px-3 py-1.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap"
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {saveStatusLabel && (
+            <span className={`flex items-center gap-1 text-xs ${saveStatus === "error" ? "text-destructive" : "text-muted-foreground"}`}>
+              {SaveStatusIcon && <SaveStatusIcon className={`h-3 w-3 ${saveStatus === "saving" ? "animate-spin" : ""}`} />}
+              {saveStatusLabel}
+            </span>
+          )}
           <Button variant="outline" size="sm" onClick={() => setResumeOpen(true)}>
-            <FileUp className="mr-2 h-4 w-4" />Resume
+            <FileUp className="mr-1 h-3.5 w-3.5" />Resume
           </Button>
           <Button variant="outline" size="sm" onClick={() => setUrlOpen(true)}>
-            <Globe className="mr-2 h-4 w-4" />URL
+            <Globe className="mr-1 h-3.5 w-3.5" />URL
           </Button>
           {form.slug && (
             <Button variant="outline" size="sm" onClick={() => window.open(`/p/${form.slug}`, "_blank")}>
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Preview
+              <ExternalLink className="mr-1 h-3.5 w-3.5" />Preview
             </Button>
           )}
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+          <Button onClick={() => handleSave(false)} disabled={saveStatus === "saving" || !isDirty} size="sm">
+            {saveStatus === "saving" ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-1 h-3.5 w-3.5" />}
             Save
           </Button>
         </div>
@@ -239,7 +323,7 @@ const ProfileEditor = () => {
       <ProfileReadiness />
 
       {/* Profile Photo Card */}
-      <Card>
+      <Card id="photo">
         <CardHeader>
           <CardTitle>Profile Photo</CardTitle>
           <CardDescription>This photo appears as your main headshot on your portfolio</CardDescription>
@@ -281,20 +365,22 @@ const ProfileEditor = () => {
         </CardContent>
       </Card>
 
-      {user && (
-        <HeroBackgroundEditor
-          userId={user.id}
-          heroStyle={form.hero_style}
-          heroBackgroundPreset={form.hero_background_preset}
-          bannerUrl={form.banner_url}
-          heroBgType={form.hero_bg_type}
-          heroBgSolidColor={form.hero_bg_solid_color}
-          heroBgVideoUrl={form.hero_bg_video_url}
-          onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
-        />
-      )}
+      <div id="hero-bg">
+        {user && (
+          <HeroBackgroundEditor
+            userId={user.id}
+            heroStyle={form.hero_style}
+            heroBackgroundPreset={form.hero_background_preset}
+            bannerUrl={form.banner_url}
+            heroBgType={form.hero_bg_type}
+            heroBgSolidColor={form.hero_bg_solid_color}
+            heroBgVideoUrl={form.hero_bg_video_url}
+            onUpdate={(fields) => setForm((prev) => ({ ...prev, ...fields }))}
+          />
+        )}
+      </div>
 
-      <Card>
+      <Card id="basic-info">
         <CardHeader>
           <CardTitle>Basic Info</CardTitle>
           <CardDescription>Your name, tagline, and location as displayed on the portfolio</CardDescription>
@@ -311,10 +397,33 @@ const ProfileEditor = () => {
           </div>
           <div><Label>Tagline <GlossaryTooltip term="tagline" /></Label><Input value={form.tagline} onChange={update("tagline")} placeholder="e.g. Award-winning screenwriter" /></div>
           <div><Label>Location</Label><Input value={form.location} onChange={update("location")} placeholder="e.g. Los Angeles, CA" /></div>
+          <div>
+            <Label>Portfolio URL Slug</Label>
+            <div className="relative">
+              <Input
+                value={form.slug}
+                onChange={handleSlugChange}
+                placeholder="your-name"
+                className="pr-8"
+              />
+              {slugChecking && <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 animate-spin text-muted-foreground" />}
+              {!slugChecking && slugAvailable === true && form.slug && <CheckCircle2 className="absolute right-2.5 top-2.5 h-4 w-4 text-green-600" />}
+              {!slugChecking && slugAvailable === false && <AlertCircle className="absolute right-2.5 top-2.5 h-4 w-4 text-destructive" />}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {slugAvailable === false ? (
+                <span className="text-destructive">This slug is already taken — choose another.</span>
+              ) : form.slug ? (
+                <>Your portfolio will be at <span className="font-mono">/p/{form.slug}</span></>
+              ) : (
+                "Letters, numbers, and hyphens only"
+              )}
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="headline-bio">
         <CardHeader>
           <CardTitle>Headline & Bio</CardTitle>
           <CardDescription>Your pitch and story — these appear prominently on your portfolio</CardDescription>

@@ -9,7 +9,10 @@ interface CheckItem {
   done: boolean;
   priority: "high" | "medium" | "low";
   tip: string;
+  weight: number;
 }
+
+const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
 
 /** Boost priority for items that align with user's primary goal */
 function applyGoalWeights(items: CheckItem[], goal: string | null) {
@@ -31,10 +34,40 @@ function applyGoalWeights(items: CheckItem[], goal: string | null) {
 
   return items.map(item => {
     if (boosted.includes(item.label) && item.priority !== "high") {
-      return { ...item, priority: "high" as const };
+      return { ...item, priority: "high" as const, weight: PRIORITY_WEIGHT.high };
     }
     return item;
   });
+}
+
+/** Circular progress ring SVG */
+function CircularProgress({ score, size = 72, strokeWidth = 6 }: { score: number; size?: number; strokeWidth?: number }) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  const color = score >= 80 ? "hsl(142 71% 45%)" : score >= 50 ? "hsl(48 96% 53%)" : "hsl(0 84% 60%)";
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="hsl(var(--muted))" strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke={color} strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          className="transition-all duration-1000 ease-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-lg font-bold text-foreground">{score}%</span>
+      </div>
+    </div>
+  );
 }
 
 const ProfileReadiness = () => {
@@ -78,60 +111,64 @@ const ProfileReadiness = () => {
       const primaryGoal = profile.primary_goal || null;
       let items: CheckItem[] = [];
 
+      const item = (label: string, done: boolean, priority: "high" | "medium" | "low", tip: string): CheckItem => ({
+        label, done, priority, tip, weight: PRIORITY_WEIGHT[priority],
+      });
+
       // Universal checks
-      items.push({ label: "Profile photo uploaded", done: !!profile.profile_photo_url, priority: "high", tip: "A professional photo builds instant trust." });
-      items.push({ label: "Display name set", done: !!profile.display_name, priority: "high", tip: "Your name is the first thing visitors see." });
-      items.push({ label: "Headline added", done: !!(profile as any).headline, priority: "high", tip: "A strong headline tells visitors who you are in one line." });
-      items.push({ label: "Bio written", done: !!profile.bio && profile.bio.length > 50, priority: "high", tip: "A detailed bio (100+ words) gives credibility." });
-      items.push({ label: "Tagline set", done: !!profile.tagline, priority: "medium", tip: "A tagline appears under your name on the portfolio." });
-      items.push({ label: "Location added", done: !!profile.location, priority: "low", tip: "Helps industry contacts know your market." });
-      items.push({ label: "At least one project", done: projects.length > 0, priority: "high", tip: "Projects are the core of your portfolio." });
-      items.push({ label: "Social links added", done: socials.length > 0, priority: "medium", tip: "Link your IMDb, LinkedIn, or social profiles." });
-      items.push({ label: "Profile published", done: !!profile.is_published, priority: "high", tip: "Your portfolio isn't visible until published." });
+      items.push(item("Profile photo uploaded", !!profile.profile_photo_url, "high", "+15% — A professional photo builds instant trust."));
+      items.push(item("Display name set", !!profile.display_name, "high", "+10% — Your name is the first thing visitors see."));
+      items.push(item("Headline added", !!(profile as any).headline, "high", "+10% — A strong headline tells visitors who you are."));
+      items.push(item("Bio written", !!profile.bio && profile.bio.length > 50, "high", "+15% — A detailed bio gives credibility."));
+      items.push(item("Tagline set", !!profile.tagline, "medium", "+5% — Appears under your name on the portfolio."));
+      items.push(item("Location added", !!profile.location, "low", "+3% — Helps contacts know your market."));
+      items.push(item("At least one project", projects.length > 0, "high", "+15% — Projects are the core of your portfolio."));
+      items.push(item("Social links added", socials.length > 0, "medium", "+5% — Link your IMDb, LinkedIn, or social profiles."));
+      items.push(item("Profile published", !!profile.is_published, "high", "+10% — Not visible until published."));
 
       // Type-specific checks
       if (["screenwriter", "tv_writer", "playwright"].includes(profileType)) {
         const withLoglines = projects.filter((p) => p.logline);
-        items.push({ label: "Projects have loglines", done: withLoglines.length >= Math.min(projects.length, 2), priority: "high", tip: "Every script should have a polished logline." });
-        items.push({ label: "Representation listed", done: reps.length > 0, priority: "medium", tip: "If repped, showing your agent signals credibility." });
-        items.push({ label: "Awards or fellowships", done: awards.length > 0, priority: "medium", tip: "Contest wins and fellowships validate your writing." });
+        items.push(item("Projects have loglines", withLoglines.length >= Math.min(projects.length, 2), "high", "+10% — Every script should have a polished logline."));
+        items.push(item("Representation listed", reps.length > 0, "medium", "+5% — Showing your agent signals credibility."));
+        items.push(item("Awards or fellowships", awards.length > 0, "medium", "+5% — Contest wins validate your writing."));
       }
 
       if (profileType === "actor") {
-        items.push({ label: "Headshot gallery (3+)", done: gallery.length >= 3, priority: "high", tip: "Casting directors need multiple looks." });
-        items.push({ label: "Demo reel uploaded", done: projects.some((p) => p.video_url), priority: "high", tip: "A reel is essential for casting." });
-        items.push({ label: "Training & education", done: education.length > 0, priority: "medium", tip: "Show your training background." });
-        items.push({ label: "Representation listed", done: reps.length > 0, priority: "high", tip: "Agents and managers should be listed." });
-        items.push({ label: "Special skills listed", done: skills.length >= 3, priority: "medium", tip: "List combat, languages, instruments, etc." });
+        items.push(item("Headshot gallery (3+)", gallery.length >= 3, "high", "+10% — Casting directors need multiple looks."));
+        items.push(item("Demo reel uploaded", projects.some((p) => p.video_url), "high", "+15% — Essential for casting."));
+        items.push(item("Training & education", education.length > 0, "medium", "+5% — Show your training background."));
+        items.push(item("Representation listed", reps.length > 0, "high", "+10% — Agents and managers should be listed."));
+        items.push(item("Special skills listed", skills.length >= 3, "medium", "+5% — Languages, combat, instruments, etc."));
       }
 
       if (profileType === "director_producer") {
-        items.push({ label: "Showreel uploaded", done: projects.some((p) => p.video_url), priority: "high", tip: "Visual work speaks louder than words." });
-        items.push({ label: "Production stills", done: gallery.length >= 2, priority: "medium", tip: "Behind-the-scenes photos show your process." });
-        items.push({ label: "Awards listed", done: awards.length > 0, priority: "medium", tip: "Festival laurels build credibility fast." });
+        items.push(item("Showreel uploaded", projects.some((p) => p.video_url), "high", "+15% — Visual work speaks louder."));
+        items.push(item("Production stills", gallery.length >= 2, "medium", "+5% — BTS photos show your process."));
+        items.push(item("Awards listed", awards.length > 0, "medium", "+5% — Festival laurels build credibility."));
       }
 
       if (["copywriter", "corporate_video"].includes(profileType)) {
-        items.push({ label: "Case study added", done: projects.some((p) => p.project_type === "case_study"), priority: "high", tip: "Case studies with metrics convert clients." });
-        items.push({ label: "Services listed", done: services.length > 0, priority: "high", tip: "Clients need to know what you offer and at what price." });
-        items.push({ label: "Client testimonials", done: testimonials.length > 0, priority: "high", tip: "Social proof drives hiring decisions." });
+        items.push(item("Case study added", projects.some((p) => p.project_type === "case_study"), "high", "+15% — Case studies with metrics convert clients."));
+        items.push(item("Services listed", services.length > 0, "high", "+10% — Clients need to know what you offer."));
+        items.push(item("Client testimonials", testimonials.length > 0, "high", "+10% — Social proof drives hiring decisions."));
       }
 
       if (["author", "journalist"].includes(profileType)) {
-        items.push({ label: "Published works added", done: projects.length >= 2, priority: "high", tip: "Show your body of work." });
-        items.push({ label: "Press or reviews", done: press.length > 0, priority: "medium", tip: "Critical reception adds authority." });
+        items.push(item("Published works added", projects.length >= 2, "high", "+10% — Show your body of work."));
+        items.push(item("Press or reviews", press.length > 0, "medium", "+5% — Critical reception adds authority."));
       }
 
       // General nice-to-haves
-      items.push({ label: "Banner image uploaded", done: !!profile.banner_url, priority: "low", tip: "A banner makes your portfolio feel polished." });
-      items.push({ label: "Testimonials added", done: testimonials.length > 0, priority: "medium", tip: "What others say about you matters." });
+      items.push(item("Banner image uploaded", !!profile.banner_url, "low", "+3% — Makes your portfolio feel polished."));
+      items.push(item("Testimonials added", testimonials.length > 0, "medium", "+5% — What others say about you matters."));
 
       // Apply goal-based priority boosts
       items = applyGoalWeights(items, primaryGoal);
 
       // Calculate score
-      const totalWeight = items.reduce((sum, i) => sum + (i.priority === "high" ? 3 : i.priority === "medium" ? 2 : 1), 0);
-      const doneWeight = items.filter((i) => i.done).reduce((sum, i) => sum + (i.priority === "high" ? 3 : i.priority === "medium" ? 2 : 1), 0);
+      const totalWeight = items.reduce((sum, i) => sum + i.weight, 0);
+      const doneWeight = items.filter((i) => i.done).reduce((sum, i) => sum + i.weight, 0);
       setScore(Math.round((doneWeight / totalWeight) * 100));
       setChecks(items);
       setLoading(false);
@@ -147,26 +184,23 @@ const ProfileReadiness = () => {
   });
   const complete = checks.filter((c) => c.done);
 
-  const scoreColor = score >= 80 ? "text-green-600" : score >= 50 ? "text-yellow-600" : "text-red-500";
-
   return (
     <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Profile Readiness
-          </CardTitle>
-          <span className={`text-2xl font-bold ${scoreColor}`}>{score}%</span>
-        </div>
-        <div className="w-full h-2 rounded-full bg-muted overflow-hidden mt-2">
-          <div
-            className="h-full rounded-full transition-all duration-700 ease-out"
-            style={{
-              width: `${score}%`,
-              backgroundColor: score >= 80 ? "hsl(142 71% 45%)" : score >= 50 ? "hsl(48 96% 53%)" : "hsl(0 84% 60%)",
-            }}
-          />
+        <div className="flex items-center gap-4">
+          <CircularProgress score={score} />
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-base flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Profile Readiness
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {score >= 90 ? "Your portfolio is looking great!" :
+               score >= 70 ? "Almost there — a few more steps to stand out." :
+               score >= 40 ? "Good start — keep adding content to boost your profile." :
+               "Let's get your portfolio off the ground."}
+            </p>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-1 max-h-[400px] overflow-y-auto">
@@ -176,13 +210,13 @@ const ProfileReadiness = () => {
             {incomplete.map((item) => (
               <div key={item.label} className="flex items-start gap-2 py-1.5 group">
                 {item.priority === "high" ? (
-                  <AlertCircle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                 ) : (
                   <Circle className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-foreground">{item.label}</p>
-                  <p className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">{item.tip}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.tip}</p>
                 </div>
               </div>
             ))}
