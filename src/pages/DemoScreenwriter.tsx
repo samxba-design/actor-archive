@@ -10,6 +10,7 @@ import LayoutSwitcher, { type LayoutPreset } from "@/components/portfolio/Layout
 import SectionLoglineShowcase from "@/components/portfolio/sections/SectionLoglineShowcase";
 import SectionProjects from "@/components/portfolio/sections/SectionProjects";
 import SectionAwards from "@/components/portfolio/sections/SectionAwards";
+import SectionServices from "@/components/portfolio/sections/SectionServices";
 import GlassCard from "@/components/portfolio/GlassCard";
 import DemoProfileTabs from "@/components/demo/DemoProfileTabs";
 import DemoInteractiveLayout from "@/components/demo/DemoInteractiveLayout";
