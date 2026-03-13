@@ -124,7 +124,7 @@ export const mockEvents = [
   { id: "ev2", title: "Sundance Film Festival — 'Ember' Premiere", venue: "Eccles Theatre", city: "Park City", country: "US", date: "2024-01-20", is_upcoming: false, description: "World premiere screening + Q&A.", ticket_url: null, event_type: "festival" },
 ];
 
-export const mockClients = ["HBO", "A24", "Apple TV+", "Blumhouse", "Searchlight", "ABC"];
+export const mockClients = ["Warner Bros", "Universal", "Disney", "Amazon Studios", "HBO", "Apple TV+", "Netflix", "Searchlight"];
 
 export const mockKnownFor = mockCredits;
 export const featuredProject = mockCredits[0];

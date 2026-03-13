@@ -79,7 +79,7 @@ export const mockServices = [
 
 export const featuredProject = mockCredits[0];
 export const mockKnownFor = mockCredits;
-export const mockClients = ["HBO", "FX", "A24", "NBC", "Netflix", "Amazon Studios"];
+export const mockClients = ["Universal", "Disney", "Amazon Studios", "HBO", "Netflix", "A24", "Paramount", "Apple TV+"];
 
 export const mockEducation = [
   { id: "ed1", institution: "UCLA School of Theater, Film and Television", degree_or_certificate: "MFA, Screenwriting", field_of_study: "Screenwriting", education_type: "Graduate", year_start: 2015, year_end: 2017, teacher_name: null, description: "Thesis screenplay selected for university showcase.", is_ongoing: false },
