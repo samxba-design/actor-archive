@@ -273,8 +273,13 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           break;
         }
         case "published_work": {
-          const { data } = await supabase.from("published_works").select("*").eq("profile_id", profileId).order("display_order", orderOpts);
-          rows = data || [];
+          const [{ data: pwData }, { data: colData }] = await Promise.all([
+            supabase.from("published_works").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+            supabase.from("work_collections").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+          ]);
+          rows = pwData || [];
+          // Store collections in singleData for the renderer
+          setSingleData(colData || []);
           break;
         }
         case "custom_sections": {
