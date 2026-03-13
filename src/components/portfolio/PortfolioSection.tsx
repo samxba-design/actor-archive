@@ -293,7 +293,15 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
     fetchData();
   }, [sectionKey, profileId]);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <section ref={sectionRef} className="animate-pulse space-y-4">
+        <div className="h-6 rounded w-32" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.08)" }} />
+        <div className="h-2 rounded w-24" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.05)" }} />
+        <div className="h-20 rounded" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.04)" }} />
+      </section>
+    );
+  }
 
   // Bio section — special handling
   if (sectionKey === "bio") {

@@ -79,7 +79,8 @@ export function useSubscription() {
       const t = (data?.tier as SubscriptionTier) || "free";
       setTier(t === "pro" ? "pro" : "free");
       setSubscriptionEnd(data?.subscription_end || null);
-    } catch {
+    } catch (err) {
+      console.warn("[useSubscription] edge function check failed, falling back to profiles:", err);
       // Fallback: read from profiles table
       const { data } = await supabase
         .from("profiles")
