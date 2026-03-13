@@ -201,7 +201,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Actor",
     description: "Headshots, demo reels, credits, and physical stats. Optimised for casting directors — everything scannable in 15 seconds.",
     icon: "Clapperboard",
-    defaultTheme: "cinematic",
+    defaultTheme: "cinematic-dark",
     sections: [
       { key: "hero", label: "Hero", description: "Primary headshot, name" },
       { key: "stats_bar", label: "Physical Stats", description: "Height, age range, unions, accents" },
