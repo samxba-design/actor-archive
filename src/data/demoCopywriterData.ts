@@ -75,7 +75,7 @@ export const mockTestimonials = [
   { id: "t3", quote: "We've worked with a dozen copywriters. Priya is the first one who actually took time to understand our customers before writing a single word.", author_name: "James Wright", author_role: "VP Marketing", author_company: "Meridian Health", author_photo_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" },
 ];
 
-export const mockClients = ["Finova", "Bloom & Birch", "Meridian Health", "Torque Fitness", "Notion", "Stripe", "Webflow", "Linear"];
+export const mockClients = ["Apple", "Microsoft", "Shopify", "HubSpot", "Stripe", "Notion", "Salesforce", "Slack"];
 
 export const mockSkills = [
   { id: "sk1", name: "Conversion Copywriting", category: "Core", proficiency: "expert" },
