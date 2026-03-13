@@ -9,6 +9,7 @@ export type SectionKey =
   | "script_library"
   | "credits"
   | "awards"
+  | "achievements"
   | "press"
   | "testimonials"
   | "training"
