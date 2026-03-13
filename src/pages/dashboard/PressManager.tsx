@@ -50,7 +50,13 @@ const PressManager = () => {
     setLoading(false);
   };
 
-  useEffect(() => { fetchItems(); }, [user]);
+  const fetchProjects = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("projects").select("id, title").eq("profile_id", user.id).order("title");
+    setProjects(data || []);
+  };
+
+  useEffect(() => { fetchItems(); fetchProjects(); }, [user]);
 
   const openAdd = () => { setEditing(null); setForm({ title: "", publication: "", date: "", article_url: "", pull_quote: "", excerpt: "", star_rating: "", is_featured: false }); setDialogOpen(true); };
   const openEdit = (item: Press) => { setEditing(item); setForm({ title: item.title, publication: item.publication || "", date: item.date || "", article_url: item.article_url || "", pull_quote: item.pull_quote || "", excerpt: item.excerpt || "", star_rating: item.star_rating?.toString() || "", is_featured: item.is_featured || false }); setDialogOpen(true); };
