@@ -1034,6 +1034,7 @@ export type Database = {
           is_draft: boolean | null
           is_published: boolean | null
           is_suspended: boolean | null
+          known_for_position: string | null
           last_name: string | null
           layout_density: string | null
           location: string | null
@@ -1086,6 +1087,7 @@ export type Database = {
           is_draft?: boolean | null
           is_published?: boolean | null
           is_suspended?: boolean | null
+          known_for_position?: string | null
           last_name?: string | null
           layout_density?: string | null
           location?: string | null
@@ -1138,6 +1140,7 @@ export type Database = {
           is_draft?: boolean | null
           is_published?: boolean | null
           is_suspended?: boolean | null
+          known_for_position?: string | null
           last_name?: string | null
           layout_density?: string | null
           location?: string | null
