@@ -147,26 +147,15 @@ const GalleryManager = () => {
       {images.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">No images yet. Upload some above.</div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {images.map((img) => (
-            <div key={img.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
-              <img src={img.image_url} alt={img.caption || ""} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => requestDelete(img.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {img.image_type.replace(/_/g, " ")}
-              </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={images.map(i => i.id)} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {images.map((img) => (
+                <SortableGalleryItem key={img.id} img={img} onDelete={requestDelete} />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       )}
       <DeleteConfirmDialog />
     </div>
