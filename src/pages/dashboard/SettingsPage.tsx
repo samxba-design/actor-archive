@@ -386,7 +386,40 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
-      {/* Known For / Highlights Position Picker */}
+      {/* Headshot Style Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Circle className="h-4 w-4" /> Headshot Style</CardTitle>
+          <CardDescription>Choose how your profile photo appears on the portfolio</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {[
+              { id: "circle", label: "Circular", icon: <div className="w-8 h-8 rounded-full bg-muted border-2 border-primary/30" />, desc: "Classic round crop" },
+              { id: "rounded", label: "Rounded", icon: <div className="w-8 h-8 rounded-xl bg-muted border-2 border-primary/30" />, desc: "Soft corners" },
+              { id: "square", label: "Square", icon: <div className="w-8 h-8 rounded-none bg-muted border-2 border-primary/30" />, desc: "Sharp edges" },
+              { id: "frame", label: "Framed", icon: <div className="w-8 h-8 rounded-lg bg-muted border-2 border-primary ring-2 ring-primary/30" />, desc: "Accent border" },
+              { id: "hidden", label: "Hidden", icon: <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><UserX className="h-4 w-4 text-muted-foreground" /></div>, desc: "Name only" },
+            ].map((style) => (
+              <button
+                key={style.id}
+                onClick={() => setHeadshotStyle(style.id)}
+                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all ${
+                  headshotStyle === style.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                {style.icon}
+                <div className="text-center">
+                  <p className="text-xs font-medium text-foreground">{style.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{style.desc}</p>
+                </div>
+                {headshotStyle === style.id && <Check className="h-3 w-3 text-primary" />}
+              </button>
+            ))}
+          </div>
+        </CardContent>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> {getTypeAwareLabels(profileType).knownForTitle} Position</CardTitle>
