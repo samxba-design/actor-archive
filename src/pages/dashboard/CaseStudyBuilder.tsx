@@ -89,7 +89,7 @@ const CaseStudyBuilder = () => {
     const { error } = await supabase.from("projects").insert({
       profile_id: user.id,
       title: form.title,
-      project_type: "case_study" as any,
+      project_type: "case_study",
       client: form.client,
       challenge: form.challenge,
       solution: form.solution,
