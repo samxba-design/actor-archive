@@ -90,8 +90,9 @@ const SortableProjectCard = ({ project, onEdit, onDelete, onDuplicate }: { proje
           </div>
         </div>
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(project)}><Pencil className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" onClick={() => onDelete(project.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(project)} title="Edit"><Pencil className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onDuplicate(project)} title="Duplicate"><Copy className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => onDelete(project.id)} title="Delete"><Trash2 className="h-4 w-4 text-destructive" /></Button>
         </div>
       </CardContent>
     </Card>
