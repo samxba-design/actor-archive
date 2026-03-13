@@ -87,6 +87,7 @@ const SkillsManager = () => {
         learnMoreRoute="/dashboard/settings"
         previewText="Displayed as colored tag badges grouped by category"
         demoUrl="/demo/actor"
+        portfolioSlug={slug || undefined}
       />
       <div className="flex items-center justify-between">
         <PageHeader

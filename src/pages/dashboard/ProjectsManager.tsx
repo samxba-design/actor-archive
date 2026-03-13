@@ -703,7 +703,7 @@ const ProjectsManager = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <ManagerHelpBanner id="projects" title="These appear in your Projects / Credits section" description="Add your work here — it shows on your public portfolio. Link awards and press to projects for richer display." learnMoreRoute="/dashboard/settings" previewText="Displayed as cards with posters, loglines, genres, and video embeds" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="projects" title="These appear in your Projects / Credits section" description="Add your work here — it shows on your public portfolio. Link awards and press to projects for richer display." learnMoreRoute="/dashboard/settings" previewText="Displayed as cards with posters, loglines, genres, and video embeds" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
 
       {projects.length === 0 ? (
         <Card>
