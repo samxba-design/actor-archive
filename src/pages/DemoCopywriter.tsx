@@ -422,7 +422,7 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 };
 
 const DemoCopywriter = () => {
-  const [themeId, setThemeId] = useState("cinematic-dark");
+  const [themeId, setThemeId] = useState("ocean-blue");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
   const [variants, setVariants] = useState<SectionVariants>(copywriterDefaultVariants);
   const [showPDFModal, setShowPDFModal] = useState(false);
