@@ -25,10 +25,10 @@ serve(async (req) => {
 
     const url = new URL(req.url);
     const query = url.searchParams.get("query");
-    const mediaType = url.searchParams.get("type") || "movie"; // movie or tv
+    const mediaType = url.searchParams.get("type") || "movie";
     const tmdbId = url.searchParams.get("id");
 
-    // If ID provided, fetch details (and check cache first)
+    // If ID provided, fetch details + poster/backdrop variants
     if (tmdbId) {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -42,13 +42,18 @@ serve(async (req) => {
         .eq("media_type", mediaType)
         .maybeSingle();
 
-      if (cached) {
-        return new Response(JSON.stringify(cached), {
+      // If cached and has poster_variants already, return it
+      if (cached && cached.raw_data?.poster_variants) {
+        return new Response(JSON.stringify({
+          ...cached,
+          poster_variants: cached.raw_data.poster_variants,
+          backdrop_variants: cached.raw_data.backdrop_variants || [],
+        }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      // Fetch from TMDB
+      // Fetch detail + credits from TMDB
       const detailRes = await fetch(
         `${TMDB_BASE}/${mediaType}/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits`
       );
@@ -59,7 +64,35 @@ serve(async (req) => {
         );
       }
 
+      // Fetch images (posters + backdrops) in parallel
+      const imagesRes = await fetch(
+        `${TMDB_BASE}/${mediaType}/${tmdbId}/images?api_key=${TMDB_API_KEY}`
+      );
+
       const detail = await detailRes.json();
+      let posterVariants: any[] = [];
+      let backdropVariants: any[] = [];
+
+      if (imagesRes.ok) {
+        const imagesData = await imagesRes.json();
+
+        posterVariants = (imagesData.posters || []).slice(0, 8).map((p: any) => ({
+          url_small: `${TMDB_IMG}/w185${p.file_path}`,
+          url_medium: `${TMDB_IMG}/w342${p.file_path}`,
+          url_large: `${TMDB_IMG}/w500${p.file_path}`,
+          aspect_ratio: p.aspect_ratio,
+          vote_average: p.vote_average,
+          iso_639_1: p.iso_639_1,
+        }));
+
+        backdropVariants = (imagesData.backdrops || []).slice(0, 4).map((b: any) => ({
+          url_small: `${TMDB_IMG}/w780${b.file_path}`,
+          url_large: `${TMDB_IMG}/w1280${b.file_path}`,
+          aspect_ratio: b.aspect_ratio,
+        }));
+      } else {
+        await imagesRes.text(); // consume body
+      }
 
       const director = detail.credits?.crew?.find((c: any) => c.job === "Director")?.name || null;
       const notableCast = detail.credits?.cast?.slice(0, 5).map((c: any) => c.name) || [];
@@ -82,7 +115,11 @@ serve(async (req) => {
         network_or_studio: mediaType === "tv"
           ? detail.networks?.[0]?.name
           : detail.production_companies?.[0]?.name || null,
-        raw_data: detail,
+        raw_data: {
+          ...detail,
+          poster_variants: posterVariants,
+          backdrop_variants: backdropVariants,
+        },
       };
 
       // Cache it
@@ -90,7 +127,11 @@ serve(async (req) => {
         onConflict: "tmdb_id,media_type",
       });
 
-      return new Response(JSON.stringify(cacheEntry), {
+      return new Response(JSON.stringify({
+        ...cacheEntry,
+        poster_variants: posterVariants,
+        backdrop_variants: backdropVariants,
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -127,6 +168,7 @@ serve(async (req) => {
       year: (r.release_date || r.first_air_date)?.split("-")[0] || null,
       poster_url: r.poster_path ? `${TMDB_IMG}/w200${r.poster_path}` : null,
       media_type: mediaType,
+      overview: r.overview || null,
     })) || [];
 
     return new Response(JSON.stringify({ results }), {
