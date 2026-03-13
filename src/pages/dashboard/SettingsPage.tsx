@@ -1033,6 +1033,37 @@ const SettingsPage = () => {
         </CardContent>
       </Card>
 
+      {/* Billing — Pro users */}
+      {isPro && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" />Billing & Subscription</CardTitle>
+            <CardDescription>Manage your Pro subscription, update payment method, or cancel.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge variant="default">Pro</Badge>
+              <span className="text-sm text-muted-foreground">Active subscription</span>
+            </div>
+            <Button
+              variant="outline"
+              onClick={async () => {
+                try {
+                  const { data, error } = await supabase.functions.invoke("customer-portal");
+                  if (error) throw error;
+                  if (data?.url) window.open(data.url, "_blank");
+                } catch (err: any) {
+                  toast({ title: "Error", description: err.message || "Could not open billing portal", variant: "destructive" });
+                }
+              }}
+            >
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Manage Billing
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Change Password */}
       <Card>
         <CardHeader>
