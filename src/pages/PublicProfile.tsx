@@ -9,6 +9,9 @@ import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import SortableSectionList from "@/components/portfolio/SortableSectionList";
+import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
+import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
+import type { KnownForPosition } from "@/components/portfolio/PortfolioHero";
 import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import { getProfileTypeConfig } from "@/config/profileSections";
@@ -52,6 +55,7 @@ interface ProfileData {
   hero_bg_video_url?: string | null;
   seo_indexable?: boolean | null;
   contact_mode?: string | null;
+  known_for_position?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -254,9 +258,16 @@ const PublicProfile = () => {
           heroBgType={(profile.hero_bg_type as any) || 'preset'}
           heroBgSolidColor={profile.hero_bg_solid_color || undefined}
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
+          knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
         />
 
         <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
+          {/* Known For below hero or as body section */}
+          {knownFor.length > 0 && (profile.known_for_position === 'below_hero' || profile.known_for_position === 'body_section') && (
+            <PortfolioSectionWrapper title="Known For" index={-1}>
+              <SectionKnownFor items={knownFor} variant="strip" />
+            </PortfolioSectionWrapper>
+          )}
           <SortableSectionList
             allSections={allSections}
             profileId={profile.id}

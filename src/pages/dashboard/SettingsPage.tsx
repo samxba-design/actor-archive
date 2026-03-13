@@ -10,14 +10,23 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star } from "lucide-react";
 import { themes } from "@/lib/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProBadge } from "@/components/UpgradeGate";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
-import type { HeroLayout } from "@/components/portfolio/PortfolioHero";
+import type { HeroLayout, KnownForPosition } from "@/components/portfolio/PortfolioHero";
+
+const KNOWN_FOR_POSITIONS: { id: KnownForPosition; label: string; description: string }[] = [
+  { id: "hero_above_name", label: "Above Name", description: "Posters displayed above your name in the hero" },
+  { id: "hero_below_cta", label: "Below CTA", description: "Posters displayed below your call-to-action button" },
+  { id: "hero_beside_photo", label: "Beside Photo", description: "Posters displayed next to your headshot" },
+  { id: "below_hero", label: "Below Hero", description: "Full-width strip right below the hero section" },
+  { id: "body_section", label: "Body Section", description: "As a regular section in the main content area" },
+  { id: "hidden", label: "Hidden", description: "Don't show Known For on your portfolio" },
+];
 
 const HERO_LAYOUTS: { id: HeroLayout; label: string; description: string }[] = [
   { id: "classic", label: "Classic", description: "Photo left, text right" },
@@ -56,6 +65,7 @@ const SettingsPage = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [heroStyle, setHeroStyle] = useState<string>("full");
+  const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [form, setForm] = useState({
     slug: "",
     theme: "minimal",
@@ -89,7 +99,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode, hero_style")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, custom_css, seo_indexable, contact_mode, hero_style, known_for_position")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -99,6 +109,7 @@ const SettingsPage = () => {
           setProfileType(pt);
           setSecondaryTypes(st);
           setHeroStyle((data as any).hero_style || "full");
+          setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
 
           // Build sections list from profile type config
           let sections: { key: string; label: string }[] = [];
@@ -241,6 +252,7 @@ const SettingsPage = () => {
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
         hero_style: heroStyle || "full",
+        known_for_position: knownForPosition || "hero_above_name",
       } as any)
       .eq("id", user.id);
 
@@ -354,6 +366,35 @@ const SettingsPage = () => {
                   {heroStyle === layout.id && <Check className="h-3 w-3 text-primary" />}
                 </div>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{layout.description}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Known For Position Picker */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Star className="h-4 w-4" /> Known For Position</CardTitle>
+          <CardDescription>Choose where your "Known For" poster cards appear on the portfolio. Posters are sourced from projects marked as Notable (via the ⭐ toggle in Projects Manager), and images come from TMDB auto-fetch or manual uploads.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {KNOWN_FOR_POSITIONS.map((pos) => (
+              <button
+                key={pos.id}
+                onClick={() => setKnownForPosition(pos.id)}
+                className={`text-left p-2.5 rounded-lg border transition-all text-xs ${
+                  knownForPosition === pos.id
+                    ? "border-primary bg-primary/10 ring-1 ring-primary"
+                    : "border-border hover:border-primary/40 hover:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground">{pos.label}</span>
+                  {knownForPosition === pos.id && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{pos.description}</p>
               </button>
             ))}
           </div>

@@ -55,6 +55,7 @@ export interface SectionVariants {
   ctaPreset: 'script' | 'hire' | 'contact' | 'reel' | 'book' | 'custom';
   heroKnownFor: HeroKnownForStyle;
   heroBgType: HeroBgType;
+  knownForPosition: 'hero_above_name' | 'hero_below_cta' | 'hero_beside_photo' | 'below_hero' | 'body_section' | 'hidden';
 }
 
 export const defaultVariants: SectionVariants = {
@@ -83,6 +84,7 @@ export const defaultVariants: SectionVariants = {
   ctaPreset: 'script',
   heroKnownFor: 'strip',
   heroBgType: 'preset',
+  knownForPosition: 'hero_above_name',
 };
 
 export const SectionVariantsCtx = createContext<{
@@ -180,6 +182,14 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'preset', label: 'Preset' }, { key: 'solid', label: 'Solid Color' },
     { key: 'bokeh', label: 'Bokeh' }, { key: 'video', label: 'Video Loop' },
     { key: 'gradient', label: 'Gradient' },
+  ],
+  knownForPosition: [
+    { key: 'hero_above_name', label: 'Above Name' },
+    { key: 'hero_below_cta', label: 'Below CTA' },
+    { key: 'hero_beside_photo', label: 'Beside Photo' },
+    { key: 'below_hero', label: 'Below Hero' },
+    { key: 'body_section', label: 'Body Section' },
+    { key: 'hidden', label: 'Hidden' },
   ],
 };
 
