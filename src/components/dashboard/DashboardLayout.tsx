@@ -62,6 +62,7 @@ function DashboardLayoutInner() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
+              <NotificationBell />
               <Button
                 variant="ghost"
                 size="icon"
