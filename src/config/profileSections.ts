@@ -233,6 +233,8 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
       { key: "press", label: "Press & Reviews", description: "Reviews and features" },
       { key: "representation", label: "Representation", description: "Agent & manager" },
       { key: "availability", label: "Availability", description: "Casting availability & self-tape" },
+      { key: "social_links", label: "Social Links", description: "Links to your social profiles" },
+      { key: "custom_sections", label: "Custom Sections", description: "Your custom content blocks" },
       { key: "contact", label: "Contact", description: "Casting enquiries" },
     ],
     projectTypes: ["film", "tv_show", "play", "video", "other"],
