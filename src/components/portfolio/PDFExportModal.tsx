@@ -6,13 +6,13 @@ interface ProfileData {
   display_name: string | null;
   first_name: string | null;
   last_name: string | null;
-  headline: string | null;
+  headline?: string | null;
   tagline: string | null;
   bio: string | null;
   location: string | null;
   profile_photo_url: string | null;
   profile_type: string | null;
-  slug: string | null;
+  slug?: string | null;
 }
 
 interface Props {
