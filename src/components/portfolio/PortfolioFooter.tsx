@@ -205,13 +205,22 @@ const PortfolioFooter = ({ profile, showContact, socialLinks: socialLinksProp, r
         )}
 
         {sent && (
-          <div className="text-center mb-8 py-8 space-y-3">
-            <CheckCircle className="w-10 h-10 mx-auto" style={{ color: theme.accentPrimary }} />
-            <p className="text-lg font-semibold" style={{ color: theme.textPrimary }}>Message sent!</p>
+          <div className="text-center mb-8 py-8 space-y-3 animate-fade-in">
+            <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center animate-contact-success" style={{ backgroundColor: `${theme.accentPrimary}15` }}>
+              <CheckCircle className="w-8 h-8" style={{ color: theme.accentPrimary }} />
+            </div>
+            <p className="text-lg font-semibold" style={{ color: theme.textPrimary, fontFamily: theme.fontDisplay }}>Message sent!</p>
             <p className="text-sm" style={{ color: theme.textSecondary }}>Thank you for reaching out. You'll hear back soon.</p>
             {profile.auto_responder_enabled && profile.auto_responder_message && (
-              <p className="text-sm max-w-md mx-auto mt-2 px-4 py-3 rounded-lg" style={{ color: theme.textSecondary, backgroundColor: `${theme.accentPrimary}10`, border: `1px solid ${theme.accentPrimary}20` }}>{profile.auto_responder_message}</p>
+              <p className="text-sm max-w-md mx-auto mt-2 px-4 py-3 rounded-xl" style={{ color: theme.textSecondary, backgroundColor: `${theme.accentPrimary}10`, border: `1px solid ${theme.accentPrimary}20` }}>{profile.auto_responder_message}</p>
             )}
+            <button
+              onClick={() => { setSent(false); setForm({ sender_name: "", sender_email: "", subject_type: "general", message: "", website: "" }); }}
+              className="mt-4 text-xs font-medium transition-colors hover:underline"
+              style={{ color: theme.accentPrimary }}
+            >
+              Send another message
+            </button>
           </div>
         )}
 

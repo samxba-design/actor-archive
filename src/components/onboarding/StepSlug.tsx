@@ -100,12 +100,12 @@ const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
               </span>
             )}
             {!checking && available === true && data.slug.length >= 3 && (
-              <span className="text-xs text-green-600 flex items-center gap-1">
-                <Check className="w-3 h-3" /> Available
+              <span className="text-xs text-green-600 flex items-center gap-1 animate-slug-available">
+                <Check className="w-3.5 h-3.5 stroke-[3]" /> Available!
               </span>
             )}
             {!checking && available === false && (
-              <span className="text-xs text-destructive flex items-center gap-1">
+              <span className="text-xs text-destructive flex items-center gap-1 animate-slug-taken">
                 <X className="w-3 h-3" /> Already taken
               </span>
             )}

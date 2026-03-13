@@ -31,7 +31,7 @@ const PortfolioSectionWrapper = ({ title, index, children }: Props) => {
       style={{
         opacity: inView ? 1 : 0,
         transform: inView ? "translateY(0)" : `translateY(${theme.scrollAnimationDistance})`,
-        transition: `opacity ${theme.scrollAnimationDuration} ease-out, transform ${theme.scrollAnimationDuration} ease-out`,
+        transition: `opacity ${theme.scrollAnimationDuration} ease-out ${index * 0.08}s, transform ${theme.scrollAnimationDuration} ease-out ${index * 0.08}s`,
       }}
     >
       {/* Heading */}
