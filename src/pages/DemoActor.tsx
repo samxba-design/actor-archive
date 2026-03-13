@@ -530,6 +530,14 @@ const DemoActor = () => {
       {/* Body */}
       <div className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <AmbientGlow />
+        {/* Known For in body when position is below_hero or body_section */}
+        {(variants.knownForPosition === 'below_hero' || variants.knownForPosition === 'body_section') && mockKnownFor.length > 0 && (
+          <div className="mb-10">
+            <PortfolioSectionWrapper title="Known For" index={-1}>
+              <KnownForWithToggle items={mockKnownFor} />
+            </PortfolioSectionWrapper>
+          </div>
+        )}
         <LayoutComponent />
       </div>
 
