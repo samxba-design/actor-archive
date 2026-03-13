@@ -47,6 +47,13 @@ const testimonials = [
   { quote: "The best portfolio platform I've seen for the entertainment industry. Period.", author: "Sofia Ortiz", role: "Director", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face" },
 ];
 
+const comparisonRows = [
+  { feature: "Industry-specific sections", creativeSlate: "Yes", generic: "No" },
+  { feature: "TMDB credit import", creativeSlate: "Yes", generic: "No" },
+  { feature: "Script access controls", creativeSlate: "5 levels", generic: "Plugin-only" },
+  { feature: "Built-in analytics", creativeSlate: "Included", generic: "Paid add-on" },
+];
+
 /* ── JSON-LD ── */
 const jsonLd = {
   "@context": "https://schema.org",
