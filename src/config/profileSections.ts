@@ -174,7 +174,7 @@ export const PROFILE_TYPES: ProfileTypeConfig[] = [
     label: "Copywriter / Content Strategist",
     description: "Case studies, writing samples, and client work. Showcase results with metrics and before/after examples.",
     icon: "Type",
-    defaultTheme: "corporate",
+    defaultTheme: "frost",
     sections: [
       { key: "hero", label: "Hero", description: "Name, photo, tagline" },
       { key: "bio", label: "Bio", description: "Your story" },
