@@ -183,6 +183,14 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
     { key: 'bokeh', label: 'Bokeh' }, { key: 'video', label: 'Video Loop' },
     { key: 'gradient', label: 'Gradient' },
   ],
+  knownForPosition: [
+    { key: 'hero_above_name', label: 'Above Name' },
+    { key: 'hero_below_cta', label: 'Below CTA' },
+    { key: 'hero_beside_photo', label: 'Beside Photo' },
+    { key: 'below_hero', label: 'Below Hero' },
+    { key: 'body_section', label: 'Body Section' },
+    { key: 'hidden', label: 'Hidden' },
+  ],
 };
 
 /* ── Toggle wrapper components ── */
