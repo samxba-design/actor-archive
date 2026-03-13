@@ -70,6 +70,7 @@ interface ProfileData {
   status_badge_animation?: string | null;
   client_logos_position?: string | null;
   headshot_style?: string | null;
+  ga_measurement_id?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -218,11 +219,30 @@ const PublicProfile = () => {
     if (!script) { script = document.createElement("script"); script.id = "portfolio-jsonld"; script.setAttribute("type", "application/ld+json"); document.head.appendChild(script); }
     script.textContent = JSON.stringify(jsonLd);
 
+    // Google Analytics injection
+    if (profile.ga_measurement_id && /^G-[A-Z0-9]+$/i.test(profile.ga_measurement_id)) {
+      const gaId = profile.ga_measurement_id;
+      if (!document.getElementById("ga-script")) {
+        const gaScript = document.createElement("script");
+        gaScript.id = "ga-script";
+        gaScript.async = true;
+        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+        document.head.appendChild(gaScript);
+
+        const gaInit = document.createElement("script");
+        gaInit.id = "ga-init";
+        gaInit.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`;
+        document.head.appendChild(gaInit);
+      }
+    }
+
     return () => {
       document.title = "CreativeSlate";
       const el = document.getElementById("portfolio-jsonld"); if (el) el.remove();
       const robots = document.querySelector('meta[name="robots"]'); if (robots) robots.remove();
       const can = document.querySelector('link[rel="canonical"]'); if (can) can.remove();
+      const gaS = document.getElementById("ga-script"); if (gaS) gaS.remove();
+      const gaI = document.getElementById("ga-init"); if (gaI) gaI.remove();
       ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach(n => {
         const t = document.querySelector(`meta[name="${n}"]`); if (t) t.remove();
       });

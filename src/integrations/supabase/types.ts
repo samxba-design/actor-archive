@@ -1026,6 +1026,7 @@ export type Database = {
           display_name: string | null
           first_name: string | null
           font_pairing: string | null
+          ga_measurement_id: string | null
           headline: string | null
           headshot_style: string | null
           hero_background_preset: string | null
@@ -1087,6 +1088,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           font_pairing?: string | null
+          ga_measurement_id?: string | null
           headline?: string | null
           headshot_style?: string | null
           hero_background_preset?: string | null
@@ -1148,6 +1150,7 @@ export type Database = {
           display_name?: string | null
           first_name?: string | null
           font_pairing?: string | null
+          ga_measurement_id?: string | null
           headline?: string | null
           headshot_style?: string | null
           hero_background_preset?: string | null

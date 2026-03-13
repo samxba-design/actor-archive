@@ -94,6 +94,7 @@ const SettingsPage = () => {
     layout_preset: "classic",
     custom_css: "",
     seo_indexable: false,
+    ga_measurement_id: "",
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -116,7 +117,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation, ga_measurement_id")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -193,6 +194,7 @@ const SettingsPage = () => {
             layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "",
             seo_indexable: (data as any).seo_indexable || false,
+            ga_measurement_id: (data as any).ga_measurement_id || "",
           });
         }
         setLoading(false);
@@ -276,6 +278,7 @@ const SettingsPage = () => {
         layout_preset: form.layout_preset || "classic",
         custom_css: form.custom_css || null,
         seo_indexable: form.seo_indexable,
+        ga_measurement_id: form.ga_measurement_id || null,
         hero_style: heroStyle || "full",
         headshot_style: headshotStyle || "circle",
         known_for_position: knownForPosition || "hero_above_name",
@@ -571,6 +574,22 @@ const SettingsPage = () => {
                   </p>
                 </div>
                 <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
+              </div>
+              {/* Google Analytics */}
+              <div className="pt-3 border-t border-border space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Search className="h-3.5 w-3.5" />
+                  Google Analytics
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Add your GA4 Measurement ID (e.g. G-XXXXXXXXXX) to track visitor analytics on your public portfolio.
+                </p>
+                <Input
+                  placeholder="G-XXXXXXXXXX"
+                  value={form.ga_measurement_id}
+                  onChange={(e) => setForm((f) => ({ ...f, ga_measurement_id: e.target.value }))}
+                  className="max-w-xs"
+                />
               </div>
             </div>
           </CardContent>
