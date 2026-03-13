@@ -344,8 +344,8 @@ const TimelineLayout = () => {
 const BentoLayout = () => (
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
     <div className="sm:col-span-2">
-      <PortfolioSectionWrapper title="Known For" index={-1}>
-        <KnownForWithToggle items={mockKnownFor} />
+      <PortfolioSectionWrapper title="Written For" index={7}>
+        <ClientLogosWithToggle companies={mockClients} />
       </PortfolioSectionWrapper>
     </div>
     <div>
