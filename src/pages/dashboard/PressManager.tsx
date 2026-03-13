@@ -85,7 +85,7 @@ const PressManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Press</Button>
       </div>
-      <ManagerHelpBanner id="press" title="Press items show in your Press section" description="Add reviews, interviews, and media mentions. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with publication logos, star ratings, and pull quotes" demoUrl="/demo/screenwriter" />
+      <ManagerHelpBanner id="press" title="Press items show in your Press section" description="Add reviews, interviews, and media mentions. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Shown as cards with publication logos, star ratings, and pull quotes" demoUrl="/demo/screenwriter" portfolioSlug={slug || undefined} />
       {items.length === 0 ? (
         <EmptyState icon={Newspaper} title="No press entries yet" description="Add reviews, interviews, or media coverage to show visitors your public profile and credibility." actionLabel="Add Press" onAction={openAdd} />
       ) : (
