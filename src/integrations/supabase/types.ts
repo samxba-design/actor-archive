@@ -1025,6 +1025,7 @@ export type Database = {
           first_name: string | null
           font_pairing: string | null
           headline: string | null
+          headshot_style: string | null
           hero_background_preset: string | null
           hero_bg_solid_color: string | null
           hero_bg_type: string | null
@@ -1079,6 +1080,7 @@ export type Database = {
           first_name?: string | null
           font_pairing?: string | null
           headline?: string | null
+          headshot_style?: string | null
           hero_background_preset?: string | null
           hero_bg_solid_color?: string | null
           hero_bg_type?: string | null
@@ -1133,6 +1135,7 @@ export type Database = {
           first_name?: string | null
           font_pairing?: string | null
           headline?: string | null
+          headshot_style?: string | null
           hero_background_preset?: string | null
           hero_bg_solid_color?: string | null
           hero_bg_type?: string | null
