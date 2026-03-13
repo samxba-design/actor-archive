@@ -31,7 +31,7 @@ interface Testimonial {
 const TestimonialsManager = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { profileType } = useProfileTypeContext();
+  const { profileType, slug } = useProfileTypeContext();
   const labels = getTypeAwareLabels(profileType);
   const [items, setItems] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
