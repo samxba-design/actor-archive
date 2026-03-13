@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Pencil, Trash2, Users } from "lucide-react";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Rep {
   id: string;
@@ -68,6 +69,7 @@ const RepresentationManager = () => {
         <h1 className="text-2xl font-bold text-foreground">Representation</h1>
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Rep</Button>
       </div>
+      <ManagerHelpBanner id="representation" title="Agent info shows in your Representation section" description="Add your agents or managers. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <Card><CardContent className="py-12 text-center text-muted-foreground">No representation listed yet.</CardContent></Card>
       ) : (

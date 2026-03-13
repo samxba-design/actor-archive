@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, Trash2, CalendarDays } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Event {
   id: string;
@@ -79,6 +80,7 @@ const EventsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Event</Button>
       </div>
+      <ManagerHelpBanner id="events" title="Events display in your Events section" description="Add screenings, premieres, or speaking engagements. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <EmptyState icon={CalendarDays} title="No events yet" description="Add screenings, premieres, or speaking engagements to keep your portfolio current." actionLabel="Add Event" onAction={openAdd} />
       ) : (

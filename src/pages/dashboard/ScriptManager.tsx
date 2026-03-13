@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Lock, Eye, Mail, Shield, Download } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useSubscription } from "@/hooks/useSubscription";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 type Project = Tables<"projects">;
 
@@ -344,6 +345,7 @@ const ScriptManager = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <ManagerHelpBanner id="scripts" title="Scripts appear with optional password protection" description="Upload PDFs and control access levels. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       {scripts.length === 0 ? (
         <Card>

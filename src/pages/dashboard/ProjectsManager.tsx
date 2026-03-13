@@ -28,6 +28,7 @@ import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import { compressImage } from "@/lib/imageCompression";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
 
 type Project = Tables<"projects">;
@@ -702,6 +703,7 @@ const ProjectsManager = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <ManagerHelpBanner id="projects" title="These appear in your Projects / Credits section" description="Add your work here — it shows on your public portfolio. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       {projects.length === 0 ? (
         <Card>

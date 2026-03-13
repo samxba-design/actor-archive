@@ -16,6 +16,7 @@ import { Loader2, Plus, Pencil, Trash2, Quote } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Testimonial {
   id: string;
@@ -79,6 +80,7 @@ const TestimonialsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Testimonial</Button>
       </div>
+      <ManagerHelpBanner id="testimonials" title="Quotes show in your Testimonials section" description="Add endorsements from collaborators or clients. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} />
       ) : (

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Globe, ExternalLink } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 type SocialLink = Tables<"social_links">;
 
@@ -116,6 +117,7 @@ const SocialLinksManager = () => {
           </DialogContent>
         </Dialog>
       </div>
+      <ManagerHelpBanner id="social-links" title="Links appear as icons on your portfolio" description="Add your IMDb, Instagram, website, and other profiles. They show on your public page." learnMoreRoute="/dashboard/settings" />
 
       {links.length === 0 ? (
         <Card>

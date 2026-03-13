@@ -16,6 +16,7 @@ import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
 import { ServiceDescriptionAI } from "@/components/dashboard/ServiceDescriptionAI";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Service {
   id: string;
@@ -136,6 +137,7 @@ const ServicesManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Service</Button>
       </div>
+      <ManagerHelpBanner id="services" title="Services appear in your Services section" description="List what you offer so visitors can hire you directly. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       {items.length === 0 ? (
         <EmptyState icon={Star} title="No services yet" description="Add your first service to let visitors know what you offer and how to hire you." actionLabel="Add Service" onAction={openAdd} />

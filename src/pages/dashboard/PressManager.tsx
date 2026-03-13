@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, Trash2, Newspaper } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Press {
   id: string;
@@ -77,6 +78,7 @@ const PressManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Press</Button>
       </div>
+      <ManagerHelpBanner id="press" title="Press items show in your Press section" description="Add reviews, interviews, and media mentions. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <EmptyState icon={Newspaper} title="No press entries yet" description="Add reviews, interviews, or media coverage to show visitors your public profile and credibility." actionLabel="Add Press" onAction={openAdd} />
       ) : (

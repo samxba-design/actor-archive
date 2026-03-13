@@ -18,6 +18,7 @@ import { useSubscription, FREE_GALLERY_LIMIT } from "@/hooks/useSubscription";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 type GalleryImage = Tables<"gallery_images">;
 
@@ -143,6 +144,7 @@ const GalleryManager = () => {
         title={labels.galleryTitle}
         description={labels.galleryDescription}
       />
+      <ManagerHelpBanner id="gallery" title="Images show in your Gallery section" description="Upload headshots, production stills, and artwork. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       <Card>
         <CardContent className="py-6 space-y-4">

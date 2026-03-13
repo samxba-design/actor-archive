@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Upload, FileText, Image, Star, GripVertical } from "lucide-react";
 import EmptyState from "@/components/dashboard/EmptyState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 import { generatePdfThumbnail, dataUrlToFile } from "@/lib/pdfThumbnail";
 
 interface PublishedWork {
@@ -215,6 +216,7 @@ const PublishedWorkManager = () => {
         title="Published Work"
         description="Manage your published articles, PDFs, and writing pieces that appear on your portfolio."
       />
+      <ManagerHelpBanner id="published-work" title="Published work appears in its own section" description="Manage articles, PDFs, and writing pieces on your portfolio. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       <Dialog open={dialogOpen} onOpenChange={(o) => { setDialogOpen(o); if (!o) resetForm(); }}>
         <DialogTrigger asChild>

@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus, Pencil, Trash2, Building2, Upload, GripVertical } from "lucide-react";
 import { getCompanyLogoUrl } from "@/lib/companyLogos";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface ClientLogo {
   id: string;
@@ -117,6 +118,7 @@ const ClientManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Client</Button>
       </div>
+      <ManagerHelpBanner id="clients" title="Logos show in your Clients section" description="Add brands you've worked with — logos are auto-fetched. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
 
       {items.length === 0 ? (
         <EmptyState

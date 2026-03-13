@@ -15,6 +15,7 @@ import { Loader2, Plus, Pencil, Trash2, Trophy } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
+import ManagerHelpBanner from "@/components/dashboard/ManagerHelpBanner";
 
 interface Award {
   id: string;
@@ -78,6 +79,7 @@ const AwardsManager = () => {
         />
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Award</Button>
       </div>
+      <ManagerHelpBanner id="awards" title="Awards display in your Awards section" description="Add festival selections, wins, and nominations. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" />
       {items.length === 0 ? (
         <EmptyState icon={Trophy} title="No awards yet" description="Add festival selections, competition wins, or fellowships to build credibility with visitors." actionLabel="Add Award" onAction={openAdd} />
       ) : (
