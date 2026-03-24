@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Diamond, Menu, Pen, Mic2, PenTool, ChevronDown } from "lucide-react";
+import { Diamond, Menu, Pen, Mic2, PenTool, ChevronDown, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLandingTheme } from "@/hooks/useLandingTheme";
 
 interface MarketingNavProps {
   glassMode?: boolean;
@@ -20,6 +21,7 @@ interface MarketingNavProps {
 export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle = false }: MarketingNavProps) {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  const { isLight, toggle: toggleLandingTheme } = useLandingTheme();
 
   return (
     <nav className="relative z-50 border-b glass-nav" style={{ borderColor: "hsl(var(--landing-border))", background: "hsl(var(--landing-bg) / 0.85)", backdropFilter: "blur(12px)" }}>
@@ -67,6 +69,19 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
               <Diamond className="h-3.5 w-3.5" />
             </button>
           )}
+          {/* Light/Dark mode toggle */}
+          <button
+            onClick={toggleLandingTheme}
+            className="h-8 w-8 rounded-lg flex items-center justify-center transition-all hover:scale-105"
+            style={{
+              background: "transparent",
+              color: "hsl(var(--landing-fg) / 0.7)",
+              border: "1px solid hsl(var(--landing-border))",
+            }}
+            title={isLight ? "Switch to dark mode" : "Switch to light mode"}
+          >
+            {isLight ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+          </button>
           {user ? (
             <Button size="sm" asChild className="font-semibold border-0 text-white"
               style={{ background: "linear-gradient(135deg, hsl(var(--landing-accent)), hsl(var(--landing-accent-warm)))" }}>
@@ -98,6 +113,18 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
               <Diamond className="h-3.5 w-3.5" />
             </button>
           )}
+          {/* Light/Dark toggle (mobile) */}
+          <button
+            onClick={toggleLandingTheme}
+            className="h-8 w-8 rounded-lg flex items-center justify-center transition-all"
+            style={{
+              color: "hsl(var(--landing-fg) / 0.7)",
+              border: "1px solid hsl(var(--landing-border))",
+            }}
+            title={isLight ? "Switch to dark mode" : "Switch to light mode"}
+          >
+            {isLight ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+          </button>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <button className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ color: "hsl(var(--landing-fg))", border: "1px solid hsl(var(--landing-border))" }}>

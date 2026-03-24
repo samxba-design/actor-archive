@@ -47,7 +47,7 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Landing page tokens */
+    /* Landing page tokens — dark (default) */
     --landing-bg: 345 25% 8%;
     --landing-fg: 30 20% 92%;
     --landing-accent: 350 40% 58%;
@@ -56,6 +56,18 @@ All colors MUST be HSL.
     --landing-border: 345 15% 18%;
     --landing-muted: 30 12% 55%;
     --landing-champagne: 35 30% 72%;
+  }
+
+  /* Landing page light mode override */
+  .landing-light {
+    --landing-bg: 30 20% 97%;
+    --landing-fg: 345 25% 12%;
+    --landing-accent: 350 50% 48%;
+    --landing-accent-warm: 20 40% 42%;
+    --landing-card: 30 20% 93%;
+    --landing-border: 345 12% 82%;
+    --landing-muted: 345 10% 42%;
+    --landing-champagne: 345 20% 30%;
   }
 
   .dark {
@@ -105,6 +117,16 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Smooth landing theme transition */
+.landing-light,
+.landing-light *,
+html:not(.landing-light),
+html:not(.landing-light) * {
+  transition-property: background-color, border-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
 }
 
 /* ═══ Dashboard shell — remap standard tokens to dark landing palette ═══ */
@@ -348,6 +370,31 @@ All colors MUST be HSL.
     ellipse 75% 65% at 50% 50%,
     transparent 50%,
     hsl(345 30% 4% / 0.5) 100%
+  );
+}
+
+/* Light mode overrides for cinematic background elements */
+.landing-light .gradient-mesh-orb--1 {
+  background: hsl(350 40% 85% / 0.35);
+}
+.landing-light .gradient-mesh-orb--2 {
+  background: hsl(20 35% 80% / 0.25);
+}
+.landing-light .gradient-mesh-orb--3 {
+  background: hsl(345 30% 82% / 0.2);
+}
+.landing-light .light-ray--1 {
+  opacity: 0.04;
+}
+.landing-light .light-ray--2,
+.landing-light .light-ray--3 {
+  opacity: 0.025;
+}
+.landing-light .cinema-vignette {
+  background: radial-gradient(
+    ellipse 75% 65% at 50% 50%,
+    transparent 50%,
+    hsl(30 20% 90% / 0.4) 100%
   );
 }
 
