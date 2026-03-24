@@ -22,6 +22,7 @@ import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { BulkImporter } from "@/components/dashboard/BulkImporter";
 import GettingStartedGuide from "@/components/dashboard/GettingStartedGuide";
+import AvailabilityQuickToggle from "@/components/dashboard/AvailabilityQuickToggle";
 
 interface SmartAction {
   label: string;
@@ -33,7 +34,7 @@ interface SmartAction {
 // Type-specific smart action definitions
 const TYPE_ACTIONS: Record<string, SmartAction[]> = {
   actor: [
-    { label: "Upload demo reel", description: "Casting directors want to see you in action", icon: Film, route: "/dashboard/projects" },
+    { label: "Upload demo reel", description: "Casting directors want to see you in action", icon: Film, route: "/dashboard/reels" },
     { label: "List your agent or manager", description: "Let producers know who to contact", icon: Users, route: "/dashboard/representation" },
     { label: "Add headshots to gallery", description: "Headshots are your #1 asset as an actor", icon: Image, route: "/dashboard/gallery" },
   ],
@@ -63,11 +64,11 @@ const TYPE_ACTIONS: Record<string, SmartAction[]> = {
   ],
   corporate_video: [
     { label: "Create a case study", description: "Showcase your best client work with metrics", icon: PenTool, route: "/dashboard/case-study" },
-    { label: "Add your showreel", description: "Upload or link your demo reel", icon: Film, route: "/dashboard/projects" },
+    { label: "Add your showreel", description: "Upload or link your demo reel", icon: Film, route: "/dashboard/reels" },
   ],
   director_producer: [
     { label: "Import credits from TMDB", description: "Auto-fill your filmography with posters", icon: Film, route: "/dashboard/projects" },
-    { label: "Add your showreel", description: "Showcase your directing work", icon: Film, route: "/dashboard/projects" },
+    { label: "Add your showreel", description: "Showcase your directing work", icon: Film, route: "/dashboard/reels" },
   ],
 };
 
@@ -386,6 +387,9 @@ const DashboardHome = () => {
 
       {/* Profile Readiness */}
       <ProfileReadiness />
+
+      {/* Availability Badge Quick Toggle */}
+      <AvailabilityQuickToggle />
 
       {/* Smart Next Steps */}
       <div className="rounded-xl border border-border p-6 bg-card/60">

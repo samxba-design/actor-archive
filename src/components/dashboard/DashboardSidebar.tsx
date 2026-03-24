@@ -47,6 +47,7 @@ const mainNav: NavItem[] = [
   { title: "Projects", url: "/dashboard/projects", icon: FolderOpen, countTable: "projects" },
   { title: "Scripts & Docs", url: "/dashboard/scripts", icon: FileText },
   { title: "Gallery", url: "/dashboard/gallery", icon: Image, countTable: "gallery_images" },
+  { title: "Demo Reels", url: "/dashboard/reels", icon: Video },
   { title: "Services", url: "/dashboard/services", icon: Briefcase, countTable: "services" },
   { title: "Social Links", url: "/dashboard/social", icon: Link2, countTable: "social_links" },
   { title: "Clients", url: "/dashboard/clients", icon: Building2, countTable: "client_logos_profile" },

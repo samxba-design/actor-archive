@@ -31,6 +31,7 @@ import PitchEmailGenerator from "@/pages/dashboard/PitchEmailGenerator";
 import PublishedWorkManager from "@/pages/dashboard/PublishedWorkManager";
 import CollectionsManager from "@/pages/dashboard/CollectionsManager";
 import CustomSectionsManager from "@/pages/dashboard/CustomSectionsManager";
+import ReelManager from "@/pages/dashboard/ReelManager";
 
 const Dashboard = () => {
   return (
@@ -67,6 +68,7 @@ const Dashboard = () => {
         <Route path="published-work" element={<PublishedWorkManager />} />
         <Route path="collections" element={<CollectionsManager />} />
         <Route path="custom-sections" element={<CustomSectionsManager />} />
+        <Route path="reels" element={<ReelManager />} />
       </Route>
     </Routes>
   );
