@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { usePortfolioTheme } from "@/themes/ThemeProvider";
 
 // All project columns EXCEPT password_hash (security: never expose to public)
 const SAFE_PROJECT_COLS = "id,profile_id,title,project_type,description,logline,genre,format,status,year,display_order,is_featured,is_notable,poster_url,backdrop_url,custom_image_url,thumbnail_url,video_url,video_type,video_thumbnail_url,role_name,role_type,director,notable_cast,network_or_studio,production_company,runtime_minutes,synopsis,network,show_role,credit_medium,cast_size_notation,duration,set_requirements,rights_status,publisher,isbn,publication,article_url,beat,client,challenge,solution,results,writing_samples_category,tags,page_count,access_level,project_slug,imdb_link,season_number,episode_count,coverage_excerpt,script_pdf_url,series_bible_url,nda_url,comparable_titles,metric_callouts,purchase_links,chapters,created_at,updated_at,tmdb_id";
@@ -94,6 +95,7 @@ function getContextualLabel(sectionKey: string, profileType: string | null): str
 }
 
 const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sectionIndex, bio }: Props) => {
+  const theme = usePortfolioTheme();
   const [data, setData] = useState<any[]>([]);
   const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -309,31 +311,51 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
     );
   }
 
+  // Shared section heading renderer — mirrors PortfolioSectionWrapper styling
+  const renderHeading = (label: string) => {
+    const showNumber = sectionIndex !== undefined && theme.sectionNumberStyle !== 'hidden';
+    const num = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
+    return (
+      <>
+        <div className="flex items-baseline gap-2.5 mb-2">
+          {showNumber && num && (
+            <span className="text-[11px] tracking-widest font-mono" style={{ color: theme.sectionNumberColor, opacity: 0.6 }}>
+              {num}
+            </span>
+          )}
+          {showNumber && theme.sectionNumberStyle === 'editorial' && (
+            <span className="hidden sm:inline-block w-8" style={{ borderBottom: `1px solid ${theme.borderDefault}`, marginBottom: '3px' }} />
+          )}
+          <h2 className="text-xl sm:text-2xl tracking-tight" style={{ fontFamily: theme.fontDisplay, fontWeight: theme.headingWeight, color: theme.textPrimary }}>
+            {label}
+          </h2>
+        </div>
+        {theme.sectionDividerStyle === 'thin-line' && (
+          <div className="mb-5" style={{ height: '1px', backgroundColor: theme.borderDefault, maxWidth: '80px' }} />
+        )}
+        {theme.sectionDividerStyle === 'thick-line' && (
+          <div className="mb-5" style={{ height: '2px', backgroundColor: theme.borderDefault, maxWidth: '50px' }} />
+        )}
+        {theme.sectionDividerStyle === 'gradient' && (
+          <div className="mb-5" style={{ height: '1px', background: `linear-gradient(to right, ${theme.accentPrimary}60, transparent)`, maxWidth: '100px' }} />
+        )}
+      </>
+    );
+  };
+
+  const sectionAnimStyle = {
+    opacity: inView ? 1 : 0,
+    transform: inView ? "translateY(0)" : `translateY(${theme.scrollAnimationDistance})`,
+    transition: `opacity ${theme.scrollAnimationDuration} ease-out, transform ${theme.scrollAnimationDuration} ease-out`,
+  };
+
   // Bio section — special handling
   if (sectionKey === "bio") {
     if (!bio) return null;
     const label = getContextualLabel(sectionKey, profileType);
-    const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
     return (
-      <section
-        ref={sectionRef}
-        style={{
-          opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : "translateY(24px)",
-          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
-        }}
-      >
-        <div className="flex items-baseline gap-3 mb-2">
-          {indexNum && (
-            <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
-              {indexNum}
-            </span>
-          )}
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
-            {label}
-          </h2>
-        </div>
-        <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+      <section ref={sectionRef} style={sectionAnimStyle}>
+        {renderHeading(label)}
         <SectionBio bio={bio} />
       </section>
     );
@@ -343,27 +365,9 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
   if (sectionKey === "availability") {
     if (!singleData) return null;
     const label = getContextualLabel(sectionKey, profileType);
-    const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
     return (
-      <section
-        ref={sectionRef}
-        style={{
-          opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : "translateY(24px)",
-          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
-        }}
-      >
-        <div className="flex items-baseline gap-3 mb-2">
-          {indexNum && (
-            <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
-              {indexNum}
-            </span>
-          )}
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
-            {label}
-          </h2>
-        </div>
-        <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+      <section ref={sectionRef} style={sectionAnimStyle}>
+        {renderHeading(label)}
         <SectionAvailability stats={singleData} />
       </section>
     );
@@ -373,14 +377,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
   if (sectionKey === "stats_bar") {
     if (!singleData) return null;
     return (
-      <section
-        ref={sectionRef}
-        style={{
-          opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : "translateY(24px)",
-          transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
-        }}
-      >
+      <section ref={sectionRef} style={sectionAnimStyle}>
         <SectionActorStats stats={singleData} />
       </section>
     );
@@ -389,14 +386,13 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
   if (data.length === 0 && sectionKey !== "contact") return null;
 
   const label = getContextualLabel(sectionKey, profileType);
-  const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
 
   const renderSection = () => {
     switch (sectionKey) {
       case "projects":
         return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} />;
       case "credits":
-        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isCredits />;
+        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isCredits layout="poster" />;
       case "gallery":
         return <SectionGallery items={data} />;
       case "awards":
@@ -418,7 +414,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "representation":
         return <SectionRepresentation items={data} />;
       case "demo_reels":
-        return <SectionDemoReels items={data} />;
+        return <SectionDemoReels items={data} variant="featured" />;
       case "logline_showcase":
         return <SectionLoglineShowcase items={data} />;
       case "script_library":
@@ -461,39 +457,8 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
   };
 
   return (
-    <section
-      ref={sectionRef}
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(24px)",
-        transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
-      }}
-    >
-      {/* Section heading with number + accent rule */}
-      <div className="flex items-baseline gap-3 mb-2">
-        {indexNum && (
-          <span
-            className="text-xs font-mono tracking-widest"
-            style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
-          >
-            {indexNum}
-          </span>
-        )}
-        <h2
-          className="text-2xl sm:text-3xl font-bold tracking-tight"
-          style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}
-        >
-          {label}
-        </h2>
-      </div>
-      <div
-        className="mb-8"
-        style={{
-          height: "2px",
-          background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))",
-          maxWidth: "120px",
-        }}
-      />
+    <section ref={sectionRef} style={sectionAnimStyle}>
+      {renderHeading(label)}
       {renderSection()}
     </section>
   );

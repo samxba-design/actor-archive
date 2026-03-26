@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { applyThemeToElement, getTheme } from "@/lib/themes";
+import { PortfolioThemeProvider } from "@/themes/ThemeProvider";
+import { resolveThemeId } from "@/themes/themes";
 import { Loader2, ArrowLeft, Calendar, Film, Clock, FileText, Users, Tag, ExternalLink } from "lucide-react";
 import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 
@@ -62,16 +63,6 @@ const ProjectPitchPage = () => {
     fetch();
   }, [slug, projectSlug]);
 
-  // Apply theme
-  useEffect(() => {
-    if (profile) {
-      const container = document.getElementById("pitch-container");
-      if (container) {
-        applyThemeToElement(container, profile.theme || "minimal", profile.accent_color || undefined);
-      }
-    }
-  }, [profile]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -117,15 +108,13 @@ const ProjectPitchPage = () => {
     writing_sample: "Writing Sample", series_bible: "Series Bible", comedy_packet: "Comedy Packet", other: "Project",
   };
 
+  const themeId = resolveThemeId(profile.theme);
+
   return (
+    <PortfolioThemeProvider themeId={themeId} className="min-h-screen">
     <div
       id="pitch-container"
       className="min-h-screen"
-      style={{
-        backgroundColor: "hsl(var(--portfolio-bg))",
-        color: "hsl(var(--portfolio-fg))",
-        fontFamily: "var(--portfolio-body-font)",
-      }}
     >
       {/* Top bar */}
       <nav className="border-b px-4 sm:px-6 py-3 flex items-center justify-between" style={{ borderColor: "hsl(var(--portfolio-border))" }}>
@@ -349,6 +338,7 @@ const ProjectPitchPage = () => {
         </div>
       </div>
     </div>
+    </PortfolioThemeProvider>
   );
 };
 

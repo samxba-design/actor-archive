@@ -109,7 +109,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const handleCta = () => {
     const type = profile.cta_type || "contact_form";
     if (type === "contact_form") {
-      document.getElementById("contact-section")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("portfolio-contact")?.scrollIntoView({ behavior: "smooth" });
     } else if (type === "calendar" && (profile.booking_url || profile.cta_url)) {
       setBookingOpen(true);
     } else if (type === "email" && profile.cta_url) {
