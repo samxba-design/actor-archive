@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { PortfolioTheme } from "./theme-types";
 import { getPortfolioTheme, getThemeFontFamilies, buildGoogleFontsUrl } from "./themes";
+import { getFontPairing, getFontGoogleUrl } from "@/lib/fontPairings";
 
 const ThemeContext = createContext<PortfolioTheme>(getPortfolioTheme('cinematic-dark'));
 
@@ -29,16 +30,38 @@ interface Props {
   children: React.ReactNode;
   className?: string;
   ctaStyleOverride?: string;
+  accentColorOverride?: string;
+  fontPairingOverride?: string;
 }
 
-export function PortfolioThemeProvider({ themeId, children, className, ctaStyleOverride }: Props) {
+export function PortfolioThemeProvider({
+  themeId,
+  children,
+  className,
+  ctaStyleOverride,
+  accentColorOverride,
+  fontPairingOverride,
+}: Props) {
   const baseTheme = useMemo(() => getPortfolioTheme(themeId), [themeId]);
   const theme = useMemo(() => {
-    if (ctaStyleOverride && ctaStyleOverride !== baseTheme.ctaStyle) {
-      return { ...baseTheme, ctaStyle: ctaStyleOverride as typeof baseTheme.ctaStyle };
+    let t = baseTheme;
+    if (ctaStyleOverride && ctaStyleOverride !== t.ctaStyle) {
+      t = { ...t, ctaStyle: ctaStyleOverride as typeof t.ctaStyle };
     }
-    return baseTheme;
-  }, [baseTheme, ctaStyleOverride]);
+    if (accentColorOverride && accentColorOverride !== t.accentPrimary) {
+      // Derive hover and subtle from the override color
+      t = {
+        ...t,
+        accentPrimary: accentColorOverride,
+        accentHover: accentColorOverride,
+        accentSubtle: `${accentColorOverride}20`,
+        accentGlow: `${accentColorOverride}14`,
+        borderHover: `${accentColorOverride}4D`,
+        borderAccent: `${accentColorOverride}66`,
+      };
+    }
+    return t;
+  }, [baseTheme, ctaStyleOverride, accentColorOverride]);
 
   // Load fonts for this theme
   useEffect(() => {
@@ -55,7 +78,47 @@ export function PortfolioThemeProvider({ themeId, children, className, ctaStyleO
     return () => { const el = document.getElementById(id); if (el) el.remove(); };
   }, [theme]);
 
-  const cssVars = useMemo(() => themeToCssVars(theme), [theme]);
+  // Load custom font pairing
+  useEffect(() => {
+    if (!fontPairingOverride || fontPairingOverride === 'default') return;
+    const pairing = getFontPairing(fontPairingOverride);
+    const url = getFontGoogleUrl(pairing);
+    if (!url) return;
+    const id = 'portfolio-font-pairing';
+    const existing = document.getElementById(id);
+    if (existing) existing.remove();
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href = url;
+    document.head.appendChild(link);
+    return () => { const el = document.getElementById(id); if (el) el.remove(); };
+  }, [fontPairingOverride]);
+
+  const cssVars = useMemo(() => {
+    const vars = themeToCssVars(theme);
+    // Apply font pairing overrides
+    if (fontPairingOverride && fontPairingOverride !== 'default') {
+      const pairing = getFontPairing(fontPairingOverride);
+      if (pairing.headingFont) {
+        vars['--portfolio-font-display'] = pairing.headingFont;
+        vars['--portfolio-font-logline'] = pairing.headingFont;
+      }
+      if (pairing.bodyFont) {
+        vars['--portfolio-font-body'] = pairing.bodyFont;
+      }
+    }
+    return vars;
+  }, [theme, fontPairingOverride]);
+
+  // Effective font-family (possibly overridden by font pairing)
+  const effectiveFontBody = useMemo(() => {
+    if (fontPairingOverride && fontPairingOverride !== 'default') {
+      const pairing = getFontPairing(fontPairingOverride);
+      if (pairing.bodyFont) return pairing.bodyFont;
+    }
+    return theme.fontBody;
+  }, [theme.fontBody, fontPairingOverride]);
 
   return (
     <ThemeContext.Provider value={theme}>
@@ -65,7 +128,7 @@ export function PortfolioThemeProvider({ themeId, children, className, ctaStyleO
           ...cssVars,
           backgroundColor: theme.bgPrimary,
           color: theme.textPrimary,
-          fontFamily: theme.fontBody,
+          fontFamily: effectiveFontBody,
         } as React.CSSProperties}
       >
         {children}

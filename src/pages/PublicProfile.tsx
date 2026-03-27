@@ -8,7 +8,7 @@ import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
-import SortableSectionList from "@/components/portfolio/SortableSectionList";
+import ProfileLayoutRenderer from "@/components/portfolio/ProfileLayoutRenderer";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
 import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
@@ -71,6 +71,7 @@ interface ProfileData {
   client_logos_position?: string | null;
   headshot_style?: string | null;
   ga_measurement_id?: string | null;
+  hero_right_content?: string | null;
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -292,7 +293,7 @@ const PublicProfile = () => {
   const profileName = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
 
   return (
-    <PortfolioThemeProvider themeId={themeId} ctaStyleOverride={profile.cta_style || undefined} className="min-h-screen relative">
+    <PortfolioThemeProvider themeId={themeId} ctaStyleOverride={profile.cta_style || undefined} accentColorOverride={profile.accent_color || undefined} fontPairingOverride={profile.font_pairing || undefined} className="min-h-screen relative">
       {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: sanitizeCSS(profile.custom_css) }} />}
 
       {/* Skip to content link for accessibility */}
@@ -313,6 +314,8 @@ const PublicProfile = () => {
           heroBgVideoUrl={profile.hero_bg_video_url || undefined}
           heroBgImageUrl={profile.hero_bg_image_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
+          heroLayout={(profile.hero_style as any) || 'classic'}
+          heroRightContent={(profile.hero_right_content as any) || 'featured'}
         />
 
         {/* Client logos below hero */}
@@ -325,12 +328,15 @@ const PublicProfile = () => {
               <SectionKnownFor items={knownFor} variant="strip" />
             </PortfolioSectionWrapper>
           )}
-          <SortableSectionList
+          <ProfileLayoutRenderer
             allSections={allSections}
+            sectionOrder={sectionOrder}
+            sectionsVisible={sectionsVisible}
             profileId={profile.id}
             profileType={profile.profile_type}
             profileSlug={profile.slug || undefined}
             bio={profile.bio}
+            layoutPreset={profile.layout_preset || "classic"}
           />
         </main>
 

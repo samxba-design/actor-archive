@@ -109,6 +109,9 @@ const SettingsPage = () => {
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [exporting, setExporting] = useState(false);
 
+  // IMPORTANT: Call hooks BEFORE any conditional returns
+  const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
+
   useEffect(() => {
     if (!user) return;
     supabase
@@ -305,11 +308,11 @@ const SettingsPage = () => {
     } finally { setExporting(false); }
   };
 
+  const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
+
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
-
-  const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
 
   return (
     <div className="max-w-3xl space-y-6">
