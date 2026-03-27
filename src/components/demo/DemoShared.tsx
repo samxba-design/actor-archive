@@ -66,7 +66,7 @@ export interface SectionVariants {
   productions: 'list' | 'cards' | 'timeline';
   imageAnimation: 'none' | 'pulse' | 'drift' | 'glass' | 'shine' | 'fade' | 'tilt';
   caseStudies: 'stack' | 'magazine' | 'grid' | 'metrics';
-  publishedWork: 'magazine' | 'grid' | 'list';
+  publishedWork: 'magazine' | 'grid' | 'list' | 'card' | 'compact' | 'text-only' | 'visual' | 'mosaic';
   collections: 'grid' | 'accordion' | 'tabs';
   campaigns: 'timeline';
   heroLayout: HeroLayout;
@@ -195,6 +195,8 @@ export const VARIANT_OPTIONS: Record<keyof SectionVariants, { key: string; label
   ],
   publishedWork: [
     { key: 'magazine', label: 'Magazine' }, { key: 'grid', label: 'Grid' }, { key: 'list', label: 'List' },
+    { key: 'card', label: 'Card' }, { key: 'compact', label: 'Compact' }, { key: 'text-only', label: 'Text Only' },
+    { key: 'visual', label: 'Visual' }, { key: 'mosaic', label: 'Mosaic' },
   ],
   collections: [
     { key: 'grid', label: 'Grid' }, { key: 'accordion', label: 'Accordion' }, { key: 'tabs', label: 'Tabs' },

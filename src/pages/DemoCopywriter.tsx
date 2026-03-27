@@ -46,6 +46,7 @@ const copywriterDefaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   clientLogos: 'marquee',
   testimonials: 'carousel',
+  publishedWork: 'visual',
   heroBgType: 'bokeh',
   knownForPosition: 'hero_above_name',
   clientLogosPosition: 'below_hero',
@@ -435,7 +436,7 @@ const LAYOUT_MAP: Record<LayoutPreset, React.ComponentType> = {
 };
 
 const DemoCopywriter = () => {
-  const [themeId, setThemeId] = useState("ocean-blue");
+  const [themeId, setThemeId] = useState("charcoal-glass");
   const [layoutPreset, setLayoutPreset] = useState<LayoutPreset>("classic");
   const [variants, setVariants] = useState<SectionVariants>(copywriterDefaultVariants);
   const [showPDFModal, setShowPDFModal] = useState(false);

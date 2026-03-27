@@ -1411,6 +1411,8 @@ export type Database = {
           article_url: string | null
           category: string | null
           collection_id: string | null
+          content_text: string | null
+          content_type: string | null
           cover_image_url: string | null
           created_at: string | null
           date: string | null
@@ -1431,6 +1433,8 @@ export type Database = {
           article_url?: string | null
           category?: string | null
           collection_id?: string | null
+          content_text?: string | null
+          content_type?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           date?: string | null
@@ -1451,6 +1455,8 @@ export type Database = {
           article_url?: string | null
           category?: string | null
           collection_id?: string | null
+          content_text?: string | null
+          content_type?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           date?: string | null
