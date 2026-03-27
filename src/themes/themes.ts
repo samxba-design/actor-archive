@@ -37,7 +37,7 @@ const cinematicDark: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '4px',
-  heroHeight: '85vh',
+  heroHeight: '70vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(201, 169, 110, 0.35)',
