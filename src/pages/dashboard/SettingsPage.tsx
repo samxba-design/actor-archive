@@ -225,7 +225,7 @@ const SettingsPage = () => {
             layout_density: (data as any).layout_density || "spacious", layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "", seo_indexable: (data as any).seo_indexable || false,
             ga_measurement_id: (data as any).ga_measurement_id || "",
-            is_featured: (data as any).is_featured || false,
+            
           });
         }
         setLoading(false);
