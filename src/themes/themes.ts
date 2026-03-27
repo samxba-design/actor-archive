@@ -429,7 +429,7 @@ const azureGlass: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '10px',
-  heroHeight: '78vh',
+  heroHeight: '65vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(43, 125, 233, 0.2)',
