@@ -335,7 +335,7 @@ const PublicProfile = () => {
           heroBgImageUrl={profile.hero_bg_image_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
           heroLayout={(profile.hero_style as any) || 'classic'}
-          heroRightContent={(profile.hero_right_content as any) || 'featured'}
+          
         />
 
         {/* Client logos below hero */}

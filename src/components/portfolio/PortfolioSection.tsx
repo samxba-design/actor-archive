@@ -458,6 +458,10 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
         }
         return <SectionPublishedWork items={data} />;
       }
+      case "collections": {
+        const cols = (singleData as any[]) || [];
+        return <SectionCollections collections={cols} works={data} />;
+      }
       case "custom_sections":
       case "staffing_info":
       case "diversity_programs":
