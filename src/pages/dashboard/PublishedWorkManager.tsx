@@ -33,6 +33,8 @@ interface PublishedWork {
   show_text_overlay: boolean | null;
   display_order: number | null;
   created_at: string | null;
+  content_text: string | null;
+  content_type: string | null;
 }
 
 const CATEGORIES = [
