@@ -84,7 +84,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   };
 
   const clearBackground = () => {
-    onUpdate({ banner_url: "", hero_background_preset: "", hero_style: "full", hero_bg_type: "preset", hero_bg_solid_color: "", hero_bg_video_url: "" });
+    onUpdate({ banner_url: "", hero_background_preset: "", hero_style: "classic", hero_bg_type: "preset", hero_bg_solid_color: "", hero_bg_video_url: "" });
   };
 
   const currentPreset = PRESET_BACKGROUNDS.find(p => p.id === heroBackgroundPreset);

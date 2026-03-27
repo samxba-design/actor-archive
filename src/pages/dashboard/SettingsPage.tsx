@@ -278,7 +278,7 @@ const SettingsPage = () => {
       font_pairing: form.font_pairing || "default", layout_density: form.layout_density || "spacious",
       layout_preset: form.layout_preset || "classic", custom_css: form.custom_css || null,
       seo_indexable: form.seo_indexable, ga_measurement_id: form.ga_measurement_id || null,
-      hero_style: heroStyle || "full", headshot_style: headshotStyle || "circle",
+      hero_style: heroStyle || "classic", headshot_style: headshotStyle || "circle",
       known_for_position: knownForPosition || "hero_above_name", cta_style: ctaStyle || null,
       client_logos_position: clientLogosPosition || "body_section", professional_status: professionalStatus || null,
       status_badge_color: statusBadgeColor || "green", status_badge_animation: statusBadgeAnimation || "pulse",

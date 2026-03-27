@@ -112,7 +112,7 @@ const ProfileEditor = () => {
             banner_url: data.banner_url || "",
             profile_type: data.profile_type || "",
             primary_goal: (data as any).primary_goal || "",
-            hero_style: (data as any).hero_style || "full",
+            hero_style: (data as any).hero_style || "classic",
             hero_background_preset: (data as any).hero_background_preset || "",
             hero_bg_type: (data as any).hero_bg_type || "preset",
             hero_bg_solid_color: (data as any).hero_bg_solid_color || "",
