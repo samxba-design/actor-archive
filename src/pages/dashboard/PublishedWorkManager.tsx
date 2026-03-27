@@ -249,6 +249,27 @@ const PublishedWorkManager = () => {
             <DialogTitle>{editing ? "Edit" : "Add"} Published Work</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-2">
+            {/* Content Type Selector */}
+            <div>
+              <Label>Content Type</Label>
+              <div className="flex gap-2 mt-1">
+                {[
+                  { key: "link", label: "Link / URL" },
+                  { key: "pdf", label: "PDF Upload" },
+                  { key: "text", label: "Paste Text" },
+                ].map((t) => (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => setForm({ ...form, content_type: t.key })}
+                    className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${form.content_type === t.key ? "bg-primary text-primary-foreground border-primary" : "bg-background border-input text-muted-foreground hover:bg-accent"}`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <Label>Title *</Label>
               <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. The Future of AI in Marketing" />
@@ -281,25 +302,43 @@ const PublishedWorkManager = () => {
               </div>
             </div>
 
-            {/* PDF Upload */}
-            <div>
-              <Label>PDF Document</Label>
-              <input ref={pdfInputRef} type="file" accept=".pdf" className="hidden" onChange={handleUploadPdf} />
-              <div className="flex items-center gap-2 mt-1">
-                <Button type="button" variant="outline" size="sm" onClick={() => pdfInputRef.current?.click()} disabled={uploadingPdf}>
-                  {uploadingPdf ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
-                  Upload PDF
-                </Button>
-                {form.pdf_url && <span className="text-xs text-muted-foreground flex items-center gap-1"><FileText className="h-3 w-3" /> Uploaded</span>}
+            {/* Content: Text paste */}
+            {form.content_type === "text" && (
+              <div>
+                <Label>Article Text</Label>
+                <Textarea
+                  value={form.content_text}
+                  onChange={(e) => setForm({ ...form, content_text: e.target.value })}
+                  placeholder="Paste your article content here..."
+                  rows={8}
+                  className="font-mono text-xs"
+                />
               </div>
-              <Input value={form.pdf_url} onChange={(e) => setForm({ ...form, pdf_url: e.target.value })} placeholder="Or paste PDF URL" className="mt-1.5" />
-            </div>
+            )}
+
+            {/* PDF Upload */}
+            {form.content_type !== "text" && (
+              <div>
+                <Label>PDF Document</Label>
+                <input ref={pdfInputRef} type="file" accept=".pdf" className="hidden" onChange={handleUploadPdf} />
+                <div className="flex items-center gap-2 mt-1">
+                  <Button type="button" variant="outline" size="sm" onClick={() => pdfInputRef.current?.click()} disabled={uploadingPdf}>
+                    {uploadingPdf ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
+                    Upload PDF
+                  </Button>
+                  {form.pdf_url && <span className="text-xs text-muted-foreground flex items-center gap-1"><FileText className="h-3 w-3" /> Uploaded</span>}
+                </div>
+                <Input value={form.pdf_url} onChange={(e) => setForm({ ...form, pdf_url: e.target.value })} placeholder="Or paste PDF URL" className="mt-1.5" />
+              </div>
+            )}
 
             {/* Article URL */}
-            <div>
-              <Label>Article URL (alternative to PDF)</Label>
-              <Input value={form.article_url} onChange={(e) => setForm({ ...form, article_url: e.target.value })} placeholder="https://..." />
-            </div>
+            {form.content_type !== "text" && (
+              <div>
+                <Label>Article URL</Label>
+                <Input value={form.article_url} onChange={(e) => setForm({ ...form, article_url: e.target.value })} placeholder="https://..." />
+              </div>
+            )}
 
             {/* Cover Image */}
             <div>
