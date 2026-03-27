@@ -12,7 +12,23 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles, Mail, AlertTriangle, Trash2, Download } from "lucide-react";
+import { Loader2, Save, ExternalLink, ArrowUp, ArrowDown, Eye, EyeOff, Lock, Search, Check, Layout, Columns, Star, Circle, Square, RectangleHorizontal, UserX, Sparkles, Mail, AlertTriangle, Trash2, Download, GripVertical } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { portfolioThemeList } from "@/themes/themes";
 import { fontPairings } from "@/lib/fontPairings";
 import { getProfileTypeConfig, getMergedSections, PROFILE_TYPES, type SectionConfig } from "@/config/profileSections";
@@ -58,6 +74,28 @@ const LAYOUT_PRESETS = [
   { id: "dashboard", label: "Dashboard", description: "Metrics-forward layout" },
 ];
 
+// ─── Sortable section row for DnD reordering ──────────────────────────────────
+function SortableSectionRow({ id, label, visible, onToggle }: { id: string; label: string; visible: boolean; onToggle: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
+      className={`flex items-center justify-between py-2.5 px-3 rounded-lg border transition-colors ${isDragging ? "shadow-lg z-50 bg-accent" : "border-border bg-background hover:bg-accent/30"}`}
+    >
+      <div className="flex items-center gap-3">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground transition-colors touch-none">
+          <GripVertical className="h-4 w-4" />
+        </button>
+        <span className={`text-sm font-medium select-none ${visible ? "text-foreground" : "text-muted-foreground line-through"}`}>{label}</span>
+      </div>
+      <button onClick={onToggle} className="p-1 rounded-md hover:bg-accent transition-colors">
+        {visible ? <Eye className="h-4 w-4 text-foreground" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
+      </button>
+    </div>
+  );
+}
+
 const SettingsPage = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -97,6 +135,7 @@ const SettingsPage = () => {
     custom_css: "",
     seo_indexable: false,
     ga_measurement_id: "",
+    is_featured: false,
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -113,11 +152,17 @@ const SettingsPage = () => {
   // IMPORTANT: Call hooks BEFORE any conditional returns
   const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
 
+  // DnD sensors for section ordering
+  const dndSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+  );
+
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation, ga_measurement_id, hero_right_content")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation, ga_measurement_id, hero_right_content, is_featured")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -180,6 +225,7 @@ const SettingsPage = () => {
             layout_density: (data as any).layout_density || "spacious", layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "", seo_indexable: (data as any).seo_indexable || false,
             ga_measurement_id: (data as any).ga_measurement_id || "",
+            is_featured: (data as any).is_featured || false,
           });
         }
         setLoading(false);
@@ -259,6 +305,15 @@ const SettingsPage = () => {
     if (target < 0 || target >= newOrder.length) return;
     [newOrder[index], newOrder[target]] = [newOrder[target], newOrder[index]];
     setSectionOrder(newOrder);
+  };
+
+  const handleSectionDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = sectionOrder.indexOf(active.id as string);
+      const newIndex = sectionOrder.indexOf(over.id as string);
+      setSectionOrder(arrayMove(sectionOrder, oldIndex, newIndex));
+    }
   };
 
   const toggleSectionVisibility = (key: string) => {
@@ -864,28 +919,34 @@ const SettingsPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Portfolio Sections</CardTitle>
-              <CardDescription>Toggle visibility and reorder sections. Save to apply.</CardDescription>
+              <CardDescription>Drag to reorder. Toggle the eye icon to show/hide. Changes save when you click Save.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {sectionOrder.map((key, index) => {
-                const section = allSections.find(s => s.key === key);
-                if (!section) return null;
-                const visible = sectionsVisible[key] !== false;
-                return (
-                  <div key={key} className="flex items-center justify-between py-2 px-3 rounded-md border border-border">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-col gap-0.5">
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, -1)} disabled={index === 0}><ArrowUp className="h-3 w-3" /></Button>
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => moveSection(index, 1)} disabled={index === sectionOrder.length - 1}><ArrowDown className="h-3 w-3" /></Button>
-                      </div>
-                      <span className={`text-sm font-medium ${visible ? "text-foreground" : "text-muted-foreground line-through"}`}>{section.label}</span>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={() => toggleSectionVisibility(key)}>
-                      {visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 text-muted-foreground" />}
-                    </Button>
-                  </div>
-                );
-              })}
+            <CardContent className="space-y-1.5">
+              <DndContext
+                sensors={dndSensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleSectionDragEnd}
+              >
+                <SortableContext items={sectionOrder} strategy={verticalListSortingStrategy}>
+                  {sectionOrder.map((key) => {
+                    const section = allSections.find(s => s.key === key);
+                    if (!section) return null;
+                    const visible = sectionsVisible[key] !== false;
+                    return (
+                      <SortableSectionRow
+                        key={key}
+                        id={key}
+                        label={section.label}
+                        visible={visible}
+                        onToggle={() => toggleSectionVisibility(key)}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DndContext>
+              <p className="text-xs text-muted-foreground pt-2">
+                💡 Tip: You can also drag sections directly on your live portfolio in Edit Mode.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>
