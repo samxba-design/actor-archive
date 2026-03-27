@@ -106,7 +106,7 @@ const SettingsPage = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [heroStyle, setHeroStyle] = useState<string>("full");
-  const [heroRightContent, setHeroRightContent] = useState<string>("featured");
+  
   const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
@@ -135,7 +135,7 @@ const SettingsPage = () => {
     custom_css: "",
     seo_indexable: false,
     ga_measurement_id: "",
-    is_featured: false,
+    
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
@@ -172,7 +172,7 @@ const SettingsPage = () => {
           setProfileType(pt);
           setSecondaryTypes(st);
           setHeroStyle((data as any).hero_style || "full");
-          setHeroRightContent((data as any).hero_right_content || "featured");
+          
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
@@ -225,7 +225,7 @@ const SettingsPage = () => {
             layout_density: (data as any).layout_density || "spacious", layout_preset: (data as any).layout_preset || "classic",
             custom_css: (data as any).custom_css || "", seo_indexable: (data as any).seo_indexable || false,
             ga_measurement_id: (data as any).ga_measurement_id || "",
-            is_featured: (data as any).is_featured || false,
+            
           });
         }
         setLoading(false);
@@ -282,7 +282,7 @@ const SettingsPage = () => {
       known_for_position: knownForPosition || "hero_above_name", cta_style: ctaStyle || null,
       client_logos_position: clientLogosPosition || "body_section", professional_status: professionalStatus || null,
       status_badge_color: statusBadgeColor || "green", status_badge_animation: statusBadgeAnimation || "pulse",
-      hero_right_content: heroRightContent || "featured",
+      
     } as any).eq("id", user.id);
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     else { setContextSlug(form.slug || null); toast({ title: "Saved", description: "Settings updated." }); clearDraft(); }

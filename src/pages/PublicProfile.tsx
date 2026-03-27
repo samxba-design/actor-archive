@@ -72,7 +72,7 @@ interface ProfileData {
   client_logos_position?: string | null;
   headshot_style?: string | null;
   ga_measurement_id?: string | null;
-  hero_right_content?: string | null;
+  
 }
 
 const DEFAULT_SECTION_ORDER = [
@@ -335,7 +335,7 @@ const PublicProfile = () => {
           heroBgImageUrl={profile.hero_bg_image_url || undefined}
           knownForPosition={(profile.known_for_position as KnownForPosition) || 'hero_above_name'}
           heroLayout={(profile.hero_style as any) || 'classic'}
-          heroRightContent={(profile.hero_right_content as any) || 'featured'}
+          
         />
 
         {/* Client logos below hero */}
