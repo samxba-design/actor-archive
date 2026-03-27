@@ -373,7 +373,7 @@ const frost: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '8px',
-  heroHeight: '75vh',
+  heroHeight: '62vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(61, 90, 128, 0.2)',
