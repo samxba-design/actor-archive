@@ -67,7 +67,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   };
 
   const selectPreset = (presetId: string) => {
-    onUpdate({ hero_background_preset: presetId, banner_url: "", hero_style: "full", hero_bg_type: "preset" });
+    onUpdate({ hero_background_preset: presetId, banner_url: "", hero_style: "classic", hero_bg_type: "preset" });
   };
 
   const setStyle = (style: string) => {
