@@ -254,6 +254,11 @@ const DashboardHome = () => {
             </Button>
           )}
           {profile?.slug && (
+            <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/preview")}>
+              <Eye className="mr-2 h-4 w-4" />Preview
+            </Button>
+          )}
+          {profile?.slug && (
             <Button
               variant={profile?.is_published ? "outline" : "default"}
               size="sm"
@@ -266,9 +271,9 @@ const DashboardHome = () => {
               )}
             </Button>
           )}
-          {profile?.slug && (
+          {profile?.slug && profile?.is_published && (
             <Button variant="outline" size="sm" onClick={() => window.open(`/p/${profile.slug}`, "_blank")}>
-              <ExternalLink className="mr-2 h-4 w-4" />{profile?.is_published ? "View" : "Preview"}
+              <ExternalLink className="mr-2 h-4 w-4" />View Live
             </Button>
           )}
         </div>

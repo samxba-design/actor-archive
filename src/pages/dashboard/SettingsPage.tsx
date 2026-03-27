@@ -599,34 +599,107 @@ const SettingsPage = () => {
 
           {/* Theme & Typography */}
           <Card>
-            <CardHeader><CardTitle>Theme & Typography</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>Theme & Typography</CardTitle>
+              <CardDescription>Choose a visual theme for your portfolio. Changes preview live when you save.</CardDescription>
+            </CardHeader>
             <CardContent className="space-y-4">
+              {/* Quick Presets */}
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <Label className="mb-2 block">Quick Presets</Label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { label: "Film Professional", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
+                    { label: "Actor Modern", theme: "obsidian-noir", heroLayout: "centered", layoutPreset: "magazine" },
+                    { label: "Director Cinematic", theme: "neon-noir", heroLayout: "banner", layoutPreset: "bento" },
+                    { label: "Writer Literary", theme: "warm-luxury", heroLayout: "minimal", layoutPreset: "minimal" },
+                    { label: "Clean Professional", theme: "clean-professional", heroLayout: "split", layoutPreset: "classic" },
+                  ].map((preset) => (
+                    <button
+                      key={preset.label}
+                      onClick={() => setForm(f => ({
+                        ...f,
+                        theme: preset.theme,
+                        layout_preset: preset.layoutPreset,
+                      }))}
+                      className="text-xs px-3 py-1.5 rounded-full border transition-all hover:border-primary/60 hover:bg-accent/50 border-border text-muted-foreground"
+                    >
+                      ✦ {preset.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-3">
                   <Label>Visual Theme</Label>
                   {!isPro && <ProBadge />}
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {portfolioThemeList.map((t) => {
-                    const isFree = ["cinematic-dark", "modern-minimal"].includes(t.id);
-                    const isLocked = !isPro && !isFree;
-                    return (
-                      <button key={t.id} onClick={() => !isLocked && setForm((f) => ({ ...f, theme: t.id }))} disabled={isLocked}
-                        className={`text-left p-3 rounded-lg border transition-all text-sm ${form.theme === t.id ? "border-primary bg-primary/10 ring-1 ring-primary" : isLocked ? "border-border opacity-50 cursor-not-allowed" : "border-border hover:border-primary/40 hover:bg-accent/50"}`}>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-foreground text-xs">{t.name}</span>
-                          {form.theme === t.id && <Check className="h-3 w-3 text-primary" />}
-                          {isLocked && <Lock className="h-3 w-3 text-muted-foreground" />}
-                        </div>
-                        <div className="flex gap-1 mt-1.5">
-                          {t.previewColors.slice(0, 5).map((c, i) => (
-                            <div key={i} className="w-4 h-4 rounded-full border border-border/50" style={{ backgroundColor: c }} />
-                          ))}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* Group themes by category */}
+                {[
+                  { label: "Dark", ids: ["cinematic-dark", "neon-noir", "obsidian-noir", "deep-space", "gothic-editorial", "electric-noir", "forest-noir"] },
+                  { label: "Light", ids: ["modern-minimal", "warm-luxury", "clean-professional", "ivory-editorial"] },
+                  { label: "Specialty", ids: ["vintage-film", "brutalist-studio", "rose-gold-glam"] },
+                ].map(group => {
+                  const groupThemes = portfolioThemeList.filter(t => group.ids.includes(t.id));
+                  if (groupThemes.length === 0) return null;
+                  return (
+                    <div key={group.label} className="mb-4">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">{group.label}</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {groupThemes.map((t) => {
+                          const isFree = ["cinematic-dark", "modern-minimal"].includes(t.id);
+                          const isLocked = !isPro && !isFree;
+                          const isSelected = form.theme === t.id;
+                          return (
+                            <button key={t.id}
+                              onClick={() => !isLocked && setForm((f) => ({ ...f, theme: t.id }))}
+                              disabled={isLocked}
+                              className={`text-left rounded-xl border-2 overflow-hidden transition-all ${
+                                isSelected ? "border-primary ring-2 ring-primary/30 scale-[1.02]" :
+                                isLocked ? "border-border opacity-50 cursor-not-allowed" :
+                                "border-border hover:border-primary/50 hover:scale-[1.01]"
+                              }`}>
+                              {/* Mini visual preview */}
+                              <div className="h-16 relative" style={{ background: t.bgPrimary || t.previewColors[0] }}>
+                                {/* Fake hero strip */}
+                                <div className="absolute bottom-0 left-0 right-0 h-8 flex items-end px-2 pb-1.5 gap-2"
+                                  style={{ background: `linear-gradient(to top, ${t.bgPrimary || t.previewColors[0]}, transparent)` }}>
+                                  <div className="w-5 h-5 rounded-full border" style={{ background: t.accentPrimary || t.previewColors[2], borderColor: `${t.accentPrimary || t.previewColors[2]}50` }} />
+                                  <div className="flex flex-col gap-0.5">
+                                    <div className="h-1.5 w-12 rounded-full" style={{ background: t.textPrimary || t.previewColors[1], opacity: 0.9 }} />
+                                    <div className="h-1 w-8 rounded-full" style={{ background: t.textSecondary || t.previewColors[4], opacity: 0.5 }} />
+                                  </div>
+                                  <div className="ml-auto px-1.5 py-0.5 rounded-sm text-[7px] font-bold"
+                                    style={{ background: t.accentPrimary || t.previewColors[2], color: "#fff" }}>
+                                    CTA
+                                  </div>
+                                </div>
+                                {/* Locked overlay */}
+                                {isLocked && (
+                                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                    <Lock className="h-4 w-4 text-white/70" />
+                                  </div>
+                                )}
+                                {/* Selected checkmark */}
+                                {isSelected && (
+                                  <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                                    <Check className="h-3 w-3 text-primary-foreground" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="px-2 py-1.5 bg-card border-t border-border/50">
+                                <p className="font-semibold text-foreground text-[11px]">{t.name}</p>
+                                <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-1">{t.description}</p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
               </div>
               <div>
                 <Label>Accent Color</Label>

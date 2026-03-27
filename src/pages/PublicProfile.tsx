@@ -7,6 +7,7 @@ import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
+import LiveCustomizePanel from "@/components/portfolio/LiveCustomizePanel";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import ProfileLayoutRenderer from "@/components/portfolio/ProfileLayoutRenderer";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
@@ -348,6 +349,7 @@ const PublicProfile = () => {
         </div>
 
         <EditModeToolbar />
+        <LiveCustomizePanel profileId={profile.id} />
 
       {/* Floating toolbar: dark mode, share, PDF, contact */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-2">

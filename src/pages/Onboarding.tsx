@@ -182,6 +182,7 @@ const Onboarding = () => {
           theme: data.theme || "cinematic-dark",
           hero_bg_type: "bokeh",
           hero_background_preset: null,
+          layout_preset: "classic",
           available_for_hire: data.availableForHire,
           onboarding_completed: true,
           is_draft: false,
