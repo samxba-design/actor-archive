@@ -72,6 +72,8 @@ const PublishedWorkManager = () => {
     is_featured: false,
     show_text_overlay: true,
     collection_id: "",
+    content_text: "",
+    content_type: "link" as string,
   });
 
   const fetchItems = async () => {
