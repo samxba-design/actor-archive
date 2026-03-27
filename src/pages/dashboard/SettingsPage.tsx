@@ -171,7 +171,7 @@ const SettingsPage = () => {
           const st = (data as any).secondary_types || [];
           setProfileType(pt);
           setSecondaryTypes(st);
-          setHeroStyle((data as any).hero_style || "full");
+          setHeroStyle((data as any).hero_style || "classic");
           
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
