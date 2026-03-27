@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe, Check, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe, Check, AlertCircle, CheckCircle2, Crop } from "lucide-react";
 import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -17,6 +17,7 @@ import { BioBuilderWizard } from "@/components/dashboard/BioBuilderWizard";
 import ProfileReadiness from "@/components/dashboard/ProfileReadiness";
 import HeroBackgroundEditor from "@/components/dashboard/HeroBackgroundEditor";
 import { useFormDraft } from "@/hooks/useFormDraft";
+import ImageCropper from "@/components/ImageCropper";
 
 interface ProfileForm {
   display_name: string;
@@ -58,6 +59,9 @@ const ProfileEditor = () => {
   const [urlOpen, setUrlOpen] = useState(false);
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [slugChecking, setSlugChecking] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropImage, setCropImage] = useState<string>("");
+  const [cropType, setCropType] = useState<"headshot" | "banner">("headshot");
   const slugTimeout = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveTimeout = useRef<ReturnType<typeof setTimeout>>();
   const initialLoad = useRef(true);
@@ -191,22 +195,57 @@ const ProfileEditor = () => {
     }
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, bucket: string, field: keyof ProfileForm) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>, cropTypeArg: "headshot" | "banner") => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
 
-    const maxDim = bucket === "headshots" ? 800 : 1920;
-    const compressed = await compressImage(file, { maxWidth: maxDim, maxHeight: maxDim, quality: 0.85 });
+    // Read file as data URL and open cropper
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const result = evt.target?.result as string;
+      setCropImage(result);
+      setCropType(cropTypeArg);
+      setCropOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
 
-    const ext = compressed.name.split(".").pop();
-    const path = `${user.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from(bucket).upload(path, compressed, { upsert: true });
-    if (error) {
-      toast({ title: "Upload error", description: error.message, variant: "destructive" });
-      return;
+  const handleCropComplete = async (croppedDataUrl: string) => {
+    if (!user) return;
+
+    try {
+      // Convert data URL to blob
+      const response = await fetch(croppedDataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `${cropType}.jpg`, { type: "image/jpeg" });
+
+      // Compress if needed
+      const maxDim = cropType === "headshot" ? 800 : 1920;
+      const compressed = await compressImage(file, {
+        maxWidth: maxDim,
+        maxHeight: maxDim,
+        quality: 0.85,
+      });
+
+      // Upload to storage
+      const bucket = cropType === "headshot" ? "headshots" : "banners";
+      const ext = compressed.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from(bucket).upload(path, compressed, { upsert: true });
+
+      if (error) {
+        toast({ title: "Upload error", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
+      const field = cropType === "headshot" ? "profile_photo_url" : "banner_url";
+      setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
+      toast({ title: "Success", description: `${cropType === "headshot" ? "Photo" : "Banner"} uploaded and cropped` });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
-    setForm((prev) => ({ ...prev, [field]: urlData.publicUrl }));
   };
 
   const handleRemovePhoto = () => {

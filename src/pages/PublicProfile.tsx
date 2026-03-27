@@ -149,6 +149,25 @@ const PublicProfile = () => {
     }
   }, [profile?.id, slug]);
 
+  // Inject custom CSS if provided and user is Pro
+  useEffect(() => {
+    if (profile?.custom_css && profile?.subscription_tier === "pro") {
+      const styleId = `custom-portfolio-css-${profile.id}`;
+      const existing = document.getElementById(styleId);
+      if (existing) existing.remove();
+
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = profile.custom_css;
+      document.head.appendChild(style);
+
+      return () => {
+        const el = document.getElementById(styleId);
+        if (el) el.remove();
+      };
+    }
+  }, [profile?.custom_css, profile?.subscription_tier, profile?.id]);
+
   // Back to top scroll listener
   useEffect(() => {
     const handleScroll = () => {
@@ -322,7 +341,15 @@ const PublicProfile = () => {
         {/* Client logos below hero */}
         {profile.client_logos_position === 'below_hero' && <ClientLogosBelow profileId={profile.id} />}
 
-        <main id="portfolio-main" className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-14" role="main">
+        <main
+          id="portfolio-main"
+          className={`max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 ${
+            profile.layout_density === "compact" ? "py-6 space-y-8" :
+            profile.layout_density === "dense" ? "py-16 space-y-20" :
+            "py-12 space-y-14" // spacious (default)
+          }`}
+          role="main"
+        >
           {/* Known For below hero or as body section */}
           {knownFor.length > 0 && (profile.known_for_position === 'below_hero' || profile.known_for_position === 'body_section') && (
             <PortfolioSectionWrapper title={getTypeAwareLabels(profile.profile_type).knownForTitle} index={-1}>

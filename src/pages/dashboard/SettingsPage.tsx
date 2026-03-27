@@ -308,8 +308,6 @@ const SettingsPage = () => {
     } finally { setExporting(false); }
   };
 
-  const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
-
   if (loading) {
     return <div className="flex justify-center py-12"><Loader2 className="animate-spin h-8 w-8 text-muted-foreground" /></div>;
   }
