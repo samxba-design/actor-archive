@@ -597,7 +597,7 @@ const oceanBlue: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'shine-sweep',
   ctaRadius: '6px',
-  heroHeight: '75vh',
+  heroHeight: '62vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(37, 99, 235, 0.2)',
