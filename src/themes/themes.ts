@@ -541,7 +541,7 @@ const creativeRose: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'glow-pulse',
   ctaRadius: '6px',
-  heroHeight: '85vh',
+  heroHeight: '70vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(199, 125, 138, 0.35)',
