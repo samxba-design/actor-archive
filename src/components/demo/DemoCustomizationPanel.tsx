@@ -53,7 +53,21 @@ const STATUS_BADGE_CATEGORY: CategoryConfig = {
   ],
 };
 
-const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY];
+const SECTIONS_CATEGORY: CategoryConfig = {
+  label: "Sections",
+  keys: [
+    { key: "publishedWork", label: "Published Work" },
+    { key: "caseStudies", label: "Case Studies" },
+    { key: "testimonials", label: "Testimonials" },
+    { key: "awards", label: "Awards" },
+    { key: "press", label: "Press" },
+    { key: "services", label: "Services" },
+    { key: "education", label: "Education" },
+    { key: "skills", label: "Skills" },
+  ],
+};
+
+const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
 
 interface Props {
   showCustomization: boolean;
