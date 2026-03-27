@@ -93,7 +93,7 @@ const warmLuxury: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'underlined',
   ctaRadius: '2px',
-  heroHeight: '80vh',
+  heroHeight: '65vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '120px',
   profilePhotoBorder: '3px solid rgba(139, 105, 20, 0.2)',
