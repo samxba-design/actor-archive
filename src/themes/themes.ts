@@ -877,7 +877,7 @@ const slatePro: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'filled-bold',
   ctaRadius: '4px',
-  heroHeight: '72vh',
+  heroHeight: '60vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '100px',
   profilePhotoBorder: '2px solid rgba(74, 111, 165, 0.2)',
