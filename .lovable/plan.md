@@ -1,55 +1,67 @@
 
+Fix confirmed: this is not a cache issue. Your live published profile currently has `hero_style = "full"` in the database, but `PortfolioHero` only knows layouts like `classic`, `centered`, `split`, `minimal`, `banner`, `editorial`, `compact`, etc. It then does:
 
-# Full Functionality Audit — Bugs & Fixes
+```text
+layoutRenderers[heroLayout]()
+```
 
-## Bug 1: Settings Save Fails (Silent Error)
+So when `heroLayout === "full"`, it calls `undefined()` and the ErrorBoundary shows “Scene Interrupted”.
 
-**Root cause**: `SettingsPage.tsx` line 285 includes `hero_right_content` in the `.update()` call, but this column does NOT exist in the `profiles` table. Supabase rejects unknown columns, so every save attempt returns an error. The error is caught by a toast, but the save silently fails.
+## Root cause
+There is a mismatch between three parts of the app:
 
-**Fix**: Remove `hero_right_content: heroRightContent || "featured"` from the update payload (line 285). Also remove the related state variable `heroRightContent` and the read on line 175 since the column doesn't exist.
+- `PortfolioHero.tsx` expects hero layout values like `classic`, `centered`, `compact`
+- `SettingsPage.tsx`, `ProfileEditor.tsx`, and `HeroBackgroundEditor.tsx` still save legacy values like `full`
+- Existing profiles already have `hero_style: "full"` saved, including the currently published one
 
-## Bug 2: "Scene Interrupted" on Preview
+## Plan
+1. Add a safe normalization layer in `PortfolioHero.tsx`
+   - Map legacy/stale values before rendering:
+     - `full` → `classic`
+     - unknown/invalid values → `classic`
+   - Guard `layoutRenderers[resolvedLayout]` so public pages never crash from bad saved data again
 
-**Root cause**: When a logged-in user navigates to `/p/{slug}`, `PublicProfile.tsx` line 338 passes `heroRightContent={(profile.hero_right_content as any) || 'featured'}` to `PortfolioHero`. While this alone doesn't crash, the PublicProfile interface (line 75) declares `hero_right_content` as a field, but `select("*")` won't return it since the column doesn't exist in the DB. The value comes through as undefined → falls back to `'featured'` → safe.
+2. Unify editor defaults and saved values
+   - Update `SettingsPage.tsx` default hero style from `full` to `classic`
+   - Update `ProfileEditor.tsx` default/load fallback from `full` to `classic`
+   - Update `HeroBackgroundEditor.tsx` so its “Full” button saves `classic` instead of `full`
+   - Keep “Compact” mapped to `compact`
 
-The actual crash is more likely caused by a **missing `collections` section handler**. When a user's profile has `collections` in their `section_order` array (which can happen after switching to copywriter/journalist/author), `PortfolioSection.tsx` has no `case "collections"` in either the `fetchData` switch or the `renderSection` switch. While currently this returns null (no crash), the standalone `collections` section key is a dead-end.
+3. Backward compatibility cleanup
+   - Anywhere a saved `hero_style` is read, normalize old values so older profiles still work immediately
+   - Ensure preview, published profile, and dashboard customization all use the same enum
 
-The most probable crash source is a **stale or corrupted `section_order`** containing keys not handled by the layout renderers (e.g., MagazineLayout, BentoLayout, DashboardLayout), where certain layouts render sections with `allSections.find()` and may pass undefined props.
+4. Quick audit for similar enum mismatches
+   - Check `layout_preset`, hero background mode, and section rendering paths for the same stale-value pattern
+   - Fix any additional unsafe direct lookup/call sites that could produce another “Scene Interrupted”
 
-**Fix**: Add a `case "collections"` handler to `PortfolioSection.tsx` that fetches collections + published works and renders `SectionCollections`. This mirrors the logic already inside the `published_work` case.
+5. Secondary cleanup
+   - Fix the `SectionClientLogos` ref warning by making the inner logo item ref-safe or removing ref propagation there
+   - This is not the crash, but it should be cleaned up during the same pass
 
-## Bug 3: `is_featured` Ghost State in Settings
+## Files to update
+- `src/components/portfolio/PortfolioHero.tsx`
+- `src/pages/dashboard/SettingsPage.tsx`
+- `src/pages/dashboard/ProfileEditor.tsx`
+- `src/components/dashboard/HeroBackgroundEditor.tsx`
+- possibly `src/components/portfolio/LiveCustomizePanel.tsx` for consistent fallback behavior
 
-The form state includes `is_featured: false` (line 138) and reads it from `(data as any).is_featured` (line 228), but the `profiles` table does not have an `is_featured` column. The value always defaults to false and is never saved. It's dead code.
+## Expected result
+- “View portfolio” works again immediately
+- existing broken profiles with old `full` values stop crashing
+- future saves won’t reintroduce the bug
+- preview and published pages become resilient to stale/invalid hero layout values
 
-**Fix**: Remove `is_featured` from the form state object and the data reading line.
+## Technical note
+This is the exact bug pattern:
 
-## Bug 4: Settings Save May Also Fail Because of `is_featured`
+```text
+saved value: hero_style = "full"
+PublicProfile passes heroLayout="full"
+PortfolioHero does layoutRenderers["full"]()
+=> undefined is not a function
+=> ErrorBoundary
+=> Scene Interrupted
+```
 
-Wait — checking line 270-286 again, `is_featured` is NOT in the update payload. Only `hero_right_content` is. So this is dead code, not a crash. Still worth cleaning up.
-
-## Bug 5: `collections` Section Not Fetched or Rendered Independently
-
-The `profileSections.ts` registry now includes `collections` for copywriter, journalist, and author. But `PortfolioSection.tsx`:
-- Has no `case "collections"` in the data fetch switch (lines 119-293)
-- Has no `case "collections"` in the render switch (lines 394-460)
-
-When a real user's profile has `collections` in `section_order`, nothing renders. The collections data is only loaded as a sub-feature of `published_work`.
-
-**Fix**: Add a `case "collections"` to both switches in `PortfolioSection.tsx` — fetch from `work_collections` + `published_works`, render using `SectionCollections`.
-
----
-
-## Implementation Plan
-
-| # | Fix | File | Effort |
-|---|-----|------|--------|
-| 1 | Remove `hero_right_content` from update payload | `SettingsPage.tsx` | Tiny |
-| 2 | Remove `heroRightContent` state + read (dead code) | `SettingsPage.tsx` | Tiny |
-| 3 | Remove `is_featured` from form state + read (dead code) | `SettingsPage.tsx` | Tiny |
-| 4 | Remove `hero_right_content` from PublicProfile interface | `PublicProfile.tsx` | Tiny |
-| 5 | Remove `heroRightContent` prop from PortfolioHero call in PublicProfile | `PublicProfile.tsx` | Tiny |
-| 6 | Add `case "collections"` fetch + render handler | `PortfolioSection.tsx` | Small |
-
-6 targeted edits across 3 files. No database changes needed.
-
+No backend schema changes are needed. This is a targeted frontend compatibility fix plus editor value cleanup.
