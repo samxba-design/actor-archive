@@ -910,7 +910,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
       {/* Background */}
       {renderBackground()}
 
-      {layoutRenderers[heroLayout]()}
+      {(layoutRenderers[heroLayout] || layoutRenderers.classic)()}
 
       {(profile.booking_url || profile.cta_url) && (
         <BookingModal open={bookingOpen} onOpenChange={setBookingOpen} bookingUrl={profile.booking_url || profile.cta_url || ""} name={name} />

@@ -61,13 +61,13 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
       return;
     }
     const { data: urlData } = supabase.storage.from("banners").getPublicUrl(path);
-    onUpdate({ banner_url: urlData.publicUrl, hero_style: "full", hero_background_preset: "", hero_bg_type: "preset" });
+    onUpdate({ banner_url: urlData.publicUrl, hero_style: "classic", hero_background_preset: "", hero_bg_type: "preset" });
     setUploading(false);
     toast({ title: "Uploaded", description: "Banner image set." });
   };
 
   const selectPreset = (presetId: string) => {
-    onUpdate({ hero_background_preset: presetId, banner_url: "", hero_style: "full", hero_bg_type: "preset" });
+    onUpdate({ hero_background_preset: presetId, banner_url: "", hero_style: "classic", hero_bg_type: "preset" });
   };
 
   const setStyle = (style: string) => {
@@ -84,7 +84,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
   };
 
   const clearBackground = () => {
-    onUpdate({ banner_url: "", hero_background_preset: "", hero_style: "full", hero_bg_type: "preset", hero_bg_solid_color: "", hero_bg_video_url: "" });
+    onUpdate({ banner_url: "", hero_background_preset: "", hero_style: "classic", hero_bg_type: "preset", hero_bg_solid_color: "", hero_bg_video_url: "" });
   };
 
   const currentPreset = PRESET_BACKGROUNDS.find(p => p.id === heroBackgroundPreset);
