@@ -149,7 +149,7 @@ const modernMinimal: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'text-link',
   ctaRadius: '0px',
-  heroHeight: '75vh',
+  heroHeight: '62vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '100px',
   profilePhotoBorder: '2px solid #FFFFFF',
