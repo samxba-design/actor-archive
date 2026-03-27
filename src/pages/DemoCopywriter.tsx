@@ -46,6 +46,7 @@ const copywriterDefaultVariants: SectionVariants = {
   heroKnownFor: 'strip',
   clientLogos: 'marquee',
   testimonials: 'carousel',
+  publishedWork: 'visual',
   heroBgType: 'bokeh',
   knownForPosition: 'hero_above_name',
   clientLogosPosition: 'below_hero',
