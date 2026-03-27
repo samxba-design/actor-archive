@@ -109,7 +109,7 @@ const ReelManager = () => {
       year: form.year ? parseInt(form.year) : null,
       role_name: form.role_name.trim() || null,
       is_featured: form.is_featured,
-      project_type: "reel",
+      project_type: "video" as const,
       profile_id: user.id,
     };
 
