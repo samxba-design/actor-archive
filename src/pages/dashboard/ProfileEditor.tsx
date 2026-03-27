@@ -78,7 +78,7 @@ const ProfileEditor = () => {
     banner_url: "",
     profile_type: "",
     primary_goal: "",
-    hero_style: "full",
+    hero_style: "classic",
     hero_background_preset: "",
     hero_bg_type: "preset",
     hero_bg_solid_color: "",
