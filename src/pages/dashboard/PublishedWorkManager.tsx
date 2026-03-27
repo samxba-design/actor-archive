@@ -115,6 +115,8 @@ const PublishedWorkManager = () => {
       is_featured: item.is_featured || false,
       show_text_overlay: item.show_text_overlay !== false,
       collection_id: (item as any).collection_id || "",
+      content_text: item.content_text || "",
+      content_type: item.content_type || "link",
     });
     setDialogOpen(true);
   };
