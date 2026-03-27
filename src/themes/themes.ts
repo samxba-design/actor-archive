@@ -933,7 +933,7 @@ const neonNoir: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'neon-border',
   ctaRadius: '4px',
-  heroHeight: '85vh',
+  heroHeight: '70vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(0, 229, 255, 0.3)',
