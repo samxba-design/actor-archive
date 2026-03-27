@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import { useInView } from "@/hooks/useInView";
 
 interface Props {
   title: string;
@@ -12,19 +13,9 @@ const PortfolioSectionWrapper = React.forwardRef<HTMLElement, Props>(
     const theme = usePortfolioTheme();
     const internalRef = useRef<HTMLElement>(null);
     const ref = (forwardedRef as React.RefObject<HTMLElement>) || internalRef;
-    const [inView, setInView] = useState(false);
+    const { ref: inViewRef, inView } = useInView({ threshold: 0.06 });
 
-    useEffect(() => {
-      const el = (ref as React.RefObject<HTMLElement>).current;
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.unobserve(el); } },
-        { threshold: 0.06 }
-      );
-      observer.observe(el);
-      return () => observer.disconnect();
-    }, []);
-
+    // Merge inViewRef (HTMLDivElement) with our section ref via a sentinel div
     const showNumber = index >= 0 && theme.sectionNumberStyle !== 'hidden';
     const num = String(index + 1).padStart(2, "0");
 
@@ -33,12 +24,15 @@ const PortfolioSectionWrapper = React.forwardRef<HTMLElement, Props>(
         ref={ref as React.Ref<HTMLElement>}
         style={{
           opacity: inView ? 1 : 0,
-          transform: inView ? "translateY(0)" : `translateY(${theme.scrollAnimationDistance})`,
-          transition: `opacity ${theme.scrollAnimationDuration} ease-out ${Math.max(0, index) * 0.08}s, transform ${theme.scrollAnimationDuration} ease-out ${Math.max(0, index) * 0.08}s`,
+          transform: inView ? "translateY(0)" : `translateY(${theme.scrollAnimationDistance ?? "24px"})`,
+          transition: `opacity ${theme.scrollAnimationDuration ?? "0.6s"} ease-out ${Math.max(0, index) * 0.08}s, transform ${theme.scrollAnimationDuration ?? "0.6s"} ease-out ${Math.max(0, index) * 0.08}s`,
         }}
       >
+        {/* Sentinel div for IntersectionObserver via useInView */}
+        <div ref={inViewRef} aria-hidden="true" style={{ position: 'absolute', pointerEvents: 'none' }} />
+
         {/* Heading */}
-        <div className="flex items-baseline gap-2.5 mb-2">
+        <div className="flex items-baseline gap-2.5 mb-2" style={{ position: 'relative' }}>
           {showNumber && (
             <span
               className="text-[11px] tracking-widest font-mono"

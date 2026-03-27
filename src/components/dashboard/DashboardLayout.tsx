@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import GettingStartedGuide from "./GettingStartedGuide";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
@@ -15,6 +15,18 @@ function DashboardLayoutInner() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const shortcuts = useKeyboardShortcuts(true);
   const { slug } = useProfileTypeContext();
+  const location = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+  const location = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [location.pathname]);
 
   // Add ? shortcut to show help
   useEffect(() => {

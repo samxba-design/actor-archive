@@ -68,6 +68,7 @@ const SettingsPage = () => {
   const [profileType, setProfileType] = useState<string | null>(null);
   const [secondaryTypes, setSecondaryTypes] = useState<string[]>([]);
   const [heroStyle, setHeroStyle] = useState<string>("full");
+  const [heroRightContent, setHeroRightContent] = useState<string>("featured");
   const [headshotStyle, setHeadshotStyle] = useState<string>("circle");
   const [knownForPosition, setKnownForPosition] = useState<KnownForPosition>("hero_above_name");
   const [ctaStyle, setCtaStyle] = useState<string>("outlined");
@@ -116,7 +117,7 @@ const SettingsPage = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation, ga_measurement_id")
+      .select("slug, theme, accent_color, is_published, show_contact_form, available_for_hire, seeking_representation, cta_label, cta_url, cta_type, booking_url, section_order, sections_visible, profile_type, secondary_types, auto_responder_enabled, auto_responder_message, font_pairing, layout_density, layout_preset, custom_css, seo_indexable, contact_mode, hero_style, known_for_position, headshot_style, cta_style, client_logos_position, professional_status, status_badge_color, status_badge_animation, ga_measurement_id, hero_right_content")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
@@ -126,6 +127,7 @@ const SettingsPage = () => {
           setProfileType(pt);
           setSecondaryTypes(st);
           setHeroStyle((data as any).hero_style || "full");
+          setHeroRightContent((data as any).hero_right_content || "featured");
           setHeadshotStyle((data as any).headshot_style || "circle");
           setKnownForPosition(((data as any).known_for_position as KnownForPosition) || "hero_above_name");
           setCtaStyle((data as any).cta_style || "outlined");
@@ -234,6 +236,7 @@ const SettingsPage = () => {
       known_for_position: knownForPosition || "hero_above_name", cta_style: ctaStyle || null,
       client_logos_position: clientLogosPosition || "body_section", professional_status: professionalStatus || null,
       status_badge_color: statusBadgeColor || "green", status_badge_animation: statusBadgeAnimation || "pulse",
+      hero_right_content: heroRightContent || "featured",
     } as any).eq("id", user.id);
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
     else { setContextSlug(form.slug || null); toast({ title: "Saved", description: "Settings updated." }); clearDraft(); }

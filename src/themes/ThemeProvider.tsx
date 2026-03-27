@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import type { PortfolioTheme } from "./theme-types";
 import { getPortfolioTheme, getThemeFontFamilies, buildGoogleFontsUrl } from "./themes";
 import { getFontPairing, getFontGoogleUrl } from "@/lib/fontPairings";
@@ -139,4 +139,15 @@ export function PortfolioThemeProvider({
 
 export function usePortfolioTheme() {
   return useContext(ThemeContext);
+}
+
+export function adjustColor(color: string, percent: number): string {
+  const cleaned = color.replace('#', '');
+  if (cleaned.length !== 6) return color;
+  const num = parseInt(cleaned, 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+  const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+  const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+  return '#' + [R, G, B].map(v => v.toString(16).padStart(2, '0')).join('');
 }

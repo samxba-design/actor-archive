@@ -387,7 +387,7 @@ const ProfileEditor = () => {
               </p>
               <div className="flex items-center gap-2">
                 <label className="cursor-pointer">
-                  <Input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoUpload(e, "headshots", "profile_photo_url")} />
+                  <Input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoUpload(e, "headshot")} />
                   <span className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer">
                     {form.profile_photo_url ? "Replace Photo" : "Upload Photo"}
                   </span>
@@ -543,6 +543,15 @@ const ProfileEditor = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ImageCropper
+        open={cropOpen}
+        onOpenChange={setCropOpen}
+        imageUrl={cropImage}
+        aspectRatio={cropType === "headshot" ? 1 : 16 / 9}
+        aspectLabel={cropType === "headshot" ? "Square (1:1) — best for headshots" : "Banner (16:9) — best for hero backgrounds"}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 };

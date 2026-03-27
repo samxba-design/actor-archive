@@ -2,7 +2,7 @@ import {
   Home, User, FolderOpen, Image, BarChart3, Settings, Eye, LogOut, Link2, Inbox,
   Briefcase, Trophy, GraduationCap, CalendarDays, Newspaper, Quote, Zap, Users, Lightbulb,
   FileText, Sparkles, PenTool, Heart, Compass, GitBranch, Bell, Share2, Crown, Building2, Shield,
-  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown,
+  Tv, Theater, BookOpen, Type, Clapperboard, Film, Video, Layers, ChevronRight, ChevronDown, Copy, Check,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate, Link } from "react-router-dom";
@@ -107,6 +107,7 @@ export function DashboardSidebar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileData, setProfileData] = useState<{ display_name: string | null; profile_photo_url: string | null } | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Collapsible group state — auto-open groups that have populated items
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
@@ -388,6 +389,27 @@ export function DashboardSidebar() {
             </span>
           </div>
         )}
+        {slug && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            onClick={() => {
+              const url = `${window.location.origin}/p/${slug}`;
+              navigator.clipboard.writeText(url).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              });
+            }}
+          >
+            {copied ? (
+              <Check className="mr-2 h-4 w-4 shrink-0 text-green-500" />
+            ) : (
+              <Copy className="mr-2 h-4 w-4 shrink-0" />
+            )}
+            {!collapsed && <span>{copied ? "Copied!" : "Copy portfolio link"}</span>}
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
@@ -396,8 +418,7 @@ export function DashboardSidebar() {
         >
           <LogOut className="mr-2 h-4 w-4 shrink-0" />
           {!collapsed && <span>Sign Out</span>}
-        </Button>
-      </SidebarFooter>
+        </Button>      </SidebarFooter>
     </Sidebar>
   );
 }
