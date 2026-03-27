@@ -135,7 +135,7 @@ const SettingsPage = () => {
     custom_css: "",
     seo_indexable: false,
     ga_measurement_id: "",
-    is_featured: false,
+    
   });
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
