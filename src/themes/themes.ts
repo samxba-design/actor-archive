@@ -765,7 +765,7 @@ const sageStudio: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'filled-subtle',
   ctaRadius: '6px',
-  heroHeight: '78vh',
+  heroHeight: '65vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '115px',
   profilePhotoBorder: '2px solid rgba(74, 122, 90, 0.2)',
