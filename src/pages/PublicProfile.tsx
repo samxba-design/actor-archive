@@ -72,7 +72,7 @@ interface ProfileData {
   client_logos_position?: string | null;
   headshot_style?: string | null;
   ga_measurement_id?: string | null;
-  hero_right_content?: string | null;
+  
 }
 
 const DEFAULT_SECTION_ORDER = [
