@@ -261,7 +261,7 @@ const noirClassic: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'text-link',
   ctaRadius: '0px',
-  heroHeight: '90vh',
+  heroHeight: '75vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(196, 30, 30, 0.3)',
