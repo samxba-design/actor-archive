@@ -61,7 +61,7 @@ const HeroBackgroundEditor = ({ userId, heroStyle, heroBackgroundPreset, bannerU
       return;
     }
     const { data: urlData } = supabase.storage.from("banners").getPublicUrl(path);
-    onUpdate({ banner_url: urlData.publicUrl, hero_style: "full", hero_background_preset: "", hero_bg_type: "preset" });
+    onUpdate({ banner_url: urlData.publicUrl, hero_style: "classic", hero_background_preset: "", hero_bg_type: "preset" });
     setUploading(false);
     toast({ title: "Uploaded", description: "Banner image set." });
   };
