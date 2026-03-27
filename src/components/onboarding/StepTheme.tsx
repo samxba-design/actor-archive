@@ -1,6 +1,6 @@
 import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Star } from "lucide-react";
 import { getProfileTypeConfig } from "@/config/profileSections";
 import { portfolioThemes, portfolioThemeList, resolveThemeId } from "@/themes/themes";
 import type { PortfolioTheme } from "@/themes/theme-types";
@@ -20,62 +20,126 @@ const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const suggestedLabel = portfolioThemes[suggestedTheme]?.name || suggestedTheme;
 
   return (
-    <div className="w-full max-w-4xl space-y-8 animate-in fade-in duration-500">
+    <div className="w-full max-w-5xl space-y-8 animate-in fade-in duration-500">
       <div className="text-center space-y-3">
         <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
           Step {stepMeta.stepNumber} of {stepMeta.totalSteps}
         </p>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Choose your look</h1>
-        <p className="text-muted-foreground">
-          You can customise colours, fonts, and layout later.
-          {suggestedTheme && (
-            <span className="block mt-1">
-              We recommend <button onClick={() => updateData({ theme: suggestedTheme })} className="font-medium text-foreground underline underline-offset-2">{suggestedLabel}</button> for your profile type.
-            </span>
-          )}
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Choose your visual style</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Pick a theme that matches your brand. You can change it anytime later, and customize colors, fonts, and layouts.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* Recommended badge */}
+      {suggestedTheme && (
+        <div className="bg-primary/10 border border-primary/30 rounded-xl p-4 text-center">
+          <p className="text-sm">
+            <Star className="w-4 h-4 inline mr-2 text-primary" />
+            <strong>Recommended for {data.profileType}:</strong>{" "}
+            <button
+              onClick={() => updateData({ theme: suggestedTheme })}
+              className="font-semibold text-primary hover:underline"
+            >
+              {suggestedLabel}
+            </button>
+          </p>
+        </div>
+      )}
+
+      {/* Theme grid with browser-frame previews */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {portfolioThemeList.map((theme, idx) => {
           const isSelected = data.theme === theme.id;
-          const colors = theme.previewColors || [theme.bgPrimary, theme.textPrimary, theme.accentPrimary, theme.bgSecondary, theme.textSecondary];
+          const isRecommended = theme.id === suggestedTheme;
 
           return (
             <button
               key={theme.id}
               onClick={() => updateData({ theme: theme.id })}
-              className={`relative group text-left rounded-lg border-2 overflow-hidden transition-all duration-300 ${
-                isSelected ? "border-primary shadow-md scale-[1.02]" : "border-border hover:border-primary/40"
+              className={`relative group text-left rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+                isSelected
+                  ? "border-primary shadow-lg scale-105 ring-2 ring-primary/30"
+                  : isRecommended
+                  ? "border-primary/40 hover:border-primary/60 shadow-md"
+                  : "border-border hover:border-primary/40"
               }`}
               style={{
                 animationName: "fade-in",
                 animationDuration: "0.4s",
                 animationTimingFunction: "ease-out",
                 animationFillMode: "backwards",
-                animationDelay: `${idx * 50}ms`,
+                animationDelay: `${idx * 30}ms`,
               }}
             >
-              {isSelected && (
-                <div className="absolute top-2 right-2 z-10 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                  <Check className="w-3 h-3 text-primary-foreground" />
+              {/* Browser chrome */}
+              <div className="flex flex-col h-full bg-card">
+                {/* Browser header */}
+                <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50 bg-muted/30">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 rounded-full bg-red-400/70" />
+                    <div className="w-2 h-2 rounded-full bg-yellow-400/70" />
+                    <div className="w-2 h-2 rounded-full bg-green-400/70" />
+                  </div>
+                  <div className="flex-1 h-1 bg-border/50 rounded" />
                 </div>
-              )}
-              {/* Color preview */}
-              <div className="p-4 h-[80px] flex flex-col justify-between" style={{ backgroundColor: colors[0] || '#0D0D0D' }}>
-                <div className="flex items-center gap-1.5">
-                  {colors.map((c, i) => (
-                    <div key={i} className="w-4 h-4 rounded-full border border-white/10" style={{ backgroundColor: c }} />
-                  ))}
+
+                {/* Portfolio preview */}
+                <div
+                  className="flex-1 p-3 flex flex-col items-center justify-center relative min-h-[140px]"
+                  style={{ backgroundColor: theme.bgPrimary }}
+                >
+                  {/* Fake hero section */}
+                  <div
+                    className="w-full h-12 rounded-lg mb-2 flex items-center justify-center gap-2 relative overflow-hidden"
+                    style={{ backgroundColor: `${theme.accentPrimary}20`, border: `1px solid ${theme.accentPrimary}40` }}
+                  >
+                    <div
+                      className="w-8 h-8 rounded-full"
+                      style={{ backgroundColor: theme.accentPrimary, opacity: 0.7 }}
+                    />
+                    <div className="flex flex-col gap-1 flex-1">
+                      <div className="h-1.5 rounded w-12" style={{ backgroundColor: theme.textPrimary, opacity: 0.8 }} />
+                      <div className="h-1 rounded w-8" style={{ backgroundColor: theme.textSecondary, opacity: 0.5 }} />
+                    </div>
+                  </div>
+
+                  {/* Fake section */}
+                  <div className="w-full space-y-1.5">
+                    <div className="h-1 rounded w-16" style={{ backgroundColor: theme.textPrimary }} />
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[1, 2].map((i) => (
+                        <div
+                          key={i}
+                          className="h-6 rounded"
+                          style={{ backgroundColor: `${theme.accentPrimary}30` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Theme info overlay */}
+                  {isSelected && (
+                    <div className="absolute inset-0 bg-primary/10 backdrop-blur-sm flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                        <Check className="w-5 h-5 text-primary-foreground" />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <div className="h-1.5 w-16 rounded-full" style={{ backgroundColor: colors[1] || '#fff', opacity: 0.8 }} />
-                  <div className="h-1 w-10 rounded-full mt-1" style={{ backgroundColor: colors[4] || colors[1] || '#aaa', opacity: 0.4 }} />
+
+                {/* Theme name and description */}
+                <div className="p-3 bg-muted/50 border-t border-border/50">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-foreground text-sm leading-tight">{theme.name}</h3>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{theme.description}</p>
+                    </div>
+                    {isRecommended && (
+                      <Star className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="p-3 bg-card">
-                <h3 className="font-semibold text-foreground text-xs">{theme.name}</h3>
-                <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{theme.description}</p>
               </div>
             </button>
           );
@@ -87,7 +151,9 @@ const StepTheme = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
           <ArrowLeft className="w-4 h-4 mr-2" /> Back
         </Button>
         <div className="flex gap-2">
-          <Button variant="ghost" onClick={onNext}>Skip for now</Button>
+          <Button variant="ghost" onClick={onNext}>
+            Skip for now
+          </Button>
           <Button onClick={onNext} className="min-w-[120px]">
             Continue
           </Button>
