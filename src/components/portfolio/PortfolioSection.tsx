@@ -288,6 +288,15 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
           rows = data || [];
           break;
         }
+        case "collections": {
+          const [{ data: colData }, { data: pwData }] = await Promise.all([
+            supabase.from("work_collections").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+            supabase.from("published_works").select("*").eq("profile_id", profileId).order("display_order", orderOpts),
+          ]);
+          rows = pwData || [];
+          setSingleData(colData || []);
+          break;
+        }
         default:
           break;
       }
