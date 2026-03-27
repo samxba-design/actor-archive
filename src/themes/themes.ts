@@ -317,7 +317,7 @@ const midnightGlass: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '8px',
-  heroHeight: '85vh',
+  heroHeight: '70vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(107, 159, 212, 0.25)',
