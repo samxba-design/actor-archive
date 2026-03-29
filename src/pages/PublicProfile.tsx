@@ -106,7 +106,6 @@ const PublicProfile = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
   const [knownFor, setKnownFor] = useState<KnownForItem[]>([]);
   const [exportData, setExportData] = useState<{
     projects: { title: string; project_type: string; role_name?: string | null; year?: number | null }[];

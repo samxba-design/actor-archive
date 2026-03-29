@@ -932,12 +932,12 @@ const SettingsPage = () => {
                   <div className="space-y-0.5">
                     <Label className="flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> Feature in CreativeSlate Discovery</Label>
                     <p className="text-xs text-muted-foreground">
-                      {form.is_featured
+                      {form.seo_indexable
                         ? "Your portfolio may appear in the public discovery feed"
                         : "Your portfolio is private — only accessible via direct link"}
                     </p>
                   </div>
-                  <Switch checked={form.is_featured} onCheckedChange={(v) => setForm((f) => ({ ...f, is_featured: v }))} />
+                  <Switch checked={form.seo_indexable} onCheckedChange={(v) => setForm((f) => ({ ...f, seo_indexable: v }))} />
                 </div>
               </CardContent>
             )}

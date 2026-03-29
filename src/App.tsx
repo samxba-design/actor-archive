@@ -29,8 +29,6 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Explore = lazy(() => import("./pages/Explore"));
 const TestimonialRequest = lazy(() => import("./pages/TestimonialRequest"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-const Explore = lazy(() => import("./pages/Explore"));
-const TestimonialRequest = lazy(() => import("./pages/TestimonialRequest"));
 
 /* ── Admin lazy-loaded routes ── */
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));

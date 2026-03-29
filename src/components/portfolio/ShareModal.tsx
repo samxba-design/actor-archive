@@ -52,7 +52,7 @@ const ShareModal = ({ url, name, open, onClose }: ShareModalProps) => {
 
   const inputStyle: React.CSSProperties = {
     background: theme.bgSecondary || theme.bgPrimary,
-    border: `1px solid ${theme.borderPrimary}`,
+    border: `1px solid ${theme.borderDefault}`,
     color: theme.textPrimary,
     borderRadius: "0.5rem",
     padding: "0.5rem 0.75rem",
@@ -80,7 +80,7 @@ const ShareModal = ({ url, name, open, onClose }: ShareModalProps) => {
       <DialogContent
         style={{
           background: theme.bgPrimary,
-          border: `1px solid ${theme.borderPrimary}`,
+          border: `1px solid ${theme.borderDefault}`,
           color: theme.textPrimary,
         }}
       >
@@ -142,7 +142,7 @@ const ShareModal = ({ url, name, open, onClose }: ShareModalProps) => {
                 src={qrUrl}
                 alt={`QR code for ${name}'s portfolio`}
                 className="w-32 h-32 rounded-lg"
-                style={{ border: `1px solid ${theme.borderPrimary}` }}
+                style={{ border: `1px solid ${theme.borderDefault}` }}
               />
               <div className="flex flex-col gap-2 pt-1">
                 <p className="text-sm" style={{ color: theme.textSecondary }}>
