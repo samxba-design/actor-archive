@@ -1,5 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useEditMode } from "./EditModeProvider";
+import { Film, Video, Camera, FolderOpen, Star, BookOpen, Newspaper, FileText, Users, Briefcase, PenTool, MessageSquare, Award, Link2 } from "lucide-react";
 
 // All project columns EXCEPT password_hash (security: never expose to public)
 const SAFE_PROJECT_COLS = "id,profile_id,title,project_type,description,logline,genre,format,status,year,display_order,is_featured,is_notable,poster_url,backdrop_url,custom_image_url,thumbnail_url,video_url,video_type,video_thumbnail_url,role_name,role_type,director,notable_cast,network_or_studio,production_company,runtime_minutes,synopsis,network,show_role,credit_medium,cast_size_notation,duration,set_requirements,rights_status,publisher,isbn,publication,article_url,beat,client,challenge,solution,results,writing_samples_category,tags,page_count,access_level,project_slug,imdb_link,season_number,episode_count,coverage_excerpt,script_pdf_url,series_bible_url,nda_url,comparable_titles,metric_callouts,purchase_links,chapters,created_at,updated_at,tmdb_id";
@@ -93,12 +95,66 @@ function getContextualLabel(sectionKey: string, profileType: string | null): str
   return defaultSectionLabels[sectionKey] || sectionKey;
 }
 
+// ─── Empty state config per section ──────────────────────────────────────────
+
+interface EmptyStateCfg {
+  icon: React.ElementType;
+  text: string;
+  cta: string;
+  route: string;
+}
+
+const SECTION_EMPTY_STATES: Record<string, EmptyStateCfg> = {
+  credits: { icon: Film, text: "No credits yet — add your first role", cta: "Add Credits", route: "/dashboard/projects" },
+  demo_reels: { icon: Video, text: "No demo reels — upload your showreel", cta: "Add Demo Reel", route: "/dashboard/projects" },
+  gallery: { icon: Camera, text: "No photos yet — add to your gallery", cta: "Add Photos", route: "/dashboard/gallery" },
+  projects: { icon: FolderOpen, text: "No projects yet — showcase your work", cta: "Add Project", route: "/dashboard/projects" },
+  awards: { icon: Award, text: "No awards yet — add your accolades", cta: "Add Awards", route: "/dashboard/awards" },
+  testimonials: { icon: MessageSquare, text: "No testimonials yet — collect social proof", cta: "Add Testimonial", route: "/dashboard/testimonials" },
+  services: { icon: Briefcase, text: "No services listed — show what you offer", cta: "Add Services", route: "/dashboard/services" },
+  skills: { icon: Star, text: "No skills listed — highlight your expertise", cta: "Add Skills", route: "/dashboard/skills" },
+  press: { icon: Newspaper, text: "No press coverage yet — add articles and reviews", cta: "Add Press", route: "/dashboard/press" },
+  education: { icon: BookOpen, text: "No education listed — add your training", cta: "Add Education", route: "/dashboard/education" },
+  training: { icon: BookOpen, text: "No training listed — add your education", cta: "Add Training", route: "/dashboard/education" },
+  representation: { icon: Users, text: "No representation listed — add your agent or manager", cta: "Add Representation", route: "/dashboard/representation" },
+  script_library: { icon: FileText, text: "No scripts yet — add your screenplays", cta: "Add Scripts", route: "/dashboard/scripts" },
+  case_studies: { icon: PenTool, text: "No case studies yet — document your best work", cta: "Add Case Study", route: "/dashboard/case-study" },
+  social_links: { icon: Link2, text: "No social links yet — connect your profiles", cta: "Add Links", route: "/dashboard/social" },
+};
+
+interface EmptyStateProps {
+  cfg: EmptyStateCfg;
+  label: string;
+}
+
+const SectionEmptyState = ({ cfg, label }: EmptyStateProps) => {
+  const Icon = cfg.icon;
+  const handleNavigate = () => { window.location.href = cfg.route; };
+  return (
+    <div className="flex flex-col items-center justify-center py-10 px-6 rounded-xl border-2 border-dashed text-center gap-3"
+      style={{ borderColor: "hsl(var(--portfolio-accent) / 0.25)", backgroundColor: "hsl(var(--portfolio-accent) / 0.04)" }}>
+      <div className="rounded-full p-3" style={{ backgroundColor: "hsl(var(--portfolio-accent) / 0.1)" }}>
+        <Icon className="h-7 w-7" style={{ color: "hsl(var(--portfolio-accent))" }} />
+      </div>
+      <p className="text-sm font-medium" style={{ color: "hsl(var(--portfolio-fg) / 0.7)" }}>{cfg.text}</p>
+      <button
+        onClick={handleNavigate}
+        className="mt-1 px-4 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90 active:scale-95"
+        style={{ backgroundColor: "hsl(var(--portfolio-accent))", color: "hsl(var(--portfolio-bg))" }}
+      >
+        {cfg.cta}
+      </button>
+    </div>
+  );
+};
+
 const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sectionIndex, bio }: Props) => {
   const [data, setData] = useState<any[]>([]);
   const [singleData, setSingleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [inView, setInView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const { isOwner, editMode } = useEditMode();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -395,7 +451,38 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
     );
   }
 
-  if (data.length === 0 && sectionKey !== "contact") return null;
+  if (data.length === 0 && sectionKey !== "contact") {
+    // If owner is in edit mode and we have an empty state config for this section, show it
+    if (isOwner && editMode && SECTION_EMPTY_STATES[sectionKey]) {
+      const cfg = SECTION_EMPTY_STATES[sectionKey];
+      const label = getContextualLabel(sectionKey, profileType);
+      const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
+      return (
+        <section
+          ref={sectionRef}
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0)" : "translateY(24px)",
+            transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+          }}
+        >
+          <div className="flex items-baseline gap-3 mb-2">
+            {indexNum && (
+              <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
+                {indexNum}
+              </span>
+            )}
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
+              {label}
+            </h2>
+          </div>
+          <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+          <SectionEmptyState cfg={cfg} label={label} />
+        </section>
+      );
+    }
+    return null;
+  }
 
   const label = getContextualLabel(sectionKey, profileType);
   const indexNum = sectionIndex !== undefined ? String(sectionIndex + 1).padStart(2, "0") : null;
@@ -403,11 +490,11 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
   const renderSection = () => {
     switch (sectionKey) {
       case "projects":
-        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} />;
+        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isOwner={isOwner} />;
       case "credits":
-        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isCredits />;
+        return <SectionProjects items={data} profileType={profileType} profileSlug={profileSlug} isCredits isOwner={isOwner} />;
       case "gallery":
-        return <SectionGallery items={data} />;
+        return <SectionGallery items={data} isOwner={isOwner} />;
       case "awards":
       case "achievements":
         return <SectionAwards items={data} />;
@@ -427,7 +514,7 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       case "representation":
         return <SectionRepresentation items={data} />;
       case "demo_reels":
-        return <SectionDemoReels items={data} />;
+        return <SectionDemoReels items={data} isOwner={isOwner} />;
       case "logline_showcase":
         return <SectionLoglineShowcase items={data} />;
       case "script_library":
