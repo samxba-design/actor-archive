@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe, Check, AlertCircle, CheckCircle2, Crop } from "lucide-react";
+import { Loader2, Save, Wand2, ChevronDown, ChevronUp, ExternalLink, Trash2, User, FileUp, Globe, Check, AlertCircle, CheckCircle2, Crop, CheckCheck } from "lucide-react";
 import { ResumeImporter } from "@/components/dashboard/ResumeImporter";
 import { URLImporter } from "@/components/dashboard/URLImporter";
 import { GlossaryTooltip } from "@/components/ui/glossary-tooltip";
@@ -53,6 +53,7 @@ const ProfileEditor = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const [savedFading, setSavedFading] = useState(false);
   const [bioExpanded, setBioExpanded] = useState(false);
   const [generatingBio, setGeneratingBio] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
@@ -64,6 +65,7 @@ const ProfileEditor = () => {
   const [cropType, setCropType] = useState<"headshot" | "banner">("headshot");
   const slugTimeout = useRef<ReturnType<typeof setTimeout>>();
   const autoSaveTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const savedFadeTimeout = useRef<ReturnType<typeof setTimeout>>();
   const initialLoad = useRef(true);
   const [loadedForm, setLoadedForm] = useState<ProfileForm | null>(null);
   const [form, setForm] = useState<ProfileForm>({
@@ -127,15 +129,19 @@ const ProfileEditor = () => {
       });
   }, [user]);
 
-  // Auto-save with 2s debounce
-  useEffect(() => {
-    if (initialLoad.current || !isDirty || loading) return;
+  // Auto-save with 2s debounce (useCallback + useRef pattern)
+  const triggerAutoSave = useCallback(() => {
     if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current);
     autoSaveTimeout.current = setTimeout(() => {
       handleSave(true);
     }, 2000);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (initialLoad.current || !isDirty || loading) return;
+    triggerAutoSave();
     return () => { if (autoSaveTimeout.current) clearTimeout(autoSaveTimeout.current); };
-  }, [form]);
+  }, [form]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Slug live availability check
   const checkSlugAvailability = useCallback((slug: string) => {
@@ -189,9 +195,15 @@ const ProfileEditor = () => {
       if (!isAutoSave) toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       setSaveStatus("saved");
+      setSavedFading(false);
       setLoadedForm({ ...form });
       clearDraft();
-      setTimeout(() => setSaveStatus("idle"), 3000);
+      // Fade out the "Saved ✓" indicator after 3 seconds
+      if (savedFadeTimeout.current) clearTimeout(savedFadeTimeout.current);
+      savedFadeTimeout.current = setTimeout(() => {
+        setSavedFading(true);
+        setTimeout(() => setSaveStatus("idle"), 500);
+      }, 3000);
     }
   };
 
@@ -309,12 +321,16 @@ const ProfileEditor = () => {
   };
 
   const saveStatusLabel = saveStatus === "saving" ? "Saving…" :
-    saveStatus === "saved" ? "Saved" :
-    saveStatus === "error" ? "Error" : null;
+    saveStatus === "saved" ? "Saved ✓" :
+    saveStatus === "error" ? "Save failed" : null;
 
   const SaveStatusIcon = saveStatus === "saving" ? Loader2 :
-    saveStatus === "saved" ? Check :
+    saveStatus === "saved" ? CheckCheck :
     saveStatus === "error" ? AlertCircle : null;
+
+  const saveStatusClass = saveStatus === "saving" ? "text-muted-foreground" :
+    saveStatus === "saved" ? `text-green-600 transition-opacity duration-500 ${savedFading ? "opacity-0" : "opacity-100"}` :
+    saveStatus === "error" ? "text-destructive" : "";
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -333,7 +349,7 @@ const ProfileEditor = () => {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {saveStatusLabel && (
-            <span className={`flex items-center gap-1 text-xs ${saveStatus === "error" ? "text-destructive" : "text-muted-foreground"}`}>
+            <span className={`flex items-center gap-1 text-xs ${saveStatusClass}`}>
               {SaveStatusIcon && <SaveStatusIcon className={`h-3 w-3 ${saveStatus === "saving" ? "animate-spin" : ""}`} />}
               {saveStatusLabel}
             </span>
