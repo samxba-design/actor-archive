@@ -25,18 +25,22 @@ const CreditRow = ({ project }: { project: any }) => {
   const theme = usePortfolioTheme();
   const image = project.poster_url || project.custom_image_url || project.backdrop_url;
   const Icon = typeIcons[project.project_type] || FileText;
+  const typeLabel = project.project_type?.replace(/_/g, " ") ?? "";
 
-  return (
+  const inner = (
     <div
-      className="flex items-center gap-3 px-3 py-2.5 transition-all group"
+      className="group flex items-center gap-3 px-3 py-2.5 transition-all rounded-sm cursor-pointer"
       style={{
-        borderLeft: project.is_featured ? `2px solid ${theme.accentPrimary}` : '2px solid transparent',
+        borderLeft: project.is_featured ? `2px solid ${theme.accentPrimary}` : `2px solid transparent`,
       }}
-      onMouseEnter={e => (e.currentTarget.style.backgroundColor = `${theme.bgElevated}80`)}
-      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+      onMouseEnter={e => { e.currentTarget.style.backgroundColor = `${theme.bgElevated}80`; }}
+      onMouseLeave={e => { e.currentTarget.style.backgroundColor = "transparent"; }}
     >
       {/* Thumbnail */}
-      <div className="w-10 h-10 rounded shrink-0 overflow-hidden" style={{ backgroundColor: theme.bgElevated }}>
+      <div
+        className="w-10 h-10 rounded shrink-0 overflow-hidden"
+        style={{ backgroundColor: theme.bgElevated }}
+      >
         {image ? (
           <img src={image} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
         ) : (
@@ -48,13 +52,33 @@ const CreditRow = ({ project }: { project: any }) => {
 
       {/* Title + role */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-[13px] font-semibold leading-tight truncate" style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}>
-          {project.title}
-        </h4>
+        <div className="flex items-baseline gap-2">
+          <h4
+            className="text-[13px] font-semibold leading-tight truncate"
+            style={{ fontFamily: theme.fontDisplay, color: theme.textPrimary }}
+          >
+            {project.title}
+          </h4>
+          {typeLabel && (
+            <span
+              className="hidden sm:inline-block text-[9px] uppercase tracking-wider shrink-0"
+              style={{ color: theme.textTertiary }}
+            >
+              {typeLabel}
+            </span>
+          )}
+        </div>
         {project.role_name && (
-          <span className="text-[11px]" style={{ color: theme.accentPrimary }}>
-            {project.role_name}{project.role_type ? ` · ${project.role_type}` : ''}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] font-medium" style={{ color: theme.accentPrimary }}>
+              {project.role_name}
+            </span>
+            {project.role_type && (
+              <span className="text-[9px] uppercase tracking-wider" style={{ color: theme.textTertiary }}>
+                {project.role_type}
+              </span>
+            )}
+          </div>
         )}
       </div>
 
@@ -62,7 +86,10 @@ const CreditRow = ({ project }: { project: any }) => {
       {project.network_or_studio && (
         <div className="hidden sm:flex items-center gap-1.5 shrink-0">
           <CompanyLogo companyName={project.network_or_studio} size={16} grayscale />
-          <span className="text-[10px] font-medium uppercase tracking-wider" style={{ color: theme.textSecondary }}>
+          <span
+            className="text-[10px] font-medium uppercase tracking-wider"
+            style={{ color: theme.textSecondary }}
+          >
             {project.network_or_studio}
           </span>
         </div>
@@ -70,19 +97,35 @@ const CreditRow = ({ project }: { project: any }) => {
 
       {/* Year */}
       {project.year && (
-        <span className="text-[12px] tabular-nums font-medium shrink-0" style={{ color: theme.textTertiary }}>
+        <span
+          className="text-[12px] tabular-nums font-mono shrink-0"
+          style={{ color: theme.textTertiary }}
+        >
           {project.year}
         </span>
       )}
 
-      {/* IMDb */}
+      {/* IMDb link */}
       {project.imdb_link && (
-        <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: theme.accentPrimary }}>
+        <a
+          href={project.imdb_link}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => e.stopPropagation()}
+          className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ color: theme.accentPrimary }}
+        >
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
       )}
     </div>
   );
+
+  return project.imdb_link ? (
+    <a href={project.imdb_link} target="_blank" rel="noopener noreferrer" className="no-underline block">
+      {inner}
+    </a>
+  ) : inner;
 };
 
 /* ── Poster-style credit card (2:3 aspect, text below image) ── */
@@ -311,11 +354,24 @@ const SectionProjects = forwardRef<HTMLDivElement, Props>(({ items, profileType,
   if (effectiveLayout === 'table') {
     return (
       <div ref={ref}>
-        <GlassCard className="divide-y" style={{ borderColor: theme.borderDefault }}>
-          {sorted.map(project => (
-            <CreditRow key={project.id} project={project} />
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            border: `${theme.cardBorderWidth} solid ${theme.borderDefault}`,
+            backgroundColor: theme.glassEnabled ? theme.glassBackground : theme.bgSecondary,
+          }}
+        >
+          {sorted.map((project, i) => (
+            <div
+              key={project.id}
+              style={{
+                borderTop: i > 0 ? `1px solid ${theme.borderDefault}` : undefined,
+              }}
+            >
+              <CreditRow project={project} />
+            </div>
           ))}
-        </GlassCard>
+        </div>
       </div>
     );
   }
