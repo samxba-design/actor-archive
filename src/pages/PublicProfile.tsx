@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { sanitizeCSS } from "@/lib/sanitizeCSS";
 import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -177,98 +178,52 @@ const PublicProfile = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Inject custom CSS if provided and user is Pro (keep this as is)
   useEffect(() => {
     if (!profile) return;
-    const name = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
-    const desc = profile.tagline || profile.bio?.slice(0, 155) || `${name}'s creative portfolio`;
-    document.title = `${name} — Portfolio`;
+    if (profile?.custom_css && profile?.subscription_tier === "pro") {
+      const styleId = `custom-portfolio-css-${profile.id}`;
+      const existing = document.getElementById(styleId);
+      if (existing) existing.remove();
 
-    // Robots meta — noindex by default, indexable only if toggled on
-    let robotsMeta = document.querySelector('meta[name="robots"]');
-    if (!robotsMeta) { robotsMeta = document.createElement("meta"); robotsMeta.setAttribute("name", "robots"); document.head.appendChild(robotsMeta); }
-    robotsMeta.setAttribute("content", profile.seo_indexable ? "index, follow" : "noindex, nofollow");
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = profile.custom_css;
+      document.head.appendChild(style);
 
-    // Canonical URL
-    const canonicalUrl = `${window.location.origin}/p/${profile.slug}`;
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) { canonical = document.createElement("link"); canonical.setAttribute("rel", "canonical"); document.head.appendChild(canonical); }
-    canonical.setAttribute("href", canonicalUrl);
+      return () => {
+        const el = document.getElementById(styleId);
+        if (el) el.remove();
+      };
+    }
+  }, [profile?.custom_css, profile?.subscription_tier, profile?.id]);
 
-    // Meta description
-    let metaDesc = document.querySelector('meta[name="description"]');
-    if (!metaDesc) { metaDesc = document.createElement("meta"); metaDesc.setAttribute("name", "description"); document.head.appendChild(metaDesc); }
-    metaDesc.setAttribute("content", desc);
+  // Google Analytics injection (keep this as is)
+  useEffect(() => {
+    if (!profile?.ga_measurement_id) return;
+    if (!/^G-[A-Z0-9]+$/i.test(profile.ga_measurement_id)) return;
 
-    // OpenGraph tags
-    const ogTags: Record<string, string> = {
-      "og:title": `${name} — Portfolio`,
-      "og:description": desc,
-      "og:type": "profile",
-      "og:url": canonicalUrl,
-    };
-    if (profile.profile_photo_url) ogTags["og:image"] = profile.profile_photo_url;
-    Object.entries(ogTags).forEach(([prop, content]) => {
-      let tag = document.querySelector(`meta[property="${prop}"]`);
-      if (!tag) { tag = document.createElement("meta"); tag.setAttribute("property", prop); document.head.appendChild(tag); }
-      tag.setAttribute("content", content);
-    });
+    const gaId = profile.ga_measurement_id;
+    if (!document.getElementById("ga-script")) {
+      const gaScript = document.createElement("script");
+      gaScript.id = "ga-script";
+      gaScript.async = true;
+      gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+      document.head.appendChild(gaScript);
 
-    // Twitter Card meta
-    const twitterTags: Record<string, string> = {
-      "twitter:card": profile.profile_photo_url ? "summary_large_image" : "summary",
-      "twitter:title": `${name} — Portfolio`,
-      "twitter:description": desc,
-    };
-    if (profile.profile_photo_url) twitterTags["twitter:image"] = profile.profile_photo_url;
-    Object.entries(twitterTags).forEach(([tName, content]) => {
-      let tag = document.querySelector(`meta[name="${tName}"]`);
-      if (!tag) { tag = document.createElement("meta"); tag.setAttribute("name", tName); document.head.appendChild(tag); }
-      tag.setAttribute("content", content);
-    });
-
-    // JSON-LD structured data
-    const jsonLd = {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name,
-      ...(profile.tagline && { description: profile.tagline }),
-      ...(profile.location && { address: { "@type": "PostalAddress", addressLocality: profile.location } }),
-      ...(profile.profile_photo_url && { image: profile.profile_photo_url }),
-      url: canonicalUrl,
-    };
-    let script = document.getElementById("portfolio-jsonld");
-    if (!script) { script = document.createElement("script"); script.id = "portfolio-jsonld"; script.setAttribute("type", "application/ld+json"); document.head.appendChild(script); }
-    script.textContent = JSON.stringify(jsonLd);
-
-    // Google Analytics injection
-    if (profile.ga_measurement_id && /^G-[A-Z0-9]+$/i.test(profile.ga_measurement_id)) {
-      const gaId = profile.ga_measurement_id;
-      if (!document.getElementById("ga-script")) {
-        const gaScript = document.createElement("script");
-        gaScript.id = "ga-script";
-        gaScript.async = true;
-        gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
-        document.head.appendChild(gaScript);
-
-        const gaInit = document.createElement("script");
-        gaInit.id = "ga-init";
-        gaInit.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`;
-        document.head.appendChild(gaInit);
-      }
+      const gaInit = document.createElement("script");
+      gaInit.id = "ga-init";
+      gaInit.textContent = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`;
+      document.head.appendChild(gaInit);
     }
 
     return () => {
-      document.title = "CreativeSlate";
-      const el = document.getElementById("portfolio-jsonld"); if (el) el.remove();
-      const robots = document.querySelector('meta[name="robots"]'); if (robots) robots.remove();
-      const can = document.querySelector('link[rel="canonical"]'); if (can) can.remove();
-      const gaS = document.getElementById("ga-script"); if (gaS) gaS.remove();
-      const gaI = document.getElementById("ga-init"); if (gaI) gaI.remove();
-      ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image'].forEach(n => {
-        const t = document.querySelector(`meta[name="${n}"]`); if (t) t.remove();
-      });
+      const gaS = document.getElementById("ga-script");
+      if (gaS) gaS.remove();
+      const gaI = document.getElementById("ga-init");
+      if (gaI) gaI.remove();
     };
-  }, [profile]);
+  }, [profile?.ga_measurement_id]);
 
   if (loading) {
     return <ProfileSkeleton />;
@@ -311,8 +266,43 @@ const PublicProfile = () => {
 
   const profileUrl = `${window.location.origin}/p/${profile.slug}`;
   const profileName = profile.display_name || [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Portfolio";
+  const profileDesc = profile.tagline || profile.bio?.slice(0, 155) || `${profileName}'s creative portfolio`;
+
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profileName,
+    ...(profile.tagline && { description: profile.tagline }),
+    ...(profile.location && { address: { "@type": "PostalAddress", addressLocality: profile.location } }),
+    ...(profile.profile_photo_url && { image: profile.profile_photo_url }),
+    url: profileUrl,
+  };
 
   return (
+    <>
+      <Helmet>
+        <title>{profileName} — Portfolio</title>
+        <meta name="description" content={profileDesc} />
+        <meta name="robots" content={profile.seo_indexable ? "index, follow" : "noindex, nofollow"} />
+        <link rel="canonical" href={profileUrl} />
+        
+        {/* OpenGraph tags */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:title" content={`${profileName} — Portfolio`} />
+        <meta property="og:description" content={profileDesc} />
+        <meta property="og:url" content={profileUrl} />
+        {profile.profile_photo_url && <meta property="og:image" content={profile.profile_photo_url} />}
+        
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content={profile.profile_photo_url ? "summary_large_image" : "summary"} />
+        <meta name="twitter:title" content={`${profileName} — Portfolio`} />
+        <meta name="twitter:description" content={profileDesc} />
+        {profile.profile_photo_url && <meta name="twitter:image" content={profile.profile_photo_url} />}
+        
+        {/* JSON-LD structured data */}
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      </Helmet>
     <PortfolioThemeProvider themeId={themeId} ctaStyleOverride={profile.cta_style || undefined} accentColorOverride={profile.accent_color || undefined} fontPairingOverride={profile.font_pairing || undefined} className="min-h-screen relative">
       {profile.custom_css && <style dangerouslySetInnerHTML={{ __html: sanitizeCSS(profile.custom_css) }} />}
 
@@ -437,6 +427,7 @@ const PublicProfile = () => {
       )}
       </EditModeProvider>
     </PortfolioThemeProvider>
+    </>
   );
 };
 
