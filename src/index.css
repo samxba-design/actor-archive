@@ -860,3 +860,95 @@ html:not(.portfolio-light-override) .portfolio-light-override {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══ Portfolio global typography & rhythm ═══ */
+
+/* Crisp image rendering for portfolio photos */
+.portfolio-image {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Smooth font rendering across all portfolio surfaces */
+[style*="--portfolio-bg"] *,
+[style*="--portfolio-fg"] * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better default line clamping */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Refined prose styles inside portfolio */
+.portfolio-prose {
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+.portfolio-prose p + p {
+  margin-top: 0.9em;
+}
+.portfolio-prose strong {
+  font-weight: 600;
+}
+
+/* scale-102 utility (used in gallery hover) */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
+/* Thin custom scrollbar for horizontal scroll areas */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 3px;
+  width: 3px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 999px;
+}
+
+/* Smooth section transitions in portfolio sections */
+.portfolio-section-wrapper > section {
+  will-change: opacity, transform;
+}
+
+/* Better text selection color in dark themes */
+[style*="--portfolio-bg: #0"][style*="--portfolio-fg"] ::selection,
+[style*="background: #0"] ::selection {
+  background: rgba(201, 169, 110, 0.35);
+  color: #F5F0EB;
+}
+
+/* Animation for lightbox image */
+@keyframes lightbox-enter {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.lightbox-image-enter {
+  animation: lightbox-enter 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Pill bounce for "Start with this style" button */
+@keyframes pill-bounce-in {
+  0%   { opacity: 0; transform: scale(0.85) translateY(-8px); }
+  60%  { transform: scale(1.04) translateY(1px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.demo-style-banner {
+  animation: pill-bounce-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 1.2s;
+  opacity: 0;
+}

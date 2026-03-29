@@ -46,7 +46,7 @@ const DemoStyleBanner = ({ theme, layoutPreset }: Props) => {
       <button
         onClick={handleClick}
         disabled={clicked}
-        className="pointer-events-auto flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95 disabled:opacity-70"
+        className="pointer-events-auto demo-style-banner flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-xl backdrop-blur-md transition-all hover:scale-105 active:scale-95 disabled:opacity-70"
         style={{
           background: "hsl(var(--portfolio-accent, var(--primary)))",
           color: "hsl(var(--portfolio-bg, var(--background)))",

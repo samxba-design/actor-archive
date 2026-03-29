@@ -20,16 +20,16 @@ type Tab = "sections" | "appearance";
 // ─── Appearance panel (extracted from LiveCustomizePanel) ─────────────────────
 
 const THEME_GROUPS = [
-  { label: "Dark", ids: ["cinematic-dark", "neon-noir", "obsidian-noir", "deep-space", "gothic-editorial"] },
-  { label: "Light", ids: ["modern-minimal", "warm-luxury", "clean-professional", "ivory-editorial"] },
-  { label: "Specialty", ids: ["vintage-film", "brutalist-studio", "electric-noir", "rose-gold-glam", "forest-noir"] },
+  { label: "Dark",     ids: ["cinematic-dark", "charcoal-glass", "neon-noir", "gothic", "midnight-glass", "noir-classic"] },
+  { label: "Light",   ids: ["warm-luxury", "modern-minimal", "frost", "azure-glass", "pearl", "mediterranean"] },
+  { label: "Colour",  ids: ["creative-rose", "ocean-blue", "frontier", "sage-studio", "sunset-warmth", "slate-pro"] },
 ];
 
 const QUICK_PRESETS = [
-  { name: "Film Professional", theme: "cinematic-dark", hero: "classic", layout: "classic" },
-  { name: "Actor Modern", theme: "obsidian-noir", hero: "centered", layout: "magazine" },
-  { name: "Director Cinematic", theme: "neon-noir", hero: "banner", layout: "bento" },
-  { name: "Writer Literary", theme: "warm-luxury", hero: "minimal", layout: "minimal" },
+  { name: "Film Professional",  theme: "cinematic-dark",  hero: "classic",  layout: "classic" },
+  { name: "Actor Modern",       theme: "charcoal-glass",  hero: "centered", layout: "magazine" },
+  { name: "Director Cinematic", theme: "neon-noir",        hero: "banner",   layout: "bento" },
+  { name: "Writer Literary",    theme: "warm-luxury",      hero: "minimal",  layout: "minimal" },
 ];
 
 const HERO_LAYOUTS = ["classic", "centered", "split", "minimal", "banner", "editorial"];

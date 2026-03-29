@@ -1043,6 +1043,17 @@ export const legacyThemeMap: Record<string, string> = {
   warm: 'mediterranean',
   midnight: 'midnight-glass',
   gallery: 'frost',
+  // Missing theme IDs referenced in presets/UI
+  'obsidian-noir': 'charcoal-glass',
+  'ivory-editorial': 'warm-luxury',
+  'deep-space': 'midnight-glass',
+  'clean-professional': 'slate-pro',
+  'gothic-editorial': 'gothic',
+  'vintage-film': 'cinematic-dark',
+  'brutalist-studio': 'modern-minimal',
+  'electric-noir': 'neon-noir',
+  'rose-gold-glam': 'creative-rose',
+  'forest-noir': 'gothic',
 };
 
 export function resolveThemeId(themeKey: string | null | undefined): string {
