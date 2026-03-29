@@ -365,7 +365,7 @@ const PublicProfile = () => {
           />
         </div>
 
-        <EditModeToolbar />
+        <EditModeToolbar profileId={profile.id} />
         <LiveCustomizePanel profileId={profile.id} />
 
       {/* Floating toolbar: dark mode, share, PDF, contact */}
