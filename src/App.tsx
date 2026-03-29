@@ -26,7 +26,11 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Terms = lazy(() => import("./pages/Terms"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const Explore = lazy(() => import("./pages/Explore"));
+const TestimonialRequest = lazy(() => import("./pages/TestimonialRequest"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Explore = lazy(() => import("./pages/Explore"));
+const TestimonialRequest = lazy(() => import("./pages/TestimonialRequest"));
 
 /* ── Admin lazy-loaded routes ── */
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
@@ -106,6 +110,8 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/t/:slug" element={<TestimonialRequest />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

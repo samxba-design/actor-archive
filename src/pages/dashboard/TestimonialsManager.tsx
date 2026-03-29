@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Loader2, Plus, Pencil, Trash2, Quote } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Quote, Copy, Link2 } from "lucide-react";
 import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import { useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import ManagerErrorState from "@/components/dashboard/ManagerErrorState";
@@ -40,6 +40,8 @@ const TestimonialsManager = () => {
   const [editing, setEditing] = useState<Testimonial | null>(null);
   const [form, setForm] = useState({ author_name: "", author_role: "", author_company: "", quote: "", is_featured: false });
   const [saving, setSaving] = useState(false);
+  const [requestSlug, setRequestSlug] = useState<string>("");
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const fetchItems = async () => {
     if (!user) return;
@@ -51,6 +53,18 @@ const TestimonialsManager = () => {
   };
 
   useEffect(() => { fetchItems(); }, [user]);
+
+  // Load slug for request link
+  useEffect(() => {
+    if (!user) return;
+    if (slug) {
+      setRequestSlug(slug);
+      return;
+    }
+    supabase.from("profiles").select("slug").eq("id", user.id).single().then(({ data }) => {
+      if (data?.slug) setRequestSlug(data.slug);
+    });
+  }, [user, slug]);
 
   const openAdd = () => { setEditing(null); setForm({ author_name: "", author_role: "", author_company: "", quote: "", is_featured: false }); setDialogOpen(true); };
   const openEdit = (item: Testimonial) => { setEditing(item); setForm({ author_name: item.author_name, author_role: item.author_role || "", author_company: item.author_company || "", quote: item.quote, is_featured: item.is_featured || false }); setDialogOpen(true); };
@@ -105,6 +119,40 @@ const TestimonialsManager = () => {
         <Button onClick={openAdd}><Plus className="mr-2 h-4 w-4" />Add Testimonial</Button>
       </div>
       <ManagerHelpBanner id="testimonials" title="Quotes show in your Testimonials section" description="Add endorsements from collaborators or clients. You can hide this section in Settings." learnMoreRoute="/dashboard/settings" previewText="Displayed as styled quote cards with author photo, name, and role" demoUrl="/demo/copywriter" portfolioSlug={slug || undefined} />
+
+      {/* Request Testimonials Card */}
+      {requestSlug && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="h-4 w-4" />
+              Request Testimonials
+            </CardTitle>
+            <CardDescription>Share this link with colleagues and collaborators</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <Input
+                readOnly
+                value={`${window.location.origin}/t/${requestSlug}`}
+                className="font-mono text-xs"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/t/${requestSlug}`);
+                  setCopiedLink(true);
+                  toast({ title: "Copied!", description: "Testimonial request link copied to clipboard." });
+                  setTimeout(() => setCopiedLink(false), 2000);
+                }}
+              >
+                {copiedLink ? <span className="text-green-500">✓ Copied</span> : <><Copy className="h-3.5 w-3.5 mr-1.5" />Copy</>}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {items.length === 0 ? (
         <EmptyState icon={Quote} title="No testimonials yet" description="Ask a collaborator or client for a short quote about working with you. Even one testimonial significantly boosts trust." actionLabel="Add Testimonial" onAction={openAdd} profileType={profileType} />
       ) : (

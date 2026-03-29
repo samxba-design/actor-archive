@@ -149,6 +149,10 @@ const SettingsPage = () => {
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [exporting, setExporting] = useState(false);
 
+  const [autoResponderEnabled, setAutoResponderEnabled] = useState(false);
+  const [autoResponderMessage, setAutoResponderMessage] = useState("");
+  const [savingAutoResponder, setSavingAutoResponder] = useState(false);
+
   // IMPORTANT: Call hooks BEFORE any conditional returns
   const { clearDraft } = useFormDraft("settings-page", form, setForm as any);
 
@@ -227,6 +231,8 @@ const SettingsPage = () => {
             ga_measurement_id: (data as any).ga_measurement_id || "",
             
           });
+          setAutoResponderEnabled((data as any).auto_responder_enabled || false);
+          setAutoResponderMessage((data as any).auto_responder_message || "");
         }
         setLoading(false);
       });
@@ -262,6 +268,21 @@ const SettingsPage = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     rebuildSections(newType, []);
     toast({ title: "Profile type updated", description: `Switched to ${PROFILE_TYPES.find(p => p.key === newType)?.label || newType}. Section layout has been reset.` });
+  };
+
+  const saveAutoResponder = async () => {
+    if (!user) return;
+    setSavingAutoResponder(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ auto_responder_enabled: autoResponderEnabled, auto_responder_message: autoResponderMessage } as any)
+      .eq("id", user.id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Saved", description: "Auto-responder settings updated." });
+    }
+    setSavingAutoResponder(false);
   };
 
   const handleSave = async () => {
@@ -532,6 +553,34 @@ const SettingsPage = () => {
                   <Textarea value={form.auto_responder_message} onChange={(e) => setForm((f) => ({ ...f, auto_responder_message: e.target.value }))} rows={3} placeholder="Thanks for reaching out! I'll get back to you within 48 hours." />
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Standalone Auto-Responder Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Auto-Responder</CardTitle>
+              <CardDescription>Automatically reply when someone sends you a message.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Enable auto-reply</Label>
+                <Switch checked={autoResponderEnabled} onCheckedChange={setAutoResponderEnabled} />
+              </div>
+              {autoResponderEnabled && (
+                <div className="space-y-2">
+                  <Label>Reply message</Label>
+                  <Textarea
+                    value={autoResponderMessage}
+                    onChange={e => setAutoResponderMessage(e.target.value)}
+                    placeholder="Thanks for reaching out! I'll get back to you shortly."
+                    rows={3}
+                  />
+                </div>
+              )}
+              <Button onClick={saveAutoResponder} disabled={savingAutoResponder}>
+                {savingAutoResponder ? <Loader2 className="animate-spin h-4 w-4" /> : "Save"}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>

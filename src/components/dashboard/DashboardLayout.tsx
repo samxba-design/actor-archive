@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { ProfileTypeProvider, useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import NotificationBell from "./NotificationBell";
+import CommandPalette from "./CommandPalette";
+import CommandPalette from "./CommandPalette";
 
 function DashboardLayoutInner() {
   const [showShortcuts, setShowShortcuts] = useState(false);
@@ -78,6 +80,10 @@ function DashboardLayoutInner() {
               >
                 <Keyboard className="h-4 w-4" />
               </Button>
+              {/* ⌘K hint */}
+              <span className="hidden lg:inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded border text-muted-foreground/60 border-border/50 select-none cursor-default">
+                <span className="font-mono">⌘K</span>
+              </span>
             </div>
           </header>
           <main className="flex-1 overflow-y-auto p-6">
@@ -87,6 +93,7 @@ function DashboardLayoutInner() {
         </div>
       </div>
       <KeyboardShortcutsHelp open={showShortcuts} onOpenChange={setShowShortcuts} shortcuts={shortcuts} />
+      <CommandPalette />
     </SidebarProvider>
   );
 }

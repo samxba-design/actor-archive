@@ -34,6 +34,9 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
             <Link to="/how-it-works">How It Works</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
+            <Link to="/explore">Explore</Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
             <Link to="/pricing">Pricing</Link>
           </Button>
           <Button variant="ghost" size="sm" asChild className="hover:bg-white/10" style={{ color: "hsl(var(--landing-fg) / 0.7)" }}>
@@ -135,6 +138,9 @@ export default function MarketingNav({ glassMode, onToggleGlass, showGlassToggle
               <div className="flex flex-col gap-4 mt-8">
                 <Link to="/how-it-works" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
                   How It Works
+                </Link>
+                <Link to="/explore" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
+                  Explore
                 </Link>
                 <Link to="/pricing" onClick={() => setOpen(false)} className="text-base font-medium px-2 py-2 rounded-lg transition-colors" style={{ color: "hsl(var(--landing-fg) / 0.8)" }}>
                   Pricing

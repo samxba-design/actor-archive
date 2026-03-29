@@ -15,7 +15,7 @@ import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
 import type { KnownForItem } from "@/components/portfolio/sections/SectionKnownFor";
 import PortfolioSectionWrapper from "@/components/portfolio/PortfolioSectionWrapper";
 import type { KnownForPosition, HeroBgType } from "@/components/portfolio/PortfolioHero";
-import { ArrowUp, MessageSquare, FileDown } from "lucide-react";
+import { ArrowUp, MessageSquare, FileDown, Share2 } from "lucide-react";
 import { trackInteraction } from "@/lib/trackInteraction";
 import ProfileSkeleton from "@/components/portfolio/ProfileSkeleton";
 import SectionClientLogos from "@/components/portfolio/sections/SectionClientLogos";
@@ -24,6 +24,8 @@ import { getTypeAwareLabels } from "@/lib/typeAwareLabels";
 import ShareButtons from "@/components/portfolio/ShareButtons";
 import DarkModeToggle from "@/components/portfolio/DarkModeToggle";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
+import ShareModal from "@/components/portfolio/ShareModal";
+import MobilePortfolioNav from "@/components/portfolio/MobilePortfolioNav";
 
 interface ProfileData {
   id: string;
@@ -103,6 +105,8 @@ const PublicProfile = () => {
   const [notFound, setNotFound] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [knownFor, setKnownFor] = useState<KnownForItem[]>([]);
   const [exportData, setExportData] = useState<{
     projects: { title: string; project_type: string; role_name?: string | null; year?: number | null }[];
@@ -367,11 +371,37 @@ const PublicProfile = () => {
 
         <EditModeToolbar profileId={profile.id} />
         <LiveCustomizePanel profileId={profile.id} />
+        <MobilePortfolioNav sectionOrder={sectionOrder} sectionsVisible={sectionsVisible} />
 
       {/* Floating toolbar: dark mode, share, PDF, contact */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-2">
         <DarkModeToggle />
         <ShareButtons url={profileUrl} title={profileName} description={profile.tagline || undefined} />
+        <button
+          onClick={() => setShareOpen(true)}
+          className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
+          style={{
+            background: "hsl(var(--portfolio-card, var(--card)))",
+            color: "hsl(var(--portfolio-fg, var(--foreground)))",
+            borderColor: "hsl(var(--portfolio-border, var(--border)))",
+          }}
+          aria-label="Share portfolio"
+        >
+          <Share2 className="h-4 w-4" />
+        </button>
+        {/* Share portfolio modal button */}
+        <button
+          onClick={() => setShareOpen(true)}
+          className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
+          title="Share portfolio"
+          style={{
+            background: "hsl(var(--portfolio-card, var(--card)))",
+            borderColor: "hsl(var(--portfolio-border-default, var(--border)))",
+            color: "hsl(var(--portfolio-accent, var(--primary)))",
+          }}
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
         <button
           onClick={() => { setShowPdfExport(true); trackInteraction(profile.id, "cv_downloaded"); }}
           className="rounded-full p-2.5 shadow-lg transition-all hover:scale-105 border"
@@ -425,6 +455,14 @@ const PublicProfile = () => {
           onClose={() => setShowPdfExport(false)}
         />
       )}
+
+      {/* Share Modal */}
+      <ShareModal
+        url={window.location.href}
+        name={profileName}
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+      />
       </EditModeProvider>
     </PortfolioThemeProvider>
     </>
