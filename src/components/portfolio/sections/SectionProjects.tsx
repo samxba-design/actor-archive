@@ -1,5 +1,6 @@
 import { useState, forwardRef } from "react";
 import { Film, Tv, BookOpen, FileText, ExternalLink, Play, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { extractYouTubeId, extractVimeoId } from "@/lib/videoEmbed";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import GlassCard from "@/components/portfolio/GlassCard";
@@ -12,6 +13,7 @@ interface Props {
   isCredits?: boolean;
   layout?: 'poster' | 'table' | 'grid';
   imageAnimation?: string;
+  isOwner?: boolean;
 }
 
 const typeIcons: Record<string, any> = {
@@ -272,12 +274,36 @@ const ProjectCard = ({ project, profileSlug, playingVideo, onPlay, onStop }: { p
   ) : card;
 };
 
-const SectionProjects = forwardRef<HTMLDivElement, Props>(({ items, profileType, profileSlug, isCredits, layout, imageAnimation }, ref) => {
+const SectionProjects = forwardRef<HTMLDivElement, Props>(({ items, profileType, profileSlug, isCredits, layout, imageAnimation, isOwner = false }, ref) => {
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const theme = usePortfolioTheme();
+  const navigate = useNavigate();
   const featured = items.filter(p => p.is_featured);
   const rest = items.filter(p => !p.is_featured);
   const sorted = [...featured, ...rest];
+
+  // Empty state for credits section
+  if (isCredits && sorted.length === 0) {
+    if (!isOwner) return null;
+    return (
+      <div ref={ref} className="flex flex-col items-center justify-center py-12 px-6 rounded-xl bg-muted/40 border border-dashed border-border text-center space-y-3">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <Film className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">No credits yet — add your first role</p>
+          <p className="text-xs text-muted-foreground mt-1">Showcase your film, TV, and theatrical roles.</p>
+        </div>
+        <button
+          onClick={() => navigate("/dashboard/projects")}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Film className="h-3.5 w-3.5" />
+          Add Credits
+        </button>
+      </div>
+    );
+  }
 
   // Determine effective layout
   const effectiveLayout = layout || (isCredits ? 'table' : 'grid');

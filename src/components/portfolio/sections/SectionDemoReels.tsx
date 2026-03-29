@@ -1,7 +1,8 @@
 import { extractYouTubeId, extractVimeoId, isYouTube, isVimeo } from "@/lib/videoEmbed";
 import { useState } from "react";
-import { Play } from "lucide-react";
+import { Play, Video } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import { useNavigate } from "react-router-dom";
 
 interface Chapter {
   time: string;
@@ -11,6 +12,7 @@ interface Chapter {
 interface Props {
   items: any[];
   variant?: 'grid' | 'featured' | 'list';
+  isOwner?: boolean;
 }
 
 const getEmbedUrl = (videoUrl: string) => {
@@ -24,10 +26,32 @@ const getEmbedUrl = (videoUrl: string) => {
   return "";
 };
 
-const SectionDemoReels = ({ items, variant = 'grid' }: Props) => {
+const SectionDemoReels = ({ items, variant = 'grid', isOwner = false }: Props) => {
   const reels = items.filter((p) => p.video_url);
   const theme = usePortfolioTheme();
-  if (reels.length === 0) return null;
+  const navigate = useNavigate();
+
+  if (reels.length === 0) {
+    if (!isOwner) return null;
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-6 rounded-xl bg-muted/40 border border-dashed border-border text-center space-y-3">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <Video className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">No demo reels — upload your showreel</p>
+          <p className="text-xs text-muted-foreground mt-1">Add a video reel so casting directors can see you in action.</p>
+        </div>
+        <button
+          onClick={() => navigate("/dashboard/reels")}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Video className="h-3.5 w-3.5" />
+          Add Demo Reel
+        </button>
+      </div>
+    );
+  }
 
   if (variant === 'featured') return <FeaturedReels reels={reels} theme={theme} />;
   if (variant === 'list') return <ListReels reels={reels} theme={theme} />;

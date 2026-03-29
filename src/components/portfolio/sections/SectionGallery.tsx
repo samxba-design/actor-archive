@@ -1,16 +1,19 @@
 import { useState, useCallback } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   items: any[];
   variant?: 'grid' | 'masonry' | 'carousel';
   imageAnimation?: string;
+  isOwner?: boolean;
 }
 
-const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Props) => {
+const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none', isOwner = false }: Props) => {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
   const theme = usePortfolioTheme();
+  const navigate = useNavigate();
 
   const closeLightbox = useCallback(() => setLightboxIdx(null), []);
   const imgAnimClass = imageAnimation !== 'none' ? `img-anim-${imageAnimation}` : '';
@@ -22,6 +25,28 @@ const SectionGallery = ({ items, variant = 'grid', imageAnimation = 'none' }: Pr
     if (e.key === "ArrowLeft") prev();
     if (e.key === "ArrowRight") next();
   }, [closeLightbox, prev, next]);
+
+  if (items.length === 0) {
+    if (!isOwner) return null;
+    return (
+      <div className="flex flex-col items-center justify-center py-12 px-6 rounded-xl bg-muted/40 border border-dashed border-border text-center space-y-3">
+        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+          <Camera className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">No photos yet — add to your gallery</p>
+          <p className="text-xs text-muted-foreground mt-1">Showcase your headshots, stills, and behind-the-scenes moments.</p>
+        </div>
+        <button
+          onClick={() => navigate("/dashboard/gallery")}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Camera className="h-3.5 w-3.5" />
+          Add Photos
+        </button>
+      </div>
+    );
+  }
 
   const lightbox = lightboxIdx !== null && (
     <div
