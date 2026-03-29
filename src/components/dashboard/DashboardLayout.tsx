@@ -11,7 +11,6 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/comp
 import { ProfileTypeProvider, useProfileTypeContext } from "@/contexts/ProfileTypeContext";
 import NotificationBell from "./NotificationBell";
 import CommandPalette from "./CommandPalette";
-import CommandPalette from "./CommandPalette";
 
 function DashboardLayoutInner() {
   const [showShortcuts, setShowShortcuts] = useState(false);
