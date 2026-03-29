@@ -23,6 +23,7 @@ import { URLImporter } from "@/components/dashboard/URLImporter";
 import { BulkImporter } from "@/components/dashboard/BulkImporter";
 import GettingStartedGuide from "@/components/dashboard/GettingStartedGuide";
 import AvailabilityQuickToggle from "@/components/dashboard/AvailabilityQuickToggle";
+import { getProfileCompletion } from "@/lib/getProfileCompletion";
 
 interface SmartAction {
   label: string;
@@ -94,12 +95,14 @@ const DashboardHome = () => {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [howItWorksDismissed, setHowItWorksDismissed] = useState(() => localStorage.getItem("hiw_dismissed") === "true");
   const [showTour, setShowTour] = useState(false);
+  const [reelCount, setReelCount] = useState(0);
+  const [skillCount, setSkillCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const [profileRes, viewsRes, inboxRes, pipelineRes, projectsRes, testimonialsRes, socialsRes, awardsRes, galleryRes] = await Promise.all([
-        supabase.from("profiles").select("display_name, slug, is_published, profile_type, profile_photo_url, onboarding_completed, bio, tagline").eq("id", user.id).single(),
+      const [profileRes, viewsRes, inboxRes, pipelineRes, projectsRes, testimonialsRes, socialsRes, awardsRes, galleryRes, reelsRes, skillsRes] = await Promise.all([
+        supabase.from("profiles").select("display_name, slug, is_published, profile_type, profile_photo_url, onboarding_completed, bio, tagline, location, contact_email").eq("id", user.id).single(),
         supabase.from("page_views").select("id", { count: "exact", head: true }).eq("profile_id", user.id).gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
         supabase.from("contact_submissions").select("id", { count: "exact", head: true }).eq("profile_id", user.id).eq("is_read", false),
         supabase.from("pipeline_submissions").select("status").eq("profile_id", user.id),
@@ -108,6 +111,8 @@ const DashboardHome = () => {
         supabase.from("social_links").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
         supabase.from("awards").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
         supabase.from("gallery_images").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
+        supabase.from("projects").select("id", { count: "exact", head: true }).eq("profile_id", user.id).not("video_url", "is", null),
+        supabase.from("skills").select("id", { count: "exact", head: true }).eq("profile_id", user.id),
       ]);
 
       setProfile(profileRes.data);
@@ -118,6 +123,8 @@ const DashboardHome = () => {
       setSocialCount(socialsRes.count || 0);
       setAwardCount(awardsRes.count || 0);
       setGalleryCount(galleryRes.count || 0);
+      setReelCount(reelsRes.count || 0);
+      setSkillCount(skillsRes.count || 0);
 
       const counts: Record<string, number> = {};
       (pipelineRes.data || []).forEach((s) => { counts[s.status] = (counts[s.status] || 0) + 1; });
@@ -150,6 +157,32 @@ const DashboardHome = () => {
   const totalPipeline = Object.values(pipelineCounts).reduce((a, b) => a + b, 0);
   const profileType = profile?.profile_type as string | null;
   const profileTypeLabel = PROFILE_TYPES.find(pt => pt.key === profileType)?.label;
+
+  // Profile completion score
+  const completionData = getProfileCompletion({
+    profile_photo_url: profile?.profile_photo_url,
+    bio: profile?.bio,
+    tagline: profile?.tagline,
+    headline: (profile as any)?.headline,
+    location: (profile as any)?.location,
+    reelCount,
+    creditCount: projectCount,
+    contactEmail: (profile as any)?.contact_email,
+    skillCount,
+  });
+  const { score: completionScore, missing: completionMissing } = completionData;
+
+  // Section routes for missing items
+  const missingSectionRoutes: Record<string, string> = {
+    "Profile photo": "/dashboard/profile",
+    "Bio / about text": "/dashboard/profile",
+    "Demo reel": "/dashboard/reels",
+    "Film or TV credit": "/dashboard/projects",
+    "Contact email or info": "/dashboard/settings",
+    "Tagline or headline": "/dashboard/profile",
+    "Skills / special skills": "/dashboard/skills",
+    "Location / city": "/dashboard/profile",
+  };
 
   // Build smart actions based on missing data + profile type
   const smartActions: SmartAction[] = [];
@@ -297,6 +330,50 @@ const DashboardHome = () => {
           </div>
         ))}
       </div>
+
+      {/* Profile Completion Score Widget */}
+      {completionScore < 100 && (
+        <div className="rounded-xl border border-border p-5 bg-card/60 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-base font-semibold text-foreground">Complete your profile</h2>
+            <span className="text-sm font-bold text-primary">{completionScore}%</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${completionScore}%`,
+                background: completionScore >= 80
+                  ? "hsl(142 71% 45%)"
+                  : completionScore >= 50
+                  ? "hsl(48 96% 53%)"
+                  : "hsl(var(--primary))",
+              }}
+            />
+          </div>
+          {completionMissing.length > 0 && (
+            <ul className="space-y-1 pt-1">
+              {completionMissing.slice(0, 5).map((item) => (
+                <li key={item}>
+                  <button
+                    onClick={() => navigate(missingSectionRoutes[item] || "/dashboard/profile")}
+                    className="text-sm text-muted-foreground hover:text-primary hover:underline transition-colors flex items-center gap-1.5"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/50 shrink-0 inline-block" />
+                    {item}
+                    <ArrowRight className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100" />
+                  </button>
+                </li>
+              ))}
+              {completionMissing.length > 5 && (
+                <li className="text-xs text-muted-foreground pl-3">
+                  +{completionMissing.length - 5} more items
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Profile Type Context Banner */}
       {profileTypeLabel && (
