@@ -466,17 +466,17 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
             transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
           }}
         >
-          <div className="flex items-baseline gap-3 mb-2">
+          <div className="flex items-baseline gap-3 mb-3">
             {indexNum && (
-              <span className="text-xs font-mono tracking-widest" style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}>
+              <span className="hidden sm:inline-block text-[10px] font-mono tracking-[0.2em] shrink-0" style={{ color: "hsl(var(--portfolio-accent) / 0.5)" }}>
                 {indexNum}
               </span>
             )}
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}>
+            <h2 className="text-2xl sm:text-3xl tracking-tight leading-tight" style={{ fontFamily: "var(--portfolio-heading-font)", fontWeight: 600, color: "hsl(var(--portfolio-fg))", letterSpacing: "-0.02em" }}>
               {label}
             </h2>
           </div>
-          <div className="mb-8" style={{ height: "2px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))", maxWidth: "120px" }} />
+          <div className="mb-6" style={{ height: "1px", background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.6), hsl(var(--portfolio-accent) / 0.15), transparent)", maxWidth: "110px" }} />
           <SectionEmptyState cfg={cfg} label={label} />
         </section>
       );
@@ -565,33 +565,48 @@ const PortfolioSection = ({ sectionKey, profileId, profileType, profileSlug, sec
       ref={sectionRef}
       style={{
         opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(24px)",
-        transition: "opacity 0.6s ease-out, transform 0.6s ease-out",
+        transform: inView ? "translateY(0)" : "translateY(20px)",
+        transition: "opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
     >
       {/* Section heading with number + accent rule */}
-      <div className="flex items-baseline gap-3 mb-2">
+      <div className="flex items-baseline gap-3 mb-3">
         {indexNum && (
           <span
-            className="text-xs font-mono tracking-widest"
-            style={{ color: "hsl(var(--portfolio-accent) / 0.4)" }}
+            className="hidden sm:inline-block text-[10px] font-mono tracking-[0.2em] shrink-0"
+            style={{ color: "hsl(var(--portfolio-accent) / 0.5)" }}
           >
             {indexNum}
           </span>
         )}
+        {indexNum && (
+          <span
+            className="hidden sm:inline-block w-5 shrink-0"
+            style={{
+              borderBottom: "1px solid hsl(var(--portfolio-accent) / 0.25)",
+              marginBottom: "4px",
+            }}
+          />
+        )}
         <h2
-          className="text-2xl sm:text-3xl font-bold tracking-tight"
-          style={{ fontFamily: "var(--portfolio-heading-font)", color: "hsl(var(--portfolio-fg))" }}
+          className="text-2xl sm:text-3xl tracking-tight leading-tight"
+          style={{
+            fontFamily: "var(--portfolio-heading-font)",
+            fontWeight: 600,
+            color: "hsl(var(--portfolio-fg))",
+            letterSpacing: "-0.02em",
+          }}
         >
           {label}
         </h2>
       </div>
       <div
-        className="mb-8"
+        className="mb-6"
         style={{
-          height: "2px",
-          background: "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.5), hsl(var(--portfolio-accent) / 0.05))",
-          maxWidth: "120px",
+          height: "1px",
+          background:
+            "linear-gradient(to right, hsl(var(--portfolio-accent) / 0.6), hsl(var(--portfolio-accent) / 0.15), transparent)",
+          maxWidth: "110px",
         }}
       />
       {renderSection()}

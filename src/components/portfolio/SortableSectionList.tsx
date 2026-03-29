@@ -90,22 +90,24 @@ const SortableSectionList = ({ allSections, profileId, profileType, profileSlug,
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={editSections} strategy={verticalListSortingStrategy}>
-        {editSections.map((sectionKey, idx) => (
-          <DraggableSectionWrapper
-            key={sectionKey}
-            id={sectionKey}
-            label={sectionLabelMap[sectionKey] || sectionKey}
-          >
-            <PortfolioSection
-              sectionKey={sectionKey}
-              profileId={profileId}
-              profileType={profileType}
-              profileSlug={profileSlug}
-              sectionIndex={idx}
-              bio={bio}
-            />
-          </DraggableSectionWrapper>
-        ))}
+        <div className="space-y-14">
+          {editSections.map((sectionKey, idx) => (
+            <DraggableSectionWrapper
+              key={sectionKey}
+              id={sectionKey}
+              label={sectionLabelMap[sectionKey] || sectionKey}
+            >
+              <PortfolioSection
+                sectionKey={sectionKey}
+                profileId={profileId}
+                profileType={profileType}
+                profileSlug={profileSlug}
+                sectionIndex={idx}
+                bio={bio}
+              />
+            </DraggableSectionWrapper>
+          ))}
+        </div>
       </SortableContext>
     </DndContext>
   );

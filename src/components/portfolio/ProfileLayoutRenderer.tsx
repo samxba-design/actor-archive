@@ -83,8 +83,8 @@ function MagazineLayout(props: Props) {
   const sidebarKeys = visibleKeys.filter((k) => !MAGAZINE_MAIN_SECTIONS.includes(k));
 
   return (
-    <div className="flex flex-col lg:flex-row gap-10">
-      {/* Main column — ~65% */}
+    <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+      {/* Main column — ~62% */}
       <div className="flex-1 min-w-0 space-y-14">
         {mainKeys.map((sectionKey, idx) => (
           <PortfolioSection
@@ -98,8 +98,8 @@ function MagazineLayout(props: Props) {
           />
         ))}
       </div>
-      {/* Sidebar — ~35% */}
-      <aside className="w-full lg:w-80 shrink-0 space-y-10">
+      {/* Sidebar — ~38% */}
+      <aside className="w-full lg:w-72 shrink-0 space-y-10">
         {sidebarKeys.map((sectionKey, idx) => (
           <PortfolioSection
             key={sectionKey}
@@ -221,7 +221,7 @@ function MinimalLayout(props: Props) {
   const { profileId, profileType, profileSlug, bio } = props;
 
   return (
-    <div className="max-w-2xl mx-auto space-y-20">
+    <div className="max-w-2xl mx-auto space-y-16 sm:space-y-20">
       {visibleKeys.map((sectionKey, idx) => (
         <PortfolioSection
           key={sectionKey}
