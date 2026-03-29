@@ -18,6 +18,7 @@ import DemoExplainer from "@/components/demo/DemoExplainer";
 import DemoCustomizationPanel from "@/components/demo/DemoCustomizationPanel";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
 import { ArrowRight, ExternalLink, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award } from "lucide-react";
+import DemoStyleBanner from "@/components/demo/DemoStyleBanner";
 import {
   SectionVariantsCtx, defaultVariants,
   type SectionVariants, WithToggle,
@@ -648,6 +649,9 @@ const DemoScreenwriter = () => {
 
       {/* Mid-scroll CTA */}
       <MidScrollCTA />
+
+      {/* Demo style shortcut */}
+      <DemoStyleBanner theme={themeId} layoutPreset={layoutPreset} />
 
       {/* Demo Explainer */}
       <DemoExplainer />

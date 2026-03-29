@@ -15,6 +15,7 @@ import DemoExplainer from "@/components/demo/DemoExplainer";
 import DemoCustomizationPanel from "@/components/demo/DemoCustomizationPanel";
 import PDFExportModal from "@/components/portfolio/PDFExportModal";
 import { ArrowRight, ChevronDown, ChevronUp, TrendingUp, Eye, FileText, Award, BookOpen } from "lucide-react";
+import DemoStyleBanner from "@/components/demo/DemoStyleBanner";
 import {
   SectionVariantsCtx, defaultVariants,
   type SectionVariants, WithToggle,
@@ -569,6 +570,9 @@ const DemoCopywriter = () => {
       <ThemeSwitcher currentThemeId={themeId} onThemeChange={setThemeId} />
 
       <MidScrollCTA />
+
+      {/* Demo style shortcut */}
+      <DemoStyleBanner theme={themeId} layoutPreset={layoutPreset} />
 
       {/* Demo Explainer */}
       <DemoExplainer />

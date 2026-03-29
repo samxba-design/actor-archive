@@ -24,6 +24,7 @@ import { BulkImporter } from "@/components/dashboard/BulkImporter";
 import GettingStartedGuide from "@/components/dashboard/GettingStartedGuide";
 import AvailabilityQuickToggle from "@/components/dashboard/AvailabilityQuickToggle";
 import { getProfileCompletion } from "@/lib/getProfileCompletion";
+import { loadDemoStyle, clearDemoStyle } from "@/lib/demoStyleCapture";
 
 interface SmartAction {
   label: string;
@@ -129,6 +130,17 @@ const DashboardHome = () => {
       const counts: Record<string, number> = {};
       (pipelineRes.data || []).forEach((s) => { counts[s.status] = (counts[s.status] || 0) + 1; });
       setPipelineCounts(counts);
+
+      // Apply any pending demo style from the demo pages
+      const pendingStyle = loadDemoStyle();
+      if (pendingStyle) {
+        clearDemoStyle();
+        await supabase.from("profiles").update({
+          theme: pendingStyle.theme,
+          layout_preset: pendingStyle.layoutPreset,
+        } as any).eq("id", user.id);
+        toast({ title: "✨ Demo style applied!", description: `Theme "${pendingStyle.theme}" and layout preset applied to your portfolio.` });
+      }
 
       setLoading(false);
     };
