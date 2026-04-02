@@ -54,7 +54,7 @@ const DemoStyleBanner = ({ theme, layoutPreset }: Props) => {
         }}
       >
         <Wand2 className="h-3.5 w-3.5 shrink-0" />
-        {clicked ? "Saving style…" : "Start with this style"}
+        {clicked ? "Saving style…" : "Start with this design"}
       </button>
     </div>
   );
