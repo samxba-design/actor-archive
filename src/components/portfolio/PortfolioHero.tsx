@@ -115,7 +115,7 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
     } else if (type === "email" && profile.cta_url) {
       window.location.href = profile.cta_url.startsWith("mailto:") ? profile.cta_url : `mailto:${profile.cta_url}`;
     } else if (type === "custom_url" && profile.cta_url) {
-      window.open(profile.cta_url, "_blank");
+      window.open(profile.cta_url, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -125,7 +125,14 @@ const PortfolioHero = ({ profile, socialLinks: socialLinksProp, representation, 
   const bioText = profile.bio || "";
   const bioTruncLen = 220;
   const bioIsTruncatable = bioText.length > bioTruncLen;
-  const displayBio = bioIsTruncatable && !bioExpanded ? `${bioText.slice(0, bioTruncLen)}...` : bioText;
+  const truncatedBio = useMemo(() => {
+    if (!bioIsTruncatable) return bioText;
+    const hardSlice = bioText.slice(0, bioTruncLen);
+    const lastWordBoundary = hardSlice.lastIndexOf(" ");
+    if (lastWordBoundary <= bioTruncLen * 0.6) return hardSlice;
+    return hardSlice.slice(0, lastWordBoundary);
+  }, [bioIsTruncatable, bioText]);
+  const displayBio = bioIsTruncatable && !bioExpanded ? `${truncatedBio}...` : bioText;
 
   const initials = name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 

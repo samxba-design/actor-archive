@@ -122,14 +122,14 @@ function BentoLayout(props: Props) {
   const { profileId, profileType, profileSlug, bio } = props;
 
   return (
-    <div
-      className="grid gap-6"
-      style={{ gridTemplateColumns: "repeat(2, 1fr)" }}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {visibleKeys.map((sectionKey, idx) => {
         const isWide = BENTO_WIDE_SECTIONS.includes(sectionKey);
         return (
-          <div key={sectionKey} style={{ gridColumn: isWide ? "1 / -1" : undefined }}>
+          <div
+            key={sectionKey}
+            className={isWide ? "md:col-span-2" : undefined}
+          >
             <PortfolioSection
               sectionKey={sectionKey}
               profileId={profileId}
