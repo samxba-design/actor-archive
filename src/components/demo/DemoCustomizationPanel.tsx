@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants, STOCK_HERO_IMAGES } from "./DemoShared";
 import { ChevronDown, ChevronUp, Settings2, Eye, EyeOff, FileDown, Wand2, Sparkles } from "lucide-react";
@@ -69,6 +69,7 @@ const SECTIONS_CATEGORY: CategoryConfig = {
 };
 
 const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
+const CUSTOMIZATION_MEMORY_KEY = "demo-customization-memory-v1";
 
 
 // QUICK_RECIPES imported from demoCustomizationPresets
@@ -167,12 +168,45 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
   const theme = usePortfolioTheme();
   const { setVariant } = useSectionVariants();
   const [lastImpact, setLastImpact] = useState<string[]>([]);
+  const [changeLog, setChangeLog] = useState<string[]>([]);
 
-  const applyRecipe = (recipe: Partial<SectionVariants>, impact?: string[]) => {
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CUSTOMIZATION_MEMORY_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { lastImpact?: string[]; changeLog?: string[] };
+      if (Array.isArray(saved.lastImpact)) setLastImpact(saved.lastImpact.slice(0, 3));
+      if (Array.isArray(saved.changeLog)) setChangeLog(saved.changeLog.slice(0, 3));
+    } catch {
+      // ignore malformed local memory
+    }
+  }, []);
+
+  const persistMemory = (nextImpact: string[], nextLog: string[]) => {
+    try {
+      localStorage.setItem(CUSTOMIZATION_MEMORY_KEY, JSON.stringify({
+        lastImpact: nextImpact,
+        changeLog: nextLog,
+      }));
+    } catch {
+      // localStorage may be blocked in some environments
+    }
+  };
+
+  const applyRecipe = (recipe: Partial<SectionVariants>, impact?: string[], actionLabel?: string) => {
     Object.entries(recipe).forEach(([key, value]) => {
       setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
     });
-    if (impact) setLastImpact(impact);
+    const nextImpact = impact ?? [];
+    if (impact) setLastImpact(nextImpact);
+    if (actionLabel) {
+      const logEntry = `${actionLabel} • ${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+      const nextLog = [logEntry, ...changeLog].slice(0, 3);
+      setChangeLog(nextLog);
+      persistMemory(nextImpact, nextLog);
+      return;
+    }
+    persistMemory(nextImpact, changeLog);
   };
 
   // If hidden, show a small floating button
@@ -271,18 +305,26 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
             <Wand2 className="w-3 h-3" style={{ color: theme.accentPrimary }} />
             <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: theme.accentPrimary }}>Quick Presets</span>
           </div>
-          <div className="flex flex-wrap gap-1.5 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5 mb-2">
             {QUICK_RECIPES.map((recipe) => (
               <button
                 key={recipe.label}
-                onClick={() => applyRecipe(recipe.apply, [`Applied ${recipe.label} preset`, recipe.description])}
-                className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+                onClick={() => applyRecipe(
+                  recipe.apply,
+                  [`Applied ${recipe.label} preset`, recipe.description, recipe.whyThisPreset],
+                  `${recipe.label} preset`
+                )}
+                className="rounded-md border px-2 py-2 text-left transition-colors hover:bg-accent"
                 style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgElevated }}
                 title={recipe.description}
               >
-                {recipe.label}
+                <p className="text-[11px] font-semibold">{recipe.label}</p>
+                <p className="text-[10px]" style={{ color: theme.textTertiary }}>{recipe.bestFor}</p>
+                <p className="text-[10px] mt-1" style={{ color: theme.textSecondary }}>Why this preset: {recipe.whyThisPreset}</p>
               </button>
             ))}
+          </div>
+          <div className="flex flex-wrap gap-1.5 mb-2">
             <button
               onClick={() => {
                 const autoOptimize: Partial<SectionVariants> = {
@@ -300,10 +342,7 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
                   "Balanced hero/CTA hierarchy",
                   "Applied high-conversion service and skills layouts",
                   "Reduced visual noise for cleaner readability",
-                ]);
-                Object.entries(autoOptimize).forEach(([key, value]) => {
-                  setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
-                });
+                ], "Auto-Arrange Best Profile");
               }}
               className="text-[10px] px-2.5 py-1 rounded-full transition-all font-semibold"
               style={{ border: `1px solid ${theme.accentPrimary}55`, color: theme.accentPrimary, background: `${theme.accentPrimary}14` }}
@@ -316,12 +355,53 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
         </div>
 
         <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgElevated}`, border: `1px solid ${theme.borderDefault}` }}>
+          <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: theme.accentPrimary }}>Quick Actions Rail</p>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => applyRecipe({ heroLayout: "classic", heroRightContent: "featured", heroBgType: "image", imageAnimation: "none" }, ["Hero simplified for readability and first impression clarity"], "Improve Hero")}
+              className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+              style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgPrimary }}
+            >
+              Improve Hero
+            </button>
+            <button
+              onClick={() => applyRecipe({ ctaPreset: "hire", ctaStyle: "filled-bold" }, ["CTA made more prominent and action-oriented"], "Fix CTA")}
+              className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+              style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgPrimary }}
+            >
+              Fix CTA
+            </button>
+            <button
+              onClick={() => applyRecipe({ testimonials: "cards", awards: "laurels", press: "cards" }, ["Trust sections adjusted to appear stronger and easier to scan"], "Apply High-Trust Variant")}
+              className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+              style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgPrimary }}
+            >
+              Apply High-Trust Variant
+            </button>
+            <button
+              onClick={() => applyRecipe({ services: "pricing", skills: "grouped", publishedWork: "card" }, ["Section presentation tuned for conversion and readability"], "Reorder for Conversion")}
+              className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+              style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgPrimary }}
+            >
+              Reorder for Conversion
+            </button>
+            <button
+              onClick={() => applyRecipe({ heroBgType: "preset", imageAnimation: "none", statusBadgeAnimation: "none" }, ["Reduced animation and decorative effects for cleaner focus"], "Simplify Visual Noise")}
+              className="text-[10px] px-2.5 py-1 rounded-full transition-all"
+              style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgPrimary }}
+            >
+              Simplify Visual Noise
+            </button>
+          </div>
+        </div>
+
+        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgElevated}`, border: `1px solid ${theme.borderDefault}` }}>
           <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: theme.accentPrimary }}>Goal Modes</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
             {GOAL_MODES.map((goal) => (
               <button
                 key={goal.label}
-                onClick={() => applyRecipe(goal.apply, goal.impact)}
+                onClick={() => applyRecipe(goal.apply, goal.impact, goal.label)}
                 className="rounded-md border px-2 py-1.5 text-left transition-colors hover:bg-accent"
                 style={{ borderColor: theme.borderDefault }}
                 title={goal.description}
@@ -332,9 +412,22 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
             ))}
           </div>
           {lastImpact.length > 0 && (
-            <ul className="mt-2 text-[10px] space-y-0.5 list-disc pl-4" style={{ color: theme.textTertiary }}>
-              {lastImpact.map((line) => <li key={line}>{line}</li>)}
-            </ul>
+            <div className="mt-2 space-y-2">
+              <div className="text-[10px] px-2 py-1 rounded-md inline-block animate-pulse" style={{ color: theme.accentPrimary, background: `${theme.accentPrimary}15` }}>
+                Preview updated
+              </div>
+              <ul className="text-[10px] space-y-0.5 list-disc pl-4" style={{ color: theme.textTertiary }}>
+                {lastImpact.map((line) => <li key={line}>{line}</li>)}
+              </ul>
+              {changeLog.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: theme.textSecondary }}>Recent Changes</p>
+                  <ul className="text-[10px] space-y-0.5 list-disc pl-4" style={{ color: theme.textTertiary }}>
+                    {changeLog.map((line) => <li key={line}>{line}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
           )}
         </div>
 

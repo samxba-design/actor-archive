@@ -3,21 +3,29 @@ import type { SectionVariants } from "./DemoShared";
 export const QUICK_RECIPES: {
   label: string;
   description: string;
+  bestFor: string;
+  whyThisPreset: string;
   apply: Partial<SectionVariants>;
 }[] = [
   {
     label: "Polished",
     description: "Balanced layout + clean readability",
+    bestFor: "Best for trust",
+    whyThisPreset: "Keeps hierarchy clear while reducing visual clutter.",
     apply: { heroLayout: "classic", heroRightContent: "featured", ctaStyle: "outlined", heroBgType: "preset", imageAnimation: "none", testimonials: "cards" },
   },
   {
     label: "Bold",
     description: "High-impact hero + strong CTA",
+    bestFor: "Best for leads",
+    whyThisPreset: "Pushes attention to hero and CTA for higher click intent.",
     apply: { heroLayout: "cinematic", heroRightContent: "showreel", ctaStyle: "glow-pulse", heroBgType: "gradient", imageAnimation: "shine", testimonials: "carousel" },
   },
   {
     label: "Editorial",
     description: "Magazine feel with refined hierarchy",
+    bestFor: "Best for authority",
+    whyThisPreset: "Adds premium storytelling tone for credibility-first visitors.",
     apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
   },
 ];
