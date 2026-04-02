@@ -556,33 +556,6 @@ const SettingsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Standalone Auto-Responder Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Auto-Responder</CardTitle>
-              <CardDescription>Automatically reply when someone sends you a message.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Enable auto-reply</Label>
-                <Switch checked={autoResponderEnabled} onCheckedChange={setAutoResponderEnabled} />
-              </div>
-              {autoResponderEnabled && (
-                <div className="space-y-2">
-                  <Label>Reply message</Label>
-                  <Textarea
-                    value={autoResponderMessage}
-                    onChange={e => setAutoResponderMessage(e.target.value)}
-                    placeholder="Thanks for reaching out! I'll get back to you shortly."
-                    rows={3}
-                  />
-                </div>
-              )}
-              <Button onClick={saveAutoResponder} disabled={savingAutoResponder}>
-                {savingAutoResponder ? <Loader2 className="animate-spin h-4 w-4" /> : "Save"}
-              </Button>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* ═══ APPEARANCE TAB ═══ */}
