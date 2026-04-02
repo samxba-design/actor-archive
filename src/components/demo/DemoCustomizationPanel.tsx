@@ -71,23 +71,10 @@ const SECTIONS_CATEGORY: CategoryConfig = {
 const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
 
 
-const QUICK_RECIPES: {
-  label: string;
-  description: string;
-  apply: Partial<SectionVariants>;
-}[] = [
-  {
-    label: "Polished",
-    description: "Balanced layout + clean readability",
-    apply: { heroLayout: "classic", heroRightContent: "featured", ctaStyle: "outlined", heroBgType: "preset", imageAnimation: "none", testimonials: "cards" },
-  },
-  {
-    label: "Bold",
-    description: "High-impact hero + strong CTA",
-    apply: { heroLayout: "cinematic", heroRightContent: "showreel", ctaStyle: "glow-pulse", heroBgType: "gradient", imageAnimation: "shine", testimonials: "carousel" },
-  },
-  {
-    label: "Editorial",
+// QUICK_RECIPES imported from demoCustomizationPresets
+
+// Local alias kept for backward compat — "Editorial" entry starts below:
+const _EDITORIAL_LABEL = "Editorial";
     description: "Magazine feel with refined hierarchy",
     apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
   },
