@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Monitor, Tablet, Smartphone, ExternalLink, ArrowLeft, RefreshCw, Sparkles } from "lucide-react";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 type Breakpoint = "desktop" | "tablet" | "mobile";
+type GoalMode = "book_work" | "find_rep" | "build_authority";
 
 const BREAKPOINT_WIDTHS: Record<Breakpoint, number> = {
   desktop: 1280,
@@ -26,6 +27,7 @@ const DashboardPreview = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [slug, setSlug] = useState<string | null>(null);
+  const [profileType, setProfileType] = useState<string>("screenwriter");
   const [loading, setLoading] = useState(true);
   const [breakpoint, setBreakpoint] = useState<Breakpoint>("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -35,11 +37,12 @@ const DashboardPreview = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug")
+      .select("slug, profile_type")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         setSlug(data?.slug || null);
+        setProfileType((data as any)?.profile_type || "screenwriter");
         setLoading(false);
       });
   }, [user]);
