@@ -71,6 +71,28 @@ const SECTIONS_CATEGORY: CategoryConfig = {
 const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
 
 
+const QUICK_RECIPES: {
+  label: string;
+  description: string;
+  apply: Partial<SectionVariants>;
+}[] = [
+  {
+    label: "Polished",
+    description: "Balanced layout + clean readability",
+    apply: { heroLayout: "classic", heroRightContent: "featured", ctaStyle: "outlined", heroBgType: "preset", imageAnimation: "none", testimonials: "cards" },
+  },
+  {
+    label: "Bold",
+    description: "High-impact hero + strong CTA",
+    apply: { heroLayout: "cinematic", heroRightContent: "showreel", ctaStyle: "glow-pulse", heroBgType: "gradient", imageAnimation: "shine", testimonials: "carousel" },
+  },
+  {
+    label: "Editorial",
+    description: "Magazine feel with refined hierarchy",
+    apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
+  },
+];
+
 interface Props {
   showCustomization: boolean;
   onToggleCustomization: () => void;
@@ -274,6 +296,11 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
               <button
                 key={recipe.label}
                 onClick={() => applyRecipe(recipe.apply, [`Applied ${recipe.label} preset`, recipe.description])}
+                onClick={() => {
+                  Object.entries(recipe.apply).forEach(([key, value]) => {
+                    setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
+                  });
+                }}
                 className="text-[10px] px-2.5 py-1 rounded-full transition-all"
                 style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgCard }}
                 title={recipe.description}
@@ -299,6 +326,9 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
                   "Applied high-conversion service and skills layouts",
                   "Reduced visual noise for cleaner readability",
                 ]);
+                Object.entries(autoOptimize).forEach(([key, value]) => {
+                  setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
+                });
               }}
               className="text-[10px] px-2.5 py-1 rounded-full transition-all font-semibold"
               style={{ border: `1px solid ${theme.accentPrimary}55`, color: theme.accentPrimary, background: `${theme.accentPrimary}14` }}

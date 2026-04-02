@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Monitor, Tablet, Smartphone, ExternalLink, ArrowLeft, RefreshCw, Sparkles, Target, RotateCcw, ShieldCheck } from "lucide-react";
+import { Loader2, Monitor, Tablet, Smartphone, ExternalLink, ArrowLeft, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -95,6 +96,12 @@ const DashboardPreview = () => {
         setProfileSnapshot(snapshot);
         setSlug(snapshot?.slug || null);
         setProfileType(snapshot?.profile_type || "screenwriter");
+      .select("slug, profile_type")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        setSlug(data?.slug || null);
+        setProfileType((data as any)?.profile_type || "screenwriter");
         setLoading(false);
       });
   }, [user]);
@@ -107,6 +114,10 @@ const DashboardPreview = () => {
     const merged = { ...profileSnapshot, ...payload } as ProfileSnapshot;
 
     const { error } = await supabase.from("profiles").update(payload as any).eq("id", user.id);
+  const applyDesign = async (theme: string, layout_preset: string, successText: string) => {
+    if (!user) return;
+    setApplying(true);
+    const { error } = await supabase.from("profiles").update({ theme, layout_preset } as any).eq("id", user.id);
     setApplying(false);
     if (error) {
       toast({ title: "Could not apply design", description: error.message, variant: "destructive" });
@@ -227,6 +238,7 @@ const DashboardPreview = () => {
 
       <div className="flex-1 overflow-auto bg-muted/20 py-6 px-4">
         <div className="max-w-[1500px] mx-auto grid grid-cols-1 xl:grid-cols-[340px_1fr] gap-4 items-start">
+        <div className="max-w-[1500px] mx-auto grid grid-cols-1 xl:grid-cols-[300px_1fr] gap-4 items-start">
           <aside className="rounded-xl border bg-background/95 p-4 space-y-4 xl:sticky xl:top-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Live design controls</p>
@@ -305,6 +317,38 @@ const DashboardPreview = () => {
                 </ul>
               </div>
             )}
+            </div>
+
+            <div className="space-y-2">
+              {QUICK_DESIGNS.map((preset) => (
+                <button
+                  type="button"
+                  key={preset.label}
+                  disabled={applying}
+                  onClick={() => applyDesign(preset.theme, preset.layout, `${preset.label} applied to your profile.`)}
+                  className="w-full text-left rounded-lg border p-2.5 text-xs transition-colors hover:border-primary/50 hover:bg-accent disabled:opacity-60"
+                >
+                  <div className="font-medium text-foreground">{preset.label}</div>
+                  <div className="text-muted-foreground">Theme: {preset.theme} • Layout: {preset.layout}</div>
+                </button>
+              ))}
+            </div>
+
+            <Button
+              className="w-full"
+              disabled={applying}
+              onClick={() =>
+                applyDesign(
+                  "clean-professional",
+                  "standard",
+                  "Auto-arranged for best readability and conversion. You can still tweak everything."
+                )
+              }
+            >
+              <Sparkles className="h-4 w-4 mr-1" />
+              Auto-Arrange Best Profile
+            </Button>
+            <p className="text-[11px] text-muted-foreground">Applies a polished baseline automatically, then updates this live preview.</p>
           </aside>
 
           <div className="flex items-start justify-center rounded-2xl p-3 sm:p-5 bg-gradient-to-br from-background via-muted/20 to-background border">
