@@ -315,7 +315,7 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
           <p className="text-[10px]" style={{ color: theme.textTertiary }}>One-click presets for fast setup, then fine-tune live below.</p>
         </div>
 
-        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgCard}`, border: `1px solid ${theme.borderDefault}` }}>
+        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgElevated}`, border: `1px solid ${theme.borderDefault}` }}>
           <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: theme.accentPrimary }}>Goal Modes</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
             {GOAL_MODES.map((goal) => (
