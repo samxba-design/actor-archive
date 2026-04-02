@@ -556,33 +556,6 @@ const SettingsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Standalone Auto-Responder Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Auto-Responder</CardTitle>
-              <CardDescription>Automatically reply when someone sends you a message.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Enable auto-reply</Label>
-                <Switch checked={autoResponderEnabled} onCheckedChange={setAutoResponderEnabled} />
-              </div>
-              {autoResponderEnabled && (
-                <div className="space-y-2">
-                  <Label>Reply message</Label>
-                  <Textarea
-                    value={autoResponderMessage}
-                    onChange={e => setAutoResponderMessage(e.target.value)}
-                    placeholder="Thanks for reaching out! I'll get back to you shortly."
-                    rows={3}
-                  />
-                </div>
-              )}
-              <Button onClick={saveAutoResponder} disabled={savingAutoResponder}>
-                {savingAutoResponder ? <Loader2 className="animate-spin h-4 w-4" /> : "Save"}
-              </Button>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* ═══ APPEARANCE TAB ═══ */}
@@ -709,29 +682,67 @@ const SettingsPage = () => {
               <CardDescription>Choose a visual theme for your portfolio. Changes preview live when you save.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Quick Presets */}
+              {/* Quick Presets — profile-type-aware */}
               <div>
-                <Label className="mb-2 block">Quick Presets</Label>
+                <Label className="mb-2 block">Quick Presets {profileType && <span className="text-muted-foreground font-normal">for {profileType.replace(/_/g, " ")}</span>}</Label>
                 <div className="flex flex-wrap gap-2">
-                  {[
-                    { label: "Film Professional", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
-                    { label: "Actor Modern", theme: "obsidian-noir", heroLayout: "centered", layoutPreset: "magazine" },
-                    { label: "Director Cinematic", theme: "neon-noir", heroLayout: "banner", layoutPreset: "bento" },
-                    { label: "Writer Literary", theme: "warm-luxury", heroLayout: "minimal", layoutPreset: "minimal" },
-                    { label: "Clean Professional", theme: "clean-professional", heroLayout: "split", layoutPreset: "classic" },
-                  ].map((preset) => (
-                    <button
-                      key={preset.label}
-                      onClick={() => setForm(f => ({
-                        ...f,
-                        theme: preset.theme,
-                        layout_preset: preset.layoutPreset,
-                      }))}
-                      className="text-xs px-3 py-1.5 rounded-full border transition-all hover:border-primary/60 hover:bg-accent/50 border-border text-muted-foreground"
-                    >
-                      ✦ {preset.label}
-                    </button>
-                  ))}
+                  {(() => {
+                    const TYPE_PRESETS: Record<string, { label: string; theme: string; heroLayout: string; layoutPreset: string }[]> = {
+                      copywriter: [
+                        { label: "Charcoal Glass", theme: "charcoal-glass", heroLayout: "centered", layoutPreset: "magazine" },
+                        { label: "Frost Clean", theme: "frost", heroLayout: "minimal", layoutPreset: "bento" },
+                        { label: "Slate Professional", theme: "slate-pro", heroLayout: "classic", layoutPreset: "classic" },
+                      ],
+                      actor: [
+                        { label: "Cinematic Dark", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
+                        { label: "Neon Spotlight", theme: "neon-noir", heroLayout: "banner", layoutPreset: "spotlight" },
+                        { label: "Charcoal Glass", theme: "charcoal-glass", heroLayout: "centered", layoutPreset: "magazine" },
+                      ],
+                      screenwriter: [
+                        { label: "Cinematic Dark", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
+                        { label: "Warm Literary", theme: "warm-luxury", heroLayout: "minimal", layoutPreset: "minimal" },
+                        { label: "Gothic", theme: "gothic", heroLayout: "cinematic", layoutPreset: "classic" },
+                      ],
+                      director: [
+                        { label: "Noir Classic", theme: "noir-classic", heroLayout: "cinematic", layoutPreset: "cinematic" },
+                        { label: "Midnight Glass", theme: "midnight-glass", heroLayout: "banner", layoutPreset: "bento" },
+                        { label: "Cinematic Dark", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
+                      ],
+                      journalist: [
+                        { label: "Warm Editorial", theme: "warm-luxury", heroLayout: "editorial", layoutPreset: "magazine" },
+                        { label: "Slate Pro", theme: "slate-pro", heroLayout: "classic", layoutPreset: "classic" },
+                        { label: "Frost Clean", theme: "frost", heroLayout: "minimal", layoutPreset: "bento" },
+                      ],
+                      author: [
+                        { label: "Warm Literary", theme: "warm-luxury", heroLayout: "minimal", layoutPreset: "minimal" },
+                        { label: "Mediterranean", theme: "mediterranean", heroLayout: "classic", layoutPreset: "classic" },
+                        { label: "Pearl Elegant", theme: "pearl", heroLayout: "centered", layoutPreset: "magazine" },
+                      ],
+                      corporate_video: [
+                        { label: "Frost Clean", theme: "frost", heroLayout: "classic", layoutPreset: "standard" },
+                        { label: "Slate Pro", theme: "slate-pro", heroLayout: "split", layoutPreset: "bento" },
+                        { label: "Azure Glass", theme: "azure-glass", heroLayout: "centered", layoutPreset: "dashboard" },
+                      ],
+                    };
+                    const defaults = [
+                      { label: "Cinematic Dark", theme: "cinematic-dark", heroLayout: "classic", layoutPreset: "classic" },
+                      { label: "Charcoal Glass", theme: "charcoal-glass", heroLayout: "centered", layoutPreset: "magazine" },
+                      { label: "Slate Pro", theme: "slate-pro", heroLayout: "split", layoutPreset: "classic" },
+                    ];
+                    const presets = TYPE_PRESETS[profileType || ""] || defaults;
+                    return presets.map((preset) => (
+                      <button
+                        key={preset.label}
+                        onClick={() => {
+                          setForm(f => ({ ...f, theme: preset.theme, layout_preset: preset.layoutPreset }));
+                          setHeroStyle(preset.heroLayout);
+                        }}
+                        className="text-xs px-3 py-1.5 rounded-full border transition-all hover:border-primary/60 hover:bg-accent/50 border-border text-muted-foreground"
+                      >
+                        ✦ {preset.label}
+                      </button>
+                    ));
+                  })()}
                 </div>
               </div>
 
@@ -740,11 +751,11 @@ const SettingsPage = () => {
                   <Label>Visual Theme</Label>
                   {!isPro && <ProBadge />}
                 </div>
-                {/* Group themes by category */}
+                {/* Group themes by category — using only real theme IDs */}
                 {[
-                  { label: "Dark", ids: ["cinematic-dark", "neon-noir", "obsidian-noir", "deep-space", "gothic-editorial", "electric-noir", "forest-noir"] },
-                  { label: "Light", ids: ["modern-minimal", "warm-luxury", "clean-professional", "ivory-editorial"] },
-                  { label: "Specialty", ids: ["vintage-film", "brutalist-studio", "rose-gold-glam"] },
+                  { label: "Dark", ids: ["cinematic-dark", "noir-classic", "midnight-glass", "neon-noir", "charcoal-glass", "gothic"] },
+                  { label: "Light", ids: ["modern-minimal", "warm-luxury", "frost", "pearl", "sage-studio", "slate-pro"] },
+                  { label: "Colorful", ids: ["creative-rose", "ocean-blue", "mediterranean", "azure-glass", "frontier", "sunset-warmth"] },
                 ].map(group => {
                   const groupThemes = portfolioThemeList.filter(t => group.ids.includes(t.id));
                   if (groupThemes.length === 0) return null;
@@ -765,9 +776,7 @@ const SettingsPage = () => {
                                 isLocked ? "border-border opacity-50 cursor-not-allowed" :
                                 "border-border hover:border-primary/50 hover:scale-[1.01]"
                               }`}>
-                              {/* Mini visual preview */}
                               <div className="h-16 relative" style={{ background: t.bgPrimary || t.previewColors[0] }}>
-                                {/* Fake hero strip */}
                                 <div className="absolute bottom-0 left-0 right-0 h-8 flex items-end px-2 pb-1.5 gap-2"
                                   style={{ background: `linear-gradient(to top, ${t.bgPrimary || t.previewColors[0]}, transparent)` }}>
                                   <div className="w-5 h-5 rounded-full border" style={{ background: t.accentPrimary || t.previewColors[2], borderColor: `${t.accentPrimary || t.previewColors[2]}50` }} />
@@ -780,13 +789,11 @@ const SettingsPage = () => {
                                     CTA
                                   </div>
                                 </div>
-                                {/* Locked overlay */}
                                 {isLocked && (
                                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                                     <Lock className="h-4 w-4 text-white/70" />
                                   </div>
                                 )}
-                                {/* Selected checkmark */}
                                 {isSelected && (
                                   <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
                                     <Check className="h-3 w-3 text-primary-foreground" />
