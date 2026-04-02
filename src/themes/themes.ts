@@ -709,7 +709,7 @@ const gothic: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '2px',
-  heroHeight: '75vh',
+  heroHeight: '55vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '115px',
   profilePhotoBorder: '2px solid rgba(107, 33, 168, 0.35)',
