@@ -821,7 +821,7 @@ const sunsetWarmth: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'filled-subtle',
   ctaRadius: '24px',
-  heroHeight: '65vh',
+  heroHeight: '50vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '115px',
   profilePhotoBorder: '3px solid rgba(232, 114, 92, 0.2)',
