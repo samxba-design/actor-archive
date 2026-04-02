@@ -71,27 +71,7 @@ const SECTIONS_CATEGORY: CategoryConfig = {
 const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
 
 
-const QUICK_RECIPES: {
-  label: string;
-  description: string;
-  apply: Partial<SectionVariants>;
-}[] = [
-  {
-    label: "Polished",
-    description: "Balanced layout + clean readability",
-    apply: { heroLayout: "classic", heroRightContent: "featured", ctaStyle: "outlined", heroBgType: "preset", imageAnimation: "none", testimonials: "cards" },
-  },
-  {
-    label: "Bold",
-    description: "High-impact hero + strong CTA",
-    apply: { heroLayout: "cinematic", heroRightContent: "showreel", ctaStyle: "glow-pulse", heroBgType: "gradient", imageAnimation: "shine", testimonials: "carousel" },
-  },
-  {
-    label: "Editorial",
-    description: "Magazine feel with refined hierarchy",
-    apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
-  },
-];
+// QUICK_RECIPES imported from demoCustomizationPresets
 
 interface Props {
   showCustomization: boolean;
@@ -296,13 +276,8 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
               <button
                 key={recipe.label}
                 onClick={() => applyRecipe(recipe.apply, [`Applied ${recipe.label} preset`, recipe.description])}
-                onClick={() => {
-                  Object.entries(recipe.apply).forEach(([key, value]) => {
-                    setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
-                  });
-                }}
                 className="text-[10px] px-2.5 py-1 rounded-full transition-all"
-                style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgCard }}
+                style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgElevated }}
                 title={recipe.description}
               >
                 {recipe.label}
@@ -340,7 +315,7 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
           <p className="text-[10px]" style={{ color: theme.textTertiary }}>One-click presets for fast setup, then fine-tune live below.</p>
         </div>
 
-        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgCard}`, border: `1px solid ${theme.borderDefault}` }}>
+        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgElevated}`, border: `1px solid ${theme.borderDefault}` }}>
           <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: theme.accentPrimary }}>Goal Modes</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
             {GOAL_MODES.map((goal) => (
