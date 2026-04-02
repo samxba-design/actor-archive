@@ -2,7 +2,6 @@ import { useState } from "react";
 import { usePortfolioTheme } from "@/themes/ThemeProvider";
 import { useSectionVariants, VARIANT_OPTIONS, type SectionVariants, STOCK_HERO_IMAGES } from "./DemoShared";
 import { ChevronDown, ChevronUp, Settings2, Eye, EyeOff, FileDown, Wand2, Sparkles } from "lucide-react";
-import { GOAL_MODES, QUICK_RECIPES } from "./demoCustomizationPresets";
 
 interface CategoryConfig {
   label: string;
@@ -70,6 +69,28 @@ const SECTIONS_CATEGORY: CategoryConfig = {
 
 const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY, STATUS_BADGE_CATEGORY, CTA_CATEGORY, SECTIONS_CATEGORY];
 
+
+const QUICK_RECIPES: {
+  label: string;
+  description: string;
+  apply: Partial<SectionVariants>;
+}[] = [
+  {
+    label: "Polished",
+    description: "Balanced layout + clean readability",
+    apply: { heroLayout: "classic", heroRightContent: "featured", ctaStyle: "outlined", heroBgType: "preset", imageAnimation: "none", testimonials: "cards" },
+  },
+  {
+    label: "Bold",
+    description: "High-impact hero + strong CTA",
+    apply: { heroLayout: "cinematic", heroRightContent: "showreel", ctaStyle: "glow-pulse", heroBgType: "gradient", imageAnimation: "shine", testimonials: "carousel" },
+  },
+  {
+    label: "Editorial",
+    description: "Magazine feel with refined hierarchy",
+    apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
+  },
+];
 
 interface Props {
   showCustomization: boolean;
@@ -164,14 +185,6 @@ const CategorySection = ({ category, defaultOpen = false }: { category: Category
 const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onExportPDF, knownForLabel }: Props) => {
   const theme = usePortfolioTheme();
   const { setVariant } = useSectionVariants();
-  const [lastImpact, setLastImpact] = useState<string[]>([]);
-
-  const applyRecipe = (recipe: Partial<SectionVariants>, impact?: string[]) => {
-    Object.entries(recipe).forEach(([key, value]) => {
-      setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
-    });
-    if (impact) setLastImpact(impact);
-  };
 
   // If hidden, show a small floating button
   if (!showCustomization) {
@@ -273,7 +286,11 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
             {QUICK_RECIPES.map((recipe) => (
               <button
                 key={recipe.label}
-                onClick={() => applyRecipe(recipe.apply, [`Applied ${recipe.label} preset`, recipe.description])}
+                onClick={() => {
+                  Object.entries(recipe.apply).forEach(([key, value]) => {
+                    setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
+                  });
+                }}
                 className="text-[10px] px-2.5 py-1 rounded-full transition-all"
                 style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgCard }}
                 title={recipe.description}
@@ -294,11 +311,9 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
                   services: 'pricing',
                   skills: 'grouped',
                 };
-                applyRecipe(autoOptimize, [
-                  "Balanced hero/CTA hierarchy",
-                  "Applied high-conversion service and skills layouts",
-                  "Reduced visual noise for cleaner readability",
-                ]);
+                Object.entries(autoOptimize).forEach(([key, value]) => {
+                  setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
+                });
               }}
               className="text-[10px] px-2.5 py-1 rounded-full transition-all font-semibold"
               style={{ border: `1px solid ${theme.accentPrimary}55`, color: theme.accentPrimary, background: `${theme.accentPrimary}14` }}
@@ -308,29 +323,6 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
             </button>
           </div>
           <p className="text-[10px]" style={{ color: theme.textTertiary }}>One-click presets for fast setup, then fine-tune live below.</p>
-        </div>
-
-        <div className="mb-3 rounded-lg p-2.5" style={{ background: `${theme.bgCard}`, border: `1px solid ${theme.borderDefault}` }}>
-          <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: theme.accentPrimary }}>Goal Modes</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
-            {GOAL_MODES.map((goal) => (
-              <button
-                key={goal.label}
-                onClick={() => applyRecipe(goal.apply, goal.impact)}
-                className="rounded-md border px-2 py-1.5 text-left transition-colors hover:bg-accent"
-                style={{ borderColor: theme.borderDefault }}
-                title={goal.description}
-              >
-                <p className="text-[11px] font-semibold" style={{ color: theme.textPrimary }}>{goal.label}</p>
-                <p className="text-[10px]" style={{ color: theme.textTertiary }}>{goal.description}</p>
-              </button>
-            ))}
-          </div>
-          {lastImpact.length > 0 && (
-            <ul className="mt-2 text-[10px] space-y-0.5 list-disc pl-4" style={{ color: theme.textTertiary }}>
-              {lastImpact.map((line) => <li key={line}>{line}</li>)}
-            </ul>
-          )}
         </div>
 
         {/* Categories */}

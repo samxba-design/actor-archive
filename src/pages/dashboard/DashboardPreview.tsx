@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Monitor, Tablet, Smartphone, ExternalLink, ArrowLeft, RefreshCw, Sparkles, Target } from "lucide-react";
+import { Loader2, Monitor, Tablet, Smartphone, ExternalLink, ArrowLeft, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -22,12 +22,6 @@ const QUICK_DESIGNS = [
   { label: "Bold Spotlight", theme: "neon-noir", layout: "spotlight" },
 ] as const;
 
-const GOAL_MODE_LABELS: Record<GoalMode, { title: string; description: string }> = {
-  book_work: { title: "Book More Work", description: "Higher-clarity CTA and service visibility." },
-  find_rep: { title: "Find Representation", description: "Emphasize credits, reels, and industry polish." },
-  build_authority: { title: "Build Authority", description: "Position awards, press, and social proof first." },
-};
-
 const DashboardPreview = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -38,8 +32,6 @@ const DashboardPreview = () => {
   const [breakpoint, setBreakpoint] = useState<Breakpoint>("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
   const [applying, setApplying] = useState(false);
-  const [goalMode, setGoalMode] = useState<GoalMode>("book_work");
-  const [lastChanges, setLastChanges] = useState<string[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -55,38 +47,18 @@ const DashboardPreview = () => {
       });
   }, [user]);
 
-  const applyDesign = async (payload: Record<string, any>, successText: string, changes: string[]) => {
+  const applyDesign = async (theme: string, layout_preset: string, successText: string) => {
     if (!user) return;
     setApplying(true);
-    const { error } = await supabase.from("profiles").update(payload as any).eq("id", user.id);
+    const { error } = await supabase.from("profiles").update({ theme, layout_preset } as any).eq("id", user.id);
     setApplying(false);
     if (error) {
       toast({ title: "Could not apply design", description: error.message, variant: "destructive" });
       return;
     }
-    setLastChanges(changes);
     setRefreshKey((k) => k + 1);
     toast({ title: "Design updated", description: successText });
   };
-
-  const goalRecipe = useMemo(() => {
-    if (goalMode === "book_work") {
-      return {
-        payload: { theme: "clean-professional", layout_preset: "standard", cta_style: "filled-bold", cta_label: "Book a Call" },
-        changes: ["Applied clean-professional theme", "Switched to standard conversion-friendly layout", "Upgraded CTA style to filled-bold", "Set CTA label to 'Book a Call'"],
-      };
-    }
-    if (goalMode === "find_rep") {
-      return {
-        payload: { theme: "obsidian-noir", layout_preset: profileType === "actor" ? "cinematic" : "magazine", cta_style: "outlined", cta_label: "Request Materials" },
-        changes: ["Applied obsidian-noir theme", "Adjusted layout for representation review", "Set CTA style to outlined for premium tone", "Set CTA label to 'Request Materials'"],
-      };
-    }
-    return {
-      payload: { theme: "neon-noir", layout_preset: "spotlight", cta_style: "shine-sweep", cta_label: "View Featured Work" },
-      changes: ["Applied neon-noir authority theme", "Set spotlight layout to focus signature work", "Enabled shine-sweep CTA treatment", "Set CTA label to 'View Featured Work'"],
-    };
-  }, [goalMode, profileType]);
 
   if (loading) {
     return (
@@ -150,12 +122,11 @@ const DashboardPreview = () => {
       </div>
 
       <div className="flex-1 overflow-auto bg-muted/20 py-6 px-4">
-        <div className="max-w-[1500px] mx-auto grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-4 items-start">
+        <div className="max-w-[1500px] mx-auto grid grid-cols-1 xl:grid-cols-[300px_1fr] gap-4 items-start">
           <aside className="rounded-xl border bg-background/95 p-4 space-y-4 xl:sticky xl:top-2">
             <div>
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Live design controls</p>
               <h2 className="text-sm font-semibold">Quick presets & smart cleanup</h2>
-              <p className="text-[11px] text-muted-foreground mt-1">Profile type detected: <span className="font-semibold text-foreground">{profileType.replaceAll("_", " ")}</span></p>
             </div>
 
             <div className="space-y-2">
@@ -164,7 +135,7 @@ const DashboardPreview = () => {
                   type="button"
                   key={preset.label}
                   disabled={applying}
-                  onClick={() => applyDesign({ theme: preset.theme, layout_preset: preset.layout }, `${preset.label} applied to your profile.`, [`Theme → ${preset.theme}`, `Layout → ${preset.layout}`])}
+                  onClick={() => applyDesign(preset.theme, preset.layout, `${preset.label} applied to your profile.`)}
                   className="w-full text-left rounded-lg border p-2.5 text-xs transition-colors hover:border-primary/50 hover:bg-accent disabled:opacity-60"
                 >
                   <div className="font-medium text-foreground">{preset.label}</div>
@@ -173,48 +144,21 @@ const DashboardPreview = () => {
               ))}
             </div>
 
-            <div className="rounded-lg border p-2.5 space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-semibold">
-                <Target className="h-3.5 w-3.5 text-primary" />
-                Goal Mode
-              </div>
-              {(["book_work", "find_rep", "build_authority"] as GoalMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setGoalMode(mode)}
-                  className={`w-full rounded-md border px-2 py-1.5 text-left transition-colors ${goalMode === mode ? "border-primary bg-primary/10" : "border-border hover:bg-accent"}`}
-                >
-                  <p className="text-xs font-medium">{GOAL_MODE_LABELS[mode].title}</p>
-                  <p className="text-[11px] text-muted-foreground">{GOAL_MODE_LABELS[mode].description}</p>
-                </button>
-              ))}
-              <Button
-                className="w-full"
-                disabled={applying}
-                onClick={() =>
-                  applyDesign(
-                    goalRecipe.payload,
-                    `${GOAL_MODE_LABELS[goalMode].title} mode applied with smart defaults.`,
-                    goalRecipe.changes,
-                  )
-                }
-              >
-                <Sparkles className="h-4 w-4 mr-1" />
-                Auto-Arrange Best Profile
-              </Button>
-            </div>
-
-            {lastChanges.length > 0 && (
-              <div className="rounded-lg border p-2.5">
-                <p className="text-xs font-semibold mb-1">Last smart changes</p>
-                <ul className="space-y-1 text-[11px] text-muted-foreground list-disc pl-4">
-                  {lastChanges.map((change) => (
-                    <li key={change}>{change}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <Button
+              className="w-full"
+              disabled={applying}
+              onClick={() =>
+                applyDesign(
+                  "clean-professional",
+                  "standard",
+                  "Auto-arranged for best readability and conversion. You can still tweak everything."
+                )
+              }
+            >
+              <Sparkles className="h-4 w-4 mr-1" />
+              Auto-Arrange Best Profile
+            </Button>
+            <p className="text-[11px] text-muted-foreground">Applies a polished baseline automatically, then updates this live preview.</p>
           </aside>
 
           <div className="flex items-start justify-center rounded-2xl p-3 sm:p-5 bg-gradient-to-br from-background via-muted/20 to-background border">
