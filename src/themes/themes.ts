@@ -205,7 +205,7 @@ const mediterranean: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'outlined',
   ctaRadius: '24px',
-  heroHeight: '65vh',
+  heroHeight: '50vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '120px',
   profilePhotoBorder: '3px solid rgba(184, 92, 60, 0.25)',
