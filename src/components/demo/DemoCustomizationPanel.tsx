@@ -73,13 +73,6 @@ const ALL_CATEGORIES = [HERO_CATEGORY, KNOWN_FOR_CATEGORY, CLIENT_LOGOS_CATEGORY
 
 // QUICK_RECIPES imported from demoCustomizationPresets
 
-// Local alias kept for backward compat — "Editorial" entry starts below:
-const _EDITORIAL_LABEL = "Editorial";
-    description: "Magazine feel with refined hierarchy",
-    apply: { heroLayout: "editorial", heroRightContent: "testimonial", ctaStyle: "underlined", heroBgType: "image", heroBgImage: "typewriter", testimonials: "single", publishedWork: "magazine" },
-  },
-];
-
 interface Props {
   showCustomization: boolean;
   onToggleCustomization: () => void;
