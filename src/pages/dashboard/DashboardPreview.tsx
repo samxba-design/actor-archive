@@ -127,7 +127,7 @@ const DashboardPreview = () => {
               <p className="text-xs uppercase tracking-wider text-muted-foreground">Live design controls</p>
               <h2 className="text-sm font-semibold">Quick presets</h2>
               <p className="text-[11px] text-muted-foreground mt-1">
-                Profile type: <span className="font-semibold text-foreground">{profileType.replaceAll("_", " ")}</span>
+                Profile type: <span className="font-semibold text-foreground">{profileType.replace(/_/g, " ")}</span>
               </p>
             </div>
 

@@ -276,13 +276,8 @@ const DemoCustomizationPanel = ({ showCustomization, onToggleCustomization, onEx
               <button
                 key={recipe.label}
                 onClick={() => applyRecipe(recipe.apply, [`Applied ${recipe.label} preset`, recipe.description])}
-                onClick={() => {
-                  Object.entries(recipe.apply).forEach(([key, value]) => {
-                    setVariant(key as keyof SectionVariants, value as SectionVariants[keyof SectionVariants]);
-                  });
-                }}
                 className="text-[10px] px-2.5 py-1 rounded-full transition-all"
-                style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgCard }}
+                style={{ border: `1px solid ${theme.borderDefault}`, color: theme.textPrimary, background: theme.bgElevated }}
                 title={recipe.description}
               >
                 {recipe.label}
