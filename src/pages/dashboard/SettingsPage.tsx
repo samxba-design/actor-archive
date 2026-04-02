@@ -811,6 +811,7 @@ const SettingsPage = () => {
                     </div>
                   );
                 })}
+              </div>
               <div>
                 <Label>Accent Color</Label>
                 <div className="flex items-center gap-3 mt-1">
