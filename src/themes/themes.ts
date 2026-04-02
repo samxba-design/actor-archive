@@ -989,7 +989,7 @@ const charcoalGlass: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'filled-subtle',
   ctaRadius: '8px',
-  heroHeight: '65vh',
+  heroHeight: '55vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '110px',
   profilePhotoBorder: '2px solid rgba(124, 140, 248, 0.25)',
