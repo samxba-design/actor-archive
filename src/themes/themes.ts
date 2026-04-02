@@ -653,7 +653,7 @@ const frontier: PortfolioTheme = {
   cardBorderWidth: '2px',
   ctaStyle: 'outlined',
   ctaRadius: '2px',
-  heroHeight: '65vh',
+  heroHeight: '50vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '120px',
   profilePhotoBorder: '3px solid rgba(139, 69, 19, 0.3)',
