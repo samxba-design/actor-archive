@@ -514,9 +514,9 @@ const DashboardPreview = () => {
             >
               <div className="flex items-center gap-2 px-3 py-1.5 bg-muted/70 border-b border-border">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-destructive/40" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400/50" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/20" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-muted-foreground/15" />
                 </div>
                 <div className="flex-1 bg-background rounded-md px-3 py-0.5 text-[10px] text-muted-foreground font-mono">
                   creativeslate.com/p/{slug}
