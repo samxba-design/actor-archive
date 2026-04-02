@@ -485,7 +485,7 @@ const pearl: PortfolioTheme = {
   cardBorderWidth: '1px',
   ctaStyle: 'underlined',
   ctaRadius: '4px',
-  heroHeight: '65vh',
+  heroHeight: '50vh',
   heroContentPosition: 'bottom-left',
   profilePhotoSize: '115px',
   profilePhotoBorder: '2px solid rgba(196, 133, 108, 0.2)',
