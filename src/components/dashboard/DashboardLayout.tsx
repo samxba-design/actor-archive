@@ -55,17 +55,17 @@ function DashboardLayoutInner() {
                       className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
                       onClick={() => {
                         if (slug) {
-                          window.open(`/p/${slug}`, "_blank");
+                          window.location.href = `/p/${slug}?edit=1`;
                         }
                       }}
                       disabled={!slug}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
-                      Preview
+                      Live Edit
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {slug ? `Open /p/${slug} in new tab` : "Set your URL slug in Settings first"}
+                    {slug ? `Open live editor /p/${slug}?edit=1` : "Set your URL slug in Settings first"}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

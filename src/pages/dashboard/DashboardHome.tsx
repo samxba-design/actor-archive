@@ -299,8 +299,8 @@ const DashboardHome = () => {
             </Button>
           )}
           {profile?.slug && (
-            <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/preview")}>
-              <Eye className="mr-2 h-4 w-4" />Preview
+            <Button variant="outline" size="sm" onClick={() => window.location.assign(`/p/${profile.slug}?edit=1`)}>
+              <Eye className="mr-2 h-4 w-4" />Live Edit
             </Button>
           )}
           {profile?.slug && (
