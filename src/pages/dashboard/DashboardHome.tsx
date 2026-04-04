@@ -300,7 +300,7 @@ const DashboardHome = () => {
           )}
           {profile?.slug && (
             <Button variant="outline" size="sm" onClick={() => navigate("/dashboard/preview")}>
-              <Eye className="mr-2 h-4 w-4" />Preview
+              <Eye className="mr-2 h-4 w-4" />Live Edit
             </Button>
           )}
           {profile?.slug && (
