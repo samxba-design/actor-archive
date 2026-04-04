@@ -55,7 +55,7 @@ function DashboardLayoutInner() {
                       className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
                       onClick={() => {
                         if (slug) {
-                          window.open(`/p/${slug}`, "_blank");
+                          window.location.href = `/p/${slug}?edit=1`;
                         }
                       }}
                       disabled={!slug}
