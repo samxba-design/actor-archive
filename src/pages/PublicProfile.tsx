@@ -8,7 +8,6 @@ import { resolveThemeId } from "@/themes/themes";
 import PortfolioHero from "@/components/portfolio/PortfolioHero";
 import PortfolioFooter from "@/components/portfolio/PortfolioFooter";
 import { EditModeProvider } from "@/components/portfolio/EditModeProvider";
-import LiveCustomizePanel from "@/components/portfolio/LiveCustomizePanel";
 import EditModeToolbar from "@/components/portfolio/EditModeToolbar";
 import ProfileLayoutRenderer from "@/components/portfolio/ProfileLayoutRenderer";
 import SectionKnownFor from "@/components/portfolio/sections/SectionKnownFor";
@@ -242,6 +241,7 @@ const PublicProfile = () => {
   }
 
   const previewTheme = searchParams.get("preview_theme");
+  const liveEditEnabled = searchParams.get("edit") === "1";
   const themeId = resolveThemeId(previewTheme || profile.theme);
 
   let sectionOrder = profile.section_order;
@@ -334,6 +334,8 @@ const PublicProfile = () => {
         {/* Client logos below hero */}
         {profile.client_logos_position === 'below_hero' && <ClientLogosBelow profileId={profile.id} />}
 
+        {liveEditEnabled && <EditModeToolbar profileId={profile.id} />}
+
         <main
           id="portfolio-main"
           className={`max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 ${
@@ -368,8 +370,6 @@ const PublicProfile = () => {
           />
         </div>
 
-        <EditModeToolbar profileId={profile.id} />
-        <LiveCustomizePanel profileId={profile.id} />
         <MobilePortfolioNav sectionOrder={sectionOrder} sectionsVisible={sectionsVisible} />
 
       {/* Floating toolbar: dark mode, share, PDF, contact */}
