@@ -61,11 +61,11 @@ function DashboardLayoutInner() {
                       disabled={!slug}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
-                      Preview
+                      Live Edit
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {slug ? `Open /p/${slug} in new tab` : "Set your URL slug in Settings first"}
+                    {slug ? `Open live profile /p/${slug} in new tab` : "Set your URL slug in Settings first"}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

@@ -362,7 +362,7 @@ const ProfileEditor = () => {
           </Button>
           {form.slug && (
             <Button variant="outline" size="sm" onClick={() => window.open(`/p/${form.slug}`, "_blank")}>
-              <ExternalLink className="mr-1 h-3.5 w-3.5" />Preview
+              <ExternalLink className="mr-1 h-3.5 w-3.5" />View Live
             </Button>
           )}
           <Button onClick={() => handleSave(false)} disabled={saveStatus === "saving" || !isDirty} size="sm">

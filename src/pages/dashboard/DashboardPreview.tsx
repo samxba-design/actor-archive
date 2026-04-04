@@ -138,17 +138,25 @@ const DashboardPreview = () => {
   const [slug, setSlug] = useState<string | null>(null);
   const [profileType, setProfileType] = useState<string>("screenwriter");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [breakpoint, setBreakpoint] = useState<Breakpoint>("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [applying, setApplying] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
-  // Current design state
+  // Current draft design state
   const [currentTheme, setCurrentTheme] = useState("cinematic-dark");
   const [currentLayout, setCurrentLayout] = useState("classic");
   const [currentHero, setCurrentHero] = useState("classic");
   const [sectionOrder, setSectionOrder] = useState<string[]>([]);
   const [sectionsVisible, setSectionsVisible] = useState<Record<string, boolean>>({});
   const [allSections, setAllSections] = useState<{ key: string; label: string }[]>([]);
+  const [savedSnapshot, setSavedSnapshot] = useState<{
+    theme: string;
+    layout: string;
+    hero: string;
+    sectionOrder: string[];
+    sectionsVisible: Record<string, boolean>;
+  } | null>(null);
 
   // Sidebar collapsible state
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -165,16 +173,20 @@ const DashboardPreview = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("slug, profile_type, theme, layout_preset, hero_style, section_order, sections_visible")
+      .select("slug, profile_type, theme, layout_preset, hero_style, section_order, sections_visible, is_published")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         setSlug(data?.slug || null);
         const pt = (data as any)?.profile_type || "screenwriter";
         setProfileType(pt);
-        setCurrentTheme(data?.theme || "cinematic-dark");
-        setCurrentLayout((data as any)?.layout_preset || "classic");
-        setCurrentHero((data as any)?.hero_style || "classic");
+        const theme = data?.theme || "cinematic-dark";
+        const layout = (data as any)?.layout_preset || "classic";
+        const hero = (data as any)?.hero_style || "classic";
+        setCurrentTheme(theme);
+        setCurrentLayout(layout);
+        setCurrentHero(hero);
+        setIsPublished(Boolean((data as any)?.is_published));
 
         // Build sections
         let sections: { key: string; label: string }[] = [];
@@ -203,6 +215,16 @@ const DashboardPreview = () => {
         } else {
           setSectionsVisible(defaultVisible);
         }
+        const mergedVisibility = (data as any)?.sections_visible && typeof (data as any).sections_visible === "object"
+          ? { ...defaultVisible, ...((data as any).sections_visible as Record<string, boolean>) }
+          : defaultVisible;
+        setSavedSnapshot({
+          theme,
+          layout,
+          hero,
+          sectionOrder: merged,
+          sectionsVisible: mergedVisibility,
+        });
 
         setLoading(false);
       });
@@ -210,9 +232,9 @@ const DashboardPreview = () => {
 
   const applyUpdate = useCallback(async (updates: Record<string, any>, successText: string) => {
     if (!user) return;
-    setApplying(true);
+    setSaving(true);
     const { error } = await supabase.from("profiles").update(updates as any).eq("id", user.id);
-    setApplying(false);
+    setSaving(false);
     if (error) {
       toast({ title: "Could not apply", description: error.message, variant: "destructive" });
       return;
@@ -221,19 +243,45 @@ const DashboardPreview = () => {
     toast({ title: "Updated", description: successText });
   }, [user, toast]);
 
+  const isDirty = savedSnapshot
+    ? currentTheme !== savedSnapshot.theme ||
+      currentLayout !== savedSnapshot.layout ||
+      currentHero !== savedSnapshot.hero ||
+      JSON.stringify(sectionOrder) !== JSON.stringify(savedSnapshot.sectionOrder) ||
+      JSON.stringify(sectionsVisible) !== JSON.stringify(savedSnapshot.sectionsVisible)
+    : false;
+
+  const handleSaveChanges = async () => {
+    if (!isDirty) return;
+    await applyUpdate(
+      {
+        theme: currentTheme,
+        layout_preset: currentLayout,
+        hero_style: currentHero,
+        section_order: sectionOrder,
+        sections_visible: sectionsVisible,
+      },
+      "Live edits saved"
+    );
+    setSavedSnapshot({
+      theme: currentTheme,
+      layout: currentLayout,
+      hero: currentHero,
+      sectionOrder: [...sectionOrder],
+      sectionsVisible: { ...sectionsVisible },
+    });
+  };
+
   const handleThemeChange = (themeId: string) => {
     setCurrentTheme(themeId);
-    applyUpdate({ theme: themeId }, `Theme changed to ${portfolioThemeList.find(t => t.id === themeId)?.name || themeId}`);
   };
 
   const handleLayoutChange = (layoutId: string) => {
     setCurrentLayout(layoutId);
-    applyUpdate({ layout_preset: layoutId }, `Layout changed to ${layoutId}`);
   };
 
   const handleHeroChange = (heroId: string) => {
     setCurrentHero(heroId);
-    applyUpdate({ hero_style: heroId }, `Hero changed to ${heroId}`);
   };
 
   const handleAutoImprove = () => {
@@ -241,10 +289,7 @@ const DashboardPreview = () => {
     setCurrentTheme(best.theme);
     setCurrentLayout(best.layout);
     setCurrentHero(best.hero);
-    applyUpdate(
-      { theme: best.theme, layout_preset: best.layout, hero_style: best.hero },
-      "Auto-optimized your profile design for maximum impact!"
-    );
+    toast({ title: "Auto-improved", description: "Suggested updates are ready to save." });
   };
 
   const handleSectionDragEnd = (event: DragEndEvent) => {
@@ -254,14 +299,12 @@ const DashboardPreview = () => {
       const newIndex = sectionOrder.indexOf(over.id as string);
       const newOrder = arrayMove(sectionOrder, oldIndex, newIndex);
       setSectionOrder(newOrder);
-      applyUpdate({ section_order: newOrder }, "Section order updated");
     }
   };
 
   const toggleSectionVisibility = (key: string) => {
     const next = { ...sectionsVisible, [key]: !sectionsVisible[key] };
     setSectionsVisible(next);
-    applyUpdate({ sections_visible: next }, `${key} ${next[key] ? "shown" : "hidden"}`);
   };
 
   const togglePanel = (key: string) => {
@@ -299,6 +342,7 @@ const DashboardPreview = () => {
           </Button>
           <span className="text-sm text-muted-foreground font-mono">/p/{slug}</span>
           <Badge variant="secondary" className="text-[10px]">{profileType.replace(/_/g, " ")}</Badge>
+          {isDirty && <Badge variant="outline" className="text-[10px]">Unsaved</Badge>}
         </div>
 
         <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
@@ -320,11 +364,15 @@ const DashboardPreview = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setRefreshKey(k => k + 1)} disabled={applying}>
-            <RefreshCw className={`h-4 w-4 mr-1 ${applying ? "animate-spin" : ""}`} /> Refresh
+          <Button variant="ghost" size="sm" onClick={() => setRefreshKey(k => k + 1)} disabled={saving}>
+            <RefreshCw className={`h-4 w-4 mr-1 ${saving ? "animate-spin" : ""}`} /> Refresh
+          </Button>
+          <Button size="sm" onClick={handleSaveChanges} disabled={!isDirty || saving}>
+            {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Check className="h-4 w-4 mr-1" />}
+            Save Live Edits
           </Button>
           <Button variant="outline" size="sm" onClick={() => window.open(previewUrl, "_blank")}>
-            <ExternalLink className="h-4 w-4 mr-1" /> Open
+            <ExternalLink className="h-4 w-4 mr-1" /> {isPublished ? "View Live Profile" : "Complete Profile"}
           </Button>
         </div>
       </div>
@@ -334,13 +382,13 @@ const DashboardPreview = () => {
         {/* ─── Design Studio sidebar ─── */}
         <aside className="w-[280px] xl:w-[300px] shrink-0 border-r border-border overflow-y-auto bg-background">
           <div className="p-3 border-b border-border">
-            <h2 className="text-sm font-bold text-foreground">Design Studio</h2>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Changes apply instantly to the preview</p>
+            <h2 className="text-sm font-bold text-foreground">Live Edit Studio</h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">Edit exactly what your public profile shows, then save</p>
           </div>
 
           {/* Auto-Improve */}
           <div className="p-3 border-b border-border">
-            <Button className="w-full" size="sm" disabled={applying} onClick={handleAutoImprove}>
+            <Button className="w-full" size="sm" disabled={saving} onClick={handleAutoImprove}>
               <Sparkles className="h-4 w-4 mr-1" /> Auto-Improve Profile
             </Button>
             <p className="text-[10px] text-muted-foreground mt-1.5">
@@ -379,7 +427,7 @@ const DashboardPreview = () => {
                     <button
                       key={t.id}
                       onClick={() => handleThemeChange(t.id)}
-                      disabled={applying}
+                      disabled={saving}
                       className={`relative rounded-lg border overflow-hidden transition-all ${
                         isSelected ? "border-primary ring-1 ring-primary" : "border-border hover:border-primary/40"
                       }`}
@@ -427,7 +475,7 @@ const DashboardPreview = () => {
                     <button
                       key={l.id}
                       onClick={() => handleLayoutChange(l.id)}
-                      disabled={applying}
+                      disabled={saving}
                       className={`text-left p-2 rounded-md border text-[11px] transition-all ${
                         isSelected ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
                       }`}
@@ -460,7 +508,7 @@ const DashboardPreview = () => {
                     <button
                       key={h.id}
                       onClick={() => handleHeroChange(h.id)}
-                      disabled={applying}
+                      disabled={saving}
                       className={`p-1.5 rounded-md border text-[10px] font-medium transition-all ${
                         isSelected ? "border-primary bg-primary/10 text-foreground" : "border-border hover:border-primary/40 text-muted-foreground"
                       }`}
