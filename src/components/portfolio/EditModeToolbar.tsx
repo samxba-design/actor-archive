@@ -39,48 +39,27 @@ function SortableSectionRow({
   label,
   visible,
   onToggle,
-  fg,
-  muted,
-  border,
-  rowBg,
 }: {
   id: string;
   label: string;
   visible: boolean;
   onToggle: () => void;
-  fg: string;
-  muted: string;
-  border: string;
-  rowBg: string;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   return (
     <div
       ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.6 : 1,
-        borderColor: border,
-        background: rowBg,
-      }}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.6 : 1 }}
       className="flex items-center justify-between rounded-md border px-2 py-1.5 text-xs"
-      aria-label={`Section ${label}`}
     >
       <div className="flex items-center gap-2">
-        <button
-          {...attributes}
-          {...listeners}
-          className="touch-none cursor-grab active:cursor-grabbing"
-          style={{ color: muted }}
-          aria-label={`Drag ${label}`}
-        >
+        <button {...attributes} {...listeners} className="text-muted-foreground hover:text-foreground touch-none cursor-grab active:cursor-grabbing">
           <GripVertical className="h-3.5 w-3.5" />
         </button>
-        <span style={{ color: visible ? fg : muted }} className={visible ? "" : "line-through opacity-90"}>{label}</span>
+        <span className={visible ? "text-foreground" : "text-muted-foreground line-through"}>{label}</span>
       </div>
-      <button onClick={onToggle} style={{ color: visible ? fg : muted }} aria-label={`${visible ? "Hide" : "Show"} ${label}`}>
+      <button onClick={onToggle} className="text-muted-foreground hover:text-foreground">
         {visible ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
       </button>
     </div>
@@ -134,13 +113,6 @@ const EditModeToolbar = ({ profileId }: Props) => {
   if (!isOwner || !profileId) return null;
 
   const chipClass = "px-2 py-0.5 text-[10px] rounded-full border transition-colors";
-  const textPrimary = theme.textPrimary || "hsl(var(--foreground))";
-  const textSecondary = theme.textSecondary || "hsl(var(--muted-foreground))";
-  const textTertiary = theme.textTertiary || "hsl(var(--muted-foreground))";
-  const borderDefault = theme.borderDefault || "hsl(var(--border))";
-  const cardBg = theme.bgCard || "hsl(var(--card))";
-  const elevatedBg = theme.bgElevated || cardBg;
-  const rowBg = `${theme.accentPrimary || "hsl(var(--primary))"}12`;
 
   const onSectionDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -195,10 +167,10 @@ const EditModeToolbar = ({ profileId }: Props) => {
     <section className="max-w-[1080px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
       <div
         className="rounded-xl border p-3 md:p-4 space-y-3"
-        style={{ background: elevatedBg, borderColor: borderDefault }}
+        style={{ background: theme.bgCard, borderColor: theme.borderDefault }}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: textPrimary }}>
+          <h3 className="text-sm font-semibold flex items-center gap-2" style={{ color: theme.textPrimary }}>
             <Sparkles className="h-4 w-4" /> Customize Portfolio
           </h3>
           <div className="flex items-center gap-2">
@@ -220,16 +192,16 @@ const EditModeToolbar = ({ profileId }: Props) => {
                 key={preset.id}
                 onClick={() => applyPreset(preset)}
                 className="text-left rounded-lg border px-3 py-2"
-                style={{ borderColor: borderDefault, background: cardBg }}
+                style={{ borderColor: theme.borderDefault }}
               >
-                <p className="text-xs font-semibold" style={{ color: textPrimary }}>{preset.title}</p>
-                <p className="text-[10px]" style={{ color: textSecondary }}>{preset.subtitle}</p>
+                <p className="text-xs font-semibold" style={{ color: theme.textPrimary }}>{preset.title}</p>
+                <p className="text-[10px]" style={{ color: theme.textTertiary }}>{preset.subtitle}</p>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="rounded-lg border p-3" style={{ borderColor: borderDefault, background: cardBg }}>
+        <div className="rounded-lg border p-3" style={{ borderColor: theme.borderDefault }}>
           <button className="w-full flex items-center justify-between" onClick={() => setAppearanceOpen((v) => !v)}>
             <p className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: theme.accentPrimary }}>
               <Wand2 className="inline h-3 w-3 mr-1" /> Appearance
@@ -240,15 +212,11 @@ const EditModeToolbar = ({ profileId }: Props) => {
           {appearanceOpen && (
             <div className="space-y-3 mt-3">
               <div>
-                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>Theme</p>
+                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>Theme</p>
                 <div className="flex flex-wrap gap-1">
                   {portfolioThemeList.slice(0, 12).map((t) => (
                     <button key={t.id} onClick={() => { setThemeId(t.id); setDirtyAppearance(true); }} className={chipClass}
-                      style={{
-                        borderColor: themeId === t.id ? theme.accentPrimary : borderDefault,
-                        color: themeId === t.id ? theme.accentPrimary : textSecondary,
-                        background: themeId === t.id ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                      }}>
+                      style={{ borderColor: themeId === t.id ? theme.accentPrimary : theme.borderDefault, color: themeId === t.id ? theme.accentPrimary : theme.textSecondary }}>
                       {t.name}
                     </button>
                   ))}
@@ -256,15 +224,11 @@ const EditModeToolbar = ({ profileId }: Props) => {
               </div>
 
               <div>
-                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>Hero Layout</p>
+                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>Hero Layout</p>
                 <div className="flex flex-wrap gap-1">
                   {HERO_LAYOUTS.map((option) => (
                     <button key={option} onClick={() => { setHeroStyle(option); setDirtyAppearance(true); }} className={`${chipClass} capitalize`}
-                      style={{
-                        borderColor: heroStyle === option ? theme.accentPrimary : borderDefault,
-                        color: heroStyle === option ? theme.accentPrimary : textSecondary,
-                        background: heroStyle === option ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                      }}>
+                      style={{ borderColor: heroStyle === option ? theme.accentPrimary : theme.borderDefault, color: heroStyle === option ? theme.accentPrimary : theme.textSecondary }}>
                       {option}
                     </button>
                   ))}
@@ -272,15 +236,11 @@ const EditModeToolbar = ({ profileId }: Props) => {
               </div>
 
               <div>
-                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>Section Layout</p>
+                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>Section Layout</p>
                 <div className="flex flex-wrap gap-1">
                   {SECTION_LAYOUTS.map((option) => (
                     <button key={option} onClick={() => { setLayoutPreset(option); setDirtyAppearance(true); }} className={`${chipClass} capitalize`}
-                      style={{
-                        borderColor: layoutPreset === option ? theme.accentPrimary : borderDefault,
-                        color: layoutPreset === option ? theme.accentPrimary : textSecondary,
-                        background: layoutPreset === option ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                      }}>
+                      style={{ borderColor: layoutPreset === option ? theme.accentPrimary : theme.borderDefault, color: layoutPreset === option ? theme.accentPrimary : theme.textSecondary }}>
                       {option}
                     </button>
                   ))}
@@ -289,30 +249,22 @@ const EditModeToolbar = ({ profileId }: Props) => {
 
               <div className="grid md:grid-cols-2 gap-3">
                 <div>
-                  <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>Status Badge</p>
+                  <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>Status Badge</p>
                   <div className="flex flex-wrap gap-1">
                     {STATUS_COLORS.map((option) => (
                       <button key={option} onClick={() => { setStatusBadgeColor(option); setDirtyAppearance(true); }} className={`${chipClass} capitalize`}
-                        style={{
-                          borderColor: statusBadgeColor === option ? theme.accentPrimary : borderDefault,
-                          color: statusBadgeColor === option ? theme.accentPrimary : textSecondary,
-                          background: statusBadgeColor === option ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                        }}>
+                        style={{ borderColor: statusBadgeColor === option ? theme.accentPrimary : theme.borderDefault, color: statusBadgeColor === option ? theme.accentPrimary : theme.textSecondary }}>
                         {option}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>Badge Effect</p>
+                  <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>Badge Effect</p>
                   <div className="flex flex-wrap gap-1">
                     {STATUS_ANIMATIONS.map((option) => (
                       <button key={option} onClick={() => { setStatusBadgeAnimation(option); setDirtyAppearance(true); }} className={`${chipClass} capitalize`}
-                        style={{
-                          borderColor: statusBadgeAnimation === option ? theme.accentPrimary : borderDefault,
-                          color: statusBadgeAnimation === option ? theme.accentPrimary : textSecondary,
-                          background: statusBadgeAnimation === option ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                        }}>
+                        style={{ borderColor: statusBadgeAnimation === option ? theme.accentPrimary : theme.borderDefault, color: statusBadgeAnimation === option ? theme.accentPrimary : theme.textSecondary }}>
                         {option}
                       </button>
                     ))}
@@ -321,15 +273,11 @@ const EditModeToolbar = ({ profileId }: Props) => {
               </div>
 
               <div>
-                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: textTertiary }}>CTA Style</p>
+                <p className="text-[10px] mb-1 uppercase tracking-wider" style={{ color: theme.textTertiary }}>CTA Style</p>
                 <div className="flex flex-wrap gap-1">
                   {CTA_STYLES.map((option) => (
                     <button key={option} onClick={() => { setCtaStyle(option); setDirtyAppearance(true); }} className={`${chipClass} capitalize`}
-                      style={{
-                        borderColor: ctaStyle === option ? theme.accentPrimary : borderDefault,
-                        color: ctaStyle === option ? theme.accentPrimary : textSecondary,
-                        background: ctaStyle === option ? `${theme.accentPrimary}22` : `${borderDefault}22`,
-                      }}>
+                      style={{ borderColor: ctaStyle === option ? theme.accentPrimary : theme.borderDefault, color: ctaStyle === option ? theme.accentPrimary : theme.textSecondary }}>
                       {option}
                     </button>
                   ))}
@@ -339,7 +287,7 @@ const EditModeToolbar = ({ profileId }: Props) => {
           )}
         </div>
 
-        <div className="rounded-lg border p-3" style={{ borderColor: borderDefault, background: cardBg }}>
+        <div className="rounded-lg border p-3" style={{ borderColor: theme.borderDefault }}>
           <p className="text-[10px] mb-2 uppercase tracking-wider font-semibold" style={{ color: theme.accentPrimary }}>Sections</p>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onSectionDragEnd}>
             <SortableContext items={sectionItems} strategy={verticalListSortingStrategy}>
@@ -351,16 +299,12 @@ const EditModeToolbar = ({ profileId }: Props) => {
                     label={key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                     visible={sectionsVisible[key] !== false}
                     onToggle={() => toggleVisibility(key)}
-                    fg={textPrimary}
-                    muted={textSecondary}
-                    border={borderDefault}
-                    rowBg={rowBg}
                   />
                 ))}
               </div>
             </SortableContext>
           </DndContext>
-          <div className="mt-2 rounded-md border px-2 py-1.5 text-[11px] flex items-center gap-2" style={{ borderColor: borderDefault, color: textSecondary, background: `${borderDefault}1A` }}>
+          <div className="mt-2 rounded-md border px-2 py-1.5 text-[11px] flex items-center gap-2" style={{ borderColor: theme.borderDefault, color: theme.textTertiary }}>
             <Check className="h-3.5 w-3.5" /> Try it: Drag sections to reorder, toggle visibility with the eye icon.
           </div>
         </div>
