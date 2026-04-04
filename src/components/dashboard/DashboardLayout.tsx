@@ -65,7 +65,7 @@ function DashboardLayoutInner() {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {slug ? `Open live editor /p/${slug}?edit=1` : "Set your URL slug in Settings first"}
+                    {slug ? `Open live profile /p/${slug} in new tab` : "Set your URL slug in Settings first"}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
