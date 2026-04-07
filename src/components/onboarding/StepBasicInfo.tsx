@@ -86,6 +86,21 @@ const StepBasicInfo = ({ data, updateData, onNext, onBack, stepMeta }: Props) =>
             placeholder="Los Angeles, CA"
           />
         </div>
+
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-xs text-muted-foreground mb-2">Live preview</p>
+          <div className="space-y-1">
+            <p className="text-base font-semibold text-foreground">
+              {data.displayName.trim() || "Your name"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {data.tagline.trim() || "Your short professional tagline will appear here."}
+            </p>
+            {data.location.trim() && (
+              <p className="text-xs text-muted-foreground">Based in {data.location.trim()}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="flex items-center justify-between">
