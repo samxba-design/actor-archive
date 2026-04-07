@@ -26,6 +26,7 @@ const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const { user } = useAuth();
   const [checking, setChecking] = useState(false);
   const [available, setAvailable] = useState<boolean | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   // Auto-generate slug from display name if slug is empty
   useEffect(() => {
@@ -38,6 +39,7 @@ const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   useEffect(() => {
     if (!data.slug || data.slug.length < 3) {
       setAvailable(null);
+      setSuggestions([]);
       return;
     }
 
@@ -54,7 +56,18 @@ const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
       }
 
       const { data: existing } = await query.maybeSingle();
-      setAvailable(!existing);
+      const isAvailable = !existing;
+      setAvailable(isAvailable);
+      if (!isAvailable) {
+        const base = slugify(data.displayName || data.slug || "creative");
+        const candidates = [base, `${base}-studio`, `${base}-portfolio`, `${base}-official`, `${base}-${new Date().getFullYear()}`]
+          .map((s) => slugify(s))
+          .filter((s, i, arr) => s.length >= 3 && s !== data.slug && arr.indexOf(s) === i)
+          .slice(0, 3);
+        setSuggestions(candidates);
+      } else {
+        setSuggestions([]);
+      }
       setChecking(false);
     }, 400);
 
@@ -113,6 +126,24 @@ const StepSlug = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
               <span className="text-xs text-muted-foreground">Minimum 3 characters</span>
             )}
           </div>
+
+          {available === false && suggestions.length > 0 && (
+            <div className="rounded-md border border-border bg-muted/40 p-3">
+              <p className="text-xs text-muted-foreground mb-2">Try one of these available-style options:</p>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => updateData({ slug: suggestion })}
+                    className="text-xs px-2.5 py-1 rounded-full border border-border hover:border-primary/40 hover:text-primary transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

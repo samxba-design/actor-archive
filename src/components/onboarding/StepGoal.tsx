@@ -1,5 +1,5 @@
 import type { OnboardingData, StepMeta } from "@/pages/Onboarding";
-import { Search, Briefcase, Megaphone, Globe, Sparkles, Check } from "lucide-react";
+import { Search, Briefcase, Megaphone, Globe, Sparkles, Check, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const GOALS = [
@@ -35,6 +35,39 @@ const GOALS = [
   },
 ] as const;
 
+const GOAL_PRESETS: Record<string, { theme: string; layoutPreset: string; availableForHire: boolean; quickWins: string[] }> = {
+  seeking_representation: {
+    theme: "cinematic-dark",
+    layoutPreset: "spotlight",
+    availableForHire: true,
+    quickWins: ["Puts credits and trust signals first", "Highlights representation-ready positioning", "Keeps contact options visible"],
+  },
+  getting_hired: {
+    theme: "slate-pro",
+    layoutPreset: "classic",
+    availableForHire: true,
+    quickWins: ["Prioritizes services and outcomes", "Keeps CTA clear above the fold", "Uses clean high-readability hierarchy"],
+  },
+  pitching_projects: {
+    theme: "noir-classic",
+    layoutPreset: "magazine",
+    availableForHire: true,
+    quickWins: ["Spotlights projects and loglines early", "Supports proof-heavy storytelling", "Optimizes narrative flow for buyers"],
+  },
+  professional_presence: {
+    theme: "warm-luxury",
+    layoutPreset: "classic",
+    availableForHire: true,
+    quickWins: ["Balanced all-purpose profile layout", "Clean typography for easy skimming", "Ready-to-share polished default"],
+  },
+  simple_presence: {
+    theme: "modern-minimal",
+    layoutPreset: "minimal",
+    availableForHire: false,
+    quickWins: ["Keeps setup minimal and fast", "Shows only essential profile sections", "Great for simple link sharing"],
+  },
+};
+
 interface Props {
   data: OnboardingData;
   updateData: (d: Partial<OnboardingData>) => void;
@@ -45,8 +78,17 @@ interface Props {
 
 const StepGoal = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
   const handleSelect = (key: string) => {
-    updateData({ primaryGoal: key });
+    const preset = GOAL_PRESETS[key];
+    updateData({
+      primaryGoal: key,
+      ...(preset && {
+        theme: preset.theme,
+        layoutPreset: preset.layoutPreset,
+        availableForHire: preset.availableForHire,
+      }),
+    });
   };
+  const selectedPreset = data.primaryGoal ? GOAL_PRESETS[data.primaryGoal] : null;
 
   return (
     <div className="w-full max-w-2xl space-y-8 animate-in fade-in duration-500">
@@ -59,6 +101,9 @@ const StepGoal = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
           This helps us tailor your profile to make the right impression. You can change this anytime.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          We’ll automatically pick a starter theme and layout based on your choice.
         </p>
       </div>
 
@@ -110,6 +155,23 @@ const StepGoal = ({ data, updateData, onNext, onBack, stepMeta }: Props) => {
           );
         })}
       </div>
+
+      {selectedPreset && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Wand2 className="w-4 h-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">Starter setup we’ll apply for you</p>
+          </div>
+          <ul className="space-y-1">
+            {selectedPreset.quickWins.map((line) => (
+              <li key={line} className="text-xs text-muted-foreground flex items-start gap-2">
+                <span className="mt-1 inline-block w-1.5 h-1.5 rounded-full bg-primary/70" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="flex justify-center gap-3">
         <Button variant="ghost" size="lg" onClick={onBack}>

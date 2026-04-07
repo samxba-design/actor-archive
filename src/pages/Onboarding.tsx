@@ -28,6 +28,7 @@ export interface OnboardingData {
   location: string;
   slug: string;
   theme: string;
+  layoutPreset: string;
   heightDisplay: string;
   ageRangeMin: string;
   ageRangeMax: string;
@@ -52,6 +53,7 @@ const INITIAL_DATA: OnboardingData = {
   location: "",
   slug: "",
   theme: "cinematic-dark",
+  layoutPreset: "classic",
   heightDisplay: "",
   ageRangeMin: "",
   ageRangeMax: "",
@@ -70,6 +72,17 @@ export interface StepMeta {
 }
 
 const STORAGE_KEY = "creativeslate_onboarding";
+const STEP_HINTS: Record<string, string> = {
+  type: "Choose what you do. We'll tailor your portfolio sections automatically.",
+  goal: "Pick your main outcome so we can prioritize the right layout and prompts.",
+  basic: "Add your essentials first — you can always refine details later.",
+  slug: "Claim a clean public URL people can remember.",
+  actor: "Optional casting details to help people assess fit quickly.",
+  specializations: "Select strengths so your profile speaks clearly to your niche.",
+  theme: "Choose a look. You can switch themes in one click later.",
+  services: "Add offers now or skip and publish fast.",
+  complete: "Quick review before launch.",
+};
 
 const Onboarding = () => {
   const { user } = useAuth();
@@ -131,6 +144,7 @@ const Onboarding = () => {
         location: data.location || null,
         slug: data.slug || null,
         theme: data.theme,
+        layout_preset: data.layoutPreset || "classic",
         available_for_hire: data.availableForHire,
       })
       .eq("id", user.id);
@@ -182,7 +196,7 @@ const Onboarding = () => {
           theme: data.theme || "cinematic-dark",
           hero_bg_type: "bokeh",
           hero_background_preset: null,
-          layout_preset: "classic",
+          layout_preset: data.layoutPreset || "classic",
           available_for_hire: data.availableForHire,
           onboarding_completed: true,
           is_draft: false,
@@ -288,6 +302,11 @@ const Onboarding = () => {
       default: return key;
     }
   });
+  const currentKey = stepKeys[step];
+  const currentLabel = stepLabels[step] || "Setup";
+  const stepsRemaining = Math.max(totalSteps - currentProgress, 0);
+  const minutesLeft = Math.max(1, Math.ceil(stepsRemaining * 1.5));
+  const currentHint = STEP_HINTS[currentKey] || "Complete this step to keep going.";
 
   return (
     <div className="min-h-screen bg-background">
@@ -323,6 +342,7 @@ const Onboarding = () => {
                         ...(data.tagline && { tagline: data.tagline }),
                         ...(data.location && { location: data.location }),
                         ...(data.theme && { theme: data.theme }),
+                        ...(data.layoutPreset && { layout_preset: data.layoutPreset }),
                       })
                       .eq("id", user!.id);
                     localStorage.removeItem(STORAGE_KEY);
@@ -333,9 +353,16 @@ const Onboarding = () => {
                 }}
                 className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap rounded-full border border-border hover:border-foreground/20 disabled:opacity-50"
               >
-                {skipping ? "Skipping..." : "Skip →"}
+                {skipping ? "Skipping..." : "Finish later →"}
               </button>
             )}
+          </div>
+          <div className="mt-3 rounded-lg border border-border/70 bg-card/70 p-3 space-y-1.5">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="font-medium text-foreground">Current: {currentLabel}</span>
+              <span className="text-muted-foreground">~{minutesLeft} min left</span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{currentHint}</p>
           </div>
         </div>
       </div>
