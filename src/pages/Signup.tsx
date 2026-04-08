@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { MailCheck, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import SEOHead from "@/components/SEOHead";
 
 const quotes = [
   { text: "I went from a blank page to a published portfolio in under 10 minutes.", author: "James Park", role: "TV Writer" },
@@ -77,9 +78,11 @@ const Signup = () => {
   };
 
   return (
-    <AuthLayout quotes={quotes}>
-      {emailSent ? (
-        <div className="text-center space-y-4 animate-fade-in">
+    <>
+      <SEOHead title="Sign Up" description="Create your CreativeSlate account and publish your portfolio." path="/signup" noIndex />
+      <AuthLayout quotes={quotes}>
+        {emailSent ? (
+          <div className="text-center space-y-4 animate-fade-in">
           <div className="mx-auto w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "hsl(var(--landing-accent) / 0.1)" }}>
             <MailCheck className="w-6 h-6" style={{ color: "hsl(var(--landing-champagne))" }} />
           </div>
@@ -98,8 +101,8 @@ const Signup = () => {
             <button onClick={() => setEmailSent(false)} className="hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>try again</button>.
           </p>
         </div>
-      ) : (
-        <>
+        ) : (
+          <>
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Create your portfolio</h1>
             <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>Join CreativeSlate and showcase your work</p>
@@ -165,9 +168,10 @@ const Signup = () => {
             Already have an account?{" "}
             <Link to="/login" className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>Sign in</Link>
           </p>
-        </>
-      )}
-    </AuthLayout>
+          </>
+        )}
+      </AuthLayout>
+    </>
   );
 };
 

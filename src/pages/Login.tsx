@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
+import SEOHead from "@/components/SEOHead";
 
 const quotes = [
   { text: "CreativeSlate finally gave my scripts the showcase they deserve.", author: "Maya Chen", role: "Screenwriter" },
@@ -69,11 +70,13 @@ const Login = () => {
   };
 
   return (
-    <AuthLayout quotes={quotes}>
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Welcome back</h1>
-        <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>Sign in to your CreativeSlate account</p>
-      </div>
+    <>
+      <SEOHead title="Log In" description="Log in to manage your CreativeSlate portfolio dashboard." path="/login" noIndex />
+      <AuthLayout quotes={quotes}>
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Welcome back</h1>
+          <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>Sign in to your CreativeSlate account</p>
+        </div>
 
       <Button variant="outline" className="w-full" onClick={handleGoogleLogin} disabled={googleLoading} style={{ borderColor: "hsl(var(--landing-border))", color: "hsl(var(--landing-fg))", background: "transparent" }}>
         {googleLoading ? (
@@ -112,11 +115,12 @@ const Login = () => {
         </Button>
       </form>
 
-      <p className="text-center text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
-        Don't have an account?{" "}
-        <Link to="/signup" className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>Sign up</Link>
-      </p>
-    </AuthLayout>
+        <p className="text-center text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
+          Don't have an account?{" "}
+          <Link to="/signup" className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>Sign up</Link>
+        </p>
+      </AuthLayout>
+    </>
   );
 };
 

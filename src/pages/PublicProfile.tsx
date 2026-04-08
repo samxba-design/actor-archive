@@ -152,25 +152,6 @@ const PublicProfile = () => {
     }
   }, [profile?.id, slug]);
 
-  // Inject custom CSS if provided and user is Pro
-  useEffect(() => {
-    if (profile?.custom_css && profile?.subscription_tier === "pro") {
-      const styleId = `custom-portfolio-css-${profile.id}`;
-      const existing = document.getElementById(styleId);
-      if (existing) existing.remove();
-
-      const style = document.createElement("style");
-      style.id = styleId;
-      style.textContent = profile.custom_css;
-      document.head.appendChild(style);
-
-      return () => {
-        const el = document.getElementById(styleId);
-        if (el) el.remove();
-      };
-    }
-  }, [profile?.custom_css, profile?.subscription_tier, profile?.id]);
-
   // Back to top scroll listener
   useEffect(() => {
     const handleScroll = () => {
