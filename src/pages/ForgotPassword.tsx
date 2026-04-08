@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import AuthLayout from "@/components/AuthLayout";
+import SEOHead from "@/components/SEOHead";
 
 const quotes = [
   { text: "CreativeSlate finally gave my scripts the showcase they deserve.", author: "Maya Chen", role: "Screenwriter" },
@@ -34,13 +35,15 @@ const ForgotPassword = () => {
   };
 
   return (
-    <AuthLayout quotes={quotes}>
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Reset password</h1>
-        <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
-          {sent ? "Check your email for a reset link." : "Enter your email and we'll send you a reset link."}
-        </p>
-      </div>
+    <>
+      <SEOHead title="Forgot Password" description="Request a password reset link for your CreativeSlate account." path="/forgot-password" noIndex />
+      <AuthLayout quotes={quotes}>
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "hsl(var(--landing-fg))" }}>Reset password</h1>
+          <p className="text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
+            {sent ? "Check your email for a reset link." : "Enter your email and we'll send you a reset link."}
+          </p>
+        </div>
 
       {!sent && (
         <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
@@ -73,10 +76,11 @@ const ForgotPassword = () => {
         </div>
       )}
 
-      <p className="text-center text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
-        <Link to="/login" className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>Back to login</Link>
-      </p>
-    </AuthLayout>
+        <p className="text-center text-sm" style={{ color: "hsl(var(--landing-muted))" }}>
+          <Link to="/login" className="font-medium hover:underline" style={{ color: "hsl(var(--landing-champagne))" }}>Back to login</Link>
+        </p>
+      </AuthLayout>
+    </>
   );
 };
 

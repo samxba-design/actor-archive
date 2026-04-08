@@ -8,11 +8,20 @@ interface SEOHeadProps {
   image?: string;
   jsonLd?: Record<string, any>;
   profileSlug?: string; // For dynamic OG images
+  noIndex?: boolean;
 }
 
-const SITE_URL = "https://actor-archive.lovable.app";
+const DEFAULT_SITE_URL = "https://actor-archive.lovable.app";
 const SITE_NAME = "CreativeSlate";
-const DEFAULT_IMAGE = `${SITE_URL}/og-image.png`;
+const CONFIGURED_SITE_URL = import.meta.env.VITE_SITE_URL?.replace(/\/$/, "");
+const resolveBaseUrl = () => {
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin;
+  }
+  return CONFIGURED_SITE_URL || DEFAULT_SITE_URL;
+};
+
+const DEFAULT_IMAGE = `${DEFAULT_SITE_URL}/og-image.png`;
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 const SEOHead = ({
@@ -23,14 +32,16 @@ const SEOHead = ({
   image,
   jsonLd,
   profileSlug,
+  noIndex = false,
 }: SEOHeadProps) => {
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
-  const canonical = `${SITE_URL}${path}`;
+  const baseUrl = resolveBaseUrl();
+  const canonical = new URL(path, `${baseUrl}/`).toString();
   
   // Use dynamic OG image for profiles, fallback to provided image or default
   const ogImage = profileSlug 
     ? `${SUPABASE_URL}/functions/v1/og-image?slug=${profileSlug}`
-    : (image || DEFAULT_IMAGE);
+    : (image ? new URL(image, `${baseUrl}/`).toString() : DEFAULT_IMAGE);
 
   return (
     <Helmet>
@@ -49,6 +60,7 @@ const SEOHead = ({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      {noIndex && <meta name="robots" content="noindex,nofollow" />}
 
       {jsonLd && (
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
