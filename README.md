@@ -1,73 +1,60 @@
-# Welcome to your Lovable project
+# CreativeSlate
+
+CreativeSlate is a portfolio platform for creative professionals (actors, writers, directors, copywriters, and multi-hyphenates), built with React + TypeScript + Supabase.
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+- App framework: Vite + React + TypeScript
+- Styling: Tailwind + shadcn/ui
+- Backend: Supabase (database, auth, edge functions)
+- Package manager: npm (lockfile included) / bun lock also present
 
-## How can I edit this code?
+## Local development
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### 1) Clone and install
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
+cd actor-archive
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 2) Run the app
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### 3) Build for production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+```
 
-**Use GitHub Codespaces**
+### 4) Run tests + lint
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```sh
+npm run test
+npm run lint
+```
 
-## What technologies are used for this project?
+## Supabase
 
-This project is built with:
+- SQL migrations: `supabase/migrations/`
+- Edge functions: `supabase/functions/*`
+- Local config: `supabase/config.toml`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+When changing schema, add a new migration file (do not edit historical migrations in place).
 
-## How can I deploy this project?
+## Deployment notes
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+- Build command: `npm run build`
+- Output directory: `dist/`
+- Ensure required Supabase env vars are configured in deployment environment.
 
-## Can I connect a custom domain to my Lovable project?
+## Product surfaces (quick map)
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Marketing + public pages: `src/pages/*.tsx`
+- Dashboard tools: `src/pages/dashboard/*.tsx`
+- Admin console: `src/pages/admin/*.tsx`
+- Onboarding flow: `src/pages/Onboarding.tsx` + `src/components/onboarding/*`

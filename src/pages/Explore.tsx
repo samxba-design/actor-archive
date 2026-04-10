@@ -120,6 +120,8 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
             src={profile.profile_photo_url}
             alt={profile.display_name || "Profile"}
             className="w-20 h-20 rounded-full object-cover"
+            loading="lazy"
+            decoding="async"
             style={{ border: `2px solid ${badgeColor}40` }}
           />
         ) : (
@@ -189,17 +191,25 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
 const Explore = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
     const fetchProfiles = async () => {
       setLoading(true);
-      const { data } = await supabase
+      setError(null);
+
+      const { data, error } = await supabase
         .from("profiles")
         .select("id, slug, display_name, tagline, location, profile_type, profile_photo_url")
         .eq("is_published", true)
         .order("display_name");
+
+      if (error) {
+        setError("We couldn't load portfolios right now. Please try again in a moment.");
+      }
+
       setProfiles((data as Profile[]) || []);
       setLoading(false);
     };
@@ -256,6 +266,7 @@ const Explore = () => {
             <input
               type="text"
               placeholder="Search by name, tagline, or location..."
+              aria-label="Search portfolios by name, tagline, or location"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl text-sm outline-none transition-all"
@@ -268,11 +279,13 @@ const Explore = () => {
           </div>
 
           {/* Filter chips */}
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="Filter portfolios by type">
             {FILTER_CHIPS.map((chip) => (
               <button
+                type="button"
                 key={chip.value}
                 onClick={() => setActiveFilter(chip.value)}
+                aria-pressed={activeFilter === chip.value}
                 className="text-sm px-4 py-1.5 rounded-full font-medium transition-all"
                 style={
                   activeFilter === chip.value
@@ -292,6 +305,11 @@ const Explore = () => {
               </button>
             ))}
           </div>
+          {!loading && !error && (
+            <p className="mt-4 text-sm" style={{ color: "hsl(var(--landing-fg) / 0.55)" }}>
+              Showing {filtered.length} portfolio{filtered.length === 1 ? "" : "s"}
+            </p>
+          )}
         </div>
 
         {/* Grid */}
@@ -301,6 +319,16 @@ const Explore = () => {
               {Array.from({ length: 8 }).map((_, i) => (
                 <SkeletonCard key={i} />
               ))}
+            </div>
+          ) : error ? (
+            <div className="text-center py-24">
+              <p
+                className="text-xl font-semibold mb-2"
+                style={{ color: "hsl(var(--landing-fg))" }}
+              >
+                Something went wrong
+              </p>
+              <p style={{ color: "hsl(var(--landing-fg) / 0.5)" }}>{error}</p>
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
