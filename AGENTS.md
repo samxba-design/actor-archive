@@ -4,6 +4,10 @@
 
 CreativeSlate is a single-page **Vite + React + TypeScript** app (shadcn/ui + Tailwind) backed by a **hosted Supabase project** (DB, auth, storage, edge functions). There is **no local backend** to run — the committed `.env` already contains live `VITE_SUPABASE_*` credentials, so auth and most data paths work against the remote project out of the box.
 
+### Live site
+- Production URL: **https://actor-archive.lovable.app/** (hosted on Lovable).
+- ⚠️ **Local dev talks to the live production Supabase backend.** The committed `.env` points at the real production Supabase project, so accounts, contact submissions, and other data you create while running locally are written to the **same database the live site uses**. Use clearly-fake test data and avoid destructive actions when testing locally.
+
 ### Running / commands
 - Dev server: `npm run dev` (Vite). It listens on **port 8080** by default. If you also run the sibling `auditionscenes` app at the same time, give one of them a different port, e.g. `npm run dev -- --port 8080` here and `--port 8081` there.
 - Standard scripts live in `package.json`: `dev`, `build`, `build:dev`, `preview`, `lint`, `test`, `test:watch`.
