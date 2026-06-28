@@ -1,0 +1,22 @@
+{
+  "name": "gigglefund",
+  "version": "1.0.0",
+  "private": true,
+  "description": "GiggleFund (GIGL) — tip comedians, fund charity, spread joy on BNB Chain",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:testnet": "hardhat run scripts/deploy.ts --network bscTestnet",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network bsc",
+    "verify": "hardhat verify",
+    "dev:web": "npm run dev --prefix web",
+    "build:web": "npm run build --prefix web"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.2.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.18",
+    "typescript": "^5.7.3"
+  }
+}
