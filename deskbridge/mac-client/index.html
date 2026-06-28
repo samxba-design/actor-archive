@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeskBridge</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="toolbar">
+        <div class="brand">
+          <span class="logo">DeskBridge</span>
+          <span id="status" class="status disconnected">Disconnected</span>
+        </div>
+        <div class="toolbar-actions">
+          <button id="disconnect-btn" class="secondary" hidden>Disconnect</button>
+          <button id="fullscreen-btn" class="secondary" hidden>Fullscreen</button>
+        </div>
+      </header>
+
+      <section id="connect-panel" class="connect-panel">
+        <div class="card">
+          <h1>Connect to your Windows PC</h1>
+          <p class="subtitle">
+            Run <strong>DeskBridge Server</strong> on your Windows machine, then enter the
+            address and PIN shown in its window.
+          </p>
+
+          <form id="connect-form">
+            <label>
+              Windows PC address
+              <input id="host" type="text" placeholder="192.168.1.50" required />
+            </label>
+
+            <label>
+              Port
+              <input id="port" type="number" value="9478" min="1" max="65535" required />
+            </label>
+
+            <label>
+              PIN
+              <input
+                id="pin"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                placeholder="6-digit PIN"
+                required
+              />
+            </label>
+
+            <p id="connect-error" class="error" hidden></p>
+
+            <button type="submit" class="primary">Connect</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="remote-panel" class="remote-panel" hidden>
+        <div class="remote-meta">
+          <span id="remote-hostname"></span>
+          <span id="remote-resolution"></span>
+        </div>
+        <div id="viewport" class="viewport" tabindex="0">
+          <img id="frame" alt="Windows desktop" draggable="false" />
+          <div id="overlay" class="overlay">Connecting…</div>
+        </div>
+        <p class="hint">
+          Click the screen to capture mouse and keyboard. Press <kbd>Esc</kbd> to release
+          capture, or use the toolbar to disconnect.
+        </p>
+      </section>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

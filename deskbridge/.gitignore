@@ -1,0 +1,5 @@
+/target/
+**/target/
+node_modules/
+mac-client/app-icon/
+.DS_Store

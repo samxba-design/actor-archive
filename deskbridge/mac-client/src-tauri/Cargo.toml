@@ -1,0 +1,22 @@
+[package]
+name = "deskbridge-client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "DeskBridge Mac client"
+
+[lib]
+name = "deskbridge_client_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(windows)'] }
