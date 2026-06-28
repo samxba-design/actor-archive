@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/protocol",
+    "crates/server",
+    "mac-client/src-tauri",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["DeskBridge"]
+
+[workspace.dependencies]
+deskbridge-protocol = { path = "crates/protocol" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+futures-util = "0.3"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+rand = "0.8"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
